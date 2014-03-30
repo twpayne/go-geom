@@ -47,7 +47,7 @@ func (e ErrStrideMismatch) Error() string {
 	return fmt.Sprintf("geom: stride mismatch, got %d, want %d", e.Got, e.Want)
 }
 
-type Envelope struct {
+type Bounds struct {
 	stride int
 	min    []float64
 	max    []float64
@@ -57,7 +57,7 @@ type Envelope struct {
 type T interface {
 	Ends() []int
 	Endss() [][]int
-	Envelope() *Envelope
+	Bounds() *Bounds
 	FlatCoords() []float64
 	Layout() Layout
 	Stride() int

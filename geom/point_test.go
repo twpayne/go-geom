@@ -16,8 +16,8 @@ func (s *PointSuite) TestXY(c *C) {
 	coords0 := []float64{1, 2}
 	c.Check(p.SetCoords(coords0), IsNil)
 
+	c.Check(p.Bounds(), DeepEquals, NewBounds(1, 2, 1, 2))
 	c.Check(p.Coords(), DeepEquals, coords0)
-	c.Check(p.Envelope(), DeepEquals, NewEnvelope(1, 2, 1, 2))
 	c.Check(p.Layout(), Equals, XY)
 	c.Check(p.Stride(), Equals, 2)
 
@@ -35,8 +35,8 @@ func (s *PointSuite) TestXYZ(c *C) {
 	coords0 := []float64{1, 2, 3}
 	c.Check(p.SetCoords(coords0), IsNil)
 
+	c.Check(p.Bounds(), DeepEquals, NewBounds(1, 2, 3, 1, 2, 3))
 	c.Check(p.Coords(), DeepEquals, coords0)
-	c.Check(p.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 1, 2, 3))
 	c.Check(p.Layout(), Equals, XYZ)
 	c.Check(p.Stride(), Equals, 3)
 
@@ -51,8 +51,8 @@ func (s *PointSuite) TestClone(c *C) {
 	c.Check(p1.SetCoords([]float64{1, 2}), IsNil)
 	p2 := p1.Clone()
 	c.Check(p2, Not(Equals), p1)
+	c.Check(p2.Bounds(), DeepEquals, p1.Bounds())
 	c.Check(p2.Coords(), DeepEquals, p1.Coords())
-	c.Check(p2.Envelope(), DeepEquals, p1.Envelope())
 	c.Check(p2.FlatCoords(), Not(Aliases), p1.FlatCoords())
 	c.Check(p2.Layout(), Equals, p1.Layout())
 	c.Check(p2.Stride(), Equals, p1.Stride())

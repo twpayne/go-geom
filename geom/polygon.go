@@ -40,6 +40,10 @@ func (p *Polygon) Clone() *Polygon {
 	}
 }
 
+func (p *Polygon) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(p.flatCoords, 0, len(p.flatCoords), p.stride)
+}
+
 func (p *Polygon) Coords() [][][]float64 {
 	return inflate2(p.flatCoords, 0, p.ends, p.stride)
 }
@@ -50,10 +54,6 @@ func (p *Polygon) Ends() []int {
 
 func (p *Polygon) Endss() [][]int {
 	return nil
-}
-
-func (p *Polygon) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(p.flatCoords, 0, len(p.flatCoords), p.stride)
 }
 
 func (p *Polygon) FlatCoords() []float64 {

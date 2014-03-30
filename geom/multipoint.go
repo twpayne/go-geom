@@ -34,6 +34,10 @@ func (mp *MultiPoint) Clone() *MultiPoint {
 	}
 }
 
+func (mp *MultiPoint) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
+}
+
 func (mp *MultiPoint) Coords() [][]float64 {
 	return inflate1(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
 }
@@ -44,10 +48,6 @@ func (mp *MultiPoint) Ends() []int {
 
 func (mp *MultiPoint) Endss() [][]int {
 	return nil
-}
-
-func (mp *MultiPoint) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
 }
 
 func (mp *MultiPoint) FlatCoords() []float64 {

@@ -27,6 +27,10 @@ func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *Mu
 	}
 }
 
+func (mls *MultiLineString) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(mls.flatCoords, 0, len(mls.flatCoords), mls.stride)
+}
+
 func (mls *MultiLineString) Coords() [][][]float64 {
 	return inflate2(mls.flatCoords, 0, mls.ends, mls.stride)
 }
@@ -37,10 +41,6 @@ func (mls *MultiLineString) Ends() []int {
 
 func (mls *MultiLineString) Endss() [][]int {
 	return nil
-}
-
-func (mls *MultiLineString) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(mls.flatCoords, 0, len(mls.flatCoords), mls.stride)
 }
 
 func (mls *MultiLineString) FlatCoords() []float64 {

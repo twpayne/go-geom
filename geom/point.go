@@ -24,6 +24,10 @@ func NewPointFlat(layout Layout, flatCoords []float64) *Point {
 	}
 }
 
+func (p *Point) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(p.flatCoords, 0, len(p.flatCoords), p.stride)
+}
+
 func (p *Point) Clone() *Point {
 	flatCoords := make([]float64, len(p.flatCoords))
 	copy(flatCoords, p.flatCoords)
@@ -44,10 +48,6 @@ func (p *Point) Ends() []int {
 
 func (p *Point) Endss() [][]int {
 	return nil
-}
-
-func (p *Point) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(p.flatCoords, 0, len(p.flatCoords), p.stride)
 }
 
 func (p *Point) FlatCoords() []float64 {

@@ -34,6 +34,10 @@ func (lr *LinearRing) Clone() *LinearRing {
 	}
 }
 
+func (lr *LinearRing) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
+}
+
 func (lr *LinearRing) Coords() [][]float64 {
 	return inflate1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
@@ -44,10 +48,6 @@ func (lr *LinearRing) Ends() []int {
 
 func (lr *LinearRing) Endss() [][]int {
 	return nil
-}
-
-func (lr *LinearRing) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
 
 func (lr *LinearRing) FlatCoords() []float64 {

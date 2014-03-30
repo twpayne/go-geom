@@ -28,6 +28,10 @@ func NewLineStringFlat(layout Layout, flatCoords []float64) *LineString {
 	}
 }
 
+func (ls *LineString) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(ls.flatCoords, 0, len(ls.flatCoords), ls.stride)
+}
+
 func (ls *LineString) Clone() *LineString {
 	flatCoords := make([]float64, len(ls.flatCoords))
 	copy(flatCoords, ls.flatCoords)
@@ -52,10 +56,6 @@ func (ls *LineString) Ends() []int {
 
 func (ls *LineString) Endss() [][]int {
 	return nil
-}
-
-func (ls *LineString) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(ls.flatCoords, 0, len(ls.flatCoords), ls.stride)
 }
 
 func (ls *LineString) FlatCoords() []float64 {

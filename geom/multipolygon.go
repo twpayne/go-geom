@@ -27,6 +27,10 @@ func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *Mu
 	}
 }
 
+func (mp *MultiPolygon) Bounds() *Bounds {
+	return NewBounds().extendFlatCoords(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
+}
+
 func (mp *MultiPolygon) Coords() [][][][]float64 {
 	return inflate3(mp.flatCoords, 0, mp.endss, mp.stride)
 }
@@ -37,10 +41,6 @@ func (mp *MultiPolygon) Ends() []int {
 
 func (mp *MultiPolygon) Endss() [][]int {
 	return mp.endss
-}
-
-func (mp *MultiPolygon) Envelope() *Envelope {
-	return NewEnvelope().extendFlatCoords(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
 }
 
 func (mp *MultiPolygon) FlatCoords() []float64 {

@@ -16,8 +16,8 @@ func (s *LinearRingSuite) TestXY(c *C) {
 	coords1 := [][]float64{{1, 2}, {3, 4}}
 	c.Check(lr.SetCoords(coords1), IsNil)
 
+	c.Check(lr.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4))
 	c.Check(lr.Coords(), DeepEquals, coords1)
-	c.Check(lr.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 4))
 	c.Check(lr.Layout(), Equals, XY)
 	c.Check(lr.Stride(), Equals, 2)
 
@@ -35,8 +35,8 @@ func (s *LinearRingSuite) TestXYZ(c *C) {
 	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
 	c.Check(lr.SetCoords(coords1), IsNil)
 
+	c.Check(lr.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4, 5, 6))
 	c.Check(lr.Coords(), DeepEquals, coords1)
-	c.Check(lr.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 4, 5, 6))
 	c.Check(lr.Layout(), Equals, XYZ)
 	c.Check(lr.Stride(), Equals, 3)
 
@@ -51,8 +51,8 @@ func (s *LinearRingSuite) TestClone(c *C) {
 	c.Check(lr1.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
 	lr2 := lr1.Clone()
 	c.Check(lr2, Not(Equals), lr1)
+	c.Check(lr2.Bounds(), DeepEquals, lr1.Bounds())
 	c.Check(lr2.Coords(), DeepEquals, lr1.Coords())
-	c.Check(lr2.Envelope(), DeepEquals, lr1.Envelope())
 	c.Check(lr2.FlatCoords(), Not(Aliases), lr1.FlatCoords())
 	c.Check(lr2.Layout(), Equals, lr1.Layout())
 	c.Check(lr2.Stride(), Equals, lr1.Stride())
