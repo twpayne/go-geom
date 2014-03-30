@@ -16,6 +16,12 @@ func NewEnvelope(args ...float64) *Envelope {
 	}
 }
 
+func (e *Envelope) Extend(g T) *Envelope {
+	e.extendStride(g.Stride())
+	e.extendFlatCoords(g.FlatCoords(), 0, len(g.FlatCoords()), g.Stride())
+	return e
+}
+
 func (e *Envelope) IsEmpty() bool {
 	for i := 0; i < e.stride; i++ {
 		if e.max[i] < e.min[i] {
