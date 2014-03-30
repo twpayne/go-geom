@@ -272,7 +272,7 @@ func read(r io.Reader) (geom.T, error) {
 
 }
 
-func Read(data []byte) (geom.T, error) {
+func Unmarshal(data []byte) (geom.T, error) {
 	return read(bytes.NewBuffer(data))
 }
 

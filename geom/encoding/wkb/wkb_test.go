@@ -15,7 +15,7 @@ var _ = Suite(&WKBSuite{})
 
 func test(c *C, g geom.T, xdr []byte, ndr []byte) {
 
-	got, err := Read(xdr)
+	got, err := Unmarshal(xdr)
 	c.Check(err, IsNil)
 	c.Check(got, Not(IsNil))
 	c.Check(got, DeepEquals, g)
@@ -24,7 +24,7 @@ func test(c *C, g geom.T, xdr []byte, ndr []byte) {
 	c.Check(err, IsNil)
 	c.Check(gotXDR, DeepEquals, xdr)
 
-	got, err = Read(ndr)
+	got, err = Unmarshal(ndr)
 	c.Check(err, IsNil)
 	c.Check(got, Not(IsNil))
 	c.Check(got, DeepEquals, g)
