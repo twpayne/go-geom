@@ -32,13 +32,13 @@ type Type uint32
 type ErrUnknownType Type
 
 func (e ErrUnknownType) Error() string {
-	return fmt.Sprintf("wkb: unknown type: %u", uint(e))
+	return fmt.Sprintf("wkb: unknown type: %d", uint(e))
 }
 
 type ErrUnsupportedType Type
 
 func (e ErrUnsupportedType) Error() string {
-	return fmt.Sprintf("wkb: unsupported type: %u", uint(e))
+	return fmt.Sprintf("wkb: unsupported type: %d", uint(e))
 }
 
 const (
