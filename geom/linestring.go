@@ -38,6 +38,10 @@ func (ls *LineString) Clone() *LineString {
 	}
 }
 
+func (ls *LineString) Coord(i int) []float64 {
+	return ls.flatCoords[i*ls.stride : (i+1)*ls.stride]
+}
+
 func (ls *LineString) Coords() [][]float64 {
 	return inflate1(ls.flatCoords, 0, len(ls.flatCoords), ls.stride)
 }
@@ -70,6 +74,18 @@ func (ls *LineString) Length() float64 {
 		length += math.Sqrt(dx*dx + dy*dy)
 	}
 	return length
+}
+
+func (ls *LineString) NumCoords() int {
+	return len(ls.flatCoords) / ls.stride
+}
+
+func (ls *LineString) Push(coord0 []float64) error {
+	if len(coord0) != ls.stride {
+		return ErrStrideMismatch{Got: len(coord0), Want: ls.stride}
+	}
+	ls.flatCoords = append(ls.flatCoords, coord0...)
+	return nil
 }
 
 func (ls *LineString) SetCoords(coords1 [][]float64) error {
