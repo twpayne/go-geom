@@ -9,18 +9,13 @@ type Polygon struct {
 
 var _ T = &Polygon{}
 
-func NewPolygon(layout Layout, coords2 [][][]float64) (*Polygon, error) {
-	p := &Polygon{
+func NewPolygon(layout Layout) *Polygon {
+	return &Polygon{
 		layout:     layout,
 		stride:     layout.Stride(),
 		flatCoords: nil,
 		ends:       nil,
 	}
-	var err error
-	if p.flatCoords, p.ends, err = deflate2(p.flatCoords, p.ends, coords2, p.stride); err != nil {
-		return nil, err
-	}
-	return p, nil
 }
 
 func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
@@ -45,7 +40,7 @@ func (p *Polygon) Clone() *Polygon {
 	}
 }
 
-func (p *Polygon) Coords() interface{} {
+func (p *Polygon) Coords() [][][]float64 {
 	return inflate2(p.flatCoords, 0, p.ends, p.stride)
 }
 
@@ -91,6 +86,14 @@ func (p *Polygon) Push(lr *LinearRing) error {
 	}
 	p.flatCoords = append(p.flatCoords, lr.flatCoords...)
 	p.ends = append(p.ends, len(p.flatCoords))
+	return nil
+}
+
+func (p *Polygon) SetCoords(coords2 [][][]float64) error {
+	var err error
+	if p.flatCoords, p.ends, err = deflate2(nil, nil, coords2, p.stride); err != nil {
+		return err
+	}
 	return nil
 }
 

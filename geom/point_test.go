@@ -10,10 +10,11 @@ var _ = Suite(&PointSuite{})
 
 func (s *PointSuite) TestXY(c *C) {
 
-	coords0 := []float64{1, 2}
-	p, err := NewPoint(XY, coords0)
-	c.Assert(err, IsNil)
+	p := NewPoint(XY)
 	c.Assert(p, Not(IsNil))
+
+	coords0 := []float64{1, 2}
+	c.Check(p.SetCoords(coords0), IsNil)
 
 	c.Check(p.Coords(), DeepEquals, coords0)
 	c.Check(p.Envelope(), DeepEquals, NewEnvelope(1, 2, 1, 2))
@@ -28,10 +29,11 @@ func (s *PointSuite) TestXY(c *C) {
 
 func (s *PointSuite) TestXYZ(c *C) {
 
-	coords0 := []float64{1, 2, 3}
-	p, err := NewPoint(XYZ, coords0)
-	c.Assert(err, IsNil)
+	p := NewPoint(XYZ)
 	c.Assert(p, Not(IsNil))
+
+	coords0 := []float64{1, 2, 3}
+	c.Check(p.SetCoords(coords0), IsNil)
 
 	c.Check(p.Coords(), DeepEquals, coords0)
 	c.Check(p.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 1, 2, 3))
@@ -45,8 +47,8 @@ func (s *PointSuite) TestXYZ(c *C) {
 }
 
 func (s *PointSuite) TestClone(c *C) {
-	p1, err := NewPoint(XY, []float64{1, 2})
-	c.Assert(err, IsNil)
+	p1 := NewPoint(XY)
+	c.Check(p1.SetCoords([]float64{1, 2}), IsNil)
 	p2 := p1.Clone()
 	c.Check(p2, Not(Equals), p1)
 	c.Check(p2.Coords(), DeepEquals, p1.Coords())
@@ -57,19 +59,9 @@ func (s *PointSuite) TestClone(c *C) {
 }
 
 func (s *PointSuite) TestStrideMismatch(c *C) {
-	var p *Point
-	var err error
-	p, err = NewPoint(XY, []float64{})
-	c.Check(p, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
-	p, err = NewPoint(XY, []float64{1})
-	c.Check(p, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
-	c.Check(err, FitsTypeOf, ErrStrideMismatch{})
-	p, err = NewPoint(XY, []float64{1, 2})
-	c.Check(p, Not(IsNil))
-	c.Check(err, IsNil)
-	p, err = NewPoint(XY, []float64{1, 2, 3})
-	c.Check(p, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
+	p := NewPoint(XY)
+	c.Check(p.SetCoords([]float64{}), DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
+	c.Check(p.SetCoords([]float64{1}), DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
+	c.Check(p.SetCoords([]float64{1, 2}), IsNil)
+	c.Check(p.SetCoords([]float64{1, 2, 3}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
 }

@@ -12,17 +12,12 @@ type LineString struct {
 
 var _ T = &LineString{}
 
-func NewLineString(layout Layout, coords1 [][]float64) (*LineString, error) {
-	ls := &LineString{
+func NewLineString(layout Layout) *LineString {
+	return &LineString{
 		layout:     layout,
 		stride:     layout.Stride(),
 		flatCoords: nil,
 	}
-	var err error
-	if ls.flatCoords, err = deflate1(ls.flatCoords, coords1, ls.stride); err != nil {
-		return nil, err
-	}
-	return ls, nil
 }
 
 func NewLineStringFlat(layout Layout, flatCoords []float64) *LineString {
@@ -43,7 +38,7 @@ func (ls *LineString) Clone() *LineString {
 	}
 }
 
-func (ls *LineString) Coords() interface{} {
+func (ls *LineString) Coords() [][]float64 {
 	return inflate1(ls.flatCoords, 0, len(ls.flatCoords), ls.stride)
 }
 
@@ -75,6 +70,14 @@ func (ls *LineString) Length() float64 {
 		length += math.Sqrt(dx*dx + dy*dy)
 	}
 	return length
+}
+
+func (ls *LineString) SetCoords(coords1 [][]float64) error {
+	var err error
+	if ls.flatCoords, err = deflate1(nil, coords1, ls.stride); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (ls *LineString) Stride() int {

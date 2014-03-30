@@ -10,10 +10,11 @@ var _ = Suite(&MultiLineStringSuite{})
 
 func (s *MultiLineStringSuite) TestXY(c *C) {
 
-	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
-	mls, err := NewMultiLineString(XY, coords2)
-	c.Assert(err, IsNil)
+	mls := NewMultiLineString(XY)
 	c.Assert(mls, Not(IsNil))
+
+	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
+	c.Check(mls.SetCoords(coords2), IsNil)
 
 	c.Check(mls.Coords(), DeepEquals, coords2)
 	c.Check(mls.Envelope(), DeepEquals, NewEnvelope(1, 2, 11, 12))

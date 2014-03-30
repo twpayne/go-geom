@@ -10,10 +10,12 @@ var _ = Suite(&MultiPointSuite{})
 
 func (s *MultiPointSuite) TestXY(c *C) {
 
-	coords1 := [][]float64{{1, 2}, {3, 4}}
-	mp, err := NewMultiPoint(XY, coords1)
-	c.Assert(err, IsNil)
+	mp := NewMultiPoint(XY)
 	c.Assert(mp, Not(IsNil))
+
+	coords1 := [][]float64{{1, 2}, {3, 4}}
+	c.Check(mp.SetCoords(coords1), IsNil)
+
 	c.Check(mp.Coords(), DeepEquals, coords1)
 	c.Check(mp.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 4))
 	c.Check(mp.Layout(), Equals, XY)
@@ -44,9 +46,11 @@ func (s *MultiPointSuite) TestXY(c *C) {
 
 func (s *MultiPointSuite) TestXYZ(c *C) {
 
+	mp := NewMultiPoint(XYZ)
+	c.Assert(mp, Not(IsNil))
+
 	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
-	mp, err := NewMultiPoint(XYZ, coords1)
-	c.Assert(err, IsNil)
+	c.Check(mp.SetCoords(coords1), IsNil)
 
 	c.Check(mp.Coords(), DeepEquals, coords1)
 	c.Check(mp.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 4, 5, 6))
@@ -76,8 +80,8 @@ func (s *MultiPointSuite) TestXYZ(c *C) {
 }
 
 func (s *MultiPointSuite) TestClone(c *C) {
-	mp1, err := NewMultiPoint(XY, [][]float64{{1, 2}, {3, 4}})
-	c.Assert(err, IsNil)
+	mp1 := NewMultiPoint(XY)
+	c.Check(mp1.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
 	mp2 := mp1.Clone()
 	c.Check(mp2, Not(Equals), mp1)
 	c.Check(mp2.Coords(), DeepEquals, mp1.Coords())
@@ -88,42 +92,27 @@ func (s *MultiPointSuite) TestClone(c *C) {
 }
 
 func (s *MultiPointSuite) TestStrideMismatch(c *C) {
-	var mp *MultiPoint
-	var err error
-	mp, err = NewMultiPoint(XY, [][]float64{{1, 2}, {}})
-	c.Check(mp, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
-	mp, err = NewMultiPoint(XY, [][]float64{{1, 2}, {3}})
-	c.Check(mp, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
-	mp, err = NewMultiPoint(XY, [][]float64{{1, 2}, {3, 4}})
-	c.Check(mp, Not(IsNil))
-	c.Check(err, IsNil)
-	mp, err = NewMultiPoint(XY, [][]float64{{1, 2}, {3, 4, 5}})
-	c.Check(mp, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
+	mp := NewMultiPoint(XY)
+	c.Check(mp.SetCoords([][]float64{{1, 2}, {}}), DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
+	c.Check(mp.SetCoords([][]float64{{1, 2}, {3}}), DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
+	c.Check(mp.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
+	c.Check(mp.SetCoords([][]float64{{1, 2}, {3, 4, 5}}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
 }
 
 func (s *MultiPointSuite) TestPush(c *C) {
 
-	var mp *MultiPoint
-	var err error
-	mp, err = NewMultiPoint(XY, nil)
-	c.Check(mp, Not(IsNil))
-	c.Check(err, IsNil)
+	mp := NewMultiPoint(XY)
 	c.Check(mp.NumPoints(), Equals, 0)
 
-	p0, err := NewPoint(XY, []float64{1, 2})
-	c.Check(err, IsNil)
-	err = mp.Push(p0)
-	c.Check(err, IsNil)
+	p0 := NewPoint(XY)
+	c.Check(p0.SetCoords([]float64{1, 2}), IsNil)
+	c.Check(mp.Push(p0), IsNil)
 	c.Check(mp.NumPoints(), Equals, 1)
 	c.Check(mp.Point(0), DeepEquals, p0)
 
-	p1, err := NewPoint(XY, []float64{3, 4})
-	c.Check(err, IsNil)
-	err = mp.Push(p1)
-	c.Check(err, IsNil)
+	p1 := NewPoint(XY)
+	c.Check(p1.SetCoords([]float64{3, 4}), IsNil)
+	c.Check(mp.Push(p1), IsNil)
 	c.Check(mp.NumPoints(), Equals, 2)
 	c.Check(mp.Point(0), DeepEquals, p0)
 	c.Check(mp.Point(1), DeepEquals, p1)
@@ -131,14 +120,6 @@ func (s *MultiPointSuite) TestPush(c *C) {
 }
 
 func (s *MultiPointSuite) TestLayoutMismatch(c *C) {
-	var mp *MultiPoint
-	var err error
-	mp, err = NewMultiPoint(XY, nil)
-	c.Check(mp, Not(IsNil))
-	c.Check(err, IsNil)
-	p1, err := NewPoint(XYZ, []float64{1, 2, 3})
-	c.Check(p1, Not(IsNil))
-	c.Check(err, IsNil)
-	err = mp.Push(p1)
-	c.Check(err, DeepEquals, ErrLayoutMismatch{Got: XYZ, Want: XY})
+	mp := NewMultiPoint(XY)
+	c.Check(mp.Push(NewPoint(XYZ)), DeepEquals, ErrLayoutMismatch{Got: XYZ, Want: XY})
 }

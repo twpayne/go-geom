@@ -10,10 +10,11 @@ var _ = Suite(&LinearRingSuite{})
 
 func (s *LinearRingSuite) TestXY(c *C) {
 
-	coords1 := [][]float64{{1, 2}, {3, 4}}
-	lr, err := NewLinearRing(XY, coords1)
-	c.Assert(err, IsNil)
+	lr := NewLinearRing(XY)
 	c.Assert(lr, Not(IsNil))
+
+	coords1 := [][]float64{{1, 2}, {3, 4}}
+	c.Check(lr.SetCoords(coords1), IsNil)
 
 	c.Check(lr.Coords(), DeepEquals, coords1)
 	c.Check(lr.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 4))
@@ -28,10 +29,11 @@ func (s *LinearRingSuite) TestXY(c *C) {
 
 func (s *LinearRingSuite) TestXYZ(c *C) {
 
-	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
-	lr, err := NewLinearRing(XYZ, coords1)
-	c.Assert(err, IsNil)
+	lr := NewLinearRing(XYZ)
 	c.Assert(lr, Not(IsNil))
+
+	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
+	c.Check(lr.SetCoords(coords1), IsNil)
 
 	c.Check(lr.Coords(), DeepEquals, coords1)
 	c.Check(lr.Envelope(), DeepEquals, NewEnvelope(1, 2, 3, 4, 5, 6))
@@ -45,8 +47,8 @@ func (s *LinearRingSuite) TestXYZ(c *C) {
 }
 
 func (s *LinearRingSuite) TestClone(c *C) {
-	lr1, err := NewLinearRing(XY, [][]float64{{1, 2}, {3, 4}})
-	c.Assert(err, IsNil)
+	lr1 := NewLinearRing(XY)
+	c.Check(lr1.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
 	lr2 := lr1.Clone()
 	c.Check(lr2, Not(Equals), lr1)
 	c.Check(lr2.Coords(), DeepEquals, lr1.Coords())
@@ -57,18 +59,9 @@ func (s *LinearRingSuite) TestClone(c *C) {
 }
 
 func (s *LinearRingSuite) TestStrideMismatch(c *C) {
-	var lr *LinearRing
-	var err error
-	lr, err = NewLinearRing(XY, [][]float64{{1, 2}, {}})
-	c.Check(lr, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
-	lr, err = NewLinearRing(XY, [][]float64{{1, 2}, {3}})
-	c.Check(lr, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
-	lr, err = NewLinearRing(XY, [][]float64{{1, 2}, {3, 4}})
-	c.Check(lr, Not(IsNil))
-	c.Check(err, IsNil)
-	lr, err = NewLinearRing(XY, [][]float64{{1, 2}, {3, 4, 5}})
-	c.Check(lr, IsNil)
-	c.Check(err, DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
+	lr := NewLinearRing(XY)
+	c.Check(lr.SetCoords([][]float64{{1, 2}, {}}), DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
+	c.Check(lr.SetCoords([][]float64{{1, 2}, {3}}), DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
+	c.Check(lr.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
+	c.Check(lr.SetCoords([][]float64{{1, 2}, {3, 4, 5}}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
 }

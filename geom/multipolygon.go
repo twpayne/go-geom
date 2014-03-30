@@ -9,18 +9,13 @@ type MultiPolygon struct {
 
 var _ T = &MultiPolygon{}
 
-func NewMultiPolygon(layout Layout, coords3 [][][][]float64) (*MultiPolygon, error) {
-	mp := &MultiPolygon{
+func NewMultiPolygon(layout Layout) *MultiPolygon {
+	return &MultiPolygon{
 		layout:     layout,
 		stride:     layout.Stride(),
 		flatCoords: nil,
 		endss:      nil,
 	}
-	var err error
-	if mp.flatCoords, mp.endss, err = deflate3(mp.flatCoords, mp.endss, coords3, mp.stride); err != nil {
-		return nil, err
-	}
-	return mp, nil
 }
 
 func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *MultiPolygon {
@@ -32,7 +27,7 @@ func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *Mu
 	}
 }
 
-func (mp *MultiPolygon) Coords() interface{} {
+func (mp *MultiPolygon) Coords() [][][][]float64 {
 	return inflate3(mp.flatCoords, 0, mp.endss, mp.stride)
 }
 
@@ -97,6 +92,14 @@ func (mp *MultiPolygon) Push(p *Polygon) error {
 	}
 	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
 	mp.endss = append(mp.endss, ends)
+	return nil
+}
+
+func (mp *MultiPolygon) SetCoords(coords3 [][][][]float64) error {
+	var err error
+	if mp.flatCoords, mp.endss, err = deflate3(nil, nil, coords3, mp.stride); err != nil {
+		return err
+	}
 	return nil
 }
 

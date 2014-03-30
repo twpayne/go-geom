@@ -9,18 +9,13 @@ type MultiLineString struct {
 
 var _ T = &MultiLineString{}
 
-func NewMultiLineString(layout Layout, coords2 [][][]float64) (*MultiLineString, error) {
-	mls := &MultiLineString{
+func NewMultiLineString(layout Layout) *MultiLineString {
+	return &MultiLineString{
 		layout:     layout,
 		stride:     layout.Stride(),
 		flatCoords: nil,
 		ends:       nil,
 	}
-	var err error
-	if mls.flatCoords, mls.ends, err = deflate2(mls.flatCoords, mls.ends, coords2, mls.stride); err != nil {
-		return nil, err
-	}
-	return mls, nil
 }
 
 func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *MultiLineString {
@@ -32,7 +27,7 @@ func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *Mu
 	}
 }
 
-func (mls *MultiLineString) Coords() interface{} {
+func (mls *MultiLineString) Coords() [][][]float64 {
 	return inflate2(mls.flatCoords, 0, mls.ends, mls.stride)
 }
 
@@ -78,6 +73,14 @@ func (mls *MultiLineString) Push(ls *LineString) error {
 	}
 	mls.flatCoords = append(mls.flatCoords, ls.flatCoords...)
 	mls.ends = append(mls.ends, len(mls.flatCoords))
+	return nil
+}
+
+func (mls *MultiLineString) SetCoords(coords2 [][][]float64) error {
+	var err error
+	if mls.flatCoords, mls.ends, err = deflate2(nil, nil, coords2, mls.stride); err != nil {
+		return err
+	}
 	return nil
 }
 

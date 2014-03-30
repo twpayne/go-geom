@@ -55,7 +55,6 @@ type Envelope struct {
 
 // A T is a generic interface implemented by all geometry types.
 type T interface {
-	Coords() interface{}
 	Ends() []int
 	Endss() [][]int
 	Envelope() *Envelope

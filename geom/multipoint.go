@@ -8,17 +8,12 @@ type MultiPoint struct {
 
 var _ T = &MultiPoint{}
 
-func NewMultiPoint(layout Layout, coords1 [][]float64) (*MultiPoint, error) {
-	mp := &MultiPoint{
+func NewMultiPoint(layout Layout) *MultiPoint {
+	return &MultiPoint{
 		layout:     layout,
 		stride:     layout.Stride(),
 		flatCoords: nil,
 	}
-	var err error
-	if mp.flatCoords, err = deflate1(mp.flatCoords, coords1, mp.stride); err != nil {
-		return nil, err
-	}
-	return mp, nil
 }
 
 func NewMultiPointFlat(layout Layout, flatCoords []float64) *MultiPoint {
@@ -39,7 +34,7 @@ func (mp *MultiPoint) Clone() *MultiPoint {
 	}
 }
 
-func (mp *MultiPoint) Coords() interface{} {
+func (mp *MultiPoint) Coords() [][]float64 {
 	return inflate1(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
 }
 
@@ -75,11 +70,21 @@ func (mp *MultiPoint) Point(i int) *Point {
 	}
 }
 
-func (mp *MultiPoint) Push(p *Point) error {
-	if p.layout != mp.layout {
-		return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
+func (mp *MultiPoint) Push(ps ...*Point) error {
+	for _, p := range ps {
+		if p.layout != mp.layout {
+			return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
+		}
+		mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
 	}
-	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
+	return nil
+}
+
+func (mp *MultiPoint) SetCoords(coords1 [][]float64) error {
+	var err error
+	if mp.flatCoords, err = deflate1(mp.flatCoords[:0], coords1, mp.stride); err != nil {
+		return err
+	}
 	return nil
 }
 

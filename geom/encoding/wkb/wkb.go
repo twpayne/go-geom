@@ -211,7 +211,7 @@ func read(r io.Reader) (geom.T, error) {
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
 		}
-		mp, _ := geom.NewMultiPoint(layout, nil)
+		mp := geom.NewMultiPoint(layout)
 		for i := uint32(0); i < n; i++ {
 			g, err := read(r)
 			if err != nil {
@@ -329,8 +329,8 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 		}
 		return nil
 	case *geom.MultiLineString:
-		mp := g.(*geom.MultiLineString)
-		n := mp.NumLineStrings()
+		mls := g.(*geom.MultiLineString)
+		n := mls.NumLineStrings()
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
@@ -351,9 +351,9 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 				return err
 			}
 		}
-	default:
-		return fmt.Errorf("wkb: unsupported or unknown geometry type: %T", g)
 	}
+
+	return fmt.Errorf("wkb: unsupported or unknown geometry type: %T", g)
 
 }
 

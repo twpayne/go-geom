@@ -8,17 +8,12 @@ type Point struct {
 
 var _ T = &Point{}
 
-func NewPoint(layout Layout, coords0 []float64) (*Point, error) {
-	p := &Point{
+func NewPoint(layout Layout) *Point {
+	return &Point{
 		layout:     layout,
 		stride:     layout.Stride(),
 		flatCoords: nil,
 	}
-	var err error
-	if p.flatCoords, err = deflate0(p.flatCoords, coords0, p.Stride()); err != nil {
-		return nil, err
-	}
-	return p, nil
 }
 
 func NewPointFlat(layout Layout, flatCoords []float64) *Point {
@@ -39,7 +34,7 @@ func (p *Point) Clone() *Point {
 	}
 }
 
-func (p *Point) Coords() interface{} {
+func (p *Point) Coords() []float64 {
 	return inflate0(p.flatCoords, 0, len(p.flatCoords), p.stride)
 }
 
@@ -61,6 +56,14 @@ func (p *Point) FlatCoords() []float64 {
 
 func (p *Point) Layout() Layout {
 	return p.layout
+}
+
+func (p *Point) SetCoords(coords0 []float64) error {
+	var err error
+	if p.flatCoords, err = deflate0(nil, coords0, p.Stride()); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *Point) Stride() int {

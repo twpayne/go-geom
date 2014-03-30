@@ -10,10 +10,10 @@ var _ = Suite(&PolygonSuite{})
 
 func (s *PolygonSuite) TestXY(c *C) {
 
-	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
-	p, err := NewPolygon(XY, coords2)
-	c.Assert(err, IsNil)
+	p := NewPolygon(XY)
 	c.Assert(p, Not(IsNil))
+	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
+	c.Check(p.SetCoords(coords2), IsNil)
 
 	c.Check(p.Coords(), DeepEquals, coords2)
 	c.Check(p.Envelope(), DeepEquals, NewEnvelope(1, 2, 11, 12))
@@ -44,10 +44,8 @@ func (s *PolygonSuite) TestXY(c *C) {
 }
 
 func (s *PolygonSuite) TestClone(c *C) {
-	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
-	p1, err := NewPolygon(XY, coords2)
-	c.Assert(err, IsNil)
-	c.Assert(p1, Not(IsNil))
+	p1 := NewPolygon(XY)
+	c.Check(p1.SetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}), IsNil)
 	p2 := p1.Clone()
 	c.Check(p2, Not(Equals), p1)
 	c.Check(p2.Coords(), DeepEquals, p1.Coords())
