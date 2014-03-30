@@ -69,3 +69,19 @@ func (p *Point) SetCoords(coords0 []float64) error {
 func (p *Point) Stride() int {
 	return p.stride
 }
+
+func (p *Point) X() float64 {
+	return p.flatCoords[0]
+}
+
+func (p *Point) Y() float64 {
+	return p.flatCoords[1]
+}
+
+func (p *Point) Z() float64 {
+	return p.flatCoords[2]
+}
+
+func (p *Point) M() float64 {
+	return p.flatCoords[p.layout.mIndex()]
+}
