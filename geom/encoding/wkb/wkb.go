@@ -160,7 +160,7 @@ func readFlatCoords2(r io.Reader, byteOrder ByteOrder, stride int) ([]float64, [
 	return flatCoordss, ends, nil
 }
 
-func read(r io.Reader) (geom.T, error) {
+func Read(r io.Reader) (geom.T, error) {
 
 	var wkbByteOrder byte
 	if err := binary.Read(r, binary.LittleEndian, &wkbByteOrder); err != nil {
@@ -213,7 +213,7 @@ func read(r io.Reader) (geom.T, error) {
 		}
 		mp := geom.NewMultiPoint(layout)
 		for i := uint32(0); i < n; i++ {
-			g, err := read(r)
+			g, err := Read(r)
 			if err != nil {
 				return nil, err
 			}
@@ -233,7 +233,7 @@ func read(r io.Reader) (geom.T, error) {
 		}
 		mls := geom.NewMultiLineString(layout)
 		for i := uint32(0); i < n; i++ {
-			g, err := read(r)
+			g, err := Read(r)
 			if err != nil {
 				return nil, err
 			}
@@ -253,7 +253,7 @@ func read(r io.Reader) (geom.T, error) {
 		}
 		mp := geom.NewMultiPolygon(layout)
 		for i := uint32(0); i < n; i++ {
-			g, err := read(r)
+			g, err := Read(r)
 			if err != nil {
 				return nil, err
 			}
@@ -273,7 +273,7 @@ func read(r io.Reader) (geom.T, error) {
 }
 
 func Unmarshal(data []byte) (geom.T, error) {
-	return read(bytes.NewBuffer(data))
+	return Read(bytes.NewBuffer(data))
 }
 
 func writeFlatCoords0(w io.Writer, byteOrder ByteOrder, coord []float64) error {
