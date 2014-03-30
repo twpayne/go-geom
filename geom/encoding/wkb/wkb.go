@@ -301,7 +301,7 @@ func writeFlatCoords2(w io.Writer, byteOrder ByteOrder, flatCoords []float64, en
 	return nil
 }
 
-func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
+func Write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 
 	var wkbByteOrder byte
 	switch byteOrder {
@@ -363,7 +363,7 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 			return err
 		}
 		for i := 0; i < n; i++ {
-			if err := write(w, byteOrder, mp.Point(i)); err != nil {
+			if err := Write(w, byteOrder, mp.Point(i)); err != nil {
 				return err
 			}
 		}
@@ -375,7 +375,7 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 			return err
 		}
 		for i := 0; i < n; i++ {
-			if err := write(w, byteOrder, mls.LineString(i)); err != nil {
+			if err := Write(w, byteOrder, mls.LineString(i)); err != nil {
 				return err
 			}
 		}
@@ -387,7 +387,7 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 			return err
 		}
 		for i := 0; i < n; i++ {
-			if err := write(w, byteOrder, mp.Polygon(i)); err != nil {
+			if err := Write(w, byteOrder, mp.Polygon(i)); err != nil {
 				return err
 			}
 		}
@@ -399,7 +399,7 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 
 func Marshal(g geom.T, byteOrder ByteOrder) ([]byte, error) {
 	w := bytes.NewBuffer(nil)
-	if err := write(w, byteOrder, g); err != nil {
+	if err := Write(w, byteOrder, g); err != nil {
 		return nil, err
 	}
 	return w.Bytes(), nil
