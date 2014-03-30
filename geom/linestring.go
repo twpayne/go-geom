@@ -99,3 +99,11 @@ func (ls *LineString) SetCoords(coords1 [][]float64) error {
 func (ls *LineString) Stride() int {
 	return ls.stride
 }
+
+func (ls *LineString) SubLineString(start, stop int) *LineString {
+	return &LineString{
+		layout:     ls.layout,
+		stride:     ls.stride,
+		flatCoords: ls.flatCoords[start*ls.stride : stop*ls.stride],
+	}
+}
