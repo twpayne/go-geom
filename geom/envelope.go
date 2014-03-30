@@ -47,6 +47,15 @@ func (e *Envelope) MaxY() float64 {
 	return e.max[1]
 }
 
+func (e1 *Envelope) Overlaps(e2 *Envelope, stride int) bool {
+	for i := 0; i < stride; i++ {
+		if e1.min[i] > e2.max[i] || e1.max[i] < e2.min[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func (e *Envelope) extendStride(stride int) {
 	for e.stride < stride {
 		e.min = append(e.min, math.Inf(1))
