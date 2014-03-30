@@ -226,6 +226,46 @@ func read(r io.Reader) (geom.T, error) {
 			}
 		}
 		return mp, nil
+	case MultiLineString, MultiLineStringZ, MultiLineStringM, MultiLineStringZM:
+		var n uint32
+		if err := binary.Read(r, byteOrder, &n); err != nil {
+			return nil, err
+		}
+		mls := geom.NewMultiLineString(layout)
+		for i := uint32(0); i < n; i++ {
+			g, err := read(r)
+			if err != nil {
+				return nil, err
+			}
+			p, ok := g.(*geom.LineString)
+			if !ok {
+				return nil, fmt.Errorf("wkb: got a %T, want *geom.LineString", g)
+			}
+			if err = mls.Push(p); err != nil {
+				return nil, err
+			}
+		}
+		return mls, nil
+	case MultiPolygon, MultiPolygonZ, MultiPolygonM, MultiPolygonZM:
+		var n uint32
+		if err := binary.Read(r, byteOrder, &n); err != nil {
+			return nil, err
+		}
+		mp := geom.NewMultiPolygon(layout)
+		for i := uint32(0); i < n; i++ {
+			g, err := read(r)
+			if err != nil {
+				return nil, err
+			}
+			p, ok := g.(*geom.Polygon)
+			if !ok {
+				return nil, fmt.Errorf("wkb: got a %T, want *geom.Polygon", g)
+			}
+			if err = mp.Push(p); err != nil {
+				return nil, err
+			}
+		}
+		return mp, nil
 	default:
 		return nil, ErrUnsupportedType(wkbGeometryType)
 	}
