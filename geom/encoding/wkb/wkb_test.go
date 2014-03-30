@@ -20,7 +20,7 @@ func test(c *C, g geom.T, xdr []byte, ndr []byte) {
 	c.Check(got, Not(IsNil))
 	c.Check(got, DeepEquals, g)
 
-	gotXDR, err := Write(g, XDR)
+	gotXDR, err := Marshal(g, XDR)
 	c.Check(err, IsNil)
 	c.Check(gotXDR, DeepEquals, xdr)
 
@@ -29,7 +29,7 @@ func test(c *C, g geom.T, xdr []byte, ndr []byte) {
 	c.Check(got, Not(IsNil))
 	c.Check(got, DeepEquals, g)
 
-	gotNDR, err := Write(g, NDR)
+	gotNDR, err := Marshal(g, NDR)
 	c.Check(err, IsNil)
 	c.Check(gotNDR, DeepEquals, ndr)
 

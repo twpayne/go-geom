@@ -397,7 +397,7 @@ func write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 
 }
 
-func Write(g geom.T, byteOrder ByteOrder) ([]byte, error) {
+func Marshal(g geom.T, byteOrder ByteOrder) ([]byte, error) {
 	w := bytes.NewBuffer(nil)
 	if err := write(w, byteOrder, g); err != nil {
 		return nil, err
