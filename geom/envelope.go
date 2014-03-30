@@ -64,12 +64,12 @@ func (e *Envelope) extendStride(stride int) {
 	}
 }
 
-func (e *Envelope) extendFlatCoords(fc []float64, offset, end, stride int) *Envelope {
+func (e *Envelope) extendFlatCoords(flatCoords []float64, offset, end, stride int) *Envelope {
 	e.extendStride(stride)
 	for i := offset; i < end; i += stride {
 		for j := 0; j < stride; j++ {
-			e.min[j] = math.Min(e.min[j], fc[i+j])
-			e.max[j] = math.Max(e.max[j], fc[i+j])
+			e.min[j] = math.Min(e.min[j], flatCoords[i+j])
+			e.max[j] = math.Max(e.max[j], flatCoords[i+j])
 		}
 	}
 	return e
