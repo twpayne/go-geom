@@ -68,6 +68,33 @@ func (s *LineStringSuite) TestClone(c *C) {
 	c.Check(ls2.Stride(), Equals, ls1.Stride())
 }
 
+func (s *LineStringSuite) TestInterpolate(c *C) {
+	ls1 := NewLineString(XYM)
+	c.Check(ls1.SetCoords([][]float64{{1, 2, 0}, {2, 4, 1}, {3, 8, 2}}), IsNil)
+	i, f := 0, 0.0
+	i, f = ls1.Interpolate(-0.5, 2)
+	c.Check(i, Equals, 0)
+	c.Check(f, Equals, 0.0)
+	i, f = ls1.Interpolate(0, 2)
+	c.Check(i, Equals, 0)
+	c.Check(f, Equals, 0.0)
+	i, f = ls1.Interpolate(0.5, 2)
+	c.Check(i, Equals, 0)
+	c.Check(f, Equals, 0.5)
+	i, f = ls1.Interpolate(1, 2)
+	c.Check(i, Equals, 1)
+	c.Check(f, Equals, 0.0)
+	i, f = ls1.Interpolate(1.5, 2)
+	c.Check(i, Equals, 1)
+	c.Check(f, Equals, 0.5)
+	i, f = ls1.Interpolate(2, 2)
+	c.Check(i, Equals, 2)
+	c.Check(f, Equals, 0.0)
+	i, f = ls1.Interpolate(2.5, 2)
+	c.Check(i, Equals, 2)
+	c.Check(f, Equals, 0.0)
+}
+
 func (s *LineStringSuite) TestPush(c *C) {
 	ls := NewLineString(XY)
 	c.Check(ls.Push([]float64{1, 2, 3}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
