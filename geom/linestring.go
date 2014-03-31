@@ -62,6 +62,14 @@ func (ls *LineString) FlatCoords() []float64 {
 	return ls.flatCoords
 }
 
+func (ls *LineString) LastCoord() []float64 {
+	if len(ls.flatCoords) == 0 {
+		return nil
+	} else {
+		return ls.flatCoords[len(ls.flatCoords)-ls.stride:]
+	}
+}
+
 func (ls *LineString) Layout() Layout {
 	return ls.layout
 }
