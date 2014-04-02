@@ -58,6 +58,13 @@ func (mp *MultiPoint) Layout() Layout {
 	return mp.layout
 }
 
+func (mp *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
+	if err := mp.SetCoords(coords1); err != nil {
+		panic(err)
+	}
+	return mp
+}
+
 func (mp *MultiPoint) NumPoints() int {
 	return len(mp.flatCoords) / mp.stride
 }
