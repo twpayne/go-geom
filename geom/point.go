@@ -58,6 +58,13 @@ func (p *Point) Layout() Layout {
 	return p.layout
 }
 
+func (p *Point) MustSetCoords(coords0 []float64) *Point {
+	if err := p.SetCoords(coords0); err != nil {
+		panic(err)
+	}
+	return p
+}
+
 func (p *Point) SetCoords(coords0 []float64) error {
 	var err error
 	if p.flatCoords, err = deflate0(nil, coords0, p.Stride()); err != nil {
