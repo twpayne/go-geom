@@ -76,6 +76,13 @@ func (p *Polygon) LinearRing(i int) *LinearRing {
 	}
 }
 
+func (p *Polygon) MustSetCoords(coords2 [][][]float64) *Polygon {
+	if err := p.SetCoords(coords2); err != nil {
+		panic(err)
+	}
+	return p
+}
+
 func (p *Polygon) NumLinearRings() int {
 	return len(p.ends)
 }
