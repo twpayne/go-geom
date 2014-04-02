@@ -58,6 +58,13 @@ func (lr *LinearRing) Layout() Layout {
 	return lr.layout
 }
 
+func (lr *LinearRing) MustSetCoords(coords1 [][]float64) *LinearRing {
+	if err := lr.SetCoords(coords1); err != nil {
+		panic(err)
+	}
+	return lr
+}
+
 func (lr *LinearRing) SetCoords(coords1 [][]float64) error {
 	var err error
 	if lr.flatCoords, err = deflate1(nil, coords1, lr.stride); err != nil {
