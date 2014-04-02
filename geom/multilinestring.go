@@ -63,6 +63,13 @@ func (mls *MultiLineString) LineString(i int) *LineString {
 	}
 }
 
+func (mls *MultiLineString) MustSetCoords(coords2 [][][]float64) *MultiLineString {
+	if err := mls.SetCoords(coords2); err != nil {
+		panic(err)
+	}
+	return mls
+}
+
 func (mls *MultiLineString) NumLineStrings() int {
 	return len(mls.ends)
 }
