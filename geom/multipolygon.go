@@ -51,6 +51,13 @@ func (mp *MultiPolygon) Layout() Layout {
 	return mp.layout
 }
 
+func (mp *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
+	if err := mp.SetCoords(coords3); err != nil {
+		panic(err)
+	}
+	return mp
+}
+
 func (mp *MultiPolygon) NumPolygons() int {
 	return len(mp.endss)
 }
