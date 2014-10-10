@@ -69,6 +69,7 @@ type parser struct {
 	ls                *geom.LineString
 	year, month, day  int
 	startAt           time.Time
+	lastDate          time.Time
 	ladStart, ladStop int
 	lodStart, lodStop int
 	tdsStart, tdsStop int
@@ -107,6 +108,10 @@ func (p *parser) parseB(line string) error {
 		}
 	}
 	date := time.Date(p.year, time.Month(p.month), p.day, hour, minute, second, nsec, time.UTC)
+	if date.Before(p.lastDate) {
+		p.day++
+		date = time.Date(p.year, time.Month(p.month), p.day, hour, minute, second, nsec, time.UTC)
+	}
 
 	if p.startAt.IsZero() {
 		p.startAt = date
@@ -170,6 +175,7 @@ func (p *parser) parseB(line string) error {
 	_ = pressureAlt
 
 	p.ls.Push([]float64{lng, lat, float64(ellipsoidAlt), float64(date.UnixNano()) / 1e9})
+	p.lastDate = date
 
 	return nil
 
