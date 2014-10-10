@@ -35,7 +35,7 @@ func (es Errors) Error() string {
 }
 
 type T struct {
-	Geom    *geom.LineString
+	Geom *geom.LineString
 }
 
 // parseDec parses a decimal value in s[start:stop].
