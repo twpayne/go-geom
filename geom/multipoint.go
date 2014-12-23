@@ -38,6 +38,10 @@ func (mp *MultiPoint) Bounds() *Bounds {
 	return NewBounds().extendFlatCoords(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
 }
 
+func (mp *MultiPoint) Coord(i int) []float64 {
+	return mp.flatCoords[i*mp.stride : (i+1)*mp.stride]
+}
+
 func (mp *MultiPoint) Coords() [][]float64 {
 	return inflate1(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
 }
@@ -63,6 +67,10 @@ func (mp *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
 		panic(err)
 	}
 	return mp
+}
+
+func (mp *MultiPoint) NumCoords() int {
+	return len(mp.flatCoords) / mp.stride
 }
 
 func (mp *MultiPoint) NumPoints() int {
