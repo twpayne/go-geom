@@ -38,6 +38,10 @@ func (lr *LinearRing) Bounds() *Bounds {
 	return NewBounds().extendFlatCoords(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
 
+func (lr *LinearRing) Coord(i int) []float64 {
+	return lr.flatCoords[i*lr.stride : (i+1)*lr.stride]
+}
+
 func (lr *LinearRing) Coords() [][]float64 {
 	return inflate1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
@@ -63,6 +67,10 @@ func (lr *LinearRing) MustSetCoords(coords1 [][]float64) *LinearRing {
 		panic(err)
 	}
 	return lr
+}
+
+func (lr *LinearRing) NumCoords() int {
+	return len(lr.flatCoords) / lr.stride
 }
 
 func (lr *LinearRing) SetCoords(coords1 [][]float64) error {
