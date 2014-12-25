@@ -1,108 +1,48 @@
 package geom
 
 type MultiPoint struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
+	geom1
 }
 
 var _ T = &MultiPoint{}
 
 func NewMultiPoint(layout Layout) *MultiPoint {
-	return &MultiPoint{
-		layout:     layout,
-		stride:     layout.Stride(),
-		flatCoords: nil,
-	}
+	return NewMultiPointFlat(layout, nil)
 }
 
 func NewMultiPointFlat(layout Layout, flatCoords []float64) *MultiPoint {
-	return &MultiPoint{
-		layout:     layout,
-		stride:     layout.Stride(),
-		flatCoords: flatCoords,
-	}
+	g := new(MultiPoint)
+	g.layout = layout
+	g.stride = layout.Stride()
+	g.flatCoords = flatCoords
+	return g
 }
 
-func (mp *MultiPoint) Clone() *MultiPoint {
-	flatCoords := make([]float64, len(mp.flatCoords))
-	copy(flatCoords, mp.flatCoords)
-	return &MultiPoint{
-		layout:     mp.layout,
-		stride:     mp.stride,
-		flatCoords: flatCoords,
-	}
+func (g *MultiPoint) Clone() *MultiPoint {
+	flatCoords := make([]float64, len(g.flatCoords))
+	copy(flatCoords, g.flatCoords)
+	return NewMultiPointFlat(g.layout, flatCoords)
 }
 
-func (mp *MultiPoint) Bounds() *Bounds {
-	return NewBounds().extendFlatCoords(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
-}
-
-func (mp *MultiPoint) Coord(i int) []float64 {
-	return mp.flatCoords[i*mp.stride : (i+1)*mp.stride]
-}
-
-func (mp *MultiPoint) Coords() [][]float64 {
-	return inflate1(mp.flatCoords, 0, len(mp.flatCoords), mp.stride)
-}
-
-func (mp *MultiPoint) Ends() []int {
-	return nil
-}
-
-func (mp *MultiPoint) Endss() [][]int {
-	return nil
-}
-
-func (mp *MultiPoint) FlatCoords() []float64 {
-	return mp.flatCoords
-}
-
-func (mp *MultiPoint) Layout() Layout {
-	return mp.layout
-}
-
-func (mp *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
-	if err := mp.SetCoords(coords1); err != nil {
+func (g *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
+	if err := g.SetCoords(coords1); err != nil {
 		panic(err)
 	}
-	return mp
+	return g
 }
 
-func (mp *MultiPoint) NumCoords() int {
-	return len(mp.flatCoords) / mp.stride
+func (g *MultiPoint) NumPoints() int {
+	return g.NumCoords()
 }
 
-func (mp *MultiPoint) NumPoints() int {
-	return len(mp.flatCoords) / mp.stride
+func (g *MultiPoint) Point(i int) *Point {
+	return NewPointFlat(g.layout, g.Coord(i))
 }
 
-func (mp *MultiPoint) Point(i int) *Point {
-	return &Point{
-		layout:     mp.layout,
-		stride:     mp.stride,
-		flatCoords: mp.flatCoords[i*mp.stride : (i+1)*mp.stride],
+func (g *MultiPoint) Push(p *Point) error {
+	if p.layout != g.layout {
+		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
 	}
-}
-
-func (mp *MultiPoint) Push(ps ...*Point) error {
-	for _, p := range ps {
-		if p.layout != mp.layout {
-			return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
-		}
-		mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
-	}
+	g.flatCoords = append(g.flatCoords, p.flatCoords...)
 	return nil
-}
-
-func (mp *MultiPoint) SetCoords(coords1 [][]float64) error {
-	var err error
-	if mp.flatCoords, err = deflate1(mp.flatCoords[:0], coords1, mp.stride); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (mp *MultiPoint) Stride() int {
-	return mp.stride
 }

@@ -1,116 +1,165 @@
 package geom
 
 import (
-	"math"
-
-	. "launchpad.net/gocheck"
+	"reflect"
+	"testing"
 )
 
-type LineStringSuite struct{}
-
-var _ = Suite(&LineStringSuite{})
-
-func (s *LineStringSuite) TestXY(c *C) {
-
-	ls := NewLineString(XY)
-	c.Assert(ls, Not(IsNil))
-
-	coords1 := [][]float64{{1, 2}, {3, 4}}
-	c.Check(ls.SetCoords(coords1), IsNil)
-
-	c.Check(ls.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4))
-	c.Check(ls.Coord(0), DeepEquals, []float64{1, 2})
-	c.Check(ls.Coord(1), DeepEquals, []float64{3, 4})
-	c.Check(ls.Coords(), DeepEquals, coords1)
-	c.Check(ls.LastCoord(), DeepEquals, []float64{3, 4})
-	c.Check(ls.Layout(), Equals, XY)
-	c.Check(ls.Length(), Equals, math.Sqrt(8))
-	c.Check(ls.NumCoords(), Equals, 2)
-	c.Check(ls.Stride(), Equals, 2)
-
-	c.Check(ls.Ends(), IsNil)
-	c.Check(ls.Endss(), IsNil)
-	c.Check(ls.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4})
-
+type testLineString struct {
+	layout     Layout
+	stride     int
+	coords     [][]float64
+	flatCoords []float64
+	bounds     *Bounds
 }
 
-func (s *LineStringSuite) TestXYZ(c *C) {
-
-	ls := NewLineString(XYZ)
-	c.Assert(ls, Not(IsNil))
-
-	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
-	c.Check(ls.SetCoords(coords1), IsNil)
-
-	c.Check(ls.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4, 5, 6))
-	c.Check(ls.Coord(0), DeepEquals, []float64{1, 2, 3})
-	c.Check(ls.Coord(1), DeepEquals, []float64{4, 5, 6})
-	c.Check(ls.Coords(), DeepEquals, coords1)
-	c.Check(ls.LastCoord(), DeepEquals, []float64{4, 5, 6})
-	c.Check(ls.Layout(), Equals, XYZ)
-	c.Check(ls.Length(), Equals, math.Sqrt(18))
-	c.Check(ls.NumCoords(), Equals, 2)
-	c.Check(ls.Stride(), Equals, 3)
-
-	c.Check(ls.Ends(), IsNil)
-	c.Check(ls.Endss(), IsNil)
-	c.Check(ls.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4, 5, 6})
-
+func testLineStringEquals(t *testing.T, ls *LineString, tls *testLineString) {
+	if ls.Layout() != tls.layout {
+		t.Errorf("ls.Layout() == %v, want %v", ls.Layout(), tls.layout)
+	}
+	if ls.Stride() != tls.stride {
+		t.Errorf("ls.Stride() == %v, want %v", ls.Stride(), tls.stride)
+	}
+	if !reflect.DeepEqual(ls.Coords(), tls.coords) {
+		t.Errorf("ls.Coords() == %v, want %v", ls.Coords(), tls.coords)
+	}
+	if !reflect.DeepEqual(ls.FlatCoords(), tls.flatCoords) {
+		t.Errorf("ls.FlatCoords() == %v, want %v", ls.FlatCoords(), tls.flatCoords)
+	}
+	if !reflect.DeepEqual(ls.Bounds(), tls.bounds) {
+		t.Errorf("ls.Bounds() == %v, want %v", ls.Bounds(), tls.bounds)
+	}
+	if got := ls.NumCoords(); got != len(tls.coords) {
+		t.Errorf("ls.NumCoords() == %v, want %v", got, len(tls.coords))
+	}
+	for i, c := range tls.coords {
+		if !reflect.DeepEqual(ls.Coord(i), c) {
+			t.Errorf("ls.Coord(%v) == %v, want %v", i, ls.Coord(i), c)
+		}
+	}
 }
 
-func (s *LineStringSuite) TestClone(c *C) {
-	ls1 := NewLineString(XY)
-	c.Check(ls1.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
-	ls2 := ls1.Clone()
-	c.Check(ls2, Not(Equals), ls1)
-	c.Check(ls2.Bounds(), DeepEquals, ls1.Bounds())
-	c.Check(ls2.Coords(), DeepEquals, ls1.Coords())
-	c.Check(ls2.FlatCoords(), Not(Aliases), ls1.FlatCoords())
-	c.Check(ls2.Layout(), Equals, ls1.Layout())
-	c.Check(ls2.Stride(), Equals, ls1.Stride())
+func TestLineString(t *testing.T) {
+	for _, c := range []struct {
+		ls  *LineString
+		tls *testLineString
+	}{
+		{
+			ls: NewLineString(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			tls: &testLineString{
+				layout:     XY,
+				stride:     2,
+				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				bounds:     NewBounds(1, 2, 5, 6),
+			},
+		},
+		{
+			ls: NewLineString(XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			tls: &testLineString{
+				layout:     XYZ,
+				stride:     3,
+				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+			},
+		},
+		{
+			ls: NewLineString(XYM).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			tls: &testLineString{
+				layout:     XYM,
+				stride:     3,
+				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+			},
+		},
+		{
+			ls: NewLineString(XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			tls: &testLineString{
+				layout:     XYZM,
+				stride:     4,
+				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				bounds:     NewBounds(1, 2, 3, 4, 9, 10, 11, 12),
+			},
+		},
+	} {
+
+		testLineStringEquals(t, c.ls, c.tls)
+	}
 }
 
-func (s *LineStringSuite) TestInterpolate(c *C) {
-	ls1 := NewLineString(XYM)
-	c.Check(ls1.SetCoords([][]float64{{1, 2, 0}, {2, 4, 1}, {3, 8, 2}}), IsNil)
-	i, f := 0, 0.0
-	i, f = ls1.Interpolate(-0.5, 2)
-	c.Check(i, Equals, 0)
-	c.Check(f, Equals, 0.0)
-	i, f = ls1.Interpolate(0, 2)
-	c.Check(i, Equals, 0)
-	c.Check(f, Equals, 0.0)
-	i, f = ls1.Interpolate(0.5, 2)
-	c.Check(i, Equals, 0)
-	c.Check(f, Equals, 0.5)
-	i, f = ls1.Interpolate(1, 2)
-	c.Check(i, Equals, 1)
-	c.Check(f, Equals, 0.0)
-	i, f = ls1.Interpolate(1.5, 2)
-	c.Check(i, Equals, 1)
-	c.Check(f, Equals, 0.5)
-	i, f = ls1.Interpolate(2, 2)
-	c.Check(i, Equals, 2)
-	c.Check(f, Equals, 0.0)
-	i, f = ls1.Interpolate(2.5, 2)
-	c.Check(i, Equals, 2)
-	c.Check(f, Equals, 0.0)
+func TestLineStringClone(t *testing.T) {
+	p1 := NewLineString(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}})
+	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
+		t.Error("Clone() should not alias flatCoords")
+	}
 }
 
-func (s *LineStringSuite) TestPush(c *C) {
-	ls := NewLineString(XY)
-	c.Check(ls.Push([]float64{1, 2, 3}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
-	c.Check(ls.Coords(), DeepEquals, [][]float64{})
-	c.Check(ls.Push([]float64{1, 2}), IsNil)
-	c.Check(ls.Coords(), DeepEquals, [][]float64{{1, 2}})
-	c.Check(ls.Push([]float64{3, 4}), IsNil)
-	c.Check(ls.Coords(), DeepEquals, [][]float64{{1, 2}, {3, 4}})
+func TestLineStringInterpolate(t *testing.T) {
+	ls := NewLineString(XYM).MustSetCoords([][]float64{{1, 2, 0}, {2, 4, 1}, {3, 8, 2}})
+	for _, c := range []struct {
+		val float64
+		dim int
+		i   int
+		f   float64
+	}{
+		{val: -0.5, dim: 2, i: 0, f: 0.0},
+		{val: 0.0, dim: 2, i: 0, f: 0.0},
+		{val: 0.5, dim: 2, i: 0, f: 0.5},
+		{val: 1.0, dim: 2, i: 1, f: 0.0},
+		{val: 1.5, dim: 2, i: 1, f: 0.5},
+		{val: 2.0, dim: 2, i: 2, f: 0.0},
+		{val: 2.5, dim: 2, i: 2, f: 0.0},
+	} {
+		if i, f := ls.Interpolate(c.val, c.dim); i != c.i || f != c.f {
+			t.Errorf("ls.Interpolate(%v, %v) == %v, %v, want %v, %v", c.val, c.dim, i, f, c.i, c.f)
+		}
+
+	}
 }
 
-func (s *LineStringSuite) TestSetCoords(c *C) {
-	ls := NewLineString(XY)
-	c.Check(ls.SetCoords([][]float64{{1, 2}, {}}), DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
-	c.Check(ls.SetCoords([][]float64{{1, 2}, {3}}), DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
-	c.Check(ls.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
-	c.Check(ls.SetCoords([][]float64{{1, 2}, {3, 4, 5}}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
+func TestLineStringStrideMismatch(t *testing.T) {
+	for _, c := range []struct {
+		layout Layout
+		coords [][]float64
+		err    error
+	}{
+		{
+			layout: XY,
+			coords: nil,
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {}},
+			err:    ErrStrideMismatch{Got: 0, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {1}},
+			err:    ErrStrideMismatch{Got: 1, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {3, 4}},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {3, 4, 5}},
+			err:    ErrStrideMismatch{Got: 3, Want: 2},
+		},
+	} {
+		p := NewLineString(c.layout)
+		if err := p.SetCoords(c.coords); err != c.err {
+			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
+		}
+	}
 }

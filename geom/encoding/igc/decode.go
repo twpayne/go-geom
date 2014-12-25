@@ -174,7 +174,7 @@ func (p *parser) parseB(line string) error {
 	}
 	_ = pressureAlt
 
-	p.ls.Push([]float64{lng, lat, float64(ellipsoidAlt), float64(date.UnixNano()) / 1e9})
+	p.ls.PushCoord([]float64{lng, lat, float64(ellipsoidAlt), float64(date.UnixNano()) / 1e9})
 	p.lastDate = date
 
 	return nil

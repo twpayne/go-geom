@@ -4,6 +4,9 @@ import (
 	"math"
 )
 
+// NewBounds creates a new Bounds. args must be an even number of values, the
+// first half are minimum values for each dimension and the second half are the
+// maximum values for each dimension.
 func NewBounds(args ...float64) *Bounds {
 	if len(args)&1 != 0 {
 		panic("geom: odd number of arguments")
@@ -16,12 +19,14 @@ func NewBounds(args ...float64) *Bounds {
 	}
 }
 
+// Extend extends b to include geometry g.
 func (b *Bounds) Extend(g T) *Bounds {
 	b.extendStride(g.Stride())
 	b.extendFlatCoords(g.FlatCoords(), 0, len(g.FlatCoords()), g.Stride())
 	return b
 }
 
+// IsEmpty returns true if b is empty.
 func (b *Bounds) IsEmpty() bool {
 	for i := 0; i < b.stride; i++ {
 		if b.max[i] < b.min[i] {
@@ -31,22 +36,17 @@ func (b *Bounds) IsEmpty() bool {
 	return false
 }
 
-func (b *Bounds) MinX() float64 {
-	return b.min[0]
+// Max returns the maximum value in dimension dim.
+func (b *Bounds) Max(dim int) float64 {
+	return b.max[dim]
 }
 
-func (b *Bounds) MinY() float64 {
-	return b.min[1]
+// Min returns the minimum value in dimension dim.
+func (b *Bounds) Min(dim int) float64 {
+	return b.min[dim]
 }
 
-func (b *Bounds) MaxX() float64 {
-	return b.max[0]
-}
-
-func (b *Bounds) MaxY() float64 {
-	return b.max[1]
-}
-
+// Overlaps returns true if b1 overlaps b2 up to stride dimensions.
 func (b1 *Bounds) Overlaps(b2 *Bounds, stride int) bool {
 	for i := 0; i < stride; i++ {
 		if b1.min[i] > b2.max[i] || b1.max[i] < b2.min[i] {
@@ -54,6 +54,11 @@ func (b1 *Bounds) Overlaps(b2 *Bounds, stride int) bool {
 		}
 	}
 	return true
+}
+
+// Stride returns b's stride.
+func (b *Bounds) Stride() int {
+	return b.stride
 }
 
 func (b *Bounds) extendStride(stride int) {

@@ -1,96 +1,56 @@
 package geom
 
 type MultiLineString struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
-	ends       []int
+	geom2
 }
 
 var _ T = &MultiLineString{}
 
 func NewMultiLineString(layout Layout) *MultiLineString {
-	return &MultiLineString{
-		layout:     layout,
-		stride:     layout.Stride(),
-		flatCoords: nil,
-		ends:       nil,
-	}
+	return NewMultiLineStringFlat(layout, nil, nil)
 }
 
 func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *MultiLineString {
-	return &MultiLineString{
-		layout:     layout,
-		stride:     layout.Stride(),
-		flatCoords: flatCoords,
-		ends:       ends,
-	}
+	g := new(MultiLineString)
+	g.layout = layout
+	g.stride = layout.Stride()
+	g.flatCoords = flatCoords
+	g.ends = ends
+	return g
 }
 
-func (mls *MultiLineString) Bounds() *Bounds {
-	return NewBounds().extendFlatCoords(mls.flatCoords, 0, len(mls.flatCoords), mls.stride)
+func (g *MultiLineString) Clone() *MultiLineString {
+	flatCoords := make([]float64, len(g.flatCoords))
+	copy(flatCoords, g.flatCoords)
+	ends := make([]int, len(g.ends))
+	copy(ends, g.ends)
+	return NewMultiLineStringFlat(g.layout, flatCoords, ends)
 }
 
-func (mls *MultiLineString) Coords() [][][]float64 {
-	return inflate2(mls.flatCoords, 0, mls.ends, mls.stride)
-}
-
-func (mls *MultiLineString) Ends() []int {
-	return mls.ends
-}
-
-func (mls *MultiLineString) Endss() [][]int {
-	return nil
-}
-
-func (mls *MultiLineString) FlatCoords() []float64 {
-	return mls.flatCoords
-}
-
-func (mls *MultiLineString) Layout() Layout {
-	return mls.layout
-}
-
-func (mls *MultiLineString) LineString(i int) *LineString {
+func (g *MultiLineString) LineString(i int) *LineString {
 	offset := 0
 	if i > 0 {
-		offset = mls.ends[i-1]
+		offset = g.ends[i-1]
 	}
-	return &LineString{
-		layout:     mls.layout,
-		stride:     mls.stride,
-		flatCoords: mls.flatCoords[offset:mls.ends[i]],
-	}
+	return NewLineStringFlat(g.layout, g.flatCoords[offset:g.ends[i]])
 }
 
-func (mls *MultiLineString) MustSetCoords(coords2 [][][]float64) *MultiLineString {
-	if err := mls.SetCoords(coords2); err != nil {
+func (g *MultiLineString) MustSetCoords(coords2 [][][]float64) *MultiLineString {
+	if err := g.SetCoords(coords2); err != nil {
 		panic(err)
 	}
-	return mls
+	return g
 }
 
-func (mls *MultiLineString) NumLineStrings() int {
-	return len(mls.ends)
+func (g *MultiLineString) NumLineStrings() int {
+	return len(g.ends)
 }
 
-func (mls *MultiLineString) Push(ls *LineString) error {
-	if ls.layout != mls.layout {
-		return ErrLayoutMismatch{Got: ls.layout, Want: mls.layout}
+func (g *MultiLineString) Push(ls *LineString) error {
+	if ls.layout != g.layout {
+		return ErrLayoutMismatch{Got: ls.layout, Want: g.layout}
 	}
-	mls.flatCoords = append(mls.flatCoords, ls.flatCoords...)
-	mls.ends = append(mls.ends, len(mls.flatCoords))
+	g.flatCoords = append(g.flatCoords, ls.flatCoords...)
+	g.ends = append(g.ends, len(g.flatCoords))
 	return nil
-}
-
-func (mls *MultiLineString) SetCoords(coords2 [][][]float64) error {
-	var err error
-	if mls.flatCoords, mls.ends, err = deflate2(nil, nil, coords2, mls.stride); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (mls *MultiLineString) Stride() int {
-	return mls.stride
 }

@@ -1,57 +1,118 @@
 package geom
 
 import (
-	. "launchpad.net/gocheck"
+	"reflect"
+	"testing"
 )
 
-type PolygonSuite struct{}
-
-var _ = Suite(&PolygonSuite{})
-
-func (s *PolygonSuite) TestXY(c *C) {
-
-	p := NewPolygon(XY)
-	c.Assert(p, Not(IsNil))
-	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
-	c.Check(p.SetCoords(coords2), IsNil)
-
-	c.Check(p.Bounds(), DeepEquals, NewBounds(1, 2, 11, 12))
-	c.Check(p.Coords(), DeepEquals, coords2)
-	c.Check(p.Layout(), Equals, XY)
-	c.Check(p.NumLinearRings(), Equals, 2)
-	c.Check(p.Stride(), Equals, 2)
-
-	c.Check(p.Ends(), DeepEquals, []int{6, 12})
-	c.Check(p.Endss(), IsNil)
-	c.Check(p.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12})
-
-	lr0 := p.LinearRing(0)
-	c.Check(lr0, FitsTypeOf, &LinearRing{})
-	c.Check(lr0.Bounds(), DeepEquals, NewBounds(1, 2, 5, 6))
-	c.Check(lr0.Coords(), DeepEquals, coords2[0])
-	c.Check(lr0.FlatCoords(), Aliases, p.FlatCoords())
-	c.Check(lr0.Layout(), Equals, p.Layout())
-	c.Check(lr0.Stride(), Equals, p.Stride())
-
-	lr1 := p.LinearRing(1)
-	c.Check(lr1, FitsTypeOf, &LinearRing{})
-	c.Check(lr1.Bounds(), DeepEquals, NewBounds(7, 8, 11, 12))
-	c.Check(lr1.Coords(), DeepEquals, coords2[1])
-	c.Check(lr1.FlatCoords(), Aliases, p.FlatCoords())
-	c.Check(lr1.Layout(), Equals, p.Layout())
-	c.Check(lr1.Stride(), Equals, p.Stride())
-
+type testPolygon struct {
+	layout     Layout
+	stride     int
+	coords     [][][]float64
+	ends       []int
+	flatCoords []float64
+	bounds     *Bounds
 }
 
-func (s *PolygonSuite) TestClone(c *C) {
-	p1 := NewPolygon(XY)
-	c.Check(p1.SetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}), IsNil)
-	p2 := p1.Clone()
-	c.Check(p2, Not(Equals), p1)
-	c.Check(p2.Bounds(), DeepEquals, p1.Bounds())
-	c.Check(p2.Coords(), DeepEquals, p1.Coords())
-	//c.Check(p2.Ends(), Not(Aliases), p1.Ends())
-	c.Check(p2.FlatCoords(), Not(Aliases), p1.FlatCoords())
-	c.Check(p2.Layout(), Equals, p1.Layout())
-	c.Check(p2.Stride(), Equals, p1.Stride())
+func testPolygonEquals(t *testing.T, p *Polygon, tp *testPolygon) {
+	if p.Layout() != tp.layout {
+		t.Errorf("p.Layout() == %v, want %v", p.Layout(), tp.layout)
+	}
+	if p.Stride() != tp.stride {
+		t.Errorf("p.Stride() == %v, want %v", p.Stride(), tp.stride)
+	}
+	if !reflect.DeepEqual(p.Coords(), tp.coords) {
+		t.Errorf("p.Coords() == %v, want %v", p.Coords(), tp.coords)
+	}
+	if !reflect.DeepEqual(p.FlatCoords(), tp.flatCoords) {
+		t.Errorf("p.FlatCoords() == %v, want %v", p.FlatCoords(), tp.flatCoords)
+	}
+	if !reflect.DeepEqual(p.Ends(), tp.ends) {
+		t.Errorf("p.Ends() == %v, want %v", p.Ends(), tp.ends)
+	}
+	if !reflect.DeepEqual(p.Bounds(), tp.bounds) {
+		t.Errorf("p.Bounds() == %v, want %v", p.Bounds(), tp.bounds)
+	}
+	if got := p.NumLinearRings(); got != len(tp.coords) {
+		t.Errorf("p.NumLinearRings() == %v, want %v", got, len(tp.coords))
+	}
+	for i, c := range tp.coords {
+		want := NewLinearRing(p.Layout()).MustSetCoords(c)
+		if got := p.LinearRing(i); !reflect.DeepEqual(got, want) {
+			t.Errorf("p.LinearRing(%v) == %v, want %v", i, got, want)
+		}
+	}
+}
+
+func TestPolygon(t *testing.T) {
+	for _, c := range []struct {
+		p  *Polygon
+		tp *testPolygon
+	}{
+		{
+			p: NewPolygon(XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
+			tp: &testPolygon{
+				layout:     XY,
+				stride:     2,
+				coords:     [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				ends:       []int{6, 12},
+				bounds:     NewBounds(1, 2, 11, 12),
+			},
+		},
+	} {
+
+		testPolygonEquals(t, c.p, c.tp)
+	}
+}
+
+func TestPolygonClone(t *testing.T) {
+	p1 := NewPolygon(XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}})
+	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
+		t.Error("Clone() should not alias flatCoords")
+	}
+}
+
+func TestPolygonStrideMismatch(t *testing.T) {
+	for _, c := range []struct {
+		layout Layout
+		coords [][][]float64
+		err    error
+	}{
+		{
+			layout: XY,
+			coords: nil,
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {}}},
+			err:    ErrStrideMismatch{Got: 0, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {1}}},
+			err:    ErrStrideMismatch{Got: 1, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {3, 4}}},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {3, 4, 5}}},
+			err:    ErrStrideMismatch{Got: 3, Want: 2},
+		},
+	} {
+		p := NewPolygon(c.layout)
+		if err := p.SetCoords(c.coords); err != c.err {
+			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
+		}
+	}
 }

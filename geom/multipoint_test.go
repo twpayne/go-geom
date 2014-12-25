@@ -1,125 +1,169 @@
 package geom
 
 import (
-	. "launchpad.net/gocheck"
+	"math"
+	"reflect"
+	"testing"
 )
 
-type MultiPointSuite struct{}
+type testMultiPoint struct {
+	layout     Layout
+	stride     int
+	coords     [][]float64
+	flatCoords []float64
+	bounds     *Bounds
+}
 
-var _ = Suite(&MultiPointSuite{})
+func testMultiPointEquals(t *testing.T, mp *MultiPoint, tmp *testMultiPoint) {
+	if mp.Layout() != tmp.layout {
+		t.Errorf("mp.Layout() == %v, want %v", mp.Layout(), tmp.layout)
+	}
+	if mp.Stride() != tmp.stride {
+		t.Errorf("mp.Stride() == %v, want %v", mp.Stride(), tmp.stride)
+	}
+	if !reflect.DeepEqual(mp.FlatCoords(), tmp.flatCoords) {
+		t.Errorf("mp.FlatCoords() == %v, want %v", mp.FlatCoords(), tmp.flatCoords)
+	}
+	if !reflect.DeepEqual(mp.Coords(), tmp.coords) {
+		t.Errorf("mp.Coords() == %v, want %v", mp.Coords(), tmp.coords)
+	}
+	if !reflect.DeepEqual(mp.Bounds(), tmp.bounds) {
+		t.Errorf("mp.Bounds() == %v, want %v", mp.Bounds(), tmp.bounds)
+	}
+	if got := mp.NumCoords(); got != len(tmp.coords) {
+		t.Errorf("mp.NumCoords() == %v, want %v", got, len(tmp.coords))
+	}
+	for i, c := range tmp.coords {
+		if !reflect.DeepEqual(mp.Coord(i), c) {
+			t.Errorf("mp.Coord(%v) == %v, want %v", i, mp.Coord(i), c)
+		}
+	}
+}
 
-func (s *MultiPointSuite) TestXY(c *C) {
+func TestMultiPoint(t *testing.T) {
+	for _, c := range []struct {
+		mp  *MultiPoint
+		tmp *testMultiPoint
+	}{
+		{
+			mp: NewMultiPoint(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			tmp: &testMultiPoint{
+				layout:     XY,
+				stride:     2,
+				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				bounds:     NewBounds(1, 2, 5, 6),
+			},
+		},
+		{
+			mp: NewMultiPoint(XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			tmp: &testMultiPoint{
+				layout:     XYZ,
+				stride:     3,
+				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+			},
+		},
+		{
+			mp: NewMultiPoint(XYM).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			tmp: &testMultiPoint{
+				layout:     XYM,
+				stride:     3,
+				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+			},
+		},
+		{
+			mp: NewMultiPoint(XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			tmp: &testMultiPoint{
+				layout:     XYZM,
+				stride:     4,
+				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				bounds:     NewBounds(1, 2, 3, 4, 9, 10, 11, 12),
+			},
+		},
+	} {
 
+		testMultiPointEquals(t, c.mp, c.tmp)
+	}
+}
+
+func TestMultiPointClone(t *testing.T) {
+	p1 := NewMultiPoint(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}})
+	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
+		t.Error("Clone() should not alias flatCoords")
+	}
+}
+
+func TestMultiPointPush(t *testing.T) {
 	mp := NewMultiPoint(XY)
-	c.Assert(mp, Not(IsNil))
-
-	coords1 := [][]float64{{1, 2}, {3, 4}}
-	c.Check(mp.SetCoords(coords1), IsNil)
-
-	c.Check(mp.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4))
-	c.Check(mp.Coords(), DeepEquals, coords1)
-	c.Check(mp.Layout(), Equals, XY)
-	c.Check(mp.NumPoints(), Equals, 2)
-	c.Check(mp.Stride(), Equals, 2)
-
-	c.Check(mp.Ends(), IsNil)
-	c.Check(mp.Endss(), IsNil)
-	c.Check(mp.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4})
-
-	p0 := mp.Point(0)
-	c.Check(p0, FitsTypeOf, &Point{})
-	c.Check(p0.Bounds(), DeepEquals, NewBounds(1, 2, 1, 2))
-	c.Check(p0.Coords(), DeepEquals, coords1[0])
-	c.Check(p0.FlatCoords(), Aliases, mp.FlatCoords())
-	c.Check(p0.Layout(), Equals, mp.Layout())
-	c.Check(p0.Stride(), Equals, mp.Stride())
-
-	p1 := mp.Point(1)
-	c.Check(p1, FitsTypeOf, &Point{})
-	c.Check(p1.Bounds(), DeepEquals, NewBounds(3, 4, 3, 4))
-	c.Check(p1.Coords(), DeepEquals, coords1[1])
-	c.Check(p1.FlatCoords(), Aliases, mp.FlatCoords())
-	c.Check(p1.Layout(), Equals, mp.Layout())
-	c.Check(p1.Stride(), Equals, mp.Stride())
-
+	testMultiPointEquals(t, mp, &testMultiPoint{
+		layout: XY,
+		stride: 2,
+		coords: [][]float64{},
+		bounds: NewBounds(math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)),
+	})
+	mp.Push(NewPoint(XY).MustSetCoords([]float64{1, 2}))
+	testMultiPointEquals(t, mp, &testMultiPoint{
+		layout:     XY,
+		stride:     2,
+		coords:     [][]float64{{1, 2}},
+		flatCoords: []float64{1, 2},
+		bounds:     NewBounds(1, 2, 1, 2),
+	})
+	mp.Push(NewPoint(XY).MustSetCoords([]float64{3, 4}))
+	testMultiPointEquals(t, mp, &testMultiPoint{
+		layout:     XY,
+		stride:     2,
+		coords:     [][]float64{{1, 2}, {3, 4}},
+		flatCoords: []float64{1, 2, 3, 4},
+		bounds:     NewBounds(1, 2, 3, 4),
+	})
 }
 
-func (s *MultiPointSuite) TestXYZ(c *C) {
-
-	mp := NewMultiPoint(XYZ)
-	c.Assert(mp, Not(IsNil))
-
-	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
-	c.Check(mp.SetCoords(coords1), IsNil)
-
-	c.Check(mp.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4, 5, 6))
-	c.Check(mp.Coords(), DeepEquals, coords1)
-	c.Check(mp.Layout(), Equals, XYZ)
-	c.Check(mp.Stride(), Equals, 3)
-
-	c.Check(mp.Ends(), IsNil)
-	c.Check(mp.Endss(), IsNil)
-	c.Check(mp.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4, 5, 6})
-
-	p0 := mp.Point(0)
-	c.Check(p0, FitsTypeOf, &Point{})
-	c.Check(p0.Bounds(), DeepEquals, NewBounds(1, 2, 3, 1, 2, 3))
-	c.Check(p0.Coords(), DeepEquals, coords1[0])
-	c.Check(p0.FlatCoords(), Aliases, mp.FlatCoords())
-	c.Check(p0.Layout(), Equals, mp.Layout())
-	c.Check(p0.Stride(), Equals, mp.Stride())
-
-	p1 := mp.Point(1)
-	c.Check(p1, FitsTypeOf, &Point{})
-	c.Check(p1.Bounds(), DeepEquals, NewBounds(4, 5, 6, 4, 5, 6))
-	c.Check(p1.Coords(), DeepEquals, coords1[1])
-	c.Check(p1.FlatCoords(), Aliases, mp.FlatCoords())
-	c.Check(p1.Layout(), Equals, mp.Layout())
-	c.Check(p1.Stride(), Equals, mp.Stride())
-
-}
-
-func (s *MultiPointSuite) TestClone(c *C) {
-	mp1 := NewMultiPoint(XY)
-	c.Check(mp1.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
-	mp2 := mp1.Clone()
-	c.Check(mp2, Not(Equals), mp1)
-	c.Check(mp2.Bounds(), DeepEquals, mp1.Bounds())
-	c.Check(mp2.Coords(), DeepEquals, mp1.Coords())
-	c.Check(mp2.FlatCoords(), Not(Aliases), mp1.FlatCoords())
-	c.Check(mp2.Layout(), Equals, mp1.Layout())
-	c.Check(mp2.Stride(), Equals, mp1.Stride())
-}
-
-func (s *MultiPointSuite) TestStrideMismatch(c *C) {
-	mp := NewMultiPoint(XY)
-	c.Check(mp.SetCoords([][]float64{{1, 2}, {}}), DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
-	c.Check(mp.SetCoords([][]float64{{1, 2}, {3}}), DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
-	c.Check(mp.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
-	c.Check(mp.SetCoords([][]float64{{1, 2}, {3, 4, 5}}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
-}
-
-func (s *MultiPointSuite) TestPush(c *C) {
-
-	mp := NewMultiPoint(XY)
-	c.Check(mp.NumPoints(), Equals, 0)
-
-	p0 := NewPoint(XY)
-	c.Check(p0.SetCoords([]float64{1, 2}), IsNil)
-	c.Check(mp.Push(p0), IsNil)
-	c.Check(mp.NumPoints(), Equals, 1)
-	c.Check(mp.Point(0), DeepEquals, p0)
-
-	p1 := NewPoint(XY)
-	c.Check(p1.SetCoords([]float64{3, 4}), IsNil)
-	c.Check(mp.Push(p1), IsNil)
-	c.Check(mp.NumPoints(), Equals, 2)
-	c.Check(mp.Point(0), DeepEquals, p0)
-	c.Check(mp.Point(1), DeepEquals, p1)
-
-}
-
-func (s *MultiPointSuite) TestLayoutMismatch(c *C) {
-	mp := NewMultiPoint(XY)
-	c.Check(mp.Push(NewPoint(XYZ)), DeepEquals, ErrLayoutMismatch{Got: XYZ, Want: XY})
+func TestMultiPointStrideMismatch(t *testing.T) {
+	for _, c := range []struct {
+		layout Layout
+		coords [][]float64
+		err    error
+	}{
+		{
+			layout: XY,
+			coords: nil,
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {}},
+			err:    ErrStrideMismatch{Got: 0, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {1}},
+			err:    ErrStrideMismatch{Got: 1, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {3, 4}},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {3, 4, 5}},
+			err:    ErrStrideMismatch{Got: 3, Want: 2},
+		},
+	} {
+		p := NewMultiPoint(c.layout)
+		if err := p.SetCoords(c.coords); err != c.err {
+			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
+		}
+	}
 }

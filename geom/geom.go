@@ -6,28 +6,14 @@ import (
 
 type Layout int
 
+//go:generate stringer -type=Layout
 const (
-	Empty = Layout(iota)
+	Empty Layout = iota
 	XY
 	XYZ
 	XYM
 	XYZM
 )
-
-var layoutStrings = map[Layout]string{
-	Empty: "Empty",
-	XY:    "XY",
-	XYZ:   "XYZ",
-	XYM:   "XYM",
-	XYZM:  "XYZM",
-}
-
-func (l Layout) String() string {
-	if s, ok := layoutStrings[l]; ok {
-		return s
-	}
-	return fmt.Sprintf("Layout%d", int(l))
-}
 
 type ErrLayoutMismatch struct {
 	Got  Layout
@@ -53,14 +39,14 @@ type Bounds struct {
 	max    []float64
 }
 
-// A T is a generic interface implemented by all geometry types.
+// A T is a generic interface geomemented by all geometry types.
 type T interface {
-	Ends() []int
-	Endss() [][]int
-	Bounds() *Bounds
-	FlatCoords() []float64
 	Layout() Layout
 	Stride() int
+	Bounds() *Bounds
+	FlatCoords() []float64
+	Ends() []int
+	Endss() [][]int
 }
 
 func (l Layout) Stride() int {
@@ -80,7 +66,7 @@ func (l Layout) Stride() int {
 	}
 }
 
-func (l Layout) mIndex() int {
+func (l Layout) MIndex() int {
 	switch l {
 	case Empty, XY, XYZ:
 		return -1

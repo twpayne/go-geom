@@ -1,67 +1,142 @@
 package geom
 
 import (
-	. "launchpad.net/gocheck"
+	"reflect"
+	"testing"
 )
 
-type LinearRingSuite struct{}
-
-var _ = Suite(&LinearRingSuite{})
-
-func (s *LinearRingSuite) TestXY(c *C) {
-
-	lr := NewLinearRing(XY)
-	c.Assert(lr, Not(IsNil))
-
-	coords1 := [][]float64{{1, 2}, {3, 4}}
-	c.Check(lr.SetCoords(coords1), IsNil)
-
-	c.Check(lr.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4))
-	c.Check(lr.Coords(), DeepEquals, coords1)
-	c.Check(lr.Layout(), Equals, XY)
-	c.Check(lr.Stride(), Equals, 2)
-
-	c.Check(lr.Ends(), IsNil)
-	c.Check(lr.Endss(), IsNil)
-	c.Check(lr.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4})
-
+type testLinearRing struct {
+	layout     Layout
+	stride     int
+	coords     [][]float64
+	flatCoords []float64
+	bounds     *Bounds
 }
 
-func (s *LinearRingSuite) TestXYZ(c *C) {
-
-	lr := NewLinearRing(XYZ)
-	c.Assert(lr, Not(IsNil))
-
-	coords1 := [][]float64{{1, 2, 3}, {4, 5, 6}}
-	c.Check(lr.SetCoords(coords1), IsNil)
-
-	c.Check(lr.Bounds(), DeepEquals, NewBounds(1, 2, 3, 4, 5, 6))
-	c.Check(lr.Coords(), DeepEquals, coords1)
-	c.Check(lr.Layout(), Equals, XYZ)
-	c.Check(lr.Stride(), Equals, 3)
-
-	c.Check(lr.Ends(), IsNil)
-	c.Check(lr.Endss(), IsNil)
-	c.Check(lr.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4, 5, 6})
-
+func testLinearRingEquals(t *testing.T, lr *LinearRing, tlr *testLinearRing) {
+	if lr.Layout() != tlr.layout {
+		t.Errorf("lr.Layout() == %v, want %v", lr.Layout(), tlr.layout)
+	}
+	if lr.Stride() != tlr.stride {
+		t.Errorf("lr.Stride() == %v, want %v", lr.Stride(), tlr.stride)
+	}
+	if !reflect.DeepEqual(lr.Coords(), tlr.coords) {
+		t.Errorf("lr.Coords() == %v, want %v", lr.Coords(), tlr.coords)
+	}
+	if !reflect.DeepEqual(lr.FlatCoords(), tlr.flatCoords) {
+		t.Errorf("lr.FlatCoords() == %v, want %v", lr.FlatCoords(), tlr.flatCoords)
+	}
+	if !reflect.DeepEqual(lr.Bounds(), tlr.bounds) {
+		t.Errorf("lr.Bounds() == %v, want %v", lr.Bounds(), tlr.bounds)
+	}
+	if got := lr.NumCoords(); got != len(tlr.coords) {
+		t.Errorf("lr.NumCoords() == %v, want %v", got, len(tlr.coords))
+	}
+	for i, c := range tlr.coords {
+		if !reflect.DeepEqual(lr.Coord(i), c) {
+			t.Errorf("lr.Coord(%v) == %v, want %v", i, lr.Coord(i), c)
+		}
+	}
 }
 
-func (s *LinearRingSuite) TestClone(c *C) {
-	lr1 := NewLinearRing(XY)
-	c.Check(lr1.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
-	lr2 := lr1.Clone()
-	c.Check(lr2, Not(Equals), lr1)
-	c.Check(lr2.Bounds(), DeepEquals, lr1.Bounds())
-	c.Check(lr2.Coords(), DeepEquals, lr1.Coords())
-	c.Check(lr2.FlatCoords(), Not(Aliases), lr1.FlatCoords())
-	c.Check(lr2.Layout(), Equals, lr1.Layout())
-	c.Check(lr2.Stride(), Equals, lr1.Stride())
+func TestLinearRing(t *testing.T) {
+	for _, c := range []struct {
+		lr  *LinearRing
+		tlr *testLinearRing
+	}{
+		{
+			lr: NewLinearRing(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			tlr: &testLinearRing{
+				layout:     XY,
+				stride:     2,
+				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				bounds:     NewBounds(1, 2, 5, 6),
+			},
+		},
+		{
+			lr: NewLinearRing(XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			tlr: &testLinearRing{
+				layout:     XYZ,
+				stride:     3,
+				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+			},
+		},
+		{
+			lr: NewLinearRing(XYM).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			tlr: &testLinearRing{
+				layout:     XYM,
+				stride:     3,
+				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+			},
+		},
+		{
+			lr: NewLinearRing(XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			tlr: &testLinearRing{
+				layout:     XYZM,
+				stride:     4,
+				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				bounds:     NewBounds(1, 2, 3, 4, 9, 10, 11, 12),
+			},
+		},
+	} {
+
+		testLinearRingEquals(t, c.lr, c.tlr)
+	}
 }
 
-func (s *LinearRingSuite) TestStrideMismatch(c *C) {
-	lr := NewLinearRing(XY)
-	c.Check(lr.SetCoords([][]float64{{1, 2}, {}}), DeepEquals, ErrStrideMismatch{Got: 0, Want: 2})
-	c.Check(lr.SetCoords([][]float64{{1, 2}, {3}}), DeepEquals, ErrStrideMismatch{Got: 1, Want: 2})
-	c.Check(lr.SetCoords([][]float64{{1, 2}, {3, 4}}), IsNil)
-	c.Check(lr.SetCoords([][]float64{{1, 2}, {3, 4, 5}}), DeepEquals, ErrStrideMismatch{Got: 3, Want: 2})
+func TestLinearRingClone(t *testing.T) {
+	p1 := NewLinearRing(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}})
+	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
+		t.Error("Clone() should not alias flatCoords")
+	}
+}
+
+func TestLinearRingStrideMismatch(t *testing.T) {
+	for _, c := range []struct {
+		layout Layout
+		coords [][]float64
+		err    error
+	}{
+		{
+			layout: XY,
+			coords: nil,
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {}},
+			err:    ErrStrideMismatch{Got: 0, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {1}},
+			err:    ErrStrideMismatch{Got: 1, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {3, 4}},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][]float64{{1, 2}, {3, 4, 5}},
+			err:    ErrStrideMismatch{Got: 3, Want: 2},
+		},
+	} {
+		p := NewLinearRing(c.layout)
+		if err := p.SetCoords(c.coords); err != c.err {
+			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
+		}
+	}
 }

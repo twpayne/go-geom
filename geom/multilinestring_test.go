@@ -1,45 +1,118 @@
 package geom
 
 import (
-	. "launchpad.net/gocheck"
+	"reflect"
+	"testing"
 )
 
-type MultiLineStringSuite struct{}
+type testMultiLineString struct {
+	layout     Layout
+	stride     int
+	coords     [][][]float64
+	flatCoords []float64
+	ends       []int
+	bounds     *Bounds
+}
 
-var _ = Suite(&MultiLineStringSuite{})
+func testMultiLineStringEquals(t *testing.T, mls *MultiLineString, tmls *testMultiLineString) {
+	if mls.Layout() != tmls.layout {
+		t.Errorf("mls.Layout() == %v, want %v", mls.Layout(), tmls.layout)
+	}
+	if mls.Stride() != tmls.stride {
+		t.Errorf("mls.Stride() == %v, want %v", mls.Stride(), tmls.stride)
+	}
+	if !reflect.DeepEqual(mls.Coords(), tmls.coords) {
+		t.Errorf("mls.Coords() == %v, want %v", mls.Coords(), tmls.coords)
+	}
+	if !reflect.DeepEqual(mls.FlatCoords(), tmls.flatCoords) {
+		t.Errorf("mls.FlatCoords() == %v, want %v", mls.FlatCoords(), tmls.flatCoords)
+	}
+	if !reflect.DeepEqual(mls.Ends(), tmls.ends) {
+		t.Errorf("mls.Ends() == %v, want %v", mls.Ends(), tmls.ends)
+	}
+	if !reflect.DeepEqual(mls.Bounds(), tmls.bounds) {
+		t.Errorf("mls.Bounds() == %v, want %v", mls.Bounds(), tmls.bounds)
+	}
+	if got := mls.NumLineStrings(); got != len(tmls.coords) {
+		t.Errorf("mls.NumLineStrings() == %v, want %v", got, len(tmls.coords))
+	}
+	for i, c := range tmls.coords {
+		want := NewLineString(mls.Layout()).MustSetCoords(c)
+		if got := mls.LineString(i); !reflect.DeepEqual(got, want) {
+			t.Errorf("mls.LineString(%v) == %v, want %v", i, got, want)
+		}
+	}
+}
 
-func (s *MultiLineStringSuite) TestXY(c *C) {
+func TestMultiLineString(t *testing.T) {
+	for _, c := range []struct {
+		mls  *MultiLineString
+		tmls *testMultiLineString
+	}{
+		{
+			mls: NewMultiLineString(XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
+			tmls: &testMultiLineString{
+				layout:     XY,
+				stride:     2,
+				coords:     [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				ends:       []int{6, 12},
+				bounds:     NewBounds(1, 2, 11, 12),
+			},
+		},
+	} {
 
-	mls := NewMultiLineString(XY)
-	c.Assert(mls, Not(IsNil))
+		testMultiLineStringEquals(t, c.mls, c.tmls)
+	}
+}
 
-	coords2 := [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}
-	c.Check(mls.SetCoords(coords2), IsNil)
+func TestMultiLineStringClone(t *testing.T) {
+	p1 := NewMultiLineString(XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}})
+	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
+		t.Error("Clone() should not alias flatCoords")
+	}
+}
 
-	c.Check(mls.Bounds(), DeepEquals, NewBounds(1, 2, 11, 12))
-	c.Check(mls.Coords(), DeepEquals, coords2)
-	c.Check(mls.Layout(), Equals, XY)
-	c.Check(mls.NumLineStrings(), Equals, 2)
-	c.Check(mls.Stride(), Equals, 2)
-
-	c.Check(mls.Ends(), DeepEquals, []int{6, 12})
-	c.Check(mls.Endss(), IsNil)
-	c.Check(mls.FlatCoords(), DeepEquals, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12})
-
-	ls0 := mls.LineString(0)
-	c.Check(ls0, FitsTypeOf, &LineString{})
-	c.Check(ls0.Bounds(), DeepEquals, NewBounds(1, 2, 5, 6))
-	c.Check(ls0.Coords(), DeepEquals, coords2[0])
-	c.Check(ls0.FlatCoords(), Aliases, mls.FlatCoords())
-	c.Check(ls0.Layout(), Equals, mls.Layout())
-	c.Check(ls0.Stride(), Equals, mls.Stride())
-
-	ls1 := mls.LineString(1)
-	c.Check(ls1, FitsTypeOf, &LineString{})
-	c.Check(ls1.Bounds(), DeepEquals, NewBounds(7, 8, 11, 12))
-	c.Check(ls1.Coords(), DeepEquals, coords2[1])
-	c.Check(ls1.FlatCoords(), Aliases, mls.FlatCoords())
-	c.Check(ls1.Layout(), Equals, mls.Layout())
-	c.Check(ls1.Stride(), Equals, mls.Stride())
-
+func TestMultiLineStringStrideMismatch(t *testing.T) {
+	for _, c := range []struct {
+		layout Layout
+		coords [][][]float64
+		err    error
+	}{
+		{
+			layout: XY,
+			coords: nil,
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {}}},
+			err:    ErrStrideMismatch{Got: 0, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {1}}},
+			err:    ErrStrideMismatch{Got: 1, Want: 2},
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {3, 4}}},
+			err:    nil,
+		},
+		{
+			layout: XY,
+			coords: [][][]float64{{{1, 2}, {3, 4, 5}}},
+			err:    ErrStrideMismatch{Got: 3, Want: 2},
+		},
+	} {
+		mls := NewMultiLineString(c.layout)
+		if err := mls.SetCoords(c.coords); err != c.err {
+			t.Errorf("mls.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
+		}
+	}
 }
