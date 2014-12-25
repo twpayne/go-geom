@@ -46,6 +46,16 @@ func (g *geom0) Stride() int {
 	return g.stride
 }
 
+func (g *geom0) mustVerify() {
+	if g.stride != g.layout.Stride() {
+		panic("stride/layout mismatch")
+	}
+	if len(g.flatCoords) != g.stride {
+		panic("length/stride mismatch")
+	}
+
+}
+
 func deflate0(flatCoords []float64, c []float64, stride int) ([]float64, error) {
 	if len(c) != stride {
 		return nil, ErrStrideMismatch{Got: len(c), Want: stride}

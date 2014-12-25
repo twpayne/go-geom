@@ -15,6 +15,7 @@ type testMultiLineString struct {
 }
 
 func testMultiLineStringEquals(t *testing.T, mls *MultiLineString, tmls *testMultiLineString) {
+	mls.mustVerify()
 	if mls.Layout() != tmls.layout {
 		t.Errorf("mls.Layout() == %v, want %v", mls.Layout(), tmls.layout)
 	}

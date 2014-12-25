@@ -40,6 +40,15 @@ func (g *geom1) SetCoords(coords1 [][]float64) error {
 	return nil
 }
 
+func (g *geom1) mustVerify() {
+	if g.stride != g.layout.Stride() {
+		panic("stride/layout mismatch")
+	}
+	if len(g.flatCoords)%g.stride != 0 {
+		panic("length/stride mismatch")
+	}
+}
+
 func deflate1(flatCoords []float64, coords1 [][]float64, stride int) ([]float64, error) {
 	for _, c := range coords1 {
 		var err error

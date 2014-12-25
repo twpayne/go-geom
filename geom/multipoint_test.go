@@ -15,6 +15,7 @@ type testMultiPoint struct {
 }
 
 func testMultiPointEquals(t *testing.T, mp *MultiPoint, tmp *testMultiPoint) {
+	mp.mustVerify()
 	if mp.Layout() != tmp.layout {
 		t.Errorf("mp.Layout() == %v, want %v", mp.Layout(), tmp.layout)
 	}

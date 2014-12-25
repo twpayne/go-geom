@@ -15,6 +15,7 @@ type testPolygon struct {
 }
 
 func testPolygonEquals(t *testing.T, p *Polygon, tp *testPolygon) {
+	p.mustVerify()
 	if p.Layout() != tp.layout {
 		t.Errorf("p.Layout() == %v, want %v", p.Layout(), tp.layout)
 	}

@@ -21,6 +21,28 @@ func (g *geom2) SetCoords(coords2 [][][]float64) error {
 	return nil
 }
 
+func (g *geom2) mustVerify() {
+	if g.stride != g.layout.Stride() {
+		panic("stride/layout mismatch")
+	}
+	if len(g.flatCoords)%g.stride != 0 {
+		panic("length/stride mismatch")
+	}
+	offset := 0
+	for _, end := range g.ends {
+		if end%g.stride != 0 {
+			panic("misaligned end")
+		}
+		if end < offset {
+			panic("out-of-order ends")
+		}
+		offset = end
+	}
+	if offset > len(g.flatCoords) {
+		panic("out-of-bounds end")
+	}
+}
+
 func deflate2(flatCoords []float64, ends []int, coords2 [][][]float64, stride int) ([]float64, []int, error) {
 	for _, coords1 := range coords2 {
 		var err error
