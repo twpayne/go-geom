@@ -42,10 +42,10 @@ func (g *geom1) SetCoords(coords1 [][]float64) error {
 
 func (g *geom1) mustVerify() {
 	if g.stride != g.layout.Stride() {
-		panic("stride/layout mismatch")
+		panic("geom: stride/layout mismatch")
 	}
 	if len(g.flatCoords)%g.stride != 0 {
-		panic("length/stride mismatch")
+		panic("geom: length/stride mismatch")
 	}
 }
 

@@ -48,10 +48,10 @@ func (g *geom0) Stride() int {
 
 func (g *geom0) mustVerify() {
 	if g.stride != g.layout.Stride() {
-		panic("stride/layout mismatch")
+		panic("geom: stride/layout mismatch")
 	}
 	if len(g.flatCoords) != g.stride {
-		panic("length/stride mismatch")
+		panic("geom: length/stride mismatch")
 	}
 
 }

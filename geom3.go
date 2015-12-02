@@ -23,25 +23,25 @@ func (g *geom3) SetCoords(coords3 [][][][]float64) error {
 
 func (g *geom3) mustVerify() {
 	if g.stride != g.layout.Stride() {
-		panic("stride/layout mismatch")
+		panic("geom: stride/layout mismatch")
 	}
 	if len(g.flatCoords)%g.stride != 0 {
-		panic("length/stride mismatch")
+		panic("geom: length/stride mismatch")
 	}
 	offset := 0
 	for _, ends := range g.endss {
 		for _, end := range ends {
 			if end%g.stride != 0 {
-				panic("mis-aligned end")
+				panic("geom: mis-aligned end")
 			}
 			if end < offset {
-				panic("out-of-order end")
+				panic("geom: out-of-order end")
 			}
 			offset = end
 		}
 	}
 	if offset > len(g.flatCoords) {
-		panic("out-of-bounds end")
+		panic("geom: out-of-bounds end")
 	}
 }
 
