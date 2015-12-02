@@ -4,6 +4,9 @@ test:
 	go test github.com/twpayne/go-geom
 	go test github.com/twpayne/go-geom/encoding/wkb
 
+gogenerate:
+	go generate
+
 goimports:
 	goimports -w *.go
 	goimports -w encoding/wkb/*.go
