@@ -1,4 +1,4 @@
-all: test govet goimports
+all: goimports govet gogenerate test
 
 test:
 	go test github.com/twpayne/go-geom
