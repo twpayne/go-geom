@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/cznic/mathutil"
-	"github.com/twpayne/gogeom2/geom"
+	"github.com/twpayne/go-geom"
 )
 
 type Encoder struct {

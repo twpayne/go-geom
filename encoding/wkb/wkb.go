@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/twpayne/gogeom2/geom"
+	"github.com/twpayne/go-geom"
 )
 
 const (

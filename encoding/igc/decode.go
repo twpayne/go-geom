@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/twpayne/gogeom2/geom"
+	"github.com/twpayne/go-geom"
 )
 
 var (
