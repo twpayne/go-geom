@@ -1,7 +1,6 @@
 package geom
 
 import (
-	"math"
 	"reflect"
 	"testing"
 )
@@ -53,7 +52,7 @@ func TestMultiPoint(t *testing.T) {
 				stride:     2,
 				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6},
-				bounds:     NewBounds(1, 2, 5, 6),
+				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
 		},
 		{
@@ -63,7 +62,7 @@ func TestMultiPoint(t *testing.T) {
 				stride:     3,
 				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
-				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
@@ -73,7 +72,7 @@ func TestMultiPoint(t *testing.T) {
 				stride:     3,
 				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
-				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
@@ -83,7 +82,7 @@ func TestMultiPoint(t *testing.T) {
 				stride:     4,
 				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
-				bounds:     NewBounds(1, 2, 3, 4, 9, 10, 11, 12),
+				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
 		},
 	} {
@@ -105,7 +104,7 @@ func TestMultiPointPush(t *testing.T) {
 		layout: XY,
 		stride: 2,
 		coords: [][]float64{},
-		bounds: NewBounds(math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)),
+		bounds: NewBounds(XY),
 	})
 	mp.Push(NewPoint(XY).MustSetCoords([]float64{1, 2}))
 	testMultiPointEquals(t, mp, &testMultiPoint{
@@ -113,7 +112,7 @@ func TestMultiPointPush(t *testing.T) {
 		stride:     2,
 		coords:     [][]float64{{1, 2}},
 		flatCoords: []float64{1, 2},
-		bounds:     NewBounds(1, 2, 1, 2),
+		bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 	})
 	mp.Push(NewPoint(XY).MustSetCoords([]float64{3, 4}))
 	testMultiPointEquals(t, mp, &testMultiPoint{
@@ -121,7 +120,7 @@ func TestMultiPointPush(t *testing.T) {
 		stride:     2,
 		coords:     [][]float64{{1, 2}, {3, 4}},
 		flatCoords: []float64{1, 2, 3, 4},
-		bounds:     NewBounds(1, 2, 3, 4),
+		bounds:     NewBounds(XY).Set(1, 2, 3, 4),
 	})
 }
 

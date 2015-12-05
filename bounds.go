@@ -1,40 +1,42 @@
 package geom
 
+// FIXME(twpayne) creating a Bounds with layout XYM and then extending it with
+// a XYZ geometry will not work.
+
 import (
 	"math"
 )
 
 type Bounds struct {
-	stride int
+	layout Layout
 	min    []float64
 	max    []float64
 }
 
-// NewBounds creates a new Bounds. args must be an even number of values, the
-// first half are minimum values for each dimension and the second half are the
-// maximum values for each dimension.
-func NewBounds(args ...float64) *Bounds {
-	if len(args)&1 != 0 {
-		panic("geom: odd number of arguments")
+// NewBounds creates a new Bounds.
+func NewBounds(layout Layout) *Bounds {
+	stride := layout.Stride()
+	min, max := make([]float64, stride), make([]float64, stride)
+	for i := 0; i < stride; i++ {
+		min[i], max[i] = math.Inf(1), math.Inf(-1)
 	}
-	stride := len(args) / 2
 	return &Bounds{
-		stride: stride,
-		min:    args[:stride],
-		max:    args[stride:],
+		layout: layout,
+		min:    min,
+		max:    max,
 	}
 }
 
 // Extend extends b to include geometry g.
 func (b *Bounds) Extend(g T) *Bounds {
-	b.extendStride(g.Stride())
+	b.extendStride(g.Layout().Stride())
 	b.extendFlatCoords(g.FlatCoords(), 0, len(g.FlatCoords()), g.Stride())
 	return b
 }
 
 // IsEmpty returns true if b is empty.
 func (b *Bounds) IsEmpty() bool {
-	for i := 0; i < b.stride; i++ {
+	for i, stride := 0, b.layout.Stride(); i < stride; i++ {
 		if b.max[i] < b.min[i] {
 			return true
 		}
@@ -52,9 +54,9 @@ func (b *Bounds) Min(dim int) float64 {
 	return b.min[dim]
 }
 
-// Overlaps returns true if b1 overlaps b2 up to stride dimensions.
-func (b1 *Bounds) Overlaps(b2 *Bounds, stride int) bool {
-	for i := 0; i < stride; i++ {
+// Overlaps returns true if b1 overlaps b2 in layout.
+func (b1 *Bounds) Overlaps(layout Layout, b2 *Bounds) bool {
+	for i, stride := 0, layout.Stride(); i < stride; i++ {
 		if b1.min[i] > b2.max[i] || b1.max[i] < b2.min[i] {
 			return false
 		}
@@ -62,16 +64,31 @@ func (b1 *Bounds) Overlaps(b2 *Bounds, stride int) bool {
 	return true
 }
 
-// Stride returns b's stride.
-func (b *Bounds) Stride() int {
-	return b.stride
+// Layout returns b's layout.
+func (b *Bounds) Layout() Layout {
+	return b.layout
+}
+
+// Set sets the minimum and maximum values. args must be an even number of
+// values: the first half are the minimum values for each dimension and the
+// second half are the maximum values for each dimension.
+func (b *Bounds) Set(args ...float64) *Bounds {
+	if len(args)&1 != 0 {
+		panic("geom: even number of arguments required")
+	}
+	stride := len(args) / 2
+	b.extendStride(stride)
+	for i := 0; i < stride; i++ {
+		b.min[i], b.max[i] = args[i], args[i+stride]
+	}
+	return b
 }
 
 func (b *Bounds) extendStride(stride int) {
-	for b.stride < stride {
+	for b.layout.Stride() < stride {
 		b.min = append(b.min, math.Inf(1))
 		b.max = append(b.max, math.Inf(-1))
-		b.stride++
+		b.layout++
 	}
 }
 

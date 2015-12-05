@@ -58,7 +58,7 @@ func TestPolygon(t *testing.T) {
 				coords:     [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				ends:       []int{6, 12},
-				bounds:     NewBounds(1, 2, 11, 12),
+				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
 			},
 		},
 	} {

@@ -52,7 +52,7 @@ func TestLineString(t *testing.T) {
 				stride:     2,
 				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6},
-				bounds:     NewBounds(1, 2, 5, 6),
+				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
 		},
 		{
@@ -62,7 +62,7 @@ func TestLineString(t *testing.T) {
 				stride:     3,
 				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
-				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
@@ -72,7 +72,7 @@ func TestLineString(t *testing.T) {
 				stride:     3,
 				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
-				bounds:     NewBounds(1, 2, 3, 7, 8, 9),
+				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
@@ -82,7 +82,7 @@ func TestLineString(t *testing.T) {
 				stride:     4,
 				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
-				bounds:     NewBounds(1, 2, 3, 4, 9, 10, 11, 12),
+				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
 		},
 	} {

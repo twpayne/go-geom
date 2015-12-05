@@ -45,7 +45,7 @@ func TestPoint(t *testing.T) {
 				stride:     2,
 				coords:     []float64{1, 2},
 				flatCoords: []float64{1, 2},
-				bounds:     NewBounds(1, 2, 1, 2),
+				bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 			},
 		},
 		{
@@ -55,7 +55,7 @@ func TestPoint(t *testing.T) {
 				stride:     3,
 				coords:     []float64{1, 2, 3},
 				flatCoords: []float64{1, 2, 3},
-				bounds:     NewBounds(1, 2, 3, 1, 2, 3),
+				bounds:     NewBounds(XYZ).Set(1, 2, 3, 1, 2, 3),
 			},
 		},
 		{
@@ -65,7 +65,7 @@ func TestPoint(t *testing.T) {
 				stride:     3,
 				coords:     []float64{1, 2, 3},
 				flatCoords: []float64{1, 2, 3},
-				bounds:     NewBounds(1, 2, 3, 1, 2, 3),
+				bounds:     NewBounds(XYM).Set(1, 2, 3, 1, 2, 3),
 			},
 		},
 		{
@@ -75,7 +75,7 @@ func TestPoint(t *testing.T) {
 				stride:     4,
 				coords:     []float64{1, 2, 3, 4},
 				flatCoords: []float64{1, 2, 3, 4},
-				bounds:     NewBounds(1, 2, 3, 4, 1, 2, 3, 4),
+				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 1, 2, 3, 4),
 			},
 		},
 	} {

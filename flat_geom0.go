@@ -7,7 +7,7 @@ type geom0 struct {
 }
 
 func (g *geom0) Bounds() *Bounds {
-	return NewBounds().extendFlatCoords(g.flatCoords, 0, len(g.flatCoords), g.stride)
+	return NewBounds(g.layout).extendFlatCoords(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
 func (g *geom0) Coords() []float64 {
