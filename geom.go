@@ -78,3 +78,12 @@ func (l Layout) MIndex() int {
 		return 3
 	}
 }
+
+func (l Layout) ZIndex() int {
+	switch l {
+	case Empty, XY, XYM:
+		return -1
+	default:
+		return 2
+	}
+}
