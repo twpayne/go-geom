@@ -44,6 +44,11 @@ func (b *Bounds) IsEmpty() bool {
 	return false
 }
 
+// Layout returns b's layout.
+func (b *Bounds) Layout() Layout {
+	return b.layout
+}
+
 // Max returns the maximum value in dimension dim.
 func (b *Bounds) Max(dim int) float64 {
 	return b.max[dim]
@@ -64,11 +69,6 @@ func (b1 *Bounds) Overlaps(layout Layout, b2 *Bounds) bool {
 	return true
 }
 
-// Layout returns b's layout.
-func (b *Bounds) Layout() Layout {
-	return b.layout
-}
-
 // Set sets the minimum and maximum values. args must be an even number of
 // values: the first half are the minimum values for each dimension and the
 // second half are the maximum values for each dimension.
@@ -84,14 +84,6 @@ func (b *Bounds) Set(args ...float64) *Bounds {
 	return b
 }
 
-func (b *Bounds) extendStride(stride int) {
-	for b.layout.Stride() < stride {
-		b.min = append(b.min, math.Inf(1))
-		b.max = append(b.max, math.Inf(-1))
-		b.layout++
-	}
-}
-
 func (b *Bounds) extendFlatCoords(flatCoords []float64, offset, end, stride int) *Bounds {
 	b.extendStride(stride)
 	for i := offset; i < end; i += stride {
@@ -101,4 +93,12 @@ func (b *Bounds) extendFlatCoords(flatCoords []float64, offset, end, stride int)
 		}
 	}
 	return b
+}
+
+func (b *Bounds) extendStride(stride int) {
+	for b.layout.Stride() < stride {
+		b.min = append(b.min, math.Inf(1))
+		b.max = append(b.max, math.Inf(-1))
+		b.layout++
+	}
 }

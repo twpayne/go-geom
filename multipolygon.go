@@ -23,13 +23,6 @@ func (mp *MultiPolygon) Area() float64 {
 	return area3(mp.flatCoords, 0, mp.endss, mp.stride)
 }
 
-func (mp *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
-	if err := mp.SetCoords(coords3); err != nil {
-		panic(err)
-	}
-	return mp
-}
-
 func (mp *MultiPolygon) Clone() *MultiPolygon {
 	flatCoords := make([]float64, len(mp.flatCoords))
 	copy(flatCoords, mp.flatCoords)
@@ -43,6 +36,13 @@ func (mp *MultiPolygon) Clone() *MultiPolygon {
 
 func (mp *MultiPolygon) Length() float64 {
 	return length3(mp.flatCoords, 0, mp.endss, mp.stride)
+}
+
+func (mp *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
+	if err := mp.SetCoords(coords3); err != nil {
+		panic(err)
+	}
+	return mp
 }
 
 func (mp *MultiPolygon) NumPolygons() int {

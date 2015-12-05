@@ -42,6 +42,19 @@ type T interface {
 	Endss() [][]int
 }
 
+func (l Layout) MIndex() int {
+	switch l {
+	case Empty, XY, XYZ:
+		return -1
+	case XYM:
+		return 2
+	case XYZM:
+		return 3
+	default:
+		return 3
+	}
+}
+
 func (l Layout) Stride() int {
 	switch l {
 	case Empty:
@@ -73,19 +86,6 @@ func (l Layout) String() string {
 		return "XYZM"
 	default:
 		return fmt.Sprintf("Layout(%d)", int(l))
-	}
-}
-
-func (l Layout) MIndex() int {
-	switch l {
-	case Empty, XY, XYZ:
-		return -1
-	case XYM:
-		return 2
-	case XYZM:
-		return 3
-	default:
-		return 3
 	}
 }
 

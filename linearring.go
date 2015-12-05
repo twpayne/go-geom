@@ -28,13 +28,13 @@ func (lr *LinearRing) Clone() *LinearRing {
 	return NewLinearRingFlat(lr.layout, flatCoords)
 }
 
+func (lr *LinearRing) Length() float64 {
+	return length1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
+}
+
 func (lr *LinearRing) MustSetCoords(coords1 [][]float64) *LinearRing {
 	if err := lr.SetCoords(coords1); err != nil {
 		panic(err)
 	}
 	return lr
-}
-
-func (lr *LinearRing) Length() float64 {
-	return length1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
