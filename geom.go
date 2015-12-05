@@ -7,7 +7,7 @@ import (
 type Layout int
 
 const (
-	Empty Layout = iota
+	NoLayout Layout = iota
 	XY
 	XYZ
 	XYM
@@ -44,7 +44,7 @@ type T interface {
 
 func (l Layout) MIndex() int {
 	switch l {
-	case Empty, XY, XYZ:
+	case NoLayout, XY, XYZ:
 		return -1
 	case XYM:
 		return 2
@@ -57,7 +57,7 @@ func (l Layout) MIndex() int {
 
 func (l Layout) Stride() int {
 	switch l {
-	case Empty:
+	case NoLayout:
 		return 0
 	case XY:
 		return 2
@@ -74,8 +74,8 @@ func (l Layout) Stride() int {
 
 func (l Layout) String() string {
 	switch l {
-	case Empty:
-		return "Empty"
+	case NoLayout:
+		return "NoLayout"
 	case XY:
 		return "XY"
 	case XYZ:
@@ -91,7 +91,7 @@ func (l Layout) String() string {
 
 func (l Layout) ZIndex() int {
 	switch l {
-	case Empty, XY, XYM:
+	case NoLayout, XY, XYM:
 		return -1
 	default:
 		return 2

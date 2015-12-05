@@ -14,7 +14,7 @@ func TestLayoutString(t *testing.T) {
 		l    Layout
 		want string
 	}{
-		{Empty, "Empty"},
+		{NoLayout, "NoLayout"},
 		{XY, "XY"},
 		{XYZ, "XYZ"},
 		{XYM, "XYM"},
