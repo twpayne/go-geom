@@ -19,6 +19,10 @@ func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
 	return p
 }
 
+func (p *Polygon) Area() float64 {
+	return area2(p.flatCoords, 0, p.ends, p.stride)
+}
+
 func (p *Polygon) Clone() *Polygon {
 	flatCoords := make([]float64, len(p.flatCoords))
 	copy(flatCoords, p.flatCoords)

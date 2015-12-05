@@ -19,6 +19,10 @@ func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *Mu
 	return mp
 }
 
+func (mp *MultiPolygon) Area() float64 {
+	return area3(mp.flatCoords, 0, mp.endss, mp.stride)
+}
+
 func (mp *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
 	if err := mp.SetCoords(coords3); err != nil {
 		panic(err)
