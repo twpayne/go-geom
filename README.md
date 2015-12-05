@@ -14,7 +14,6 @@ func ExampleNewPolygon() {
 	fmt.Printf("unitSquare.Area() == %f", unitSquare.Area())
 	// Output: unitSquare.Area() == 1.00000
 }
-
 ```
 
 [License](LICENSE)

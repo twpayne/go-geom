@@ -62,7 +62,6 @@ func TestMultiLineString(t *testing.T) {
 			},
 		},
 	} {
-
 		testMultiLineStringEquals(t, c.mls, c.tmls)
 	}
 }
