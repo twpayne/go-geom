@@ -1,9 +1,5 @@
 package geom
 
-import (
-	"math"
-)
-
 type LineString struct {
 	geom1
 }
@@ -26,16 +22,6 @@ func (ls *LineString) Clone() *LineString {
 	flatCoords := make([]float64, len(ls.flatCoords))
 	copy(flatCoords, ls.flatCoords)
 	return NewLineStringFlat(ls.layout, flatCoords)
-}
-
-func (ls *LineString) Length2() float64 {
-	length := 0.0
-	for i := ls.stride; i < len(ls.flatCoords); i += ls.stride {
-		dx := ls.flatCoords[i] - ls.flatCoords[i-ls.stride]
-		dy := ls.flatCoords[i+1] - ls.flatCoords[i+1-ls.stride]
-		length += math.Sqrt(dx*dx + dy*dy)
-	}
-	return length
 }
 
 func (ls *LineString) Interpolate(val float64, dim int) (int, float64) {
