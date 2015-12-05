@@ -42,15 +42,3 @@ func (g *geom2) mustVerify() {
 		panic("geom: out-of-bounds end")
 	}
 }
-
-func deflate2(flatCoords []float64, ends []int, coords2 [][][]float64, stride int) ([]float64, []int, error) {
-	for _, coords1 := range coords2 {
-		var err error
-		flatCoords, err = deflate1(flatCoords, coords1, stride)
-		if err != nil {
-			return nil, nil, err
-		}
-		ends = append(ends, len(flatCoords))
-	}
-	return flatCoords, ends, nil
-}

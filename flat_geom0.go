@@ -53,13 +53,4 @@ func (g *geom0) mustVerify() {
 	if len(g.flatCoords) != g.stride {
 		panic("geom: length/stride mismatch")
 	}
-
-}
-
-func deflate0(flatCoords []float64, c []float64, stride int) ([]float64, error) {
-	if len(c) != stride {
-		return nil, ErrStrideMismatch{Got: len(c), Want: stride}
-	}
-	flatCoords = append(flatCoords, c...)
-	return flatCoords, nil
 }

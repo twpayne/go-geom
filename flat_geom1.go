@@ -48,14 +48,3 @@ func (g *geom1) mustVerify() {
 		panic("geom: length/stride mismatch")
 	}
 }
-
-func deflate1(flatCoords []float64, coords1 [][]float64, stride int) ([]float64, error) {
-	for _, c := range coords1 {
-		var err error
-		flatCoords, err = deflate0(flatCoords, c, stride)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return flatCoords, nil
-}
