@@ -11,38 +11,38 @@ func NewMultiPoint(layout Layout) *MultiPoint {
 }
 
 func NewMultiPointFlat(layout Layout, flatCoords []float64) *MultiPoint {
-	g := new(MultiPoint)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
-	return g
+	mp := new(MultiPoint)
+	mp.layout = layout
+	mp.stride = layout.Stride()
+	mp.flatCoords = flatCoords
+	return mp
 }
 
-func (g *MultiPoint) Clone() *MultiPoint {
-	flatCoords := make([]float64, len(g.flatCoords))
-	copy(flatCoords, g.flatCoords)
-	return NewMultiPointFlat(g.layout, flatCoords)
+func (mp *MultiPoint) Clone() *MultiPoint {
+	flatCoords := make([]float64, len(mp.flatCoords))
+	copy(flatCoords, mp.flatCoords)
+	return NewMultiPointFlat(mp.layout, flatCoords)
 }
 
-func (g *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
-	if err := g.SetCoords(coords1); err != nil {
+func (mp *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
+	if err := mp.SetCoords(coords1); err != nil {
 		panic(err)
 	}
-	return g
+	return mp
 }
 
-func (g *MultiPoint) NumPoints() int {
-	return g.NumCoords()
+func (mp *MultiPoint) NumPoints() int {
+	return mp.NumCoords()
 }
 
-func (g *MultiPoint) Point(i int) *Point {
-	return NewPointFlat(g.layout, g.Coord(i))
+func (mp *MultiPoint) Point(i int) *Point {
+	return NewPointFlat(mp.layout, mp.Coord(i))
 }
 
-func (g *MultiPoint) Push(p *Point) error {
-	if p.layout != g.layout {
-		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
+func (mp *MultiPoint) Push(p *Point) error {
+	if p.layout != mp.layout {
+		return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
 	}
-	g.flatCoords = append(g.flatCoords, p.flatCoords...)
+	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
 	return nil
 }

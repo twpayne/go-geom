@@ -11,46 +11,46 @@ func NewPolygon(layout Layout) *Polygon {
 }
 
 func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
-	g := new(Polygon)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
-	g.ends = ends
-	return g
+	p := new(Polygon)
+	p.layout = layout
+	p.stride = layout.Stride()
+	p.flatCoords = flatCoords
+	p.ends = ends
+	return p
 }
 
-func (g *Polygon) Clone() *Polygon {
-	flatCoords := make([]float64, len(g.flatCoords))
-	copy(flatCoords, g.flatCoords)
-	ends := make([]int, len(g.ends))
-	copy(ends, g.ends)
-	return NewPolygonFlat(g.layout, flatCoords, ends)
+func (p *Polygon) Clone() *Polygon {
+	flatCoords := make([]float64, len(p.flatCoords))
+	copy(flatCoords, p.flatCoords)
+	ends := make([]int, len(p.ends))
+	copy(ends, p.ends)
+	return NewPolygonFlat(p.layout, flatCoords, ends)
 }
 
-func (g *Polygon) LinearRing(i int) *LinearRing {
+func (p *Polygon) LinearRing(i int) *LinearRing {
 	offset := 0
 	if i > 0 {
-		offset = g.ends[i-1]
+		offset = p.ends[i-1]
 	}
-	return NewLinearRingFlat(g.layout, g.flatCoords[offset:g.ends[i]])
+	return NewLinearRingFlat(p.layout, p.flatCoords[offset:p.ends[i]])
 }
 
-func (g *Polygon) MustSetCoords(coords2 [][][]float64) *Polygon {
-	if err := g.SetCoords(coords2); err != nil {
+func (p *Polygon) MustSetCoords(coords2 [][][]float64) *Polygon {
+	if err := p.SetCoords(coords2); err != nil {
 		panic(err)
 	}
-	return g
+	return p
 }
 
-func (g *Polygon) NumLinearRings() int {
-	return len(g.ends)
+func (p *Polygon) NumLinearRings() int {
+	return len(p.ends)
 }
 
-func (g *Polygon) Push(lr *LinearRing) error {
-	if lr.layout != g.layout {
-		return ErrLayoutMismatch{Got: lr.layout, Want: g.layout}
+func (p *Polygon) Push(lr *LinearRing) error {
+	if lr.layout != p.layout {
+		return ErrLayoutMismatch{Got: lr.layout, Want: p.layout}
 	}
-	g.flatCoords = append(g.flatCoords, lr.flatCoords...)
-	g.ends = append(g.ends, len(g.flatCoords))
+	p.flatCoords = append(p.flatCoords, lr.flatCoords...)
+	p.ends = append(p.ends, len(p.flatCoords))
 	return nil
 }

@@ -11,58 +11,58 @@ func NewMultiPolygon(layout Layout) *MultiPolygon {
 }
 
 func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *MultiPolygon {
-	g := new(MultiPolygon)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
-	g.endss = endss
-	return g
+	mp := new(MultiPolygon)
+	mp.layout = layout
+	mp.stride = layout.Stride()
+	mp.flatCoords = flatCoords
+	mp.endss = endss
+	return mp
 }
 
-func (g *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
-	if err := g.SetCoords(coords3); err != nil {
+func (mp *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
+	if err := mp.SetCoords(coords3); err != nil {
 		panic(err)
 	}
-	return g
+	return mp
 }
 
-func (g *MultiPolygon) Clone() *MultiPolygon {
-	flatCoords := make([]float64, len(g.flatCoords))
-	copy(flatCoords, g.flatCoords)
-	endss := make([][]int, len(g.endss))
-	for i, ends := range g.endss {
+func (mp *MultiPolygon) Clone() *MultiPolygon {
+	flatCoords := make([]float64, len(mp.flatCoords))
+	copy(flatCoords, mp.flatCoords)
+	endss := make([][]int, len(mp.endss))
+	for i, ends := range mp.endss {
 		endss[i] = make([]int, len(ends))
 		copy(endss[i], ends)
 	}
-	return NewMultiPolygonFlat(g.layout, flatCoords, endss)
+	return NewMultiPolygonFlat(mp.layout, flatCoords, endss)
 }
 
-func (g *MultiPolygon) NumPolygons() int {
-	return len(g.endss)
+func (mp *MultiPolygon) NumPolygons() int {
+	return len(mp.endss)
 }
 
-func (g *MultiPolygon) Polygon(i int) *Polygon {
+func (mp *MultiPolygon) Polygon(i int) *Polygon {
 	offset := 0
 	if i > 0 {
-		ends := g.endss[i-1]
+		ends := mp.endss[i-1]
 		offset = ends[len(ends)-1]
 	}
-	ends := make([]int, len(g.endss[i]))
+	ends := make([]int, len(mp.endss[i]))
 	if offset == 0 {
-		copy(ends, g.endss[i])
+		copy(ends, mp.endss[i])
 	} else {
-		for j, end := range g.endss[i] {
+		for j, end := range mp.endss[i] {
 			ends[j] = end - offset
 		}
 	}
-	return NewPolygonFlat(g.layout, g.flatCoords[offset:g.endss[i][len(g.endss[i])-1]], ends)
+	return NewPolygonFlat(mp.layout, mp.flatCoords[offset:mp.endss[i][len(mp.endss[i])-1]], ends)
 }
 
-func (g *MultiPolygon) Push(p *Polygon) error {
-	if p.layout != g.layout {
-		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
+func (mp *MultiPolygon) Push(p *Polygon) error {
+	if p.layout != mp.layout {
+		return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
 	}
-	offset := len(g.flatCoords)
+	offset := len(mp.flatCoords)
 	ends := make([]int, len(p.ends))
 	if offset == 0 {
 		copy(ends, p.ends)
@@ -71,7 +71,7 @@ func (g *MultiPolygon) Push(p *Polygon) error {
 			ends[i] = end + offset
 		}
 	}
-	g.flatCoords = append(g.flatCoords, p.flatCoords...)
-	g.endss = append(g.endss, ends)
+	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
+	mp.endss = append(mp.endss, ends)
 	return nil
 }

@@ -11,22 +11,22 @@ func NewPoint(layout Layout) *Point {
 }
 
 func NewPointFlat(layout Layout, flatCoords []float64) *Point {
-	g := new(Point)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
-	return g
+	p := new(Point)
+	p.layout = layout
+	p.stride = layout.Stride()
+	p.flatCoords = flatCoords
+	return p
 }
 
-func (g *Point) Clone() *Point {
-	flatCoords := make([]float64, len(g.flatCoords))
-	copy(flatCoords, g.flatCoords)
-	return NewPointFlat(g.layout, flatCoords)
+func (p *Point) Clone() *Point {
+	flatCoords := make([]float64, len(p.flatCoords))
+	copy(flatCoords, p.flatCoords)
+	return NewPointFlat(p.layout, flatCoords)
 }
 
-func (g *Point) MustSetCoords(coords0 []float64) *Point {
-	if err := g.SetCoords(coords0); err != nil {
+func (p *Point) MustSetCoords(coords0 []float64) *Point {
+	if err := p.SetCoords(coords0); err != nil {
 		panic(err)
 	}
-	return g
+	return p
 }

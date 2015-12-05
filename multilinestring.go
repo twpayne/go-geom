@@ -11,46 +11,46 @@ func NewMultiLineString(layout Layout) *MultiLineString {
 }
 
 func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *MultiLineString {
-	g := new(MultiLineString)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
-	g.ends = ends
-	return g
+	mls := new(MultiLineString)
+	mls.layout = layout
+	mls.stride = layout.Stride()
+	mls.flatCoords = flatCoords
+	mls.ends = ends
+	return mls
 }
 
-func (g *MultiLineString) Clone() *MultiLineString {
-	flatCoords := make([]float64, len(g.flatCoords))
-	copy(flatCoords, g.flatCoords)
-	ends := make([]int, len(g.ends))
-	copy(ends, g.ends)
-	return NewMultiLineStringFlat(g.layout, flatCoords, ends)
+func (mls *MultiLineString) Clone() *MultiLineString {
+	flatCoords := make([]float64, len(mls.flatCoords))
+	copy(flatCoords, mls.flatCoords)
+	ends := make([]int, len(mls.ends))
+	copy(ends, mls.ends)
+	return NewMultiLineStringFlat(mls.layout, flatCoords, ends)
 }
 
-func (g *MultiLineString) LineString(i int) *LineString {
+func (mls *MultiLineString) LineString(i int) *LineString {
 	offset := 0
 	if i > 0 {
-		offset = g.ends[i-1]
+		offset = mls.ends[i-1]
 	}
-	return NewLineStringFlat(g.layout, g.flatCoords[offset:g.ends[i]])
+	return NewLineStringFlat(mls.layout, mls.flatCoords[offset:mls.ends[i]])
 }
 
-func (g *MultiLineString) MustSetCoords(coords2 [][][]float64) *MultiLineString {
-	if err := g.SetCoords(coords2); err != nil {
+func (mls *MultiLineString) MustSetCoords(coords2 [][][]float64) *MultiLineString {
+	if err := mls.SetCoords(coords2); err != nil {
 		panic(err)
 	}
-	return g
+	return mls
 }
 
-func (g *MultiLineString) NumLineStrings() int {
-	return len(g.ends)
+func (mls *MultiLineString) NumLineStrings() int {
+	return len(mls.ends)
 }
 
-func (g *MultiLineString) Push(ls *LineString) error {
-	if ls.layout != g.layout {
-		return ErrLayoutMismatch{Got: ls.layout, Want: g.layout}
+func (mls *MultiLineString) Push(ls *LineString) error {
+	if ls.layout != mls.layout {
+		return ErrLayoutMismatch{Got: ls.layout, Want: mls.layout}
 	}
-	g.flatCoords = append(g.flatCoords, ls.flatCoords...)
-	g.ends = append(g.ends, len(g.flatCoords))
+	mls.flatCoords = append(mls.flatCoords, ls.flatCoords...)
+	mls.ends = append(mls.ends, len(mls.flatCoords))
 	return nil
 }
