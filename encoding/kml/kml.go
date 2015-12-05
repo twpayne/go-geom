@@ -23,10 +23,17 @@ func EncodePoint(p *geom.Point) kml.Element {
 	return kml.Point(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), p.Stride(), dim(p.Layout())))
 }
 
+func EncodeLineString(ls *geom.LineString) kml.Element {
+	flatCoords := ls.FlatCoords()
+	return kml.LineString(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), ls.Stride(), dim(ls.Layout())))
+}
+
 func Encode(g geom.T) kml.Element {
 	switch g.(type) {
 	case *geom.Point:
 		return EncodePoint(g.(*geom.Point))
+	case *geom.LineString:
+		return EncodeLineString(g.(*geom.LineString))
 	default:
 		panic(fmt.Sprintf("kml: unsupported type: %v", reflect.TypeOf(g)))
 	}

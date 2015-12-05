@@ -41,6 +41,30 @@ func Test(t *testing.T) {
 			g:    geom.NewPoint(geom.XYZM).MustSetCoords([]float64{0, 0, 1, 1}),
 			want: `<Point><coordinates>0,0,1</coordinates></Point>`,
 		},
+		{
+			g: geom.NewLineString(geom.XY).MustSetCoords([][]float64{
+				{0, 0}, {1, 1},
+			}),
+			want: `<LineString><coordinates>0,0 1,1</coordinates></LineString>`,
+		},
+		{
+			g: geom.NewLineString(geom.XYZ).MustSetCoords([][]float64{
+				{1, 2, 3}, {4, 5, 6},
+			}),
+			want: `<LineString><coordinates>1,2,3 4,5,6</coordinates></LineString>`,
+		},
+		{
+			g: geom.NewLineString(geom.XYM).MustSetCoords([][]float64{
+				{1, 2, 3}, {4, 5, 6},
+			}),
+			want: `<LineString><coordinates>1,2 4,5</coordinates></LineString>`,
+		},
+		{
+			g: geom.NewLineString(geom.XYZM).MustSetCoords([][]float64{
+				{1, 2, 3, 4}, {5, 6, 7, 8},
+			}),
+			want: `<LineString><coordinates>1,2,3 5,6,7</coordinates></LineString>`,
+		},
 	} {
 		b := &bytes.Buffer{}
 		e := xml.NewEncoder(b)
