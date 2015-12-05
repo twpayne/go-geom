@@ -18,6 +18,10 @@ func NewLineStringFlat(layout Layout, flatCoords []float64) *LineString {
 	return ls
 }
 
+func (ls *LineString) Area() float64 {
+	return 0
+}
+
 func (ls *LineString) Clone() *LineString {
 	flatCoords := make([]float64, len(ls.flatCoords))
 	copy(flatCoords, ls.flatCoords)

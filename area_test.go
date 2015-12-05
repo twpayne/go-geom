@@ -12,6 +12,18 @@ func TestArea(t *testing.T) {
 		want float64
 	}{
 		{
+			g:    NewPoint(XY),
+			want: 0,
+		},
+		{
+			g:    NewLineString(XY),
+			want: 0,
+		},
+		{
+			g:    NewLinearRing(XY),
+			want: 0,
+		},
+		{
 			g: NewLinearRing(XY).MustSetCoords([][]float64{
 				{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0},
 			}),
@@ -28,6 +40,14 @@ func TestArea(t *testing.T) {
 				{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2},
 			}),
 			want: 60,
+		},
+		{
+			g:    NewMultiLineString(XY),
+			want: 0,
+		},
+		{
+			g:    NewPolygon(XY),
+			want: 0,
 		},
 		{
 			g: NewPolygon(XY).MustSetCoords([][][]float64{
@@ -53,6 +73,10 @@ func TestArea(t *testing.T) {
 				{{0, 6}, {2, 6}, {2, 8}, {0, 8}, {0, 6}},
 			}),
 			want: 56,
+		},
+		{
+			g:    NewMultiPolygon(XY),
+			want: 0,
 		},
 		{
 			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{

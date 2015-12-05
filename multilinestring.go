@@ -19,6 +19,10 @@ func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *Mu
 	return mls
 }
 
+func (mls *MultiLineString) Area() float64 {
+	return 0
+}
+
 func (mls *MultiLineString) Clone() *MultiLineString {
 	flatCoords := make([]float64, len(mls.flatCoords))
 	copy(flatCoords, mls.flatCoords)

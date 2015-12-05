@@ -18,6 +18,10 @@ func NewMultiPointFlat(layout Layout, flatCoords []float64) *MultiPoint {
 	return mp
 }
 
+func (mp *MultiPoint) Area() float64 {
+	return 0
+}
+
 func (mp *MultiPoint) Clone() *MultiPoint {
 	flatCoords := make([]float64, len(mp.flatCoords))
 	copy(flatCoords, mp.flatCoords)

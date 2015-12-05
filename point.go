@@ -18,6 +18,10 @@ func NewPointFlat(layout Layout, flatCoords []float64) *Point {
 	return p
 }
 
+func (p *Point) Area() float64 {
+	return 0
+}
+
 func (p *Point) Clone() *Point {
 	flatCoords := make([]float64, len(p.flatCoords))
 	copy(flatCoords, p.flatCoords)
