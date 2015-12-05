@@ -63,12 +63,3 @@ func deflate0(flatCoords []float64, c []float64, stride int) ([]float64, error) 
 	flatCoords = append(flatCoords, c...)
 	return flatCoords, nil
 }
-
-func inflate0(flatCoords []float64, offset, end, stride int) []float64 {
-	if offset+stride != end {
-		panic("geom: stride mismatch")
-	}
-	c := make([]float64, stride)
-	copy(c, flatCoords[offset:end])
-	return c
-}

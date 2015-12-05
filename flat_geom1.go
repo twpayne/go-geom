@@ -59,12 +59,3 @@ func deflate1(flatCoords []float64, coords1 [][]float64, stride int) ([]float64,
 	}
 	return flatCoords, nil
 }
-
-func inflate1(flatCoords []float64, offset, end, stride int) [][]float64 {
-	coords1 := make([][]float64, (end-offset)/stride)
-	for i := range coords1 {
-		coords1[i] = inflate0(flatCoords, offset, offset+stride, stride)
-		offset += stride
-	}
-	return coords1
-}
