@@ -33,12 +33,6 @@ func (e ErrStrideMismatch) Error() string {
 	return fmt.Sprintf("geom: stride mismatch, got %d, want %d", e.Got, e.Want)
 }
 
-type Bounds struct {
-	stride int
-	min    []float64
-	max    []float64
-}
-
 // A T is a generic interface geomemented by all geometry types.
 type T interface {
 	Layout() Layout

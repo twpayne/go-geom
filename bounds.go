@@ -4,6 +4,12 @@ import (
 	"math"
 )
 
+type Bounds struct {
+	stride int
+	min    []float64
+	max    []float64
+}
+
 // NewBounds creates a new Bounds. args must be an even number of values, the
 // first half are minimum values for each dimension and the second half are the
 // maximum values for each dimension.
