@@ -7,7 +7,7 @@ type Point struct {
 var _ T = &Point{}
 
 func NewPoint(layout Layout) *Point {
-	return NewPointFlat(layout, nil)
+	return NewPointFlat(layout, make([]float64, layout.Stride()))
 }
 
 func NewPointFlat(layout Layout, flatCoords []float64) *Point {

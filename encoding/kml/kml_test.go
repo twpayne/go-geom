@@ -14,6 +14,10 @@ func Test(t *testing.T) {
 		want string
 	}{
 		{
+			g:    geom.NewPoint(geom.XY),
+			want: `<Point><coordinates>0,0</coordinates></Point>`,
+		},
+		{
 			g:    geom.NewPoint(geom.XY).MustSetCoords([]float64{0, 0}),
 			want: `<Point><coordinates>0,0</coordinates></Point>`,
 		},
