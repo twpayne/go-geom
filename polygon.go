@@ -31,6 +31,10 @@ func (p *Polygon) Clone() *Polygon {
 	return NewPolygonFlat(p.layout, flatCoords, ends)
 }
 
+func (p *Polygon) Length() float64 {
+	return length2(p.flatCoords, 0, p.ends, p.stride)
+}
+
 func (p *Polygon) LinearRing(i int) *LinearRing {
 	offset := 0
 	if i > 0 {

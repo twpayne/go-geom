@@ -27,6 +27,10 @@ func (mls *MultiLineString) Clone() *MultiLineString {
 	return NewMultiLineStringFlat(mls.layout, flatCoords, ends)
 }
 
+func (mls *MultiLineString) Length() float64 {
+	return length2(mls.flatCoords, 0, mls.ends, mls.stride)
+}
+
 func (mls *MultiLineString) LineString(i int) *LineString {
 	offset := 0
 	if i > 0 {

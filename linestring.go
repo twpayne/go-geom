@@ -54,6 +54,10 @@ func (ls *LineString) Interpolate(val float64, dim int) (int, float64) {
 	return low, (val - val0) / (val1 - val0)
 }
 
+func (ls *LineString) Length() float64 {
+	return length1(ls.flatCoords, 0, len(ls.flatCoords), ls.stride)
+}
+
 func (ls *LineString) MustSetCoords(coords1 [][]float64) *LineString {
 	if err := ls.SetCoords(coords1); err != nil {
 		panic(err)

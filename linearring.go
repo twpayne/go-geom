@@ -34,3 +34,7 @@ func (lr *LinearRing) MustSetCoords(coords1 [][]float64) *LinearRing {
 	}
 	return lr
 }
+
+func (lr *LinearRing) Length() float64 {
+	return length1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
+}
