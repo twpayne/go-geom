@@ -12,6 +12,14 @@ func TestLength(t *testing.T) {
 		want float64
 	}{
 		{
+			g:    NewPoint(XY),
+			want: 0,
+		},
+		{
+			g:    NewMultiPoint(XY),
+			want: 0,
+		},
+		{
 			g:    NewLineString(XY),
 			want: 0,
 		},

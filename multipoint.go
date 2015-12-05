@@ -28,6 +28,10 @@ func (mp *MultiPoint) Clone() *MultiPoint {
 	return NewMultiPointFlat(mp.layout, flatCoords)
 }
 
+func (mp *MultiPoint) Length() float64 {
+	return 0
+}
+
 func (mp *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
 	if err := mp.SetCoords(coords1); err != nil {
 		panic(err)

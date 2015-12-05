@@ -28,6 +28,10 @@ func (p *Point) Clone() *Point {
 	return NewPointFlat(p.layout, flatCoords)
 }
 
+func (p *Point) Length() float64 {
+	return 0
+}
+
 func (p *Point) MustSetCoords(coords0 []float64) *Point {
 	if err := p.SetCoords(coords0); err != nil {
 		panic(err)
