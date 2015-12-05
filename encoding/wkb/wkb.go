@@ -14,11 +14,9 @@ const (
 	wkbNDR = 1
 )
 
-type ByteOrder binary.ByteOrder
-
 var (
-	XDR = ByteOrder(binary.BigEndian)
-	NDR = ByteOrder(binary.LittleEndian)
+	XDR = binary.BigEndian
+	NDR = binary.LittleEndian
 )
 
 type ErrUnknownByteOrder byte
@@ -122,7 +120,7 @@ func (t Type) layout() (geom.Layout, error) {
 	}
 }
 
-func readFlatCoords0(r io.Reader, byteOrder ByteOrder, stride int) ([]float64, error) {
+func readFlatCoords0(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, error) {
 	coord := make([]float64, stride)
 	if err := binary.Read(r, byteOrder, &coord); err != nil {
 		return nil, err
@@ -130,7 +128,7 @@ func readFlatCoords0(r io.Reader, byteOrder ByteOrder, stride int) ([]float64, e
 	return coord, nil
 }
 
-func readFlatCoords1(r io.Reader, byteOrder ByteOrder, stride int) ([]float64, error) {
+func readFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, error) {
 	var n uint32
 	if err := binary.Read(r, byteOrder, &n); err != nil {
 		return nil, err
@@ -142,7 +140,7 @@ func readFlatCoords1(r io.Reader, byteOrder ByteOrder, stride int) ([]float64, e
 	return flatCoords, nil
 }
 
-func readFlatCoords2(r io.Reader, byteOrder ByteOrder, stride int) ([]float64, []int, error) {
+func readFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, []int, error) {
 	var n uint32
 	if err := binary.Read(r, byteOrder, &n); err != nil {
 		return nil, nil, err
@@ -166,7 +164,7 @@ func Read(r io.Reader) (geom.T, error) {
 	if err := binary.Read(r, binary.LittleEndian, &wkbByteOrder); err != nil {
 		return nil, err
 	}
-	var byteOrder ByteOrder
+	var byteOrder binary.ByteOrder
 	switch wkbByteOrder {
 	case wkbXDR:
 		byteOrder = XDR
@@ -276,18 +274,18 @@ func Unmarshal(data []byte) (geom.T, error) {
 	return Read(bytes.NewBuffer(data))
 }
 
-func writeFlatCoords0(w io.Writer, byteOrder ByteOrder, coord []float64) error {
+func writeFlatCoords0(w io.Writer, byteOrder binary.ByteOrder, coord []float64) error {
 	return binary.Write(w, byteOrder, coord)
 }
 
-func writeFlatCoords1(w io.Writer, byteOrder ByteOrder, coords []float64, stride int) error {
+func writeFlatCoords1(w io.Writer, byteOrder binary.ByteOrder, coords []float64, stride int) error {
 	if err := binary.Write(w, byteOrder, uint32(len(coords)/stride)); err != nil {
 		return err
 	}
 	return binary.Write(w, byteOrder, coords)
 }
 
-func writeFlatCoords2(w io.Writer, byteOrder ByteOrder, flatCoords []float64, ends []int, stride int) error {
+func writeFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, flatCoords []float64, ends []int, stride int) error {
 	if err := binary.Write(w, byteOrder, uint32(len(ends))); err != nil {
 		return err
 	}
@@ -301,7 +299,7 @@ func writeFlatCoords2(w io.Writer, byteOrder ByteOrder, flatCoords []float64, en
 	return nil
 }
 
-func Write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
+func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 
 	var wkbByteOrder byte
 	switch byteOrder {
@@ -397,7 +395,7 @@ func Write(w io.Writer, byteOrder ByteOrder, g geom.T) error {
 
 }
 
-func Marshal(g geom.T, byteOrder ByteOrder) ([]byte, error) {
+func Marshal(g geom.T, byteOrder binary.ByteOrder) ([]byte, error) {
 	w := bytes.NewBuffer(nil)
 	if err := Write(w, byteOrder, g); err != nil {
 		return nil, err
