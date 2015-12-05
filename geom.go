@@ -6,7 +6,6 @@ import (
 
 type Layout int
 
-//go:generate stringer -type=Layout
 const (
 	Empty Layout = iota
 	XY
@@ -57,6 +56,23 @@ func (l Layout) Stride() int {
 		return 4
 	default:
 		return int(l)
+	}
+}
+
+func (l Layout) String() string {
+	switch l {
+	case Empty:
+		return "Empty"
+	case XY:
+		return "XY"
+	case XYZ:
+		return "XYZ"
+	case XYM:
+		return "XYM"
+	case XYZM:
+		return "XYZM"
+	default:
+		return fmt.Sprintf("Layout(%d)", int(l))
 	}
 }
 
