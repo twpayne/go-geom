@@ -34,10 +34,6 @@ func (es Errors) Error() string {
 	return strings.Join(ss, "\n")
 }
 
-type T struct {
-	Geom *geom.LineString
-}
-
 // parseDec parses a decimal value in s[start:stop].
 func parseDec(s string, start, stop int) (int, error) {
 	result := 0
@@ -66,7 +62,7 @@ func parseDecInRange(s string, start, stop, min, max int) (int, error) {
 // parser contains the state of a parser.
 type parser struct {
 	state             int
-	ls                *geom.LineString
+	coords            []float64
 	year, month, day  int
 	startAt           time.Time
 	lastDate          time.Time
@@ -78,7 +74,7 @@ type parser struct {
 
 // newParser creates a new parser.
 func newParser() *parser {
-	return &parser{ls: geom.NewLineString(geom.XYZM), bRecordLen: 35}
+	return &parser{bRecordLen: 35}
 }
 
 // parseB parses a B record from line and updates the state of p.
@@ -174,7 +170,7 @@ func (p *parser) parseB(line string) error {
 	}
 	_ = pressureAlt
 
-	p.ls.PushCoord([]float64{lng, lat, float64(ellipsoidAlt), float64(date.UnixNano()) / 1e9})
+	p.coords = append(p.coords, lng, lat, float64(ellipsoidAlt), float64(date.UnixNano())/1e9)
 	p.lastDate = date
 
 	return nil
@@ -314,13 +310,13 @@ func doParse(r io.Reader) (*parser, Errors) {
 }
 
 // Read reads a igc.T from r, which should contain IGC records.
-func Read(r io.Reader) (*T, error) {
+func Read(r io.Reader) (*geom.LineString, error) {
 	p, errors := doParse(r)
 	if len(errors) != 0 {
 		return nil, errors
 	}
-	if p.ls.NumCoords() == 0 {
+	if len(p.coords) == 0 {
 		return nil, ErrNoBRecords
 	}
-	return &T{p.ls}, nil
+	return geom.NewLineStringFlat(geom.XYZM, p.coords), nil
 }
