@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"reflect"
 
 	"github.com/twpayne/go-geom"
 )
@@ -314,7 +315,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case NDR:
 		wkbByteOrder = wkbNDR
 	default:
-		panic("wkb: invalid byte order") // FIXME
+		return ErrUnsupportedByteOrder{}
 	}
 	if err := binary.Write(w, byteOrder, wkbByteOrder); err != nil {
 		return err
@@ -335,7 +336,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case *geom.MultiPolygon:
 		wkbGeometryType = wkbPolygon
 	default:
-		panic("wkb: unsupported type") // FIXME
+		return geom.ErrUnsupportedType{Type: reflect.TypeOf(g)}
 	}
 	switch g.Layout() {
 	case geom.XY:
@@ -347,7 +348,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case geom.XYZM:
 		wkbGeometryType += wkbXYZM
 	default:
-		panic("wkb: unsupported layout") // FIXME
+		return geom.ErrUnsupportedLayout(g.Layout())
 	}
 	if err := binary.Write(w, byteOrder, wkbGeometryType); err != nil {
 		return err
