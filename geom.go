@@ -2,6 +2,7 @@ package geom
 
 import (
 	"fmt"
+	"reflect"
 )
 
 type Layout int
@@ -30,6 +31,14 @@ type ErrStrideMismatch struct {
 
 func (e ErrStrideMismatch) Error() string {
 	return fmt.Sprintf("geom: stride mismatch, got %d, want %d", e.Got, e.Want)
+}
+
+type ErrUnsupportedType struct {
+	Type reflect.Type
+}
+
+func (e ErrUnsupportedType) Error() string {
+	return fmt.Sprintf("geom: unsupported type %s", e.Type)
 }
 
 // A T is a generic interface geomemented by all geometry types.
