@@ -26,3 +26,94 @@ func TestLayoutString(t *testing.T) {
 		}
 	}
 }
+
+func TestVerify(t *testing.T) {
+	for _, tc := range []struct {
+		v interface {
+			verify() error
+		}
+		want error
+	}{
+		{
+			&geom0{},
+			nil,
+		},
+		{
+			&geom0{NoLayout, 0, []float64{0, 0}},
+			errNonEmptyFlatCoords,
+		},
+		{
+			&geom0{XY, 1, []float64{0, 0}},
+			errStrideLayoutMismatch,
+		},
+		{
+			&geom0{XY, 2, []float64{0}},
+			errLengthStrideMismatch,
+		},
+		{
+			&geom1{},
+			nil,
+		},
+		{
+			&geom1{geom0{NoLayout, 0, []float64{0}}},
+			errNonEmptyFlatCoords,
+		},
+		{
+			&geom1{geom0{XY, 1, []float64{0, 0}}},
+			errStrideLayoutMismatch,
+		},
+		{
+			&geom1{geom0{XY, 2, []float64{0}}},
+			errLengthStrideMismatch,
+		},
+		{
+			&geom2{},
+			nil,
+		},
+		{
+			&geom2{geom1{geom0{NoLayout, 0, []float64{0}}}, []int{}},
+			errNonEmptyFlatCoords,
+		},
+		{
+			&geom2{geom1{geom0{NoLayout, 0, []float64{}}}, []int{4}},
+			errNonEmptyEnds,
+		},
+		{
+			&geom2{geom1{geom0{XY, 2, []float64{0}}}, []int{4}},
+			errLengthStrideMismatch,
+		},
+		{
+			&geom2{geom1{geom0{XY, 1, []float64{0, 0, 0, 0}}}, []int{-1}},
+			errStrideLayoutMismatch,
+		},
+		{
+			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0}}}, []int{-1}},
+			errMisalignedEnd,
+		},
+		{
+			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0}}}, []int{3}},
+			errMisalignedEnd,
+		},
+		{
+			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{8, 4}},
+			errOutOfOrderEnd,
+		},
+		{
+			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 4}},
+			errIncorrectEnd,
+		},
+		{
+			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 12}},
+			errIncorrectEnd,
+		},
+		{
+			&geom3{},
+			nil,
+		},
+		// FIXME add more geom3 test cases
+	} {
+		if got := tc.v.verify(); got != tc.want {
+			t.Errorf("%#v.verify() == %v, want %v", tc.v, got, tc.want)
+		}
+	}
+}
