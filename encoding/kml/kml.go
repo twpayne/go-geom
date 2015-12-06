@@ -9,18 +9,17 @@ import (
 	"github.com/twpayne/go-kml"
 )
 
-func dim(l geom.Layout) int {
-	switch l {
-	case geom.XY, geom.XYM:
-		return 2
+func Encode(g geom.T) kml.Element {
+	switch g.(type) {
+	case *geom.Point:
+		return EncodePoint(g.(*geom.Point))
+	case *geom.LineString:
+		return EncodeLineString(g.(*geom.LineString))
+	case *geom.Polygon:
+		return EncodePolygon(g.(*geom.Polygon))
 	default:
-		return 3
+		panic(fmt.Sprintf("kml: unsupported type: %v", reflect.TypeOf(g)))
 	}
-}
-
-func EncodePoint(p *geom.Point) kml.Element {
-	flatCoords := p.FlatCoords()
-	return kml.Point(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), p.Stride(), dim(p.Layout())))
 }
 
 func EncodeLineString(ls *geom.LineString) kml.Element {
@@ -31,6 +30,11 @@ func EncodeLineString(ls *geom.LineString) kml.Element {
 func EncodeLinearRing(lr *geom.LinearRing) kml.Element {
 	flatCoords := lr.FlatCoords()
 	return kml.LinearRing(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), lr.Stride(), dim(lr.Layout())))
+}
+
+func EncodePoint(p *geom.Point) kml.Element {
+	flatCoords := p.FlatCoords()
+	return kml.Point(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), p.Stride(), dim(p.Layout())))
 }
 
 func EncodePolygon(p *geom.Polygon) kml.Element {
@@ -51,15 +55,11 @@ func EncodePolygon(p *geom.Polygon) kml.Element {
 	return kml.Polygon(boundaries...)
 }
 
-func Encode(g geom.T) kml.Element {
-	switch g.(type) {
-	case *geom.Point:
-		return EncodePoint(g.(*geom.Point))
-	case *geom.LineString:
-		return EncodeLineString(g.(*geom.LineString))
-	case *geom.Polygon:
-		return EncodePolygon(g.(*geom.Polygon))
+func dim(l geom.Layout) int {
+	switch l {
+	case geom.XY, geom.XYM:
+		return 2
 	default:
-		panic(fmt.Sprintf("kml: unsupported type: %v", reflect.TypeOf(g)))
+		return 3
 	}
 }
