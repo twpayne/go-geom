@@ -2,7 +2,6 @@
 package kml
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/twpayne/go-geom"
@@ -24,7 +23,7 @@ func Encode(g geom.T) (kml.Element, error) {
 	case *geom.Polygon:
 		return EncodePolygon(g.(*geom.Polygon)), nil
 	default:
-		return nil, fmt.Errorf("kml: unsupported type: %v", reflect.TypeOf(g))
+		return nil, geom.ErrUnsupportedType{Type: reflect.TypeOf(g)}
 	}
 }
 
