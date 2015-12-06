@@ -80,6 +80,30 @@ func Test(t *testing.T) {
 			want: `<LineString><coordinates>1,2,3 5,6,7</coordinates></LineString>`,
 		},
 		{
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64{
+				{{1, 2}, {3, 4}, {5, 6}, {7, 8}},
+			}),
+			want: `<MultiGeometry>` +
+				`<LineString>` +
+				`<coordinates>1,2 3,4 5,6 7,8</coordinates>` +
+				`</LineString>` +
+				`</MultiGeometry>`,
+		},
+		{
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64{
+				{{1, 2}, {3, 4}, {5, 6}, {7, 8}},
+				{{9, 10}, {11, 12}, {13, 14}},
+			}),
+			want: `<MultiGeometry>` +
+				`<LineString>` +
+				`<coordinates>1,2 3,4 5,6 7,8</coordinates>` +
+				`</LineString>` +
+				`<LineString>` +
+				`<coordinates>9,10 11,12 13,14</coordinates>` +
+				`</LineString>` +
+				`</MultiGeometry>`,
+		},
+		{
 			g: geom.NewPolygon(geom.XY).MustSetCoords([][][]float64{
 				{{1, 2}, {3, 4}, {5, 6}, {1, 2}},
 			}),
