@@ -196,8 +196,13 @@ func Test(t *testing.T) {
 	} {
 		b := &bytes.Buffer{}
 		e := xml.NewEncoder(b)
-		if err := e.Encode(Encode(tc.g)); err != nil {
-			t.Errorf("Encode(Encode(%#v)) == %v, want nil", tc.g, err)
+		element, err := Encode(tc.g)
+		if err != nil {
+			t.Errorf("Encode(%#v) == %#v, %v, want ..., nil", tc.g, element, err)
+			continue
+		}
+		if err := e.Encode(element); err != nil {
+			t.Errorf("Encode(%#v) == %v, want nil", element, err)
 			continue
 		}
 		if got := b.String(); got != tc.want {

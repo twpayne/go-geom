@@ -9,22 +9,22 @@ import (
 	"github.com/twpayne/go-kml"
 )
 
-func Encode(g geom.T) kml.Element {
+func Encode(g geom.T) (kml.Element, error) {
 	switch g.(type) {
 	case *geom.Point:
-		return EncodePoint(g.(*geom.Point))
+		return EncodePoint(g.(*geom.Point)), nil
 	case *geom.LineString:
-		return EncodeLineString(g.(*geom.LineString))
+		return EncodeLineString(g.(*geom.LineString)), nil
 	case *geom.MultiLineString:
-		return EncodeMultiLineString(g.(*geom.MultiLineString))
+		return EncodeMultiLineString(g.(*geom.MultiLineString)), nil
 	case *geom.MultiPoint:
-		return EncodeMultiPoint(g.(*geom.MultiPoint))
+		return EncodeMultiPoint(g.(*geom.MultiPoint)), nil
 	case *geom.MultiPolygon:
-		return EncodeMultiPolygon(g.(*geom.MultiPolygon))
+		return EncodeMultiPolygon(g.(*geom.MultiPolygon)), nil
 	case *geom.Polygon:
-		return EncodePolygon(g.(*geom.Polygon))
+		return EncodePolygon(g.(*geom.Polygon)), nil
 	default:
-		panic(fmt.Sprintf("kml: unsupported type: %v", reflect.TypeOf(g)))
+		return nil, fmt.Errorf("kml: unsupported type: %v", reflect.TypeOf(g))
 	}
 }
 
