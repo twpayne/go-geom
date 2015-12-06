@@ -34,6 +34,14 @@ func (g *geom0) NumCoords() int {
 	return 1
 }
 
+func (g *geom0) Reserve(n int) {
+	if cap(g.flatCoords) < n*g.stride {
+		fcs := make([]float64, len(g.flatCoords), n*g.stride)
+		copy(fcs, g.flatCoords)
+		g.flatCoords = fcs
+	}
+}
+
 func (g *geom0) SetCoords(coords0 []float64) error {
 	var err error
 	if g.flatCoords, err = deflate0(nil, coords0, g.stride); err != nil {
