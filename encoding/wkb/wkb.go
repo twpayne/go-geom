@@ -25,6 +25,12 @@ func (e ErrUnknownByteOrder) Error() string {
 	return fmt.Sprintf("wkb: unknown byte order: %b", byte(e))
 }
 
+type ErrUnsupportedByteOrder struct{}
+
+func (e ErrUnsupportedByteOrder) Error() string {
+	return "wkb: unsupported byte order"
+}
+
 type Type uint32
 
 type ErrUnknownType Type
