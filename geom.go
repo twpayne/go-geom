@@ -2,7 +2,6 @@ package geom
 
 import (
 	"fmt"
-	"reflect"
 )
 
 type Layout int
@@ -40,11 +39,11 @@ func (e ErrUnsupportedLayout) Error() string {
 }
 
 type ErrUnsupportedType struct {
-	Type reflect.Type
+	Value interface{}
 }
 
 func (e ErrUnsupportedType) Error() string {
-	return fmt.Sprintf("geom: unsupported type %s", e.Type)
+	return fmt.Sprintf("geom: unsupported type %T", e.Value)
 }
 
 // A T is a generic interface geomemented by all geometry types.
