@@ -12,6 +12,8 @@ func Encode(g geom.T) (kml.Element, error) {
 		return EncodePoint(g.(*geom.Point)), nil
 	case *geom.LineString:
 		return EncodeLineString(g.(*geom.LineString)), nil
+	case *geom.LinearRing:
+		return EncodeLinearRing(g.(*geom.LinearRing)), nil
 	case *geom.MultiLineString:
 		return EncodeMultiLineString(g.(*geom.MultiLineString)), nil
 	case *geom.MultiPoint:
