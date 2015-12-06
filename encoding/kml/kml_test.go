@@ -42,6 +42,20 @@ func Test(t *testing.T) {
 			want: `<Point><coordinates>0,0,1</coordinates></Point>`,
 		},
 		{
+			g: geom.NewMultiPoint(geom.XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			want: `<MultiGeometry>` +
+				`<Point>` +
+				`<coordinates>1,2</coordinates>` +
+				`</Point>` +
+				`<Point>` +
+				`<coordinates>3,4</coordinates>` +
+				`</Point>` +
+				`<Point>` +
+				`<coordinates>5,6</coordinates>` +
+				`</Point>` +
+				`</MultiGeometry>`,
+		},
+		{
 			g: geom.NewLineString(geom.XY).MustSetCoords([][]float64{
 				{0, 0}, {1, 1},
 			}),
