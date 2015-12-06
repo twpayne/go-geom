@@ -1,5 +1,7 @@
 # go-geom
 
+[![Build Status](https://travis-ci.org/twpayne/go-geom.svg?branch=master)](https://travis-ci.org/twpayne/go-geom)
+
 Package geom implements efficient geometry types.
 
 See https://godoc.org/github.com/twpayne/go-geom.
