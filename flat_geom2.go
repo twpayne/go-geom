@@ -25,6 +25,15 @@ func (g *geom2) verify() error {
 	if g.stride != g.layout.Stride() {
 		return errStrideLayoutMismatch
 	}
+	if g.stride == 0 {
+		if len(g.flatCoords) != 0 {
+			return errNonEmptyFlatCoords
+		}
+		if len(g.ends) != 0 {
+			return errNonEmptyEnds
+		}
+		return nil
+	}
 	if len(g.flatCoords)%g.stride != 0 {
 		return errLengthStrideMismatch
 	}
