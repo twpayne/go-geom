@@ -12,24 +12,8 @@ func (g *geom1) Coords() [][]float64 {
 	return inflate1(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
-func (g *geom1) LastCoord() []float64 {
-	if len(g.flatCoords) == 0 {
-		return nil
-	} else {
-		return g.flatCoords[len(g.flatCoords)-g.stride:]
-	}
-}
-
 func (g *geom1) NumCoords() int {
 	return len(g.flatCoords) / g.stride
-}
-
-func (g *geom1) PushCoord(coord0 []float64) error {
-	if len(coord0) != g.stride {
-		return ErrStrideMismatch{Got: len(coord0), Want: g.stride}
-	}
-	g.flatCoords = append(g.flatCoords, coord0...)
-	return nil
 }
 
 func (g *geom1) SetCoords(coords1 [][]float64) error {
