@@ -159,7 +159,7 @@ func readFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 			return nil, nil, err
 		}
 		flatCoordss = append(flatCoordss, flatCoords...)
-		ends = append(ends, len(flatCoords))
+		ends = append(ends, len(flatCoordss))
 	}
 	return flatCoordss, ends, nil
 }
