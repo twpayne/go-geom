@@ -333,7 +333,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case *geom.MultiLineString:
 		wkbGeometryType = wkbMultiLineString
 	case *geom.MultiPolygon:
-		wkbGeometryType = wkbPolygon
+		wkbGeometryType = wkbMultiPolygon
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
