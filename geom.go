@@ -33,6 +33,12 @@ func (e ErrStrideMismatch) Error() string {
 	return fmt.Sprintf("geom: stride mismatch, got %d, want %d", e.Got, e.Want)
 }
 
+type ErrUnsupportedLayout Layout
+
+func (e ErrUnsupportedLayout) Error() string {
+	return fmt.Sprintf("geom: unsupported layout %s", Layout(e))
+}
+
 type ErrUnsupportedType struct {
 	Type reflect.Type
 }
