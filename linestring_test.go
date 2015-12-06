@@ -14,7 +14,9 @@ type testLineString struct {
 }
 
 func testLineStringEquals(t *testing.T, ls *LineString, tls *testLineString) {
-	ls.mustVerify()
+	if err := ls.verify(); err != nil {
+		t.Error(err)
+	}
 	if ls.Layout() != tls.layout {
 		t.Errorf("ls.Layout() == %v, want %v", ls.Layout(), tls.layout)
 	}

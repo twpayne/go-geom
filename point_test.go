@@ -14,7 +14,9 @@ type testPoint struct {
 }
 
 func testPointEquals(t *testing.T, p *Point, tp *testPoint) {
-	p.mustVerify()
+	if err := p.verify(); err != nil {
+		t.Error(err)
+	}
 	if p.Layout() != tp.layout {
 		t.Errorf("p.Layout() == %v, want %v", p.Layout(), tp.layout)
 	}

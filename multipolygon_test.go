@@ -15,7 +15,9 @@ type testMultiPolygon struct {
 }
 
 func testMultiPolygonEquals(t *testing.T, mp *MultiPolygon, tmp *testMultiPolygon) {
-	mp.mustVerify()
+	if err := mp.verify(); err != nil {
+		t.Error(err)
+	}
 	if mp.Layout() != tmp.layout {
 		t.Errorf("mp.Layout() == %v, want %v", mp.Layout(), tmp.layout)
 	}

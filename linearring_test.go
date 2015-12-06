@@ -14,7 +14,9 @@ type testLinearRing struct {
 }
 
 func testLinearRingEquals(t *testing.T, lr *LinearRing, tlr *testLinearRing) {
-	lr.mustVerify()
+	if err := lr.verify(); err != nil {
+		t.Error(err)
+	}
 	if lr.Layout() != tlr.layout {
 		t.Errorf("lr.Layout() == %v, want %v", lr.Layout(), tlr.layout)
 	}
