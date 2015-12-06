@@ -396,9 +396,10 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 				return err
 			}
 		}
+		return nil
+	default:
+		return fmt.Errorf("wkb: unsupported or unknown geometry type: %T", g)
 	}
-
-	return fmt.Errorf("wkb: unsupported or unknown geometry type: %T", g)
 
 }
 
