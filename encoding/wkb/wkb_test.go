@@ -1,6 +1,7 @@
 package wkb
 
 import (
+	"encoding/hex"
 	"reflect"
 	"testing"
 
@@ -8,23 +9,22 @@ import (
 )
 
 func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
-
-	if got, err := Unmarshal(xdr); err != nil || !reflect.DeepEqual(got, g) {
-		t.Errorf("Unmarshal(%v) == %v, %v, want %v, nil", xdr, got, err, g)
+	if xdr != nil {
+		if got, err := Unmarshal(xdr); err != nil || !reflect.DeepEqual(got, g) {
+			t.Errorf("Unmarshal(%s) == %#v, %#v, want %#v, nil", hex.EncodeToString(xdr), got, err, g)
+		}
+		if got, err := Marshal(g, XDR); err != nil || !reflect.DeepEqual(got, xdr) {
+			t.Errorf("Marshal(%#v, XDR) == %s, %#v, want %s, nil", g, hex.EncodeToString(got), err, hex.EncodeToString(xdr))
+		}
 	}
-
-	if got, err := Marshal(g, XDR); err != nil || !reflect.DeepEqual(got, xdr) {
-		t.Errorf("Marshal(%v, XDR) == %v, %v, want %v, nil", g, got, err, xdr)
+	if ndr != nil {
+		if got, err := Unmarshal(ndr); err != nil || !reflect.DeepEqual(got, g) {
+			t.Errorf("Unmarshal(%s) == %#v, %#v, want %#v, nil", hex.EncodeToString(ndr), got, err, g)
+		}
+		if got, err := Marshal(g, NDR); err != nil || !reflect.DeepEqual(got, ndr) {
+			t.Errorf("Marshal(%#v, NDR) == %s, %#v, want %#v, nil", g, hex.EncodeToString(got), err, hex.EncodeToString(ndr))
+		}
 	}
-
-	if got, err := Unmarshal(ndr); err != nil || !reflect.DeepEqual(got, g) {
-		t.Errorf("Unmarshal(%v) == %v, %v, want %v, nil", ndr, got, err, g)
-	}
-
-	if got, err := Marshal(g, NDR); err != nil || !reflect.DeepEqual(got, ndr) {
-		t.Errorf("Marshal(%v, NDR) == %v, %v, want %v, nil", g, got, err, ndr)
-	}
-
 }
 
 func TestPoint(t *testing.T) {
