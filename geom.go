@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -111,3 +112,11 @@ func (l Layout) ZIndex() int {
 		return 2
 	}
 }
+
+var (
+	errIncorrectEnd         = errors.New("geom: incorrect end")
+	errLengthStrideMismatch = errors.New("geom: length/stride mismatch")
+	errMisalignedEnd        = errors.New("geom: misaligned end")
+	errOutOfOrderEnd        = errors.New("geom: out-of-order end")
+	errStrideLayoutMismatch = errors.New("geom: stride/layout mismatch")
+)
