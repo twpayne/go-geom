@@ -122,7 +122,7 @@ func (t Type) layout() (geom.Layout, error) {
 	case PointZM, LineStringZM, PolygonZM, MultiPointZM, MultiLineStringZM, MultiPolygonZM, GeometryCollectionZM, PolyhedralSurfaceZM, TINZM, TriangleZM:
 		return geom.XYZM, nil
 	default:
-		return geom.Layout(0), ErrUnknownType(t)
+		return geom.NoLayout, ErrUnknownType(t)
 	}
 }
 
