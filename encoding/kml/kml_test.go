@@ -145,6 +145,54 @@ func Test(t *testing.T) {
 				`</innerBoundaryIs>` +
 				`</Polygon>`,
 		},
+		{
+			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][][]float64{
+				{
+					{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}},
+					{{0.4, 0.5, 0.6}, {0.7, 0.8, 0.9}, {0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}},
+				},
+			}),
+			want: `<MultiGeometry>` +
+				`<Polygon>` +
+				`<outerBoundaryIs>` +
+				`<LinearRing>` +
+				`<coordinates>1,2,3 4,5,6 7,8,9 1,2,3</coordinates>` +
+				`</LinearRing>` +
+				`</outerBoundaryIs>` +
+				`<innerBoundaryIs>` +
+				`<LinearRing>` +
+				`<coordinates>0.4,0.5,0.6 0.7,0.8,0.9 0.1,0.2,0.3 0.4,0.5,0.6</coordinates>` +
+				`</LinearRing>` +
+				`</innerBoundaryIs>` +
+				`</Polygon>` +
+				`</MultiGeometry>`,
+		},
+		{
+			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][][]float64{
+				{
+					{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}},
+				},
+				{
+					{{0.4, 0.5, 0.6}, {0.7, 0.8, 0.9}, {0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}},
+				},
+			}),
+			want: `<MultiGeometry>` +
+				`<Polygon>` +
+				`<outerBoundaryIs>` +
+				`<LinearRing>` +
+				`<coordinates>1,2,3 4,5,6 7,8,9 1,2,3</coordinates>` +
+				`</LinearRing>` +
+				`</outerBoundaryIs>` +
+				`</Polygon>` +
+				`<Polygon>` +
+				`<outerBoundaryIs>` +
+				`<LinearRing>` +
+				`<coordinates>0.4,0.5,0.6 0.7,0.8,0.9 0.1,0.2,0.3 0.4,0.5,0.6</coordinates>` +
+				`</LinearRing>` +
+				`</outerBoundaryIs>` +
+				`</Polygon>` +
+				`</MultiGeometry>`,
+		},
 	} {
 		b := &bytes.Buffer{}
 		e := xml.NewEncoder(b)

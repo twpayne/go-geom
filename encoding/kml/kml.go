@@ -19,6 +19,8 @@ func Encode(g geom.T) kml.Element {
 		return EncodeMultiLineString(g.(*geom.MultiLineString))
 	case *geom.MultiPoint:
 		return EncodeMultiPoint(g.(*geom.MultiPoint))
+	case *geom.MultiPolygon:
+		return EncodeMultiPolygon(g.(*geom.MultiPolygon))
 	case *geom.Polygon:
 		return EncodePolygon(g.(*geom.Polygon))
 	default:
@@ -60,6 +62,29 @@ func EncodeMultiPoint(mp *geom.MultiPoint) kml.Element {
 		offset += stride
 	}
 	return kml.MultiGeometry(points...)
+}
+
+func EncodeMultiPolygon(mp *geom.MultiPolygon) kml.Element {
+	polygons := make([]kml.Element, mp.NumPolygons())
+	flatCoords := mp.FlatCoords()
+	endss := mp.Endss()
+	stride := mp.Stride()
+	d := dim(mp.Layout())
+	offset := 0
+	for i, ends := range endss {
+		boundaries := make([]kml.Element, len(ends))
+		for j, end := range ends {
+			linearRing := kml.LinearRing(kml.CoordinatesFlat(flatCoords, offset, end, stride, d))
+			if j == 0 {
+				boundaries[j] = kml.OuterBoundaryIs(linearRing)
+			} else {
+				boundaries[j] = kml.InnerBoundaryIs(linearRing)
+			}
+			offset = end
+		}
+		polygons[i] = kml.Polygon(boundaries...)
+	}
+	return kml.MultiGeometry(polygons...)
 }
 
 func EncodePoint(p *geom.Point) kml.Element {
