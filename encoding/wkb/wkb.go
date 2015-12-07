@@ -1,3 +1,4 @@
+// Package wkb implements Well Known Binary encoding and decoding.
 package wkb
 
 import (

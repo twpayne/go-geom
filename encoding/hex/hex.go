@@ -1,3 +1,4 @@
+// Package hex implements Well Known Binary encoding and decoding of strings.
 package hex
 
 import (
