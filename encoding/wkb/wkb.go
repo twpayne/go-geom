@@ -19,6 +19,20 @@ var (
 	NDR = binary.LittleEndian
 )
 
+// FIXME This should be Codec-specific, not global
+// FIXME Consider overall per-geometry limit rather than per-level limit
+var MaxGeometryElements = [4]uint32{0, 1 << 20, 1 << 15, 1 << 10}
+
+type ErrGeometryTooLarge struct {
+	Level int
+	N     uint32
+	Limit uint32
+}
+
+func (e ErrGeometryTooLarge) Error() string {
+	return fmt.Sprintf("wkb: number of elements at level %d (%d) exceeds %d", e.Level, e.N, e.Limit)
+}
+
 type ErrUnknownByteOrder byte
 
 func (e ErrUnknownByteOrder) Error() string {
@@ -139,6 +153,9 @@ func readFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	if err := binary.Read(r, byteOrder, &n); err != nil {
 		return nil, err
 	}
+	if n > MaxGeometryElements[1] {
+		return nil, ErrGeometryTooLarge{Level: 1, N: n, Limit: MaxGeometryElements[1]}
+	}
 	flatCoords := make([]float64, int(n)*stride)
 	if err := binary.Read(r, byteOrder, &flatCoords); err != nil {
 		return nil, err
@@ -150,6 +167,9 @@ func readFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	var n uint32
 	if err := binary.Read(r, byteOrder, &n); err != nil {
 		return nil, nil, err
+	}
+	if n > MaxGeometryElements[2] {
+		return nil, nil, ErrGeometryTooLarge{Level: 2, N: n, Limit: MaxGeometryElements[2]}
 	}
 	var flatCoordss []float64
 	var ends []int
@@ -215,6 +235,9 @@ func Read(r io.Reader) (geom.T, error) {
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
 		}
+		if n > MaxGeometryElements[1] {
+			return nil, ErrGeometryTooLarge{Level: 1, N: n, Limit: MaxGeometryElements[1]}
+		}
 		mp := geom.NewMultiPoint(layout)
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
@@ -235,6 +258,9 @@ func Read(r io.Reader) (geom.T, error) {
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
 		}
+		if n > MaxGeometryElements[2] {
+			return nil, ErrGeometryTooLarge{Level: 2, N: n, Limit: MaxGeometryElements[2]}
+		}
 		mls := geom.NewMultiLineString(layout)
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
@@ -254,6 +280,9 @@ func Read(r io.Reader) (geom.T, error) {
 		var n uint32
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
+		}
+		if n > MaxGeometryElements[3] {
+			return nil, ErrGeometryTooLarge{Level: 3, N: n, Limit: MaxGeometryElements[3]}
 		}
 		mp := geom.NewMultiPolygon(layout)
 		for i := uint32(0); i < n; i++ {
