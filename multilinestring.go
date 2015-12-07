@@ -43,8 +43,8 @@ func (mls *MultiLineString) LineString(i int) *LineString {
 	return NewLineStringFlat(mls.layout, mls.flatCoords[offset:mls.ends[i]])
 }
 
-func (mls *MultiLineString) MustSetCoords(coords2 [][][]float64) *MultiLineString {
-	if err := mls.setCoords(coords2); err != nil {
+func (mls *MultiLineString) MustSetCoords(coords [][][]float64) *MultiLineString {
+	if err := mls.setCoords(coords); err != nil {
 		panic(err)
 	}
 	return mls
@@ -63,8 +63,8 @@ func (mls *MultiLineString) Push(ls *LineString) error {
 	return nil
 }
 
-func (mls *MultiLineString) SetCoords(coords2 [][][]float64) (*MultiLineString, error) {
-	if err := mls.setCoords(coords2); err != nil {
+func (mls *MultiLineString) SetCoords(coords [][][]float64) (*MultiLineString, error) {
+	if err := mls.setCoords(coords); err != nil {
 		return nil, err
 	}
 	return mls, nil

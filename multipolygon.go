@@ -84,8 +84,8 @@ func (mp *MultiPolygon) Push(p *Polygon) error {
 	return nil
 }
 
-func (mp *MultiPolygon) SetCoords(coords3 [][][][]float64) (*MultiPolygon, error) {
-	if err := mp.setCoords(coords3); err != nil {
+func (mp *MultiPolygon) SetCoords(coords [][][][]float64) (*MultiPolygon, error) {
+	if err := mp.setCoords(coords); err != nil {
 		return nil, err
 	}
 	return mp, nil

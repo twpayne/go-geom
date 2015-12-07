@@ -32,15 +32,15 @@ func (p *Point) Length() float64 {
 	return 0
 }
 
-func (p *Point) MustSetCoords(coords0 []float64) *Point {
-	if err := p.setCoords(coords0); err != nil {
+func (p *Point) MustSetCoords(coords []float64) *Point {
+	if err := p.setCoords(coords); err != nil {
 		panic(err)
 	}
 	return p
 }
 
-func (p *Point) SetCoords(coords0 []float64) (*Point, error) {
-	if err := p.setCoords(coords0); err != nil {
+func (p *Point) SetCoords(coords []float64) (*Point, error) {
+	if err := p.setCoords(coords); err != nil {
 		return nil, err
 	}
 	return p, nil
