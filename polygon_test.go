@@ -1,9 +1,18 @@
 package geom
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
+
+func ExampleNewPolygon() {
+	unitSquare := NewPolygon(XY).MustSetCoords([][][]float64{
+		{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
+	})
+	fmt.Printf("unitSquare.Area() == %f", unitSquare.Area())
+	// Output: unitSquare.Area() == 1.000000
+}
 
 type testPolygon struct {
 	layout     Layout
