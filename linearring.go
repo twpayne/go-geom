@@ -33,8 +33,15 @@ func (lr *LinearRing) Length() float64 {
 }
 
 func (lr *LinearRing) MustSetCoords(coords1 [][]float64) *LinearRing {
-	if err := lr.SetCoords(coords1); err != nil {
+	if err := lr.setCoords(coords1); err != nil {
 		panic(err)
 	}
 	return lr
+}
+
+func (lr *LinearRing) SetCoords(coords1 [][]float64) (*LinearRing, error) {
+	if err := lr.setCoords(coords1); err != nil {
+		return nil, err
+	}
+	return lr, nil
 }

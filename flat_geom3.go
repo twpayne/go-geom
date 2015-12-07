@@ -13,7 +13,7 @@ func (g *geom3) Endss() [][]int {
 	return g.endss
 }
 
-func (g *geom3) SetCoords(coords3 [][][][]float64) error {
+func (g *geom3) setCoords(coords3 [][][][]float64) error {
 	var err error
 	if g.flatCoords, g.endss, err = deflate3(nil, nil, coords3, g.stride); err != nil {
 		return err

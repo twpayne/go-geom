@@ -33,10 +33,17 @@ func (mp *MultiPoint) Length() float64 {
 }
 
 func (mp *MultiPoint) MustSetCoords(coords1 [][]float64) *MultiPoint {
-	if err := mp.SetCoords(coords1); err != nil {
+	if err := mp.setCoords(coords1); err != nil {
 		panic(err)
 	}
 	return mp
+}
+
+func (mp *MultiPoint) SetCoords(coords1 [][]float64) (*MultiPoint, error) {
+	if err := mp.setCoords(coords1); err != nil {
+		return nil, err
+	}
+	return mp, nil
 }
 
 func (mp *MultiPoint) NumPoints() int {

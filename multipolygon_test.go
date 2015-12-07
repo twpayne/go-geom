@@ -114,7 +114,7 @@ func TestMultiPolygonStrideMismatch(t *testing.T) {
 		},
 	} {
 		mp := NewMultiPolygon(c.layout)
-		if err := mp.SetCoords(c.coords); err != c.err {
+		if _, err := mp.SetCoords(c.coords); err != c.err {
 			t.Errorf("mp.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
 		}
 	}

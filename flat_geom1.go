@@ -16,7 +16,7 @@ func (g *geom1) NumCoords() int {
 	return len(g.flatCoords) / g.stride
 }
 
-func (g *geom1) SetCoords(coords1 [][]float64) error {
+func (g *geom1) setCoords(coords1 [][]float64) error {
 	var err error
 	if g.flatCoords, err = deflate1(nil, coords1, g.stride); err != nil {
 		return err

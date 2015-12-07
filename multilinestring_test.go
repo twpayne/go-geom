@@ -113,7 +113,7 @@ func TestMultiLineStringStrideMismatch(t *testing.T) {
 		},
 	} {
 		mls := NewMultiLineString(c.layout)
-		if err := mls.SetCoords(c.coords); err != c.err {
+		if _, err := mls.SetCoords(c.coords); err != c.err {
 			t.Errorf("mls.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
 		}
 	}

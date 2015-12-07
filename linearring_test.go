@@ -138,7 +138,7 @@ func TestLinearRingStrideMismatch(t *testing.T) {
 		},
 	} {
 		p := NewLinearRing(c.layout)
-		if err := p.SetCoords(c.coords); err != c.err {
+		if _, err := p.SetCoords(c.coords); err != c.err {
 			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
 		}
 	}
