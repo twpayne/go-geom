@@ -6,3 +6,5 @@ go:
 
 install:
         - go get github.com/twpayne/go-kml
+
+sudo: false
