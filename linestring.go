@@ -62,14 +62,14 @@ func (ls *LineString) Length() float64 {
 	return length1(ls.flatCoords, 0, len(ls.flatCoords), ls.stride)
 }
 
-func (ls *LineString) MustSetCoords(coords [][]float64) *LineString {
+func (ls *LineString) MustSetCoords(coords []Coord) *LineString {
 	if err := ls.setCoords(coords); err != nil {
 		panic(err)
 	}
 	return ls
 }
 
-func (ls *LineString) SetCoords(coords [][]float64) (*LineString, error) {
+func (ls *LineString) SetCoords(coords []Coord) (*LineString, error) {
 	if err := ls.setCoords(coords); err != nil {
 		return nil, err
 	}

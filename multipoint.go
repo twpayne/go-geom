@@ -32,14 +32,14 @@ func (mp *MultiPoint) Length() float64 {
 	return 0
 }
 
-func (mp *MultiPoint) MustSetCoords(coords [][]float64) *MultiPoint {
+func (mp *MultiPoint) MustSetCoords(coords []Coord) *MultiPoint {
 	if err := mp.setCoords(coords); err != nil {
 		panic(err)
 	}
 	return mp
 }
 
-func (mp *MultiPoint) SetCoords(coords [][]float64) (*MultiPoint, error) {
+func (mp *MultiPoint) SetCoords(coords []Coord) (*MultiPoint, error) {
 	if err := mp.setCoords(coords); err != nil {
 		return nil, err
 	}

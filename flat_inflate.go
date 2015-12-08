@@ -1,6 +1,6 @@
 package geom
 
-func inflate0(flatCoords []float64, offset, end, stride int) []float64 {
+func inflate0(flatCoords []float64, offset, end, stride int) Coord {
 	if offset+stride != end {
 		panic("geom: stride mismatch")
 	}
@@ -9,8 +9,8 @@ func inflate0(flatCoords []float64, offset, end, stride int) []float64 {
 	return c
 }
 
-func inflate1(flatCoords []float64, offset, end, stride int) [][]float64 {
-	coords1 := make([][]float64, (end-offset)/stride)
+func inflate1(flatCoords []float64, offset, end, stride int) []Coord {
+	coords1 := make([]Coord, (end-offset)/stride)
 	for i := range coords1 {
 		coords1[i] = inflate0(flatCoords, offset, offset+stride, stride)
 		offset += stride
@@ -18,8 +18,8 @@ func inflate1(flatCoords []float64, offset, end, stride int) [][]float64 {
 	return coords1
 }
 
-func inflate2(flatCoords []float64, offset int, ends []int, stride int) [][][]float64 {
-	coords2 := make([][][]float64, len(ends))
+func inflate2(flatCoords []float64, offset int, ends []int, stride int) [][]Coord {
+	coords2 := make([][]Coord, len(ends))
 	for i := range coords2 {
 		end := ends[i]
 		coords2[i] = inflate1(flatCoords, offset, end, stride)
@@ -28,8 +28,8 @@ func inflate2(flatCoords []float64, offset int, ends []int, stride int) [][][]fl
 	return coords2
 }
 
-func inflate3(flatCoords []float64, offset int, endss [][]int, stride int) [][][][]float64 {
-	coords3 := make([][][][]float64, len(endss))
+func inflate3(flatCoords []float64, offset int, endss [][]int, stride int) [][][]Coord {
+	coords3 := make([][][]Coord, len(endss))
 	for i := range coords3 {
 		ends := endss[i]
 		coords3[i] = inflate2(flatCoords, offset, ends, stride)

@@ -38,7 +38,7 @@ func (mp *MultiPolygon) Length() float64 {
 	return length3(mp.flatCoords, 0, mp.endss, mp.stride)
 }
 
-func (mp *MultiPolygon) MustSetCoords(coords3 [][][][]float64) *MultiPolygon {
+func (mp *MultiPolygon) MustSetCoords(coords3 [][][]Coord) *MultiPolygon {
 	if err := mp.setCoords(coords3); err != nil {
 		panic(err)
 	}
@@ -84,7 +84,7 @@ func (mp *MultiPolygon) Push(p *Polygon) error {
 	return nil
 }
 
-func (mp *MultiPolygon) SetCoords(coords [][][][]float64) (*MultiPolygon, error) {
+func (mp *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
 	if err := mp.setCoords(coords); err != nil {
 		return nil, err
 	}

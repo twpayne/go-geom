@@ -119,7 +119,7 @@ func Decode(g *Geometry) (geom.T, error) {
 }
 
 func decodePoint(g *Geometry) (*geom.Point, error) {
-	coordinates, ok := g.Coordinates.([]float64)
+	coordinates, ok := g.Coordinates.(geom.Coord)
 	if !ok {
 		return nil, errors.New("geojson: coordinates is not a []float64")
 	}
@@ -131,7 +131,7 @@ func decodePoint(g *Geometry) (*geom.Point, error) {
 }
 
 func decodeLineString(g *Geometry) (*geom.LineString, error) {
-	coordinates, ok := g.Coordinates.([][]float64)
+	coordinates, ok := g.Coordinates.([]geom.Coord)
 	if !ok {
 		return nil, errors.New("geojson: coordinates is not a [][]float64")
 	}
@@ -143,7 +143,7 @@ func decodeLineString(g *Geometry) (*geom.LineString, error) {
 }
 
 func decodePolygon(g *Geometry) (*geom.Polygon, error) {
-	coordinates, ok := g.Coordinates.([][][]float64)
+	coordinates, ok := g.Coordinates.([][]geom.Coord)
 	if !ok {
 		return nil, errors.New("geojson: coordinates is not a [][][]float64")
 	}
@@ -155,7 +155,7 @@ func decodePolygon(g *Geometry) (*geom.Polygon, error) {
 }
 
 func decodeMultiPoint(g *Geometry) (*geom.MultiPoint, error) {
-	coordinates, ok := g.Coordinates.([][]float64)
+	coordinates, ok := g.Coordinates.([]geom.Coord)
 	if !ok {
 		return nil, errors.New("geojson: coordinates is not a [][]float64")
 	}
@@ -167,7 +167,7 @@ func decodeMultiPoint(g *Geometry) (*geom.MultiPoint, error) {
 }
 
 func decodeMultiLineString(g *Geometry) (*geom.MultiLineString, error) {
-	coordinates, ok := g.Coordinates.([][][]float64)
+	coordinates, ok := g.Coordinates.([][]geom.Coord)
 	if !ok {
 		return nil, errors.New("geojson: coordinates is not a [][][]float64")
 	}
@@ -179,7 +179,7 @@ func decodeMultiLineString(g *Geometry) (*geom.MultiLineString, error) {
 }
 
 func decodeMultiPolygon(g *Geometry) (*geom.MultiPolygon, error) {
-	coordinates, ok := g.Coordinates.([][][][]float64)
+	coordinates, ok := g.Coordinates.([][][]geom.Coord)
 	if !ok {
 		return nil, errors.New("geojson: coordinates is not a [][][][]float64")
 	}
@@ -190,7 +190,7 @@ func decodeMultiPolygon(g *Geometry) (*geom.MultiPolygon, error) {
 	return geom.NewMultiPolygon(layout).SetCoords(coordinates)
 }
 
-func guessLayout0(coords0 []float64) (geom.Layout, error) {
+func guessLayout0(coords0 geom.Coord) (geom.Layout, error) {
 	switch n := len(coords0); n {
 	case 0, 1:
 		return geom.NoLayout, ErrDimensionalityTooLow(len(coords0))
@@ -205,7 +205,7 @@ func guessLayout0(coords0 []float64) (geom.Layout, error) {
 	}
 }
 
-func guessLayout1(coords1 [][]float64) (geom.Layout, error) {
+func guessLayout1(coords1 []geom.Coord) (geom.Layout, error) {
 	if len(coords1) == 0 {
 		return DefaultLayout, nil
 	} else {
@@ -213,7 +213,7 @@ func guessLayout1(coords1 [][]float64) (geom.Layout, error) {
 	}
 }
 
-func guessLayout2(coords2 [][][]float64) (geom.Layout, error) {
+func guessLayout2(coords2 [][]geom.Coord) (geom.Layout, error) {
 	if len(coords2) == 0 {
 		return DefaultLayout, nil
 	} else {
@@ -221,7 +221,7 @@ func guessLayout2(coords2 [][][]float64) (geom.Layout, error) {
 	}
 }
 
-func guessLayout3(coords3 [][][][]float64) (geom.Layout, error) {
+func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
 	if len(coords3) == 0 {
 		return DefaultLayout, nil
 	} else {

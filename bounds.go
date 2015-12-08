@@ -9,14 +9,14 @@ import (
 
 type Bounds struct {
 	layout Layout
-	min    []float64
-	max    []float64
+	min    Coord
+	max    Coord
 }
 
 // NewBounds creates a new Bounds.
 func NewBounds(layout Layout) *Bounds {
 	stride := layout.Stride()
-	min, max := make([]float64, stride), make([]float64, stride)
+	min, max := make(Coord, stride), make(Coord, stride)
 	for i := 0; i < stride; i++ {
 		min[i], max[i] = math.Inf(1), math.Inf(-1)
 	}

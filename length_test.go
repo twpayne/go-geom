@@ -24,7 +24,7 @@ func TestLength(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewLineString(XY).MustSetCoords([][]float64{
+			g: NewLineString(XY).MustSetCoords([]Coord{
 				{0, 0}, {1, 0},
 			}),
 			want: 1,
@@ -34,7 +34,7 @@ func TestLength(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewLinearRing(XY).MustSetCoords([][]float64{
+			g: NewLinearRing(XY).MustSetCoords([]Coord{
 				{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0},
 			}),
 			want: 4,
@@ -44,13 +44,13 @@ func TestLength(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewPolygon(XY).MustSetCoords([][][]float64{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 			}),
 			want: 4,
 		},
 		{
-			g: NewPolygon(XY).MustSetCoords([][][]float64{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 				{{0.25, 0.25}, {0.75, 0.25}, {0.75, 0.75}, {0.25, 0.75}, {0.25, 0.25}},
 			}),
@@ -61,7 +61,7 @@ func TestLength(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 					{{0.25, 0.25}, {0.75, 0.25}, {0.75, 0.75}, {0.25, 0.75}, {0.25, 0.25}},
@@ -70,7 +70,7 @@ func TestLength(t *testing.T) {
 			want: 6,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 					{{0.25, 0.25}, {0.75, 0.25}, {0.75, 0.75}, {0.25, 0.75}, {0.25, 0.25}},

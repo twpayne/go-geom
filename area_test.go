@@ -24,19 +24,19 @@ func TestArea(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewLinearRing(XY).MustSetCoords([][]float64{
+			g: NewLinearRing(XY).MustSetCoords([]Coord{
 				{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0},
 			}),
 			want: 1,
 		},
 		{
-			g: NewLinearRing(XY).MustSetCoords([][]float64{
+			g: NewLinearRing(XY).MustSetCoords([]Coord{
 				{0, 0}, {1, 1}, {1, 0}, {0, 0},
 			}),
 			want: -0.5,
 		},
 		{
-			g: NewLinearRing(XY).MustSetCoords([][]float64{
+			g: NewLinearRing(XY).MustSetCoords([]Coord{
 				{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2},
 			}),
 			want: 60,
@@ -50,25 +50,25 @@ func TestArea(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewPolygon(XY).MustSetCoords([][][]float64{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 			}),
 			want: 1,
 		},
 		{
-			g: NewPolygon(XY).MustSetCoords([][][]float64{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 			}),
 			want: -0.5,
 		},
 		{
-			g: NewPolygon(XY).MustSetCoords([][][]float64{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
 			}),
 			want: 60,
 		},
 		{
-			g: NewPolygon(XY).MustSetCoords([][][]float64{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
 				{{0, 6}, {2, 6}, {2, 8}, {0, 8}, {0, 6}},
 			}),
@@ -79,7 +79,7 @@ func TestArea(t *testing.T) {
 			want: 0,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 				},
@@ -87,7 +87,7 @@ func TestArea(t *testing.T) {
 			want: 1,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 				},
@@ -95,7 +95,7 @@ func TestArea(t *testing.T) {
 			want: -0.5,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
 				},
@@ -103,7 +103,7 @@ func TestArea(t *testing.T) {
 			want: 60,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
 					{{0, 6}, {2, 6}, {2, 8}, {0, 8}, {0, 6}},
@@ -112,7 +112,7 @@ func TestArea(t *testing.T) {
 			want: 56,
 		},
 		{
-			g: NewMultiPolygon(XY).MustSetCoords([][][][]float64{
+			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 				},
