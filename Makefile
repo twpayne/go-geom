@@ -1,5 +1,9 @@
+goversion=$(word 3,$(shell go version))
+
 all:
 	go test -v ./...
-	go test -cover -race ./...
-	go vet ./...
+	if [ "${goversion}" = "go1.5.2" ]; then \
+		go test -cover -race ./... ; \
+		go vet ./... ; \
+	fi
 	test -z "$(go fmt ./...)"
