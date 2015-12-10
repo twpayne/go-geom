@@ -10,7 +10,7 @@ Example:
 
 ```go
 func ExampleNewPolygon() {
-	unitSquare := NewPolygon(XY).MustSetCoords([][][]float64{
+	unitSquare := NewPolygon(XY).MustSetCoords([][]Coord{
 		{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
 	})
 	fmt.Printf("unitSquare.Area() == %f", unitSquare.Area())
