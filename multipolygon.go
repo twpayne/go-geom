@@ -20,7 +20,7 @@ func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *Mu
 }
 
 func (mp *MultiPolygon) Area() float64 {
-	return area3(mp.flatCoords, 0, mp.endss, mp.stride)
+	return doubleArea3(mp.flatCoords, 0, mp.endss, mp.stride) / 2
 }
 
 func (mp *MultiPolygon) Clone() *MultiPolygon {
