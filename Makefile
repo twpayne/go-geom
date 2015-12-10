@@ -7,3 +7,5 @@ all:
 		go vet ./... ; \
 	fi
 	test -z "$(go fmt ./...)"
+	go generate ./...
+	git diff --exit-code
