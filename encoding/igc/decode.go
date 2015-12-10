@@ -168,9 +168,8 @@ func (p *parser) parseB(line string) error {
 	if ellipsoidAlt, err = parseDec(line, 30, 35); err != nil {
 		return err
 	}
-	_ = pressureAlt
 
-	p.coords = append(p.coords, lng, lat, float64(ellipsoidAlt), float64(date.UnixNano())/1e9)
+	p.coords = append(p.coords, lng, lat, float64(ellipsoidAlt), float64(date.UnixNano())/1e9, float64(pressureAlt))
 	p.lastDate = date
 
 	return nil
@@ -318,5 +317,5 @@ func Read(r io.Reader) (*geom.LineString, error) {
 	if len(p.coords) == 0 {
 		return nil, ErrNoBRecords
 	}
-	return geom.NewLineStringFlat(geom.XYZM, p.coords), nil
+	return geom.NewLineStringFlat(geom.Layout(5), p.coords), nil
 }
