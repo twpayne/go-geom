@@ -16,77 +16,77 @@ func TestGeometry(t *testing.T) {
 			g: geom.NewPoint(DefaultLayout),
 			geometry: &Geometry{
 				Type:        "Point",
-				Coordinates: []float64{0, 0},
+				Coordinates: geom.Coord{0, 0},
 			},
 		},
 		{
-			g: geom.NewPoint(geom.XY).MustSetCoords([]float64{1, 2}),
+			g: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 			geometry: &Geometry{
 				Type:        "Point",
-				Coordinates: []float64{1, 2},
+				Coordinates: geom.Coord{1, 2},
 			},
 		},
 		{
-			g: geom.NewPoint(geom.XYZ).MustSetCoords([]float64{1, 2, 3}),
+			g: geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{1, 2, 3}),
 			geometry: &Geometry{
 				Type:        "Point",
-				Coordinates: []float64{1, 2, 3},
+				Coordinates: geom.Coord{1, 2, 3},
 			},
 		},
 		{
-			g: geom.NewPoint(geom.XYZM).MustSetCoords([]float64{1, 2, 3, 4}),
+			g: geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1, 2, 3, 4}),
 			geometry: &Geometry{
 				Type:        "Point",
-				Coordinates: []float64{1, 2, 3, 4},
+				Coordinates: geom.Coord{1, 2, 3, 4},
 			},
 		},
 		{
 			g: geom.NewLineString(DefaultLayout),
 			geometry: &Geometry{
 				Type:        "LineString",
-				Coordinates: [][]float64{},
+				Coordinates: []geom.Coord{},
 			},
 		},
 		{
-			g: geom.NewLineString(geom.XY).MustSetCoords([][]float64{{1, 2}, {3, 4}}),
+			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
 			geometry: &Geometry{
 				Type:        "LineString",
-				Coordinates: [][]float64{{1, 2}, {3, 4}},
+				Coordinates: []geom.Coord{{1, 2}, {3, 4}},
 			},
 		},
 		{
-			g: geom.NewLineString(geom.XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}}),
+			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
 			geometry: &Geometry{
 				Type:        "LineString",
-				Coordinates: [][]float64{{1, 2, 3}, {4, 5, 6}},
+				Coordinates: []geom.Coord{{1, 2, 3}, {4, 5, 6}},
 			},
 		},
 		{
-			g: geom.NewLineString(geom.XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}}),
+			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}}),
 			geometry: &Geometry{
 				Type:        "LineString",
-				Coordinates: [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}},
+				Coordinates: []geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}},
 			},
 		},
 		{
 			g: geom.NewPolygon(DefaultLayout),
 			geometry: &Geometry{
 				Type:        "Polygon",
-				Coordinates: [][][]float64{},
+				Coordinates: [][]geom.Coord{},
 			},
 		},
 		{
-			g: geom.NewPolygon(geom.XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
+			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
 			geometry: &Geometry{
 				Type:        "Polygon",
-				Coordinates: [][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
+				Coordinates: [][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
 			},
 		},
 		{
-			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][][]float64{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
+			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
 			geometry: &Geometry{
 				Type:        "Polygon",
-				Coordinates: [][][]float64{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}},
+				Coordinates: [][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}},
 			},
 		},
 		// FIXME Add MultiPoint tests

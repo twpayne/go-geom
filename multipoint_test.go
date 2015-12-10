@@ -8,7 +8,7 @@ import (
 type testMultiPoint struct {
 	layout     Layout
 	stride     int
-	coords     [][]float64
+	coords     []Coord
 	flatCoords []float64
 	bounds     *Bounds
 }
@@ -48,41 +48,41 @@ func TestMultiPoint(t *testing.T) {
 		tmp *testMultiPoint
 	}{
 		{
-			mp: NewMultiPoint(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			mp: NewMultiPoint(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}}),
 			tmp: &testMultiPoint{
 				layout:     XY,
 				stride:     2,
-				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
+				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
 		},
 		{
-			mp: NewMultiPoint(XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			mp: NewMultiPoint(XYZ).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			tmp: &testMultiPoint{
 				layout:     XYZ,
 				stride:     3,
-				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
-			mp: NewMultiPoint(XYM).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			mp: NewMultiPoint(XYM).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			tmp: &testMultiPoint{
 				layout:     XYM,
 				stride:     3,
-				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
-			mp: NewMultiPoint(XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			mp: NewMultiPoint(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
 			tmp: &testMultiPoint{
 				layout:     XYZM,
 				stride:     4,
-				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
+				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
@@ -94,7 +94,7 @@ func TestMultiPoint(t *testing.T) {
 }
 
 func TestMultiPointClone(t *testing.T) {
-	p1 := NewMultiPoint(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}})
+	p1 := NewMultiPoint(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
 	}
@@ -105,22 +105,22 @@ func TestMultiPointPush(t *testing.T) {
 	testMultiPointEquals(t, mp, &testMultiPoint{
 		layout: XY,
 		stride: 2,
-		coords: [][]float64{},
+		coords: []Coord{},
 		bounds: NewBounds(XY),
 	})
-	mp.Push(NewPoint(XY).MustSetCoords([]float64{1, 2}))
+	mp.Push(NewPoint(XY).MustSetCoords(Coord{1, 2}))
 	testMultiPointEquals(t, mp, &testMultiPoint{
 		layout:     XY,
 		stride:     2,
-		coords:     [][]float64{{1, 2}},
+		coords:     []Coord{{1, 2}},
 		flatCoords: []float64{1, 2},
 		bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 	})
-	mp.Push(NewPoint(XY).MustSetCoords([]float64{3, 4}))
+	mp.Push(NewPoint(XY).MustSetCoords(Coord{3, 4}))
 	testMultiPointEquals(t, mp, &testMultiPoint{
 		layout:     XY,
 		stride:     2,
-		coords:     [][]float64{{1, 2}, {3, 4}},
+		coords:     []Coord{{1, 2}, {3, 4}},
 		flatCoords: []float64{1, 2, 3, 4},
 		bounds:     NewBounds(XY).Set(1, 2, 3, 4),
 	})
@@ -129,7 +129,7 @@ func TestMultiPointPush(t *testing.T) {
 func TestMultiPointStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
-		coords [][]float64
+		coords []Coord
 		err    error
 	}{
 		{
@@ -139,27 +139,27 @@ func TestMultiPointStrideMismatch(t *testing.T) {
 		},
 		{
 			layout: XY,
-			coords: [][]float64{},
+			coords: []Coord{},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {}},
+			coords: []Coord{{1, 2}, {}},
 			err:    ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {1}},
+			coords: []Coord{{1, 2}, {1}},
 			err:    ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {3, 4}},
+			coords: []Coord{{1, 2}, {3, 4}},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {3, 4, 5}},
+			coords: []Coord{{1, 2}, {3, 4, 5}},
 			err:    ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {

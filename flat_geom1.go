@@ -4,11 +4,11 @@ type geom1 struct {
 	geom0
 }
 
-func (g *geom1) Coord(i int) []float64 {
+func (g *geom1) Coord(i int) Coord {
 	return g.flatCoords[i*g.stride : (i+1)*g.stride]
 }
 
-func (g *geom1) Coords() [][]float64 {
+func (g *geom1) Coords() []Coord {
 	return inflate1(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
@@ -16,7 +16,7 @@ func (g *geom1) NumCoords() int {
 	return len(g.flatCoords) / g.stride
 }
 
-func (g *geom1) setCoords(coords1 [][]float64) error {
+func (g *geom1) setCoords(coords1 []Coord) error {
 	var err error
 	if g.flatCoords, err = deflate1(nil, coords1, g.stride); err != nil {
 		return err

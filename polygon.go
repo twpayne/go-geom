@@ -43,7 +43,7 @@ func (p *Polygon) LinearRing(i int) *LinearRing {
 	return NewLinearRingFlat(p.layout, p.flatCoords[offset:p.ends[i]])
 }
 
-func (p *Polygon) MustSetCoords(coords [][][]float64) *Polygon {
+func (p *Polygon) MustSetCoords(coords [][]Coord) *Polygon {
 	if err := p.setCoords(coords); err != nil {
 		panic(err)
 	}
@@ -63,7 +63,7 @@ func (p *Polygon) Push(lr *LinearRing) error {
 	return nil
 }
 
-func (p *Polygon) SetCoords(coords [][][]float64) (*Polygon, error) {
+func (p *Polygon) SetCoords(coords [][]Coord) (*Polygon, error) {
 	if err := p.setCoords(coords); err != nil {
 		return nil, err
 	}

@@ -18,31 +18,31 @@ func Test(t *testing.T) {
 			want: `<Point><coordinates>0,0</coordinates></Point>`,
 		},
 		{
-			g:    geom.NewPoint(geom.XY).MustSetCoords([]float64{0, 0}),
+			g:    geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0, 0}),
 			want: `<Point><coordinates>0,0</coordinates></Point>`,
 		},
 		{
-			g:    geom.NewPoint(geom.XYZ).MustSetCoords([]float64{0, 0, 0}),
+			g:    geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{0, 0, 0}),
 			want: `<Point><coordinates>0,0</coordinates></Point>`,
 		},
 		{
-			g:    geom.NewPoint(geom.XYZ).MustSetCoords([]float64{0, 0, 1}),
+			g:    geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{0, 0, 1}),
 			want: `<Point><coordinates>0,0,1</coordinates></Point>`,
 		},
 		{
-			g:    geom.NewPoint(geom.XYM).MustSetCoords([]float64{0, 0, 1}),
+			g:    geom.NewPoint(geom.XYM).MustSetCoords(geom.Coord{0, 0, 1}),
 			want: `<Point><coordinates>0,0</coordinates></Point>`,
 		},
 		{
-			g:    geom.NewPoint(geom.XYZM).MustSetCoords([]float64{0, 0, 0, 1}),
+			g:    geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{0, 0, 0, 1}),
 			want: `<Point><coordinates>0,0</coordinates></Point>`,
 		},
 		{
-			g:    geom.NewPoint(geom.XYZM).MustSetCoords([]float64{0, 0, 1, 1}),
+			g:    geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{0, 0, 1, 1}),
 			want: `<Point><coordinates>0,0,1</coordinates></Point>`,
 		},
 		{
-			g: geom.NewMultiPoint(geom.XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}, {5, 6}}),
 			want: `<MultiGeometry>` +
 				`<Point>` +
 				`<coordinates>1,2</coordinates>` +
@@ -56,31 +56,31 @@ func Test(t *testing.T) {
 				`</MultiGeometry>`,
 		},
 		{
-			g: geom.NewLineString(geom.XY).MustSetCoords([][]float64{
+			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{
 				{0, 0}, {1, 1},
 			}),
 			want: `<LineString><coordinates>0,0 1,1</coordinates></LineString>`,
 		},
 		{
-			g: geom.NewLineString(geom.XYZ).MustSetCoords([][]float64{
+			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{
 				{1, 2, 3}, {4, 5, 6},
 			}),
 			want: `<LineString><coordinates>1,2,3 4,5,6</coordinates></LineString>`,
 		},
 		{
-			g: geom.NewLineString(geom.XYM).MustSetCoords([][]float64{
+			g: geom.NewLineString(geom.XYM).MustSetCoords([]geom.Coord{
 				{1, 2, 3}, {4, 5, 6},
 			}),
 			want: `<LineString><coordinates>1,2 4,5</coordinates></LineString>`,
 		},
 		{
-			g: geom.NewLineString(geom.XYZM).MustSetCoords([][]float64{
+			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{
 				{1, 2, 3, 4}, {5, 6, 7, 8},
 			}),
 			want: `<LineString><coordinates>1,2,3 5,6,7</coordinates></LineString>`,
 		},
 		{
-			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64{
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{
 				{{1, 2}, {3, 4}, {5, 6}, {7, 8}},
 			}),
 			want: `<MultiGeometry>` +
@@ -90,7 +90,7 @@ func Test(t *testing.T) {
 				`</MultiGeometry>`,
 		},
 		{
-			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64{
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{
 				{{1, 2}, {3, 4}, {5, 6}, {7, 8}},
 				{{9, 10}, {11, 12}, {13, 14}},
 			}),
@@ -104,7 +104,7 @@ func Test(t *testing.T) {
 				`</MultiGeometry>`,
 		},
 		{
-			g: geom.NewPolygon(geom.XY).MustSetCoords([][][]float64{
+			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{
 				{{1, 2}, {3, 4}, {5, 6}, {1, 2}},
 			}),
 			want: `<Polygon>` +
@@ -116,7 +116,7 @@ func Test(t *testing.T) {
 				`</Polygon>`,
 		},
 		{
-			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][][]float64{
+			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{
 				{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}},
 			}),
 			want: `<Polygon>` +
@@ -128,7 +128,7 @@ func Test(t *testing.T) {
 				`</Polygon>`,
 		},
 		{
-			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][][]float64{
+			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{
 				{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}},
 				{{0.4, 0.5, 0.6}, {0.7, 0.8, 0.9}, {0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}},
 			}),
@@ -146,7 +146,7 @@ func Test(t *testing.T) {
 				`</Polygon>`,
 		},
 		{
-			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][][]float64{
+			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][]geom.Coord{
 				{
 					{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}},
 					{{0.4, 0.5, 0.6}, {0.7, 0.8, 0.9}, {0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}},
@@ -168,7 +168,7 @@ func Test(t *testing.T) {
 				`</MultiGeometry>`,
 		},
 		{
-			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][][]float64{
+			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][]geom.Coord{
 				{
 					{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}},
 				},

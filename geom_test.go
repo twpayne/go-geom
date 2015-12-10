@@ -39,15 +39,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom0{NoLayout, 0, []float64{0, 0}},
+			&geom0{NoLayout, 0, Coord{0, 0}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom0{XY, 1, []float64{0, 0}},
+			&geom0{XY, 1, Coord{0, 0}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom0{XY, 2, []float64{0}},
+			&geom0{XY, 2, Coord{0}},
 			errLengthStrideMismatch,
 		},
 		{
@@ -55,15 +55,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom1{geom0{NoLayout, 0, []float64{0}}},
+			&geom1{geom0{NoLayout, 0, Coord{0}}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom1{geom0{XY, 1, []float64{0, 0}}},
+			&geom1{geom0{XY, 1, Coord{0, 0}}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom1{geom0{XY, 2, []float64{0}}},
+			&geom1{geom0{XY, 2, Coord{0}}},
 			errLengthStrideMismatch,
 		},
 		{
@@ -71,39 +71,39 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, []float64{0}}}, []int{}},
+			&geom2{geom1{geom0{NoLayout, 0, Coord{0}}}, []int{}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, []float64{}}}, []int{4}},
+			&geom2{geom1{geom0{NoLayout, 0, Coord{}}}, []int{4}},
 			errNonEmptyEnds,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, []float64{0}}}, []int{4}},
+			&geom2{geom1{geom0{XY, 2, Coord{0}}}, []int{4}},
 			errLengthStrideMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 1, []float64{0, 0, 0, 0}}}, []int{-1}},
+			&geom2{geom1{geom0{XY, 1, Coord{0, 0, 0, 0}}}, []int{-1}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0}}}, []int{-1}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}}}, []int{-1}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0}}}, []int{3}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}}}, []int{3}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{8, 4}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{8, 4}},
 			errOutOfOrderEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 4}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 4}},
 			errIncorrectEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, []float64{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 12}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 12}},
 			errIncorrectEnd,
 		},
 		{

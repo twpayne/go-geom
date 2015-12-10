@@ -8,7 +8,7 @@ import (
 type testLinearRing struct {
 	layout     Layout
 	stride     int
-	coords     [][]float64
+	coords     []Coord
 	flatCoords []float64
 	bounds     *Bounds
 }
@@ -48,41 +48,41 @@ func TestLinearRing(t *testing.T) {
 		tlr *testLinearRing
 	}{
 		{
-			lr: NewLinearRing(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			lr: NewLinearRing(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}}),
 			tlr: &testLinearRing{
 				layout:     XY,
 				stride:     2,
-				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
+				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
 		},
 		{
-			lr: NewLinearRing(XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			lr: NewLinearRing(XYZ).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			tlr: &testLinearRing{
 				layout:     XYZ,
 				stride:     3,
-				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
-			lr: NewLinearRing(XYM).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			lr: NewLinearRing(XYM).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			tlr: &testLinearRing{
 				layout:     XYM,
 				stride:     3,
-				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
-			lr: NewLinearRing(XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			lr: NewLinearRing(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
 			tlr: &testLinearRing{
 				layout:     XYZM,
 				stride:     4,
-				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
+				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
@@ -94,7 +94,7 @@ func TestLinearRing(t *testing.T) {
 }
 
 func TestLinearRingClone(t *testing.T) {
-	p1 := NewLinearRing(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}})
+	p1 := NewLinearRing(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
 	}
@@ -103,7 +103,7 @@ func TestLinearRingClone(t *testing.T) {
 func TestLinearRingStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
-		coords [][]float64
+		coords []Coord
 		err    error
 	}{
 		{
@@ -113,27 +113,27 @@ func TestLinearRingStrideMismatch(t *testing.T) {
 		},
 		{
 			layout: XY,
-			coords: [][]float64{},
+			coords: []Coord{},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {}},
+			coords: []Coord{{1, 2}, {}},
 			err:    ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {1}},
+			coords: []Coord{{1, 2}, {1}},
 			err:    ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {3, 4}},
+			coords: []Coord{{1, 2}, {3, 4}},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {3, 4, 5}},
+			coords: []Coord{{1, 2}, {3, 4, 5}},
 			err:    ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {

@@ -8,7 +8,7 @@ import (
 type testMultiPolygon struct {
 	layout     Layout
 	stride     int
-	coords     [][][][]float64
+	coords     [][][]Coord
 	flatCoords []float64
 	endss      [][]int
 	bounds     *Bounds
@@ -53,11 +53,11 @@ func TestMultiPolygon(t *testing.T) {
 		tmp *testMultiPolygon
 	}{
 		{
-			mp: NewMultiPolygon(XY).MustSetCoords([][][][]float64{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}}),
+			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}}),
 			tmp: &testMultiPolygon{
 				layout:     XY,
 				stride:     2,
-				coords:     [][][][]float64{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}},
+				coords:     [][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{{6, 12}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
@@ -70,7 +70,7 @@ func TestMultiPolygon(t *testing.T) {
 }
 
 func TestMultiPolygonClone(t *testing.T) {
-	p1 := NewMultiPolygon(XY).MustSetCoords([][][][]float64{{{{1, 2}, {3, 4}, {5, 6}}}})
+	p1 := NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}}})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
 	}
@@ -79,7 +79,7 @@ func TestMultiPolygonClone(t *testing.T) {
 func TestMultiPolygonStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
-		coords [][][][]float64
+		coords [][][]Coord
 		err    error
 	}{
 		{
@@ -89,27 +89,27 @@ func TestMultiPolygonStrideMismatch(t *testing.T) {
 		},
 		{
 			layout: XY,
-			coords: [][][][]float64{},
+			coords: [][][]Coord{},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][][][]float64{{{{1, 2}, {}}}},
+			coords: [][][]Coord{{{{1, 2}, {}}}},
 			err:    ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][][][]float64{{{{1, 2}, {1}}}},
+			coords: [][][]Coord{{{{1, 2}, {1}}}},
 			err:    ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][][][]float64{{{{1, 2}, {3, 4}}}},
+			coords: [][][]Coord{{{{1, 2}, {3, 4}}}},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][][][]float64{{{{1, 2}, {3, 4, 5}}}},
+			coords: [][][]Coord{{{{1, 2}, {3, 4, 5}}}},
 			err:    ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {

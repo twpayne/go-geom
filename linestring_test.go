@@ -8,7 +8,7 @@ import (
 type testLineString struct {
 	layout     Layout
 	stride     int
-	coords     [][]float64
+	coords     []Coord
 	flatCoords []float64
 	bounds     *Bounds
 }
@@ -48,41 +48,41 @@ func TestLineString(t *testing.T) {
 		tls *testLineString
 	}{
 		{
-			ls: NewLineString(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}}),
+			ls: NewLineString(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}}),
 			tls: &testLineString{
 				layout:     XY,
 				stride:     2,
-				coords:     [][]float64{{1, 2}, {3, 4}, {5, 6}},
+				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
 		},
 		{
-			ls: NewLineString(XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			ls: NewLineString(XYZ).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			tls: &testLineString{
 				layout:     XYZ,
 				stride:     3,
-				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
-			ls: NewLineString(XYM).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			ls: NewLineString(XYM).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			tls: &testLineString{
 				layout:     XYM,
 				stride:     3,
-				coords:     [][]float64{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
-			ls: NewLineString(XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			ls: NewLineString(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
 			tls: &testLineString{
 				layout:     XYZM,
 				stride:     4,
-				coords:     [][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
+				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
@@ -94,14 +94,14 @@ func TestLineString(t *testing.T) {
 }
 
 func TestLineStringClone(t *testing.T) {
-	p1 := NewLineString(XY).MustSetCoords([][]float64{{1, 2}, {3, 4}, {5, 6}})
+	p1 := NewLineString(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
 	}
 }
 
 func TestLineStringInterpolate(t *testing.T) {
-	ls := NewLineString(XYM).MustSetCoords([][]float64{{1, 2, 0}, {2, 4, 1}, {3, 8, 2}})
+	ls := NewLineString(XYM).MustSetCoords([]Coord{{1, 2, 0}, {2, 4, 1}, {3, 8, 2}})
 	for _, c := range []struct {
 		val float64
 		dim int
@@ -126,7 +126,7 @@ func TestLineStringInterpolate(t *testing.T) {
 func TestLineStringStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
-		coords [][]float64
+		coords []Coord
 		err    error
 	}{
 		{
@@ -136,27 +136,27 @@ func TestLineStringStrideMismatch(t *testing.T) {
 		},
 		{
 			layout: XY,
-			coords: [][]float64{},
+			coords: []Coord{},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {}},
+			coords: []Coord{{1, 2}, {}},
 			err:    ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {1}},
+			coords: []Coord{{1, 2}, {1}},
 			err:    ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {3, 4}},
+			coords: []Coord{{1, 2}, {3, 4}},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]float64{{1, 2}, {3, 4, 5}},
+			coords: []Coord{{1, 2}, {3, 4, 5}},
 			err:    ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {
