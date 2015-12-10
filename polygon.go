@@ -20,7 +20,7 @@ func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
 }
 
 func (p *Polygon) Area() float64 {
-	return area2(p.flatCoords, 0, p.ends, p.stride)
+	return doubleArea2(p.flatCoords, 0, p.ends, p.stride) / 2
 }
 
 func (p *Polygon) Clone() *Polygon {
