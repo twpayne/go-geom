@@ -115,6 +115,13 @@ func (l Layout) ZIndex() int {
 	}
 }
 
+func Must(g T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return g
+}
+
 var (
 	errIncorrectEnd         = errors.New("geom: incorrect end")
 	errLengthStrideMismatch = errors.New("geom: length/stride mismatch")
