@@ -32,6 +32,10 @@ func (mp *MultiPolygon) Clone() *MultiPolygon {
 	return NewMultiPolygonFlat(mp.layout, flatCoords, endss)
 }
 
+func (mp *MultiPolygon) Empty() bool {
+	return mp.NumPolygons() == 0
+}
+
 func (mp *MultiPolygon) Length() float64 {
 	return length3(mp.flatCoords, 0, mp.endss, mp.stride)
 }

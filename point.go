@@ -31,6 +31,11 @@ func (p *Point) Clone() *Point {
 	return NewPointFlat(p.layout, flatCoords)
 }
 
+// Empty returns true if p contains no geometries, i.e. it returns false.
+func (p *Point) Empty() bool {
+	return false
+}
+
 // Length returns the length of p, i.e. zero.
 func (p *Point) Length() float64 {
 	return 0

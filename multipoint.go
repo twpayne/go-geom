@@ -26,6 +26,10 @@ func (mp *MultiPoint) Clone() *MultiPoint {
 	return NewMultiPointFlat(mp.layout, flatCoords)
 }
 
+func (mp *MultiPoint) Empty() bool {
+	return mp.NumPoints() == 0
+}
+
 func (mp *MultiPoint) Length() float64 {
 	return 0
 }
