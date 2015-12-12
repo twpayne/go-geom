@@ -5,8 +5,6 @@ type Point struct {
 	geom0
 }
 
-var _ T = &Point{}
-
 // NewPoint allocates a new Point with layout l and all values zero.
 func NewPoint(l Layout) *Point {
 	return NewPointFlat(l, make([]float64, l.Stride()))

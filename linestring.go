@@ -6,8 +6,6 @@ type LineString struct {
 	geom1
 }
 
-var _ T = &LineString{}
-
 // NewLineString returns a new LineString with layout l and no control points.
 func NewLineString(l Layout) *LineString {
 	return NewLineStringFlat(l, nil)

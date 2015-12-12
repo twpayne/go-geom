@@ -4,8 +4,6 @@ type MultiLineString struct {
 	geom2
 }
 
-var _ T = &MultiLineString{}
-
 func NewMultiLineString(layout Layout) *MultiLineString {
 	return NewMultiLineStringFlat(layout, nil, nil)
 }
