@@ -63,9 +63,7 @@ func (ls *LineString) Length() float64 {
 }
 
 func (ls *LineString) MustSetCoords(coords []Coord) *LineString {
-	if err := ls.setCoords(coords); err != nil {
-		panic(err)
-	}
+	Must(ls.SetCoords(coords))
 	return ls
 }
 

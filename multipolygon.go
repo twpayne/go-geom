@@ -38,10 +38,8 @@ func (mp *MultiPolygon) Length() float64 {
 	return length3(mp.flatCoords, 0, mp.endss, mp.stride)
 }
 
-func (mp *MultiPolygon) MustSetCoords(coords3 [][][]Coord) *MultiPolygon {
-	if err := mp.setCoords(coords3); err != nil {
-		panic(err)
-	}
+func (mp *MultiPolygon) MustSetCoords(coords [][][]Coord) *MultiPolygon {
+	Must(mp.SetCoords(coords))
 	return mp
 }
 

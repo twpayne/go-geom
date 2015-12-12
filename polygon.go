@@ -44,9 +44,7 @@ func (p *Polygon) LinearRing(i int) *LinearRing {
 }
 
 func (p *Polygon) MustSetCoords(coords [][]Coord) *Polygon {
-	if err := p.setCoords(coords); err != nil {
-		panic(err)
-	}
+	Must(p.SetCoords(coords))
 	return p
 }
 
