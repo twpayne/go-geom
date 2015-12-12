@@ -14,6 +14,18 @@ var (
 		&Point{},
 		&Polygon{},
 	}
+	_ = []interface {
+		Area() float64
+		Length() float64
+	}{
+		&LineString{},
+		&LinearRing{},
+		&MultiLineString{},
+		&MultiPoint{},
+		&MultiPolygon{},
+		&Point{},
+		&Polygon{},
+	}
 )
 
 func aliases(x, y []float64) bool {
