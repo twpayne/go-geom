@@ -4,8 +4,6 @@ type Polygon struct {
 	geom2
 }
 
-var _ T = &Polygon{}
-
 func NewPolygon(layout Layout) *Polygon {
 	return NewPolygonFlat(layout, nil, nil)
 }

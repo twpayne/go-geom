@@ -4,8 +4,6 @@ type LinearRing struct {
 	geom1
 }
 
-var _ T = &LinearRing{}
-
 func NewLinearRing(layout Layout) *LinearRing {
 	return NewLinearRingFlat(layout, nil)
 }

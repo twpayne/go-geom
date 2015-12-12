@@ -4,8 +4,6 @@ type MultiPolygon struct {
 	geom3
 }
 
-var _ T = &MultiPolygon{}
-
 func NewMultiPolygon(layout Layout) *MultiPolygon {
 	return NewMultiPolygonFlat(layout, nil, nil)
 }

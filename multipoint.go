@@ -4,8 +4,6 @@ type MultiPoint struct {
 	geom1
 }
 
-var _ T = &MultiPoint{}
-
 func NewMultiPoint(layout Layout) *MultiPoint {
 	return NewMultiPointFlat(layout, nil)
 }
