@@ -29,6 +29,10 @@ func (p *Polygon) Clone() *Polygon {
 	return NewPolygonFlat(p.layout, flatCoords, ends)
 }
 
+func (p *Polygon) Empty() bool {
+	return false
+}
+
 func (p *Polygon) Length() float64 {
 	return length2(p.flatCoords, 0, p.ends, p.stride)
 }

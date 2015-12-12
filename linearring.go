@@ -26,6 +26,10 @@ func (lr *LinearRing) Clone() *LinearRing {
 	return NewLinearRingFlat(lr.layout, flatCoords)
 }
 
+func (lr *LinearRing) Empty() bool {
+	return false
+}
+
 func (lr *LinearRing) Length() float64 {
 	return length1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
