@@ -44,9 +44,7 @@ func (mls *MultiLineString) LineString(i int) *LineString {
 }
 
 func (mls *MultiLineString) MustSetCoords(coords [][]Coord) *MultiLineString {
-	if err := mls.setCoords(coords); err != nil {
-		panic(err)
-	}
+	Must(mls.SetCoords(coords))
 	return mls
 }
 
