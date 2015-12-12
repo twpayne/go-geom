@@ -1,3 +1,5 @@
+// Package geom implements fast and GC-efficient Open Geo Consortium-style
+// geometries.
 package geom
 
 import (
@@ -5,14 +7,19 @@ import (
 	"fmt"
 )
 
+// A Layout describes the meaning of an N-dimensional coordinate. Layout(N) for
+// N > 4 is a valid layout, in which case the first dimensions are interpreted
+// to be X, Y, Z, and M and extra dimensions have no special meaning.  M values
+// are considered part of a linear referencing system (e.g. classical time or
+// distance along a path). 1-dimensional layouts are not supported.
 type Layout int
 
 const (
-	NoLayout Layout = iota
-	XY
-	XYZ
-	XYM
-	XYZM
+	NoLayout Layout = iota // Zero value
+	XY                     // 2D
+	XYZ                    // 3D
+	XYM                    // 2D with an M value
+	XYZM                   // 3D with an M value
 )
 
 type ErrLayoutMismatch struct {
@@ -47,6 +54,7 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geom: unsupported type %T", e.Value)
 }
 
+// A Coord represents an N-dimensional coordinate.
 type Coord []float64
 
 // A T is a generic interface geomemented by all geometry types.
@@ -59,6 +67,7 @@ type T interface {
 	Endss() [][]int
 }
 
+// MIndex returns the index of the M dimension, or -1 if the l does not have an M dimension.
 func (l Layout) MIndex() int {
 	switch l {
 	case NoLayout, XY, XYZ:
@@ -72,6 +81,7 @@ func (l Layout) MIndex() int {
 	}
 }
 
+// Stride returns l's number of dimensions.
 func (l Layout) Stride() int {
 	switch l {
 	case NoLayout:
@@ -89,6 +99,7 @@ func (l Layout) Stride() int {
 	}
 }
 
+// String returns a human-readable string representing l.
 func (l Layout) String() string {
 	switch l {
 	case NoLayout:
@@ -106,6 +117,7 @@ func (l Layout) String() string {
 	}
 }
 
+// ZIndex returns the index of l's Z dimension, or -1 if l does not have a Z dimension.
 func (l Layout) ZIndex() int {
 	switch l {
 	case NoLayout, XY, XYM:
@@ -115,6 +127,7 @@ func (l Layout) ZIndex() int {
 	}
 }
 
+// Must panics if err is not nil, otherwise it returns g.
 func Must(g T, err error) T {
 	if err != nil {
 		panic(err)
