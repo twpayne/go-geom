@@ -69,6 +69,41 @@ func (e ErrUnsupportedType) Error() string {
 // A Coord represents an N-dimensional coordinate.
 type Coord []float64
 
+func (c Coord) X() float64 {
+	return c[0]
+}
+func (c Coord) Y() float64 {
+	return c[1]
+}
+
+func (c Coord) Set(other Coord) {
+	for i := 0; i < len(c) && i < len(other); i++ {
+		c[i] = other[i]
+	}
+}
+
+// It is assumed that this coord and other coord both have the same (provided) layout
+func (c Coord) Equal(layout Layout, other Coord) bool {
+
+	numOrds := len(c)
+
+	if layout.Stride() < numOrds {
+		numOrds = layout.Stride()
+	}
+
+	if (len(c) < layout.Stride() || len(other) < layout.Stride()) && len(c) != len(other) {
+		return false
+	}
+
+	for i := 0; i < numOrds; i++ {
+		if c[i] != other[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 // A T is a generic interface geomemented by all geometry types.
 type T interface {
 	Layout() Layout
