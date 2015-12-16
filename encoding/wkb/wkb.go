@@ -60,6 +60,15 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("wkb: unsupported type: %d", uint(e))
 }
 
+type ErrUnexpectedType struct {
+	Got  interface{}
+	Want interface{}
+}
+
+func (e ErrUnexpectedType) Error() string {
+	return fmt.Sprintf("wkb: got %T, want %T", e.Got, e.Want)
+}
+
 const (
 	wkbPointId              = 1
 	wkbLineStringId         = 2
