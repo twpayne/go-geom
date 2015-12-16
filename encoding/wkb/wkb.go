@@ -256,7 +256,7 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 			p, ok := g.(*geom.Point)
 			if !ok {
-				return nil, fmt.Errorf("wkb: got a %T, want *geom.Point", g)
+				return nil, ErrUnexpectedType{Got: g, Want: &geom.Point{}}
 			}
 			if err = mp.Push(p); err != nil {
 				return nil, err
@@ -279,7 +279,7 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 			p, ok := g.(*geom.LineString)
 			if !ok {
-				return nil, fmt.Errorf("wkb: got a %T, want *geom.LineString", g)
+				return nil, ErrUnexpectedType{Got: g, Want: &geom.LineString{}}
 			}
 			if err = mls.Push(p); err != nil {
 				return nil, err
@@ -302,7 +302,7 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 			p, ok := g.(*geom.Polygon)
 			if !ok {
-				return nil, fmt.Errorf("wkb: got a %T, want *geom.Polygon", g)
+				return nil, ErrUnexpectedType{Got: g, Want: &geom.Polygon{}}
 			}
 			if err = mp.Push(p); err != nil {
 				return nil, err
