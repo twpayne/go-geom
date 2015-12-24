@@ -54,3 +54,8 @@ func (p *Point) SetCoords(coords Coord) (*Point, error) {
 	}
 	return p, nil
 }
+
+// Swap swaps the values of p1 and p2.
+func (p1 *Point) Swap(p2 *Point) {
+	p1.geom0.swap(&p2.geom0)
+}

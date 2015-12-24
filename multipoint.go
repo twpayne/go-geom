@@ -61,3 +61,8 @@ func (mp *MultiPoint) Push(p *Point) error {
 	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
 	return nil
 }
+
+// Swap swaps the values of mp1 and mp2.
+func (mp1 *MultiPoint) Swap(mp2 *MultiPoint) {
+	mp1.geom1.swap(&mp2.geom1)
+}

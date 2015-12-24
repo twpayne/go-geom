@@ -69,3 +69,8 @@ func (p *Polygon) SetCoords(coords [][]Coord) (*Polygon, error) {
 	}
 	return p, nil
 }
+
+// Swap swaps the values of p1 and p2.
+func (p1 *Polygon) Swap(p2 *Polygon) {
+	p1.geom2.swap(&p2.geom2)
+}
