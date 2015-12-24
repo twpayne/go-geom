@@ -5,6 +5,7 @@ go:
         - 1.5.2
 
 install:
+        - go get github.com/mattn/go-sqlite3
         - go get github.com/twpayne/go-kml
 
 sudo: false
