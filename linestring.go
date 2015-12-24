@@ -91,3 +91,8 @@ func (ls *LineString) SetCoords(coords []Coord) (*LineString, error) {
 func (ls *LineString) SubLineString(start, stop int) *LineString {
 	return NewLineStringFlat(ls.layout, ls.flatCoords[start*ls.stride:stop*ls.stride])
 }
+
+// Swap swaps the values of ls1 and ls2.
+func (ls1 *LineString) Swap(ls2 *LineString) {
+	ls1.geom1.swap(&ls2.geom1)
+}

@@ -60,81 +60,90 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("wkb: unsupported type: %d", uint(e))
 }
 
+type ErrUnexpectedType struct {
+	Got  interface{}
+	Want interface{}
+}
+
+func (e ErrUnexpectedType) Error() string {
+	return fmt.Sprintf("wkb: got %T, want %T", e.Got, e.Want)
+}
+
 const (
-	wkbPoint              = 1
-	wkbLineString         = 2
-	wkbPolygon            = 3
-	wkbMultiPoint         = 4
-	wkbMultiLineString    = 5
-	wkbMultiPolygon       = 6
-	wkbGeometryCollection = 7
-	wkbPolyhedralSurface  = 15
-	wkbTIN                = 16
-	wkbTriangle           = 17
+	wkbPointId              = 1
+	wkbLineStringId         = 2
+	wkbPolygonId            = 3
+	wkbMultiPointId         = 4
+	wkbMultiLineStringId    = 5
+	wkbMultiPolygonId       = 6
+	wkbGeometryCollectionId = 7
+	wkbPolyhedralSurfaceId  = 15
+	wkbTINId                = 16
+	wkbTriangleId           = 17
 )
 
 const (
-	wkbXY   = 0
-	wkbXYZ  = 1000
-	wkbXYM  = 2000
-	wkbXYZM = 3000
+	wkbXYId   = 0
+	wkbXYZId  = 1000
+	wkbXYMId  = 2000
+	wkbXYZMId = 3000
 )
 
 const (
-	Point              = Type(wkbPoint + wkbXY)
-	LineString         = Type(wkbLineString + wkbXY)
-	Polygon            = Type(wkbPolygon + wkbXY)
-	MultiPoint         = Type(wkbMultiPoint + wkbXY)
-	MultiLineString    = Type(wkbMultiLineString + wkbXY)
-	MultiPolygon       = Type(wkbMultiPolygon + wkbXY)
-	GeometryCollection = Type(wkbGeometryCollection + wkbXY)
-	PolyhedralSurface  = Type(wkbPolyhedralSurface + wkbXY)
-	TIN                = Type(wkbTIN + wkbXY)
-	Triangle           = Type(wkbTriangle + wkbXY)
+	wkbPoint              = Type(wkbPointId + wkbXYId)
+	wkbLineString         = Type(wkbLineStringId + wkbXYId)
+	wkbPolygon            = Type(wkbPolygonId + wkbXYId)
+	wkbMultiPoint         = Type(wkbMultiPointId + wkbXYId)
+	wkbMultiLineString    = Type(wkbMultiLineStringId + wkbXYId)
+	wkbMultiPolygon       = Type(wkbMultiPolygonId + wkbXYId)
+	wkbGeometryCollection = Type(wkbGeometryCollectionId + wkbXYId)
+	wkbPolyhedralSurface  = Type(wkbPolyhedralSurfaceId + wkbXYId)
+	wkbTIN                = Type(wkbTINId + wkbXYId)
+	wkbTriangle           = Type(wkbTriangleId + wkbXYId)
 
-	PointZ              = Type(wkbPoint + wkbXYZ)
-	LineStringZ         = Type(wkbLineString + wkbXYZ)
-	PolygonZ            = Type(wkbPolygon + wkbXYZ)
-	MultiPointZ         = Type(wkbMultiPoint + wkbXYZ)
-	MultiLineStringZ    = Type(wkbMultiLineString + wkbXYZ)
-	MultiPolygonZ       = Type(wkbMultiPolygon + wkbXYZ)
-	GeometryCollectionZ = Type(wkbGeometryCollection + wkbXYZ)
-	PolyhedralSurfaceZ  = Type(wkbPolyhedralSurface + wkbXYZ)
-	TINZ                = Type(wkbTIN + wkbXYZ)
-	TriangleZ           = Type(wkbTriangle + wkbXYZ)
+	wkbPointZ              = Type(wkbPointId + wkbXYZId)
+	wkbLineStringZ         = Type(wkbLineStringId + wkbXYZId)
+	wkbPolygonZ            = Type(wkbPolygonId + wkbXYZId)
+	wkbMultiPointZ         = Type(wkbMultiPointId + wkbXYZId)
+	wkbMultiLineStringZ    = Type(wkbMultiLineStringId + wkbXYZId)
+	wkbMultiPolygonZ       = Type(wkbMultiPolygonId + wkbXYZId)
+	wkbGeometryCollectionZ = Type(wkbGeometryCollectionId + wkbXYZId)
+	wkbPolyhedralSurfaceZ  = Type(wkbPolyhedralSurfaceId + wkbXYZId)
+	wkbTINZ                = Type(wkbTINId + wkbXYZId)
+	wkbTriangleZ           = Type(wkbTriangleId + wkbXYZId)
 
-	PointM              = Type(wkbPoint + wkbXYM)
-	LineStringM         = Type(wkbLineString + wkbXYM)
-	PolygonM            = Type(wkbPolygon + wkbXYM)
-	MultiPointM         = Type(wkbMultiPoint + wkbXYM)
-	MultiLineStringM    = Type(wkbMultiLineString + wkbXYM)
-	MultiPolygonM       = Type(wkbMultiPolygon + wkbXYM)
-	GeometryCollectionM = Type(wkbGeometryCollection + wkbXYM)
-	PolyhedralSurfaceM  = Type(wkbPolyhedralSurface + wkbXYM)
-	TINM                = Type(wkbTIN + wkbXYM)
-	TriangleM           = Type(wkbTriangle + wkbXYM)
+	wkbPointM              = Type(wkbPointId + wkbXYMId)
+	wkbLineStringM         = Type(wkbLineStringId + wkbXYMId)
+	wkbPolygonM            = Type(wkbPolygonId + wkbXYMId)
+	wkbMultiPointM         = Type(wkbMultiPointId + wkbXYMId)
+	wkbMultiLineStringM    = Type(wkbMultiLineStringId + wkbXYMId)
+	wkbMultiPolygonM       = Type(wkbMultiPolygonId + wkbXYMId)
+	wkbGeometryCollectionM = Type(wkbGeometryCollectionId + wkbXYMId)
+	wkbPolyhedralSurfaceM  = Type(wkbPolyhedralSurfaceId + wkbXYMId)
+	wkbTINM                = Type(wkbTINId + wkbXYMId)
+	wkbTriangleM           = Type(wkbTriangleId + wkbXYMId)
 
-	PointZM              = Type(wkbPoint + wkbXYZM)
-	LineStringZM         = Type(wkbLineString + wkbXYZM)
-	PolygonZM            = Type(wkbPolygon + wkbXYZM)
-	MultiPointZM         = Type(wkbMultiPoint + wkbXYZM)
-	MultiLineStringZM    = Type(wkbMultiLineString + wkbXYZM)
-	MultiPolygonZM       = Type(wkbMultiPolygon + wkbXYZM)
-	GeometryCollectionZM = Type(wkbGeometryCollection + wkbXYZM)
-	PolyhedralSurfaceZM  = Type(wkbPolyhedralSurface + wkbXYZM)
-	TINZM                = Type(wkbTIN + wkbXYZM)
-	TriangleZM           = Type(wkbTriangle + wkbXYZM)
+	wkbPointZM              = Type(wkbPointId + wkbXYZMId)
+	wkbLineStringZM         = Type(wkbLineStringId + wkbXYZMId)
+	wkbPolygonZM            = Type(wkbPolygonId + wkbXYZMId)
+	wkbMultiPointZM         = Type(wkbMultiPointId + wkbXYZMId)
+	wkbMultiLineStringZM    = Type(wkbMultiLineStringId + wkbXYZMId)
+	wkbMultiPolygonZM       = Type(wkbMultiPolygonId + wkbXYZMId)
+	wkbGeometryCollectionZM = Type(wkbGeometryCollectionId + wkbXYZMId)
+	wkbPolyhedralSurfaceZM  = Type(wkbPolyhedralSurfaceId + wkbXYZMId)
+	wkbTINZM                = Type(wkbTINId + wkbXYZMId)
+	wkbTriangleZM           = Type(wkbTriangleId + wkbXYZMId)
 )
 
 func (t Type) layout() (geom.Layout, error) {
 	switch t {
-	case Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, PolyhedralSurface, TIN, Triangle:
+	case wkbPoint, wkbLineString, wkbPolygon, wkbMultiPoint, wkbMultiLineString, wkbMultiPolygon, wkbGeometryCollection, wkbPolyhedralSurface, wkbTIN, wkbTriangle:
 		return geom.XY, nil
-	case PointZ, LineStringZ, PolygonZ, MultiPointZ, MultiLineStringZ, MultiPolygonZ, GeometryCollectionZ, PolyhedralSurfaceZ, TINZ, TriangleZ:
+	case wkbPointZ, wkbLineStringZ, wkbPolygonZ, wkbMultiPointZ, wkbMultiLineStringZ, wkbMultiPolygonZ, wkbGeometryCollectionZ, wkbPolyhedralSurfaceZ, wkbTINZ, wkbTriangleZ:
 		return geom.XYZ, nil
-	case PointM, LineStringM, PolygonM, MultiPointM, MultiLineStringM, MultiPolygonM, GeometryCollectionM, PolyhedralSurfaceM, TINM, TriangleM:
+	case wkbPointM, wkbLineStringM, wkbPolygonM, wkbMultiPointM, wkbMultiLineStringM, wkbMultiPolygonM, wkbGeometryCollectionM, wkbPolyhedralSurfaceM, wkbTINM, wkbTriangleM:
 		return geom.XYM, nil
-	case PointZM, LineStringZM, PolygonZM, MultiPointZM, MultiLineStringZM, MultiPolygonZM, GeometryCollectionZM, PolyhedralSurfaceZM, TINZM, TriangleZM:
+	case wkbPointZM, wkbLineStringZM, wkbPolygonZM, wkbMultiPointZM, wkbMultiLineStringZM, wkbMultiPolygonZM, wkbGeometryCollectionZM, wkbPolyhedralSurfaceZM, wkbTINZM, wkbTriangleZM:
 		return geom.XYZM, nil
 	default:
 		return geom.NoLayout, ErrUnknownType(t)
@@ -213,25 +222,25 @@ func Read(r io.Reader) (geom.T, error) {
 	}
 
 	switch t {
-	case Point, PointZ, PointM, PointZM:
+	case wkbPoint, wkbPointZ, wkbPointM, wkbPointZM:
 		flatCoords, err := readFlatCoords0(r, byteOrder, layout.Stride())
 		if err != nil {
 			return nil, err
 		}
 		return geom.NewPointFlat(layout, flatCoords), nil
-	case LineString, LineStringZ, LineStringM, LineStringZM:
+	case wkbLineString, wkbLineStringZ, wkbLineStringM, wkbLineStringZM:
 		flatCoords, err := readFlatCoords1(r, byteOrder, layout.Stride())
 		if err != nil {
 			return nil, err
 		}
 		return geom.NewLineStringFlat(layout, flatCoords), nil
-	case Polygon, PolygonZ, PolygonM, PolygonZM:
+	case wkbPolygon, wkbPolygonZ, wkbPolygonM, wkbPolygonZM:
 		flatCoords, ends, err := readFlatCoords2(r, byteOrder, layout.Stride())
 		if err != nil {
 			return nil, err
 		}
 		return geom.NewPolygonFlat(layout, flatCoords, ends), nil
-	case MultiPoint, MultiPointZ, MultiPointM, MultiPointZM:
+	case wkbMultiPoint, wkbMultiPointZ, wkbMultiPointM, wkbMultiPointZM:
 		var n uint32
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
@@ -247,14 +256,14 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 			p, ok := g.(*geom.Point)
 			if !ok {
-				return nil, fmt.Errorf("wkb: got a %T, want *geom.Point", g)
+				return nil, ErrUnexpectedType{Got: g, Want: &geom.Point{}}
 			}
 			if err = mp.Push(p); err != nil {
 				return nil, err
 			}
 		}
 		return mp, nil
-	case MultiLineString, MultiLineStringZ, MultiLineStringM, MultiLineStringZM:
+	case wkbMultiLineString, wkbMultiLineStringZ, wkbMultiLineStringM, wkbMultiLineStringZM:
 		var n uint32
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
@@ -270,14 +279,14 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 			p, ok := g.(*geom.LineString)
 			if !ok {
-				return nil, fmt.Errorf("wkb: got a %T, want *geom.LineString", g)
+				return nil, ErrUnexpectedType{Got: g, Want: &geom.LineString{}}
 			}
 			if err = mls.Push(p); err != nil {
 				return nil, err
 			}
 		}
 		return mls, nil
-	case MultiPolygon, MultiPolygonZ, MultiPolygonM, MultiPolygonZM:
+	case wkbMultiPolygon, wkbMultiPolygonZ, wkbMultiPolygonM, wkbMultiPolygonZM:
 		var n uint32
 		if err := binary.Read(r, byteOrder, &n); err != nil {
 			return nil, err
@@ -293,7 +302,7 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 			p, ok := g.(*geom.Polygon)
 			if !ok {
-				return nil, fmt.Errorf("wkb: got a %T, want *geom.Polygon", g)
+				return nil, ErrUnexpectedType{Got: g, Want: &geom.Polygon{}}
 			}
 			if err = mp.Push(p); err != nil {
 				return nil, err
@@ -353,29 +362,29 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	var wkbGeometryType uint32
 	switch g.(type) {
 	case *geom.Point:
-		wkbGeometryType = wkbPoint
+		wkbGeometryType = wkbPointId
 	case *geom.LineString:
-		wkbGeometryType = wkbLineString
+		wkbGeometryType = wkbLineStringId
 	case *geom.Polygon:
-		wkbGeometryType = wkbPolygon
+		wkbGeometryType = wkbPolygonId
 	case *geom.MultiPoint:
-		wkbGeometryType = wkbMultiPoint
+		wkbGeometryType = wkbMultiPointId
 	case *geom.MultiLineString:
-		wkbGeometryType = wkbMultiLineString
+		wkbGeometryType = wkbMultiLineStringId
 	case *geom.MultiPolygon:
-		wkbGeometryType = wkbMultiPolygon
+		wkbGeometryType = wkbMultiPolygonId
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
 	switch g.Layout() {
 	case geom.XY:
-		wkbGeometryType += wkbXY
+		wkbGeometryType += wkbXYId
 	case geom.XYZ:
-		wkbGeometryType += wkbXYZ
+		wkbGeometryType += wkbXYZId
 	case geom.XYM:
-		wkbGeometryType += wkbXYM
+		wkbGeometryType += wkbXYMId
 	case geom.XYZM:
-		wkbGeometryType += wkbXYZM
+		wkbGeometryType += wkbXYZMId
 	default:
 		return geom.ErrUnsupportedLayout(g.Layout())
 	}

@@ -45,3 +45,8 @@ func (lr *LinearRing) SetCoords(coords []Coord) (*LinearRing, error) {
 	}
 	return lr, nil
 }
+
+// Swap swaps the values of lr1 and lr2.
+func (lr1 *LinearRing) Swap(lr2 *LinearRing) {
+	lr1.geom1.swap(&lr2.geom1)
+}

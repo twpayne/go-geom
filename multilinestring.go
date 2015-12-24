@@ -69,3 +69,8 @@ func (mls *MultiLineString) SetCoords(coords [][]Coord) (*MultiLineString, error
 	}
 	return mls, nil
 }
+
+// Swap swaps the values of mls1 and mls2.
+func (mls1 *MultiLineString) Swap(mls2 *MultiLineString) {
+	mls1.geom2.swap(&mls2.geom2)
+}
