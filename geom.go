@@ -54,9 +54,6 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geom: unsupported type %T", e.Value)
 }
 
-// A Coord represents an N-dimensional coordinate.
-type Coord []float64
-
 // A T is a generic interface geomemented by all geometry types.
 type T interface {
 	Layout() Layout

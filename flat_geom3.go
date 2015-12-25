@@ -5,7 +5,7 @@ type geom3 struct {
 	endss [][]int
 }
 
-func (g *geom3) Coords() [][][]Coord {
+func (g *geom3) Coords() [][][][]float64 {
 	return inflate3(g.flatCoords, 0, g.endss, g.stride)
 }
 
@@ -13,7 +13,7 @@ func (g *geom3) Endss() [][]int {
 	return g.endss
 }
 
-func (g *geom3) setCoords(coords3 [][][]Coord) error {
+func (g *geom3) setCoords(coords3 [][][][]float64) error {
 	var err error
 	if g.flatCoords, g.endss, err = deflate3(nil, nil, coords3, g.stride); err != nil {
 		return err

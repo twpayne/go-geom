@@ -5,7 +5,7 @@ type geom2 struct {
 	ends []int
 }
 
-func (g *geom2) Coords() [][]Coord {
+func (g *geom2) Coords() [][][]float64 {
 	return inflate2(g.flatCoords, 0, g.ends, g.stride)
 }
 
@@ -13,7 +13,7 @@ func (g *geom2) Ends() []int {
 	return g.ends
 }
 
-func (g *geom2) setCoords(coords2 [][]Coord) error {
+func (g *geom2) setCoords(coords2 [][][]float64) error {
 	var err error
 	if g.flatCoords, g.ends, err = deflate2(nil, nil, coords2, g.stride); err != nil {
 		return err

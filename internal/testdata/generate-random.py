@@ -36,7 +36,7 @@ class RandomPoint(shapely.geometry.Point):
         shapely.geometry.Point.__init__(self, coord)
 
     def goify(self):
-        return 'geom.NewPoint(geom.XY).MustSetCoords(geom.Coord%s)' % (goifyNestedFloat64Array([self.x, self.y]),)
+        return 'geom.NewPoint(geom.XY).MustSetCoords([]float64%s)' % (goifyNestedFloat64Array([self.x, self.y]),)
 
 
 class RandomLineString(shapely.geometry.LineString):
@@ -47,7 +47,7 @@ class RandomLineString(shapely.geometry.LineString):
         shapely.geometry.LineString.__init__(self, coords)
 
     def goify(self):
-        return 'geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord%s)' % (goifyNestedFloat64Array(self.coords),)
+        return 'geom.NewLineString(geom.XY).MustSetCoords([][]float64%s)' % (goifyNestedFloat64Array(self.coords),)
 
 
 class RandomPolygon(shapely.geometry.Polygon):
@@ -59,7 +59,7 @@ class RandomPolygon(shapely.geometry.Polygon):
 
     def goify(self):
         coords = [self.exterior.coords] + [i.coords for i in self.interiors]
-        return 'geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
+        return 'geom.NewPolygon(geom.XY).MustSetCoords([][][]float64%s)' % (goifyNestedFloat64Array(coords),)
 
 
 class RandomMultiPoint(shapely.geometry.MultiPoint):
@@ -69,7 +69,7 @@ class RandomMultiPoint(shapely.geometry.MultiPoint):
 
     def goify(self):
         coords = [point.coords[0] for point in self.geoms]
-        return 'geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
+        return 'geom.NewMultiPoint(geom.XY).MustSetCoords([][]float64%s)' % (goifyNestedFloat64Array(coords),)
 
 
 class RandomMultiLineString(shapely.geometry.MultiLineString):
@@ -79,7 +79,7 @@ class RandomMultiLineString(shapely.geometry.MultiLineString):
 
     def goify(self):
         coords = [linestring.coords for linestring in self.geoms]
-        return 'geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
+        return 'geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64%s)' % (goifyNestedFloat64Array(coords),)
 
 
 class RandomMultiPolygon(shapely.geometry.MultiPolygon):
@@ -89,7 +89,7 @@ class RandomMultiPolygon(shapely.geometry.MultiPolygon):
 
     def goify(self):
         coords = [[polygon.exterior.coords] + [i.coords for i in polygon.interiors] for polygon in self.geoms]
-        return 'geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
+        return 'geom.NewMultiPolygon(geom.XY).MustSetCoords([][][][]float64%s)' % (goifyNestedFloat64Array(coords),)
 
 
 def main(argv):

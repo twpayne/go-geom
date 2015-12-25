@@ -15,27 +15,27 @@ func Test(t *testing.T) {
 		xdr string
 	}{
 		{
-			g:   geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
+			g:   geom.NewPoint(geom.XY).MustSetCoords([]float64{1, 2}),
 			ndr: "0101000000000000000000f03f0000000000000040",
 		},
 		{
-			g:   geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{2, 4}),
+			g:   geom.NewPoint(geom.XY).MustSetCoords([]float64{2, 4}),
 			xdr: "000000000140000000000000004010000000000000",
 		},
 		{
-			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{
+			g: geom.NewLineString(geom.XY).MustSetCoords([][]float64{
 				{-71.160281, 42.258729}, {-71.160837, 42.259113}, {-71.161144, 42.25932},
 			}),
 			ndr: "010200000003000000e44a3d0b42ca51c06ec328081e21454027bf45274bca51c0f67b629d2a214540957cec2e50ca51c07099d36531214540",
 		},
 		{
-			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64{
 				{{-71.160281, 42.258729}, {-71.160837, 42.259113}, {-71.161144, 42.25932}},
 			}),
 			ndr: "010500000001000000010200000003000000e44a3d0b42ca51c06ec328081e21454027bf45274bca51c0f67b629d2a214540957cec2e50ca51c07099d36531214540",
 		},
 		{
-			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{
+			g: geom.NewPolygon(geom.XY).MustSetCoords([][][]float64{
 				{
 					{-71.1776585052917, 42.3902909739571},
 					{-71.1776820268866, 42.3903701743239},
@@ -47,7 +47,7 @@ func Test(t *testing.T) {
 			ndr: "010300000001000000050000006285c7c15ecb51c0ed88fc0df531454028a46f245fcb51c009075ea6f731454047ded1e65dcb51c0781c510ef83145404871a7835dcb51c0ebdaee75f53145406285c7c15ecb51c0ed88fc0df5314540",
 		},
 		{
-			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord{
+			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][][]float64{
 				{
 					{
 						{-71.1031880899493, 42.3152774590236},

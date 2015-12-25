@@ -8,7 +8,7 @@ import (
 type testPoint struct {
 	layout     Layout
 	stride     int
-	coords     Coord
+	coords     []float64
 	flatCoords []float64
 	bounds     *Bounds
 }
@@ -45,17 +45,17 @@ func TestPoint(t *testing.T) {
 			tp: &testPoint{
 				layout:     XY,
 				stride:     2,
-				coords:     Coord{0, 0},
+				coords:     []float64{0, 0},
 				flatCoords: []float64{0, 0},
 				bounds:     NewBounds(XY).Set(0, 0, 0, 0),
 			},
 		},
 		{
-			p: NewPoint(XY).MustSetCoords(Coord{1, 2}),
+			p: NewPoint(XY).MustSetCoords([]float64{1, 2}),
 			tp: &testPoint{
 				layout:     XY,
 				stride:     2,
-				coords:     Coord{1, 2},
+				coords:     []float64{1, 2},
 				flatCoords: []float64{1, 2},
 				bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 			},
@@ -65,17 +65,17 @@ func TestPoint(t *testing.T) {
 			tp: &testPoint{
 				layout:     XYZ,
 				stride:     3,
-				coords:     Coord{0, 0, 0},
+				coords:     []float64{0, 0, 0},
 				flatCoords: []float64{0, 0, 0},
 				bounds:     NewBounds(XYZ).Set(0, 0, 0, 0, 0, 0),
 			},
 		},
 		{
-			p: NewPoint(XYZ).MustSetCoords(Coord{1, 2, 3}),
+			p: NewPoint(XYZ).MustSetCoords([]float64{1, 2, 3}),
 			tp: &testPoint{
 				layout:     XYZ,
 				stride:     3,
-				coords:     Coord{1, 2, 3},
+				coords:     []float64{1, 2, 3},
 				flatCoords: []float64{1, 2, 3},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 1, 2, 3),
 			},
@@ -85,17 +85,17 @@ func TestPoint(t *testing.T) {
 			tp: &testPoint{
 				layout:     XYM,
 				stride:     3,
-				coords:     Coord{0, 0, 0},
+				coords:     []float64{0, 0, 0},
 				flatCoords: []float64{0, 0, 0},
 				bounds:     NewBounds(XYM).Set(0, 0, 0, 0, 0, 0),
 			},
 		},
 		{
-			p: NewPoint(XYM).MustSetCoords(Coord{1, 2, 3}),
+			p: NewPoint(XYM).MustSetCoords([]float64{1, 2, 3}),
 			tp: &testPoint{
 				layout:     XYM,
 				stride:     3,
-				coords:     Coord{1, 2, 3},
+				coords:     []float64{1, 2, 3},
 				flatCoords: []float64{1, 2, 3},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 1, 2, 3),
 			},
@@ -105,17 +105,17 @@ func TestPoint(t *testing.T) {
 			tp: &testPoint{
 				layout:     XYZM,
 				stride:     4,
-				coords:     Coord{0, 0, 0, 0},
+				coords:     []float64{0, 0, 0, 0},
 				flatCoords: []float64{0, 0, 0, 0},
 				bounds:     NewBounds(XYZM).Set(0, 0, 0, 0, 0, 0, 0, 0),
 			},
 		},
 		{
-			p: NewPoint(XYZM).MustSetCoords(Coord{1, 2, 3, 4}),
+			p: NewPoint(XYZM).MustSetCoords([]float64{1, 2, 3, 4}),
 			tp: &testPoint{
 				layout:     XYZM,
 				stride:     4,
-				coords:     Coord{1, 2, 3, 4},
+				coords:     []float64{1, 2, 3, 4},
 				flatCoords: []float64{1, 2, 3, 4},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 1, 2, 3, 4),
 			},
@@ -126,7 +126,7 @@ func TestPoint(t *testing.T) {
 }
 
 func TestPointClone(t *testing.T) {
-	p1 := NewPoint(XY).MustSetCoords(Coord{1, 2})
+	p1 := NewPoint(XY).MustSetCoords([]float64{1, 2})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
 	}
@@ -135,7 +135,7 @@ func TestPointClone(t *testing.T) {
 func TestPointStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
-		coords Coord
+		coords []float64
 		err    error
 	}{
 		{
@@ -145,22 +145,22 @@ func TestPointStrideMismatch(t *testing.T) {
 		},
 		{
 			layout: XY,
-			coords: Coord{},
+			coords: []float64{},
 			err:    ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: Coord{1},
+			coords: []float64{1},
 			err:    ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: Coord{1, 2},
+			coords: []float64{1, 2},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: Coord{1, 2, 3},
+			coords: []float64{1, 2, 3},
 			err:    ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {
