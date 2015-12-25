@@ -1,7 +1,7 @@
 package geojson
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
 
 	"github.com/twpayne/go-geom"
@@ -22,14 +22,39 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
 }
 
-type Geometry struct {
+type Point struct {
+	Type        string    `json:"type"`
+	Coordinates []float64 `json:"coordinates"`
+}
+
+type LineString struct {
 	Type        string      `json:"type"`
-	Coordinates interface{} `json:"coordinates"`
+	Coordinates [][]float64 `json:"coordinates"`
+}
+
+type Polygon struct {
+	Type        string        `json:"type"`
+	Coordinates [][][]float64 `json:"coordinates"`
+}
+
+type MultiPoint struct {
+	Type        string      `json:"type"`
+	Coordinates [][]float64 `json:"coordinates"`
+}
+
+type MultiLineString struct {
+	Type        string        `json:"type"`
+	Coordinates [][][]float64 `json:"coordinates"`
+}
+
+type MultiPolygon struct {
+	Type        string          `json:"type"`
+	Coordinates [][][][]float64 `json:"coordinates"`
 }
 
 type Feature struct {
 	Type       string                 `json:"type"`
-	Geometry   *Geometry              `json:"geometry"`
+	Geometry   interface{}            `json:"geometry"`
 	Properties map[string]interface{} `json:"properties"`
 }
 
@@ -38,159 +63,31 @@ type FeatureCollection struct {
 	Features []Feature `json:"features"`
 }
 
-func Encode(g geom.T) (*Geometry, error) {
-	switch g.(type) {
-	case *geom.Point:
-		return EncodePoint(g.(*geom.Point)), nil
-	case *geom.LineString:
-		return EncodeLineString(g.(*geom.LineString)), nil
-	case *geom.Polygon:
-		return EncodePolygon(g.(*geom.Polygon)), nil
-	case *geom.MultiPoint:
-		return EncodeMultiPoint(g.(*geom.MultiPoint)), nil
-	case *geom.MultiLineString:
-		return EncodeMultiLineString(g.(*geom.MultiLineString)), nil
-	case *geom.MultiPolygon:
-		return EncodeMultiPolygon(g.(*geom.MultiPolygon)), nil
-	default:
-		return nil, geom.ErrUnsupportedType{Value: g}
+func encodeCoords1(coords1 []geom.Coord) [][]float64 {
+	cs := make([][]float64, len(coords1))
+	for i, c0 := range coords1 {
+		cs[i] = c0
 	}
+	return cs
 }
 
-func EncodePoint(p *geom.Point) *Geometry {
-	return &Geometry{
-		Type:        "Point",
-		Coordinates: p.Coords(),
+func encodeCoords2(coords2 [][]geom.Coord) [][][]float64 {
+	cs := make([][][]float64, len(coords2))
+	for i, c1 := range coords2 {
+		cs[i] = encodeCoords1(c1)
 	}
+	return cs
 }
 
-func EncodeLineString(ls *geom.LineString) *Geometry {
-	return &Geometry{
-		Type:        "LineString",
-		Coordinates: ls.Coords(),
+func encodeCoords3(coords3 [][][]geom.Coord) [][][][]float64 {
+	cs := make([][][][]float64, len(coords3))
+	for i, c2 := range coords3 {
+		cs[i] = encodeCoords2(c2)
 	}
+	return cs
 }
 
-func EncodePolygon(p *geom.Polygon) *Geometry {
-	return &Geometry{
-		Type:        "Polygon",
-		Coordinates: p.Coords(),
-	}
-}
-
-func EncodeMultiPoint(p *geom.MultiPoint) *Geometry {
-	return &Geometry{
-		Type:        "MultiPoint",
-		Coordinates: p.Coords(),
-	}
-}
-
-func EncodeMultiLineString(ls *geom.MultiLineString) *Geometry {
-	return &Geometry{
-		Type:        "MultiLineString",
-		Coordinates: ls.Coords(),
-	}
-}
-
-func EncodeMultiPolygon(p *geom.MultiPolygon) *Geometry {
-	return &Geometry{
-		Type:        "MultiPolygon",
-		Coordinates: p.Coords(),
-	}
-}
-
-func Decode(g *Geometry) (geom.T, error) {
-	switch g.Type {
-	case "Point":
-		return decodePoint(g)
-	case "LineString":
-		return decodeLineString(g)
-	case "Polygon":
-		return decodePolygon(g)
-	case "MultiPoint":
-		return decodeMultiPoint(g)
-	case "MultiLineString":
-		return decodeMultiLineString(g)
-	case "MultiPolygon":
-		return decodeMultiPolygon(g)
-	default:
-		return nil, ErrUnsupportedType(g.Type)
-	}
-}
-
-func decodePoint(g *Geometry) (*geom.Point, error) {
-	coordinates, ok := g.Coordinates.(geom.Coord)
-	if !ok {
-		return nil, errors.New("geojson: coordinates is not a []float64")
-	}
-	layout, err := guessLayout0(coordinates)
-	if err != nil {
-		return nil, err
-	}
-	return geom.NewPoint(layout).SetCoords(coordinates)
-}
-
-func decodeLineString(g *Geometry) (*geom.LineString, error) {
-	coordinates, ok := g.Coordinates.([]geom.Coord)
-	if !ok {
-		return nil, errors.New("geojson: coordinates is not a [][]float64")
-	}
-	layout, err := guessLayout1(coordinates)
-	if err != nil {
-		return nil, err
-	}
-	return geom.NewLineString(layout).SetCoords(coordinates)
-}
-
-func decodePolygon(g *Geometry) (*geom.Polygon, error) {
-	coordinates, ok := g.Coordinates.([][]geom.Coord)
-	if !ok {
-		return nil, errors.New("geojson: coordinates is not a [][][]float64")
-	}
-	layout, err := guessLayout2(coordinates)
-	if err != nil {
-		return nil, err
-	}
-	return geom.NewPolygon(layout).SetCoords(coordinates)
-}
-
-func decodeMultiPoint(g *Geometry) (*geom.MultiPoint, error) {
-	coordinates, ok := g.Coordinates.([]geom.Coord)
-	if !ok {
-		return nil, errors.New("geojson: coordinates is not a [][]float64")
-	}
-	layout, err := guessLayout1(coordinates)
-	if err != nil {
-		return nil, err
-	}
-	return geom.NewMultiPoint(layout).SetCoords(coordinates)
-}
-
-func decodeMultiLineString(g *Geometry) (*geom.MultiLineString, error) {
-	coordinates, ok := g.Coordinates.([][]geom.Coord)
-	if !ok {
-		return nil, errors.New("geojson: coordinates is not a [][][]float64")
-	}
-	layout, err := guessLayout2(coordinates)
-	if err != nil {
-		return nil, err
-	}
-	return geom.NewMultiLineString(layout).SetCoords(coordinates)
-}
-
-func decodeMultiPolygon(g *Geometry) (*geom.MultiPolygon, error) {
-	coordinates, ok := g.Coordinates.([][][]geom.Coord)
-	if !ok {
-		return nil, errors.New("geojson: coordinates is not a [][][][]float64")
-	}
-	layout, err := guessLayout3(coordinates)
-	if err != nil {
-		return nil, err
-	}
-	return geom.NewMultiPolygon(layout).SetCoords(coordinates)
-}
-
-func guessLayout0(coords0 geom.Coord) (geom.Layout, error) {
+func guessLayout0(coords0 []float64) (geom.Layout, error) {
 	switch n := len(coords0); n {
 	case 0, 1:
 		return geom.NoLayout, ErrDimensionalityTooLow(len(coords0))
@@ -205,7 +102,7 @@ func guessLayout0(coords0 geom.Coord) (geom.Layout, error) {
 	}
 }
 
-func guessLayout1(coords1 []geom.Coord) (geom.Layout, error) {
+func guessLayout1(coords1 [][]float64) (geom.Layout, error) {
 	if len(coords1) == 0 {
 		return DefaultLayout, nil
 	} else {
@@ -213,7 +110,7 @@ func guessLayout1(coords1 []geom.Coord) (geom.Layout, error) {
 	}
 }
 
-func guessLayout2(coords2 [][]geom.Coord) (geom.Layout, error) {
+func guessLayout2(coords2 [][][]float64) (geom.Layout, error) {
 	if len(coords2) == 0 {
 		return DefaultLayout, nil
 	} else {
@@ -221,10 +118,204 @@ func guessLayout2(coords2 [][]geom.Coord) (geom.Layout, error) {
 	}
 }
 
-func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
+func guessLayout3(coords3 [][][][]float64) (geom.Layout, error) {
 	if len(coords3) == 0 {
 		return DefaultLayout, nil
 	} else {
 		return guessLayout2(coords3[0])
+	}
+}
+
+func Marshal(g geom.T) ([]byte, error) {
+	switch g.(type) {
+	case *geom.Point:
+		p := g.(*geom.Point)
+		return json.Marshal(&Point{
+			Type:        "Point",
+			Coordinates: p.Coords(),
+		})
+	case *geom.LineString:
+		ls := g.(*geom.LineString)
+		return json.Marshal(&LineString{
+			Type:        "LineString",
+			Coordinates: encodeCoords1(ls.Coords()),
+		})
+	case *geom.Polygon:
+		p := g.(*geom.Polygon)
+		return json.Marshal(&Polygon{
+			Type:        "Polygon",
+			Coordinates: encodeCoords2(p.Coords()),
+		})
+	case *geom.MultiPoint:
+		mp := g.(*geom.MultiPoint)
+		return json.Marshal(&MultiPoint{
+			Type:        "MultiPoint",
+			Coordinates: encodeCoords1(mp.Coords()),
+		})
+	case *geom.MultiLineString:
+		mls := g.(*geom.MultiLineString)
+		return json.Marshal(&MultiLineString{
+			Type:        "MultiLineString",
+			Coordinates: encodeCoords2(mls.Coords()),
+		})
+	case *geom.MultiPolygon:
+		mp := g.(*geom.MultiPolygon)
+		return json.Marshal(&MultiPolygon{
+			Type:        "MultiPolygon",
+			Coordinates: encodeCoords3(mp.Coords()),
+		})
+	default:
+		return nil, geom.ErrUnsupportedType{Value: g}
+	}
+}
+
+func decodeCoords1(coords1 [][]float64) []geom.Coord {
+	gc := make([]geom.Coord, len(coords1))
+	for i, c := range coords1 {
+		gc[i] = geom.Coord(c)
+	}
+	return gc
+}
+
+func decodeCoords2(coords2 [][][]float64) [][]geom.Coord {
+	gc := make([][]geom.Coord, len(coords2))
+	for i, cs1 := range coords2 {
+		gc[i] = decodeCoords1(cs1)
+	}
+	return gc
+}
+
+func decodeCoords3(coords3 [][][][]float64) [][][]geom.Coord {
+	gc := make([][][]geom.Coord, len(coords3))
+	for i, cs2 := range coords3 {
+		gc[i] = decodeCoords2(cs2)
+	}
+	return gc
+}
+
+func unmarshalPoint(data []byte, g *geom.T) error {
+	var p Point
+	if err := json.Unmarshal(data, &p); err != nil {
+		return err
+	}
+	layout, err := guessLayout0(p.Coordinates)
+	if err != nil {
+		return err
+	}
+	gp, err := geom.NewPoint(layout).SetCoords(p.Coordinates)
+	if err != nil {
+		return err
+	}
+	*g = gp
+	return nil
+}
+
+func unmarshalLineString(data []byte, g *geom.T) error {
+	var ls LineString
+	if err := json.Unmarshal(data, &ls); err != nil {
+		return err
+	}
+	layout, err := guessLayout1(ls.Coordinates)
+	if err != nil {
+		return err
+	}
+	gls, err := geom.NewLineString(layout).SetCoords(decodeCoords1(ls.Coordinates))
+	if err != nil {
+		return err
+	}
+	*g = gls
+	return nil
+}
+
+func unmarshalPolygon(data []byte, g *geom.T) error {
+	var p Polygon
+	if err := json.Unmarshal(data, &p); err != nil {
+		return err
+	}
+	layout, err := guessLayout2(p.Coordinates)
+	if err != nil {
+		return err
+	}
+	gp, err := geom.NewPolygon(layout).SetCoords(decodeCoords2(p.Coordinates))
+	if err != nil {
+		return err
+	}
+	*g = gp
+	return nil
+}
+
+func unmarshalMultiPoint(data []byte, g *geom.T) error {
+	var mp MultiPoint
+	if err := json.Unmarshal(data, &mp); err != nil {
+		return err
+	}
+	layout, err := guessLayout1(mp.Coordinates)
+	if err != nil {
+		return err
+	}
+	gmp, err := geom.NewMultiPoint(layout).SetCoords(decodeCoords1(mp.Coordinates))
+	if err != nil {
+		return err
+	}
+	*g = gmp
+	return nil
+}
+
+func unmarshalMultiLineString(data []byte, g *geom.T) error {
+	var mls MultiLineString
+	if err := json.Unmarshal(data, &mls); err != nil {
+		return err
+	}
+	layout, err := guessLayout2(mls.Coordinates)
+	if err != nil {
+		return err
+	}
+	gmls, err := geom.NewMultiLineString(layout).SetCoords(decodeCoords2(mls.Coordinates))
+	if err != nil {
+		return err
+	}
+	*g = gmls
+	return nil
+}
+
+func unmarshalMultiPolygon(data []byte, g *geom.T) error {
+	var mp MultiPolygon
+	if err := json.Unmarshal(data, &mp); err != nil {
+		return err
+	}
+	layout, err := guessLayout3(mp.Coordinates)
+	if err != nil {
+		return err
+	}
+	gmp, err := geom.NewMultiPolygon(layout).SetCoords(decodeCoords3(mp.Coordinates))
+	if err != nil {
+		return err
+	}
+	*g = gmp
+	return nil
+}
+
+func Unmarshal(data []byte, g *geom.T) error {
+	var t struct {
+		Type string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch t.Type {
+	case "Point":
+		return unmarshalPoint(data, g)
+	case "LineString":
+		return unmarshalLineString(data, g)
+	case "Polygon":
+		return unmarshalPolygon(data, g)
+	case "MultiPoint":
+		return unmarshalMultiPoint(data, g)
+	case "MultiLineString":
+		return unmarshalMultiLineString(data, g)
+	case "MultiPolygon":
+		return unmarshalMultiPolygon(data, g)
+	default:
+		return ErrUnsupportedType(t.Type)
 	}
 }
