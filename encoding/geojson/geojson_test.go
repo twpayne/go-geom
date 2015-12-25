@@ -11,6 +11,7 @@ func TestGeometry(t *testing.T) {
 	for _, tc := range []struct {
 		g        geom.T
 		geometry *Geometry
+		s        string
 	}{
 		{
 			g: geom.NewPoint(DefaultLayout),
@@ -18,6 +19,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Point",
 				Coordinates: geom.Coord{0, 0},
 			},
+			s: `{"type":"Point","coordinates":[0,0]}`,
 		},
 		{
 			g: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
@@ -25,6 +27,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Point",
 				Coordinates: geom.Coord{1, 2},
 			},
+			s: `{"type":"Point","coordinates":[1,2]}`,
 		},
 		{
 			g: geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{1, 2, 3}),
@@ -32,6 +35,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Point",
 				Coordinates: geom.Coord{1, 2, 3},
 			},
+			s: `{"type":"Point","coordinates":[1,2,3]}`,
 		},
 		{
 			g: geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1, 2, 3, 4}),
@@ -39,6 +43,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Point",
 				Coordinates: geom.Coord{1, 2, 3, 4},
 			},
+			s: `{"type":"Point","coordinates":[1,2,3,4]}`,
 		},
 		{
 			g: geom.NewLineString(DefaultLayout),
@@ -46,6 +51,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "LineString",
 				Coordinates: []geom.Coord{},
 			},
+			s: `{"type":"LineString","coordinates":[]}`,
 		},
 		{
 			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
@@ -53,6 +59,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "LineString",
 				Coordinates: []geom.Coord{{1, 2}, {3, 4}},
 			},
+			s: `{"type":"LineString","coordinates":[[1,2],[3,4]]}`,
 		},
 		{
 			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
@@ -60,6 +67,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "LineString",
 				Coordinates: []geom.Coord{{1, 2, 3}, {4, 5, 6}},
 			},
+			s: `{"type":"LineString","coordinates":[[1,2,3],[4,5,6]]}`,
 		},
 		{
 			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}}),
@@ -67,6 +75,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "LineString",
 				Coordinates: []geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}},
 			},
+			s: `{"type":"LineString","coordinates":[[1,2,3,4],[5,6,7,8]]}`,
 		},
 		{
 			g: geom.NewPolygon(DefaultLayout),
@@ -74,6 +83,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Polygon",
 				Coordinates: [][]geom.Coord{},
 			},
+			s: `{"type":"Polygon","coordinates":[]}`,
 		},
 		{
 			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
@@ -81,6 +91,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Polygon",
 				Coordinates: [][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
 			},
+			s: `{"type":"Polygon","coordinates":[[[1,2],[3,4],[5,6],[1,2]]]}`,
 		},
 		{
 			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
@@ -88,6 +99,7 @@ func TestGeometry(t *testing.T) {
 				Type:        "Polygon",
 				Coordinates: [][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}},
 			},
+			s: `{"type":"Polygon","coordinates":[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]]]}`,
 		},
 		// FIXME Add MultiPoint tests
 		// FIXME Add MultiLineString tests
@@ -98,6 +110,9 @@ func TestGeometry(t *testing.T) {
 		}
 		if got, err := Decode(tc.geometry); err != nil || !reflect.DeepEqual(got, tc.g) {
 			t.Errorf("Decode(%#v) == %#v, %v, want %#v, nil", tc.geometry, got, err, tc.g)
+		}
+		if got, err := Marshal(tc.g); err != nil || string(got) != tc.s {
+			t.Errorf("Marshal(%#v) == %#v, %v, want %#v, nil", tc.g, string(got), err, tc.s)
 		}
 	}
 }

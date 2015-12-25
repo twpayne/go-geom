@@ -1,6 +1,7 @@
 package geojson
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -227,4 +228,12 @@ func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
 	} else {
 		return guessLayout2(coords3[0])
 	}
+}
+
+func Marshal(g geom.T) ([]byte, error) {
+	geometry, err := Encode(g)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(geometry)
 }
