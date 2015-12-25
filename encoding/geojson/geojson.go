@@ -145,30 +145,6 @@ func Marshal(g geom.T) ([]byte, error) {
 	}
 }
 
-func decodeCoords1(coords1 [][]float64) [][]float64 {
-	gc := make([][]float64, len(coords1))
-	for i, c := range coords1 {
-		gc[i] = []float64(c)
-	}
-	return gc
-}
-
-func decodeCoords2(coords2 [][][]float64) [][][]float64 {
-	gc := make([][][]float64, len(coords2))
-	for i, cs1 := range coords2 {
-		gc[i] = decodeCoords1(cs1)
-	}
-	return gc
-}
-
-func decodeCoords3(coords3 [][][][]float64) [][][][]float64 {
-	gc := make([][][][]float64, len(coords3))
-	for i, cs2 := range coords3 {
-		gc[i] = decodeCoords2(cs2)
-	}
-	return gc
-}
-
 func unmarshalPoint(data []byte, g *geom.T) error {
 	var p Point
 	if err := json.Unmarshal(data, &p); err != nil {
@@ -195,7 +171,7 @@ func unmarshalLineString(data []byte, g *geom.T) error {
 	if err != nil {
 		return err
 	}
-	gls, err := geom.NewLineString(layout).SetCoords(decodeCoords1(ls.Coordinates))
+	gls, err := geom.NewLineString(layout).SetCoords(ls.Coordinates)
 	if err != nil {
 		return err
 	}
@@ -212,7 +188,7 @@ func unmarshalPolygon(data []byte, g *geom.T) error {
 	if err != nil {
 		return err
 	}
-	gp, err := geom.NewPolygon(layout).SetCoords(decodeCoords2(p.Coordinates))
+	gp, err := geom.NewPolygon(layout).SetCoords(p.Coordinates)
 	if err != nil {
 		return err
 	}
@@ -229,7 +205,7 @@ func unmarshalMultiPoint(data []byte, g *geom.T) error {
 	if err != nil {
 		return err
 	}
-	gmp, err := geom.NewMultiPoint(layout).SetCoords(decodeCoords1(mp.Coordinates))
+	gmp, err := geom.NewMultiPoint(layout).SetCoords(mp.Coordinates)
 	if err != nil {
 		return err
 	}
@@ -246,7 +222,7 @@ func unmarshalMultiLineString(data []byte, g *geom.T) error {
 	if err != nil {
 		return err
 	}
-	gmls, err := geom.NewMultiLineString(layout).SetCoords(decodeCoords2(mls.Coordinates))
+	gmls, err := geom.NewMultiLineString(layout).SetCoords(mls.Coordinates)
 	if err != nil {
 		return err
 	}
@@ -263,7 +239,7 @@ func unmarshalMultiPolygon(data []byte, g *geom.T) error {
 	if err != nil {
 		return err
 	}
-	gmp, err := geom.NewMultiPolygon(layout).SetCoords(decodeCoords3(mp.Coordinates))
+	gmp, err := geom.NewMultiPolygon(layout).SetCoords(mp.Coordinates)
 	if err != nil {
 		return err
 	}
