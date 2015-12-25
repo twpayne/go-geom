@@ -63,30 +63,6 @@ type FeatureCollection struct {
 	Features []Feature `json:"features"`
 }
 
-func encodeCoords1(coords1 [][]float64) [][]float64 {
-	cs := make([][]float64, len(coords1))
-	for i, c0 := range coords1 {
-		cs[i] = c0
-	}
-	return cs
-}
-
-func encodeCoords2(coords2 [][][]float64) [][][]float64 {
-	cs := make([][][]float64, len(coords2))
-	for i, c1 := range coords2 {
-		cs[i] = encodeCoords1(c1)
-	}
-	return cs
-}
-
-func encodeCoords3(coords3 [][][][]float64) [][][][]float64 {
-	cs := make([][][][]float64, len(coords3))
-	for i, c2 := range coords3 {
-		cs[i] = encodeCoords2(c2)
-	}
-	return cs
-}
-
 func guessLayout0(coords0 []float64) (geom.Layout, error) {
 	switch n := len(coords0); n {
 	case 0, 1:
@@ -138,31 +114,31 @@ func Marshal(g geom.T) ([]byte, error) {
 		ls := g.(*geom.LineString)
 		return json.Marshal(&LineString{
 			Type:        "LineString",
-			Coordinates: encodeCoords1(ls.Coords()),
+			Coordinates: ls.Coords(),
 		})
 	case *geom.Polygon:
 		p := g.(*geom.Polygon)
 		return json.Marshal(&Polygon{
 			Type:        "Polygon",
-			Coordinates: encodeCoords2(p.Coords()),
+			Coordinates: p.Coords(),
 		})
 	case *geom.MultiPoint:
 		mp := g.(*geom.MultiPoint)
 		return json.Marshal(&MultiPoint{
 			Type:        "MultiPoint",
-			Coordinates: encodeCoords1(mp.Coords()),
+			Coordinates: mp.Coords(),
 		})
 	case *geom.MultiLineString:
 		mls := g.(*geom.MultiLineString)
 		return json.Marshal(&MultiLineString{
 			Type:        "MultiLineString",
-			Coordinates: encodeCoords2(mls.Coords()),
+			Coordinates: mls.Coords(),
 		})
 	case *geom.MultiPolygon:
 		mp := g.(*geom.MultiPolygon)
 		return json.Marshal(&MultiPolygon{
 			Type:        "MultiPolygon",
-			Coordinates: encodeCoords3(mp.Coords()),
+			Coordinates: mp.Coords(),
 		})
 	default:
 		return nil, geom.ErrUnsupportedType{Value: g}
