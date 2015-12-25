@@ -73,13 +73,13 @@ func (ls *LineString) Length() float64 {
 }
 
 // MustSetCoords is like SetCoords but it panics on any error.
-func (ls *LineString) MustSetCoords(coords []Coord) *LineString {
+func (ls *LineString) MustSetCoords(coords [][]float64) *LineString {
 	Must(ls.SetCoords(coords))
 	return ls
 }
 
 // SetCoords sets the coordinates of ls.
-func (ls *LineString) SetCoords(coords []Coord) (*LineString, error) {
+func (ls *LineString) SetCoords(coords [][]float64) (*LineString, error) {
 	if err := ls.setCoords(coords); err != nil {
 		return nil, err
 	}

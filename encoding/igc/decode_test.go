@@ -17,7 +17,7 @@ func TestDecode(t *testing.T) {
 			s: "AXTR20C38FF2C110\r\n" +
 				"HFDTE151115\r\n" +
 				"B1316284654230N00839078EA0147801630\r\n",
-			g: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
+			g: geom.NewLineString(geom.Layout(5)).MustSetCoords([][]float64{
 				{8.6513, 46.90383333333333, 1630, 1447593388, 1478},
 			}),
 		},
@@ -26,7 +26,7 @@ func TestDecode(t *testing.T) {
 				"HFDTE020613\r\n" +
 				"I033638FXA3940SIU4141TDS\r\n" +
 				"B1053525151892N00203986WA0017900275000108\r\n",
-			g: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
+			g: geom.NewLineString(geom.Layout(5)).MustSetCoords([][]float64{
 				{-2.0664333333333333, 51.864866666666664, 275, 1370170432.8, 179},
 			}),
 		},
@@ -35,7 +35,7 @@ func TestDecode(t *testing.T) {
 				"HFDTE100810\r\n" +
 				"I033637LAD3839LOD4040TDS\r\n" +
 				"B1146174031985N00726775WA010040114912340",
-			g: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
+			g: geom.NewLineString(geom.Layout(5)).MustSetCoords([][]float64{
 				{-7.446255666666667, 40.53308533333333, 1149, 1281440777, 1004},
 			}),
 		},

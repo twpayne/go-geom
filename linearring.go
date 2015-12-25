@@ -34,12 +34,12 @@ func (lr *LinearRing) Length() float64 {
 	return length1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
 }
 
-func (lr *LinearRing) MustSetCoords(coords []Coord) *LinearRing {
+func (lr *LinearRing) MustSetCoords(coords [][]float64) *LinearRing {
 	Must(lr.SetCoords(coords))
 	return lr
 }
 
-func (lr *LinearRing) SetCoords(coords []Coord) (*LinearRing, error) {
+func (lr *LinearRing) SetCoords(coords [][]float64) (*LinearRing, error) {
 	if err := lr.setCoords(coords); err != nil {
 		return nil, err
 	}

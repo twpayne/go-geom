@@ -42,13 +42,13 @@ func (p *Point) Length() float64 {
 }
 
 // MustSetCoords is like SetCoords but panics on any error.
-func (p *Point) MustSetCoords(coords Coord) *Point {
+func (p *Point) MustSetCoords(coords []float64) *Point {
 	Must(p.SetCoords(coords))
 	return p
 }
 
 // SetCoords sets the coordinates of p.
-func (p *Point) SetCoords(coords Coord) (*Point, error) {
+func (p *Point) SetCoords(coords []float64) (*Point, error) {
 	if err := p.setCoords(coords); err != nil {
 		return nil, err
 	}

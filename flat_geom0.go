@@ -10,7 +10,7 @@ func (g *geom0) Bounds() *Bounds {
 	return NewBounds(g.layout).extendFlatCoords(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
-func (g *geom0) Coords() Coord {
+func (g *geom0) Coords() []float64 {
 	return inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 

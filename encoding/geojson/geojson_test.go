@@ -17,15 +17,15 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"Point","coordinates":[0,0]}`,
 		},
 		{
-			g: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
+			g: geom.NewPoint(geom.XY).MustSetCoords([]float64{1, 2}),
 			s: `{"type":"Point","coordinates":[1,2]}`,
 		},
 		{
-			g: geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{1, 2, 3}),
+			g: geom.NewPoint(geom.XYZ).MustSetCoords([]float64{1, 2, 3}),
 			s: `{"type":"Point","coordinates":[1,2,3]}`,
 		},
 		{
-			g: geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1, 2, 3, 4}),
+			g: geom.NewPoint(geom.XYZM).MustSetCoords([]float64{1, 2, 3, 4}),
 			s: `{"type":"Point","coordinates":[1,2,3,4]}`,
 		},
 		{
@@ -33,15 +33,15 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"LineString","coordinates":[]}`,
 		},
 		{
-			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
+			g: geom.NewLineString(geom.XY).MustSetCoords([][]float64{{1, 2}, {3, 4}}),
 			s: `{"type":"LineString","coordinates":[[1,2],[3,4]]}`,
 		},
 		{
-			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
+			g: geom.NewLineString(geom.XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}}),
 			s: `{"type":"LineString","coordinates":[[1,2,3],[4,5,6]]}`,
 		},
 		{
-			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}}),
+			g: geom.NewLineString(geom.XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}}),
 			s: `{"type":"LineString","coordinates":[[1,2,3,4],[5,6,7,8]]}`,
 		},
 		{
@@ -49,11 +49,11 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"Polygon","coordinates":[]}`,
 		},
 		{
-			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
+			g: geom.NewPolygon(geom.XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
 			s: `{"type":"Polygon","coordinates":[[[1,2],[3,4],[5,6],[1,2]]]}`,
 		},
 		{
-			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
+			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][][]float64{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
 			s: `{"type":"Polygon","coordinates":[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]]]}`,
 		},
 		{
@@ -61,15 +61,15 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"MultiPoint","coordinates":[]}`,
 		},
 		{
-			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
+			g: geom.NewMultiPoint(geom.XY).MustSetCoords([][]float64{{1, 2}, {3, 4}}),
 			s: `{"type":"MultiPoint","coordinates":[[1,2],[3,4]]}`,
 		},
 		{
-			g: geom.NewMultiPoint(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
+			g: geom.NewMultiPoint(geom.XYZ).MustSetCoords([][]float64{{1, 2, 3}, {4, 5, 6}}),
 			s: `{"type":"MultiPoint","coordinates":[[1,2,3],[4,5,6]]}`,
 		},
 		{
-			g: geom.NewMultiPoint(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}}),
+			g: geom.NewMultiPoint(geom.XYZM).MustSetCoords([][]float64{{1, 2, 3, 4}, {5, 6, 7, 8}}),
 			s: `{"type":"MultiPoint","coordinates":[[1,2,3,4],[5,6,7,8]]}`,
 		},
 		{
@@ -77,11 +77,11 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"MultiLineString","coordinates":[]}`,
 		},
 		{
-			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
 			s: `{"type":"MultiLineString","coordinates":[[[1,2],[3,4],[5,6],[1,2]]]}`,
 		},
 		{
-			g: geom.NewMultiLineString(geom.XYZ).MustSetCoords([][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
+			g: geom.NewMultiLineString(geom.XYZ).MustSetCoords([][][]float64{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
 			s: `{"type":"MultiLineString","coordinates":[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]]]}`,
 		},
 		{
@@ -89,7 +89,7 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"MultiPolygon","coordinates":[]}`,
 		},
 		{
-			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][]geom.Coord{{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}, {{-1, -2, -3}, {-4, -5, -6}, {-7, -8, -9}, {-1, -2, -3}}}}),
+			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][][]float64{{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}, {{-1, -2, -3}, {-4, -5, -6}, {-7, -8, -9}, {-1, -2, -3}}}}),
 			s: `{"type":"MultiPolygon","coordinates":[[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]],[[-1,-2,-3],[-4,-5,-6],[-7,-8,-9],[-1,-2,-3]]]]}`,
 		},
 	} {

@@ -8,7 +8,7 @@ import (
 type testMultiLineString struct {
 	layout     Layout
 	stride     int
-	coords     [][]Coord
+	coords     [][][]float64
 	flatCoords []float64
 	ends       []int
 	bounds     *Bounds
@@ -53,11 +53,11 @@ func TestMultiLineString(t *testing.T) {
 		tmls *testMultiLineString
 	}{
 		{
-			mls: NewMultiLineString(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
+			mls: NewMultiLineString(XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
 			tmls: &testMultiLineString{
 				layout:     XY,
 				stride:     2,
-				coords:     [][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
+				coords:     [][][]float64{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				ends:       []int{6, 12},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
@@ -69,7 +69,7 @@ func TestMultiLineString(t *testing.T) {
 }
 
 func TestMultiLineStringClone(t *testing.T) {
-	p1 := NewMultiLineString(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}})
+	p1 := NewMultiLineString(XY).MustSetCoords([][][]float64{{{1, 2}, {3, 4}, {5, 6}}})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
 	}
@@ -78,7 +78,7 @@ func TestMultiLineStringClone(t *testing.T) {
 func TestMultiLineStringStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
-		coords [][]Coord
+		coords [][][]float64
 		err    error
 	}{
 		{
@@ -88,27 +88,27 @@ func TestMultiLineStringStrideMismatch(t *testing.T) {
 		},
 		{
 			layout: XY,
-			coords: [][]Coord{},
+			coords: [][][]float64{},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]Coord{{{1, 2}, {}}},
+			coords: [][][]float64{{{1, 2}, {}}},
 			err:    ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]Coord{{{1, 2}, {1}}},
+			coords: [][][]float64{{{1, 2}, {1}}},
 			err:    ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
 			layout: XY,
-			coords: [][]Coord{{{1, 2}, {3, 4}}},
+			coords: [][][]float64{{{1, 2}, {3, 4}}},
 			err:    nil,
 		},
 		{
 			layout: XY,
-			coords: [][]Coord{{{1, 2}, {3, 4, 5}}},
+			coords: [][][]float64{{{1, 2}, {3, 4, 5}}},
 			err:    ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {

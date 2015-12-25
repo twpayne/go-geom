@@ -1,6 +1,6 @@
 package geom
 
-func deflate0(flatCoords []float64, c Coord, stride int) ([]float64, error) {
+func deflate0(flatCoords []float64, c []float64, stride int) ([]float64, error) {
 	if len(c) != stride {
 		return nil, ErrStrideMismatch{Got: len(c), Want: stride}
 	}
@@ -8,7 +8,7 @@ func deflate0(flatCoords []float64, c Coord, stride int) ([]float64, error) {
 	return flatCoords, nil
 }
 
-func deflate1(flatCoords []float64, coords1 []Coord, stride int) ([]float64, error) {
+func deflate1(flatCoords []float64, coords1 [][]float64, stride int) ([]float64, error) {
 	for _, c := range coords1 {
 		var err error
 		flatCoords, err = deflate0(flatCoords, c, stride)
@@ -19,7 +19,7 @@ func deflate1(flatCoords []float64, coords1 []Coord, stride int) ([]float64, err
 	return flatCoords, nil
 }
 
-func deflate2(flatCoords []float64, ends []int, coords2 [][]Coord, stride int) ([]float64, []int, error) {
+func deflate2(flatCoords []float64, ends []int, coords2 [][][]float64, stride int) ([]float64, []int, error) {
 	for _, coords1 := range coords2 {
 		var err error
 		flatCoords, err = deflate1(flatCoords, coords1, stride)
@@ -31,7 +31,7 @@ func deflate2(flatCoords []float64, ends []int, coords2 [][]Coord, stride int) (
 	return flatCoords, ends, nil
 }
 
-func deflate3(flatCoords []float64, endss [][]int, coords3 [][][]Coord, stride int) ([]float64, [][]int, error) {
+func deflate3(flatCoords []float64, endss [][]int, coords3 [][][][]float64, stride int) ([]float64, [][]int, error) {
 	for _, coords2 := range coords3 {
 		var err error
 		var ends []int

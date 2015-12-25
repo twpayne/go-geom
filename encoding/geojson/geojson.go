@@ -63,7 +63,7 @@ type FeatureCollection struct {
 	Features []Feature `json:"features"`
 }
 
-func encodeCoords1(coords1 []geom.Coord) [][]float64 {
+func encodeCoords1(coords1 [][]float64) [][]float64 {
 	cs := make([][]float64, len(coords1))
 	for i, c0 := range coords1 {
 		cs[i] = c0
@@ -71,7 +71,7 @@ func encodeCoords1(coords1 []geom.Coord) [][]float64 {
 	return cs
 }
 
-func encodeCoords2(coords2 [][]geom.Coord) [][][]float64 {
+func encodeCoords2(coords2 [][][]float64) [][][]float64 {
 	cs := make([][][]float64, len(coords2))
 	for i, c1 := range coords2 {
 		cs[i] = encodeCoords1(c1)
@@ -79,7 +79,7 @@ func encodeCoords2(coords2 [][]geom.Coord) [][][]float64 {
 	return cs
 }
 
-func encodeCoords3(coords3 [][][]geom.Coord) [][][][]float64 {
+func encodeCoords3(coords3 [][][][]float64) [][][][]float64 {
 	cs := make([][][][]float64, len(coords3))
 	for i, c2 := range coords3 {
 		cs[i] = encodeCoords2(c2)
@@ -169,24 +169,24 @@ func Marshal(g geom.T) ([]byte, error) {
 	}
 }
 
-func decodeCoords1(coords1 [][]float64) []geom.Coord {
-	gc := make([]geom.Coord, len(coords1))
+func decodeCoords1(coords1 [][]float64) [][]float64 {
+	gc := make([][]float64, len(coords1))
 	for i, c := range coords1 {
-		gc[i] = geom.Coord(c)
+		gc[i] = []float64(c)
 	}
 	return gc
 }
 
-func decodeCoords2(coords2 [][][]float64) [][]geom.Coord {
-	gc := make([][]geom.Coord, len(coords2))
+func decodeCoords2(coords2 [][][]float64) [][][]float64 {
+	gc := make([][][]float64, len(coords2))
 	for i, cs1 := range coords2 {
 		gc[i] = decodeCoords1(cs1)
 	}
 	return gc
 }
 
-func decodeCoords3(coords3 [][][][]float64) [][][]geom.Coord {
-	gc := make([][][]geom.Coord, len(coords3))
+func decodeCoords3(coords3 [][][][]float64) [][][][]float64 {
+	gc := make([][][][]float64, len(coords3))
 	for i, cs2 := range coords3 {
 		gc[i] = decodeCoords2(cs2)
 	}
