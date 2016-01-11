@@ -26,6 +26,10 @@ var (
 
 type Errors map[int]error
 
+type T struct {
+	LineString *geom.LineString
+}
+
 func (es Errors) Error() string {
 	var ss []string
 	for lineno, e := range es {
@@ -309,7 +313,7 @@ func doParse(r io.Reader) (*parser, Errors) {
 }
 
 // Read reads a igc.T from r, which should contain IGC records.
-func Read(r io.Reader) (*geom.LineString, error) {
+func Read(r io.Reader) (*T, error) {
 	p, errors := doParse(r)
 	if len(errors) != 0 {
 		return nil, errors
@@ -317,5 +321,7 @@ func Read(r io.Reader) (*geom.LineString, error) {
 	if len(p.coords) == 0 {
 		return nil, ErrNoBRecords
 	}
-	return geom.NewLineStringFlat(geom.Layout(5), p.coords), nil
+	return &T{
+		LineString: geom.NewLineStringFlat(geom.Layout(5), p.coords),
+	}, nil
 }
