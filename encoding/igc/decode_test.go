@@ -51,3 +51,40 @@ func TestDecode(t *testing.T) {
 		}
 	}
 }
+
+func TestDecodeHeaders(t *testing.T) {
+	for _, tc := range []struct {
+		s string
+		t *T
+	}{
+		{
+			s: "AFLY05094\r\n" +
+				"HFDTE210407\r\n" +
+				"HFFXA100\r\n" +
+				"HFPLTPILOT:Tom Payne\r\n" +
+				"HFGTYGLIDERTYPE:Gradient Aspen\r\n" +
+				"HFGIDGLIDERID:G12242505057\r\n" +
+				"HFDTM100GPSDATUM:WGS84\r\n" +
+				"HFGPSGPS:FURUNO GH-80\r\n" +
+				"HFRFWFIRMWAREVERSION:1.16\r\n" +
+				"HFRHWHARDWAREVERSION:1.00\r\n" +
+				"HFFTYFRTYPE:FLYTEC,5020\r\n",
+			t: &T{
+				Headers: []Header{
+					{Source: "F", Key: "PLT", KeyExtra: "PILOT", Value: "Tom Payne"},
+					{Source: "F", Key: "GTY", KeyExtra: "GLIDERTYPE", Value: "Gradient Aspen"},
+					{Source: "F", Key: "GID", KeyExtra: "GLIDERID", Value: "G12242505057"},
+					{Source: "F", Key: "DTM", KeyExtra: "100GPSDATUM", Value: "WGS84"},
+					{Source: "F", Key: "GPS", KeyExtra: "GPS", Value: "FURUNO GH-80"},
+					{Source: "F", Key: "RFW", KeyExtra: "FIRMWAREVERSION", Value: "1.16"},
+					{Source: "F", Key: "RHW", KeyExtra: "HARDWAREVERSION", Value: "1.00"},
+					{Source: "F", Key: "FTY", KeyExtra: "FRTYPE", Value: "FLYTEC,5020"},
+				},
+			},
+		},
+	} {
+		if got, err := Read(bytes.NewBufferString(tc.s)); err != nil || !reflect.DeepEqual(tc.t.Headers, got.Headers) {
+			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v", tc.s, got, err, tc.t)
+		}
+	}
+}

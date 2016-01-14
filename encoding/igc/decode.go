@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"time"
 
@@ -21,11 +22,21 @@ var (
 	ErrEmptyLine                      = errors.New("empty line")
 	ErrMissingARecord                 = errors.New("missing A record")
 	ErrOutOfRange                     = errors.New("out of range")
+
+	hRegexp = regexp.MustCompile(`H([FP])([A-Z]{3})(.*?):(.*?)\s*\z`)
 )
 
 type Errors map[int]error
 
+type Header struct {
+	Source   string
+	Key      string
+	KeyExtra string
+	Value    string
+}
+
 type T struct {
+	Headers    []Header
 	LineString *geom.LineString
 }
 
@@ -65,6 +76,7 @@ func parseDecInRange(s string, start, stop, min, max int) (int, error) {
 // parser contains the state of a parser.
 type parser struct {
 	state             int
+	headers           []Header
 	coords            []float64
 	year, month, day  int
 	startAt           time.Time
@@ -181,6 +193,14 @@ func (p *parser) parseB(line string) error {
 
 // parseB parses an H record from line and updates the state of p.
 func (p *parser) parseH(line string) error {
+	if m := hRegexp.FindStringSubmatch(line); m != nil {
+		p.headers = append(p.headers, Header{
+			Source:   m[1],
+			Key:      m[2],
+			KeyExtra: m[3],
+			Value:    m[4],
+		})
+	}
 	switch {
 	case strings.HasPrefix(line, "HFDTE"):
 		return p.parseHFDTE(line)
@@ -318,6 +338,7 @@ func Read(r io.Reader) (*T, error) {
 		return nil, errors
 	}
 	return &T{
+		Headers:    p.headers,
 		LineString: geom.NewLineStringFlat(geom.Layout(5), p.coords),
 	}, nil
 }
