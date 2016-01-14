@@ -47,7 +47,7 @@ func TestDecode(t *testing.T) {
 		},
 	} {
 		if got, err := Read(bytes.NewBufferString(tc.s)); err != nil || !reflect.DeepEqual(tc.t, got) {
-			t.Errorf("Read(...(%v)) == %#v, %v, want nil, %#v", tc.s, got, err, tc.t)
+			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v", tc.s, got, err, tc.t)
 		}
 	}
 }
