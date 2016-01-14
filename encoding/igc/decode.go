@@ -20,7 +20,6 @@ var (
 	ErrInvalidIRecord                 = errors.New("invalid I record")
 	ErrEmptyLine                      = errors.New("empty line")
 	ErrMissingARecord                 = errors.New("missing A record")
-	ErrNoBRecords                     = errors.New("no B records")
 	ErrOutOfRange                     = errors.New("out of range")
 )
 
@@ -317,9 +316,6 @@ func Read(r io.Reader) (*T, error) {
 	p, errors := doParse(r)
 	if len(errors) != 0 {
 		return nil, errors
-	}
-	if len(p.coords) == 0 {
-		return nil, ErrNoBRecords
 	}
 	return &T{
 		LineString: geom.NewLineStringFlat(geom.Layout(5), p.coords),
