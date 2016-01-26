@@ -6,6 +6,6 @@ all:
 		go test -cover -race ./... ; \
 		go vet ./... ; \
 	fi
-	test -z "$(go fmt ./...)"
+	test -z "$(go fmt -s ./...)"
 	go generate ./...
 	git diff --exit-code
