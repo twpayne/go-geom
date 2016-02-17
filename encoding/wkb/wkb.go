@@ -70,69 +70,69 @@ func (e ErrUnexpectedType) Error() string {
 }
 
 const (
-	wkbPointId              = 1
-	wkbLineStringId         = 2
-	wkbPolygonId            = 3
-	wkbMultiPointId         = 4
-	wkbMultiLineStringId    = 5
-	wkbMultiPolygonId       = 6
-	wkbGeometryCollectionId = 7
-	wkbPolyhedralSurfaceId  = 15
-	wkbTINId                = 16
-	wkbTriangleId           = 17
+	wkbPointID              = 1
+	wkbLineStringID         = 2
+	wkbPolygonID            = 3
+	wkbMultiPointID         = 4
+	wkbMultiLineStringID    = 5
+	wkbMultiPolygonID       = 6
+	wkbGeometryCollectionID = 7
+	wkbPolyhedralSurfaceID  = 15
+	wkbTINID                = 16
+	wkbTriangleID           = 17
 )
 
 const (
-	wkbXYId   = 0
-	wkbXYZId  = 1000
-	wkbXYMId  = 2000
-	wkbXYZMId = 3000
+	wkbXYID   = 0
+	wkbXYZID  = 1000
+	wkbXYMID  = 2000
+	wkbXYZMID = 3000
 )
 
 const (
-	wkbPoint              = Type(wkbPointId + wkbXYId)
-	wkbLineString         = Type(wkbLineStringId + wkbXYId)
-	wkbPolygon            = Type(wkbPolygonId + wkbXYId)
-	wkbMultiPoint         = Type(wkbMultiPointId + wkbXYId)
-	wkbMultiLineString    = Type(wkbMultiLineStringId + wkbXYId)
-	wkbMultiPolygon       = Type(wkbMultiPolygonId + wkbXYId)
-	wkbGeometryCollection = Type(wkbGeometryCollectionId + wkbXYId)
-	wkbPolyhedralSurface  = Type(wkbPolyhedralSurfaceId + wkbXYId)
-	wkbTIN                = Type(wkbTINId + wkbXYId)
-	wkbTriangle           = Type(wkbTriangleId + wkbXYId)
+	wkbPoint              = Type(wkbPointID + wkbXYID)
+	wkbLineString         = Type(wkbLineStringID + wkbXYID)
+	wkbPolygon            = Type(wkbPolygonID + wkbXYID)
+	wkbMultiPoint         = Type(wkbMultiPointID + wkbXYID)
+	wkbMultiLineString    = Type(wkbMultiLineStringID + wkbXYID)
+	wkbMultiPolygon       = Type(wkbMultiPolygonID + wkbXYID)
+	wkbGeometryCollection = Type(wkbGeometryCollectionID + wkbXYID)
+	wkbPolyhedralSurface  = Type(wkbPolyhedralSurfaceID + wkbXYID)
+	wkbTIN                = Type(wkbTINID + wkbXYID)
+	wkbTriangle           = Type(wkbTriangleID + wkbXYID)
 
-	wkbPointZ              = Type(wkbPointId + wkbXYZId)
-	wkbLineStringZ         = Type(wkbLineStringId + wkbXYZId)
-	wkbPolygonZ            = Type(wkbPolygonId + wkbXYZId)
-	wkbMultiPointZ         = Type(wkbMultiPointId + wkbXYZId)
-	wkbMultiLineStringZ    = Type(wkbMultiLineStringId + wkbXYZId)
-	wkbMultiPolygonZ       = Type(wkbMultiPolygonId + wkbXYZId)
-	wkbGeometryCollectionZ = Type(wkbGeometryCollectionId + wkbXYZId)
-	wkbPolyhedralSurfaceZ  = Type(wkbPolyhedralSurfaceId + wkbXYZId)
-	wkbTINZ                = Type(wkbTINId + wkbXYZId)
-	wkbTriangleZ           = Type(wkbTriangleId + wkbXYZId)
+	wkbPointZ              = Type(wkbPointID + wkbXYZID)
+	wkbLineStringZ         = Type(wkbLineStringID + wkbXYZID)
+	wkbPolygonZ            = Type(wkbPolygonID + wkbXYZID)
+	wkbMultiPointZ         = Type(wkbMultiPointID + wkbXYZID)
+	wkbMultiLineStringZ    = Type(wkbMultiLineStringID + wkbXYZID)
+	wkbMultiPolygonZ       = Type(wkbMultiPolygonID + wkbXYZID)
+	wkbGeometryCollectionZ = Type(wkbGeometryCollectionID + wkbXYZID)
+	wkbPolyhedralSurfaceZ  = Type(wkbPolyhedralSurfaceID + wkbXYZID)
+	wkbTINZ                = Type(wkbTINID + wkbXYZID)
+	wkbTriangleZ           = Type(wkbTriangleID + wkbXYZID)
 
-	wkbPointM              = Type(wkbPointId + wkbXYMId)
-	wkbLineStringM         = Type(wkbLineStringId + wkbXYMId)
-	wkbPolygonM            = Type(wkbPolygonId + wkbXYMId)
-	wkbMultiPointM         = Type(wkbMultiPointId + wkbXYMId)
-	wkbMultiLineStringM    = Type(wkbMultiLineStringId + wkbXYMId)
-	wkbMultiPolygonM       = Type(wkbMultiPolygonId + wkbXYMId)
-	wkbGeometryCollectionM = Type(wkbGeometryCollectionId + wkbXYMId)
-	wkbPolyhedralSurfaceM  = Type(wkbPolyhedralSurfaceId + wkbXYMId)
-	wkbTINM                = Type(wkbTINId + wkbXYMId)
-	wkbTriangleM           = Type(wkbTriangleId + wkbXYMId)
+	wkbPointM              = Type(wkbPointID + wkbXYMID)
+	wkbLineStringM         = Type(wkbLineStringID + wkbXYMID)
+	wkbPolygonM            = Type(wkbPolygonID + wkbXYMID)
+	wkbMultiPointM         = Type(wkbMultiPointID + wkbXYMID)
+	wkbMultiLineStringM    = Type(wkbMultiLineStringID + wkbXYMID)
+	wkbMultiPolygonM       = Type(wkbMultiPolygonID + wkbXYMID)
+	wkbGeometryCollectionM = Type(wkbGeometryCollectionID + wkbXYMID)
+	wkbPolyhedralSurfaceM  = Type(wkbPolyhedralSurfaceID + wkbXYMID)
+	wkbTINM                = Type(wkbTINID + wkbXYMID)
+	wkbTriangleM           = Type(wkbTriangleID + wkbXYMID)
 
-	wkbPointZM              = Type(wkbPointId + wkbXYZMId)
-	wkbLineStringZM         = Type(wkbLineStringId + wkbXYZMId)
-	wkbPolygonZM            = Type(wkbPolygonId + wkbXYZMId)
-	wkbMultiPointZM         = Type(wkbMultiPointId + wkbXYZMId)
-	wkbMultiLineStringZM    = Type(wkbMultiLineStringId + wkbXYZMId)
-	wkbMultiPolygonZM       = Type(wkbMultiPolygonId + wkbXYZMId)
-	wkbGeometryCollectionZM = Type(wkbGeometryCollectionId + wkbXYZMId)
-	wkbPolyhedralSurfaceZM  = Type(wkbPolyhedralSurfaceId + wkbXYZMId)
-	wkbTINZM                = Type(wkbTINId + wkbXYZMId)
-	wkbTriangleZM           = Type(wkbTriangleId + wkbXYZMId)
+	wkbPointZM              = Type(wkbPointID + wkbXYZMID)
+	wkbLineStringZM         = Type(wkbLineStringID + wkbXYZMID)
+	wkbPolygonZM            = Type(wkbPolygonID + wkbXYZMID)
+	wkbMultiPointZM         = Type(wkbMultiPointID + wkbXYZMID)
+	wkbMultiLineStringZM    = Type(wkbMultiLineStringID + wkbXYZMID)
+	wkbMultiPolygonZM       = Type(wkbMultiPolygonID + wkbXYZMID)
+	wkbGeometryCollectionZM = Type(wkbGeometryCollectionID + wkbXYZMID)
+	wkbPolyhedralSurfaceZM  = Type(wkbPolyhedralSurfaceID + wkbXYZMID)
+	wkbTINZM                = Type(wkbTINID + wkbXYZMID)
+	wkbTriangleZM           = Type(wkbTriangleID + wkbXYZMID)
 )
 
 func (t Type) layout() (geom.Layout, error) {
@@ -362,29 +362,29 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	var wkbGeometryType uint32
 	switch g.(type) {
 	case *geom.Point:
-		wkbGeometryType = wkbPointId
+		wkbGeometryType = wkbPointID
 	case *geom.LineString:
-		wkbGeometryType = wkbLineStringId
+		wkbGeometryType = wkbLineStringID
 	case *geom.Polygon:
-		wkbGeometryType = wkbPolygonId
+		wkbGeometryType = wkbPolygonID
 	case *geom.MultiPoint:
-		wkbGeometryType = wkbMultiPointId
+		wkbGeometryType = wkbMultiPointID
 	case *geom.MultiLineString:
-		wkbGeometryType = wkbMultiLineStringId
+		wkbGeometryType = wkbMultiLineStringID
 	case *geom.MultiPolygon:
-		wkbGeometryType = wkbMultiPolygonId
+		wkbGeometryType = wkbMultiPolygonID
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
 	switch g.Layout() {
 	case geom.XY:
-		wkbGeometryType += wkbXYId
+		wkbGeometryType += wkbXYID
 	case geom.XYZ:
-		wkbGeometryType += wkbXYZId
+		wkbGeometryType += wkbXYZID
 	case geom.XYM:
-		wkbGeometryType += wkbXYMId
+		wkbGeometryType += wkbXYMID
 	case geom.XYZM:
-		wkbGeometryType += wkbXYZMId
+		wkbGeometryType += wkbXYZMID
 	default:
 		return geom.ErrUnsupportedLayout(g.Layout())
 	}
