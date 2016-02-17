@@ -21,11 +21,11 @@ func (g *geom3) setCoords(coords3 [][][]Coord) error {
 	return nil
 }
 
-func (g1 *geom3) swap(g2 *geom3) {
-	g1.stride, g2.stride = g2.stride, g1.stride
-	g1.layout, g2.layout = g2.layout, g1.layout
-	g1.flatCoords, g2.flatCoords = g2.flatCoords, g1.flatCoords
-	g1.endss, g2.endss = g2.endss, g1.endss
+func (g *geom3) swap(g2 *geom3) {
+	g.stride, g2.stride = g2.stride, g.stride
+	g.layout, g2.layout = g2.layout, g.layout
+	g.flatCoords, g2.flatCoords = g2.flatCoords, g.flatCoords
+	g.endss, g2.endss = g2.endss, g.endss
 }
 
 func (g *geom3) verify() error {

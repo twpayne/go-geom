@@ -42,10 +42,10 @@ func (g *geom0) Reserve(n int) {
 	}
 }
 
-func (g1 *geom0) swap(g2 *geom0) {
-	g1.stride, g2.stride = g2.stride, g1.stride
-	g1.layout, g2.layout = g2.layout, g1.layout
-	g1.flatCoords, g2.flatCoords = g2.flatCoords, g1.flatCoords
+func (g *geom0) swap(g2 *geom0) {
+	g.stride, g2.stride = g2.stride, g.stride
+	g.layout, g2.layout = g2.layout, g.layout
+	g.flatCoords, g2.flatCoords = g2.flatCoords, g.flatCoords
 }
 
 func (g *geom0) setCoords(coords0 []float64) error {

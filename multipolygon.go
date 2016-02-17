@@ -91,7 +91,7 @@ func (mp *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
 	return mp, nil
 }
 
-// Swap swaps the values of mp1 and mp2.
-func (mp1 *MultiPolygon) Swap(mp2 *MultiPolygon) {
-	mp1.geom3.swap(&mp2.geom3)
+// Swap swaps the values of mp and mp2.
+func (mp *MultiPolygon) Swap(mp2 *MultiPolygon) {
+	mp.geom3.swap(&mp2.geom3)
 }

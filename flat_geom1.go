@@ -24,10 +24,10 @@ func (g *geom1) setCoords(coords1 []Coord) error {
 	return nil
 }
 
-func (g1 *geom1) swap(g2 *geom1) {
-	g1.stride, g2.stride = g2.stride, g1.stride
-	g1.layout, g2.layout = g2.layout, g1.layout
-	g1.flatCoords, g2.flatCoords = g2.flatCoords, g1.flatCoords
+func (g *geom1) swap(g2 *geom1) {
+	g.stride, g2.stride = g2.stride, g.stride
+	g.layout, g2.layout = g2.layout, g.layout
+	g.flatCoords, g2.flatCoords = g2.flatCoords, g.flatCoords
 }
 
 func (g *geom1) verify() error {
