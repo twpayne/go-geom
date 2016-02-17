@@ -112,11 +112,11 @@ func (p *parser) parseB(line string) error {
 		return err
 	}
 	if p.tdsStart != 0 {
-		if decisecond, err := parseDecInRange(line, p.tdsStart, p.tdsStop, 0, 10); err != nil {
+		decisecond, err := parseDecInRange(line, p.tdsStart, p.tdsStop, 0, 10)
+		if err != nil {
 			return err
-		} else {
-			nsec = decisecond * 1e8
 		}
+		nsec = decisecond * 1e8
 	}
 	date := time.Date(p.year, time.Month(p.month), p.day, hour, minute, second, nsec, time.UTC)
 	if date.Before(p.lastDate) {

@@ -105,25 +105,22 @@ func guessLayout0(coords0 []float64) (geom.Layout, error) {
 func guessLayout1(coords1 [][]float64) (geom.Layout, error) {
 	if len(coords1) == 0 {
 		return DefaultLayout, nil
-	} else {
-		return guessLayout0(coords1[0])
 	}
+	return guessLayout0(coords1[0])
 }
 
 func guessLayout2(coords2 [][][]float64) (geom.Layout, error) {
 	if len(coords2) == 0 {
 		return DefaultLayout, nil
-	} else {
-		return guessLayout1(coords2[0])
 	}
+	return guessLayout1(coords2[0])
 }
 
 func guessLayout3(coords3 [][][][]float64) (geom.Layout, error) {
 	if len(coords3) == 0 {
 		return DefaultLayout, nil
-	} else {
-		return guessLayout2(coords3[0])
 	}
+	return guessLayout2(coords3[0])
 }
 
 func Marshal(g geom.T) ([]byte, error) {
