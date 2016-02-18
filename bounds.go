@@ -7,6 +7,7 @@ import (
 	"math"
 )
 
+// A Bounds represents a multi-dimensional bounding box.
 type Bounds struct {
 	layout Layout
 	min    Coord
