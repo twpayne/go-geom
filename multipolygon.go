@@ -1,13 +1,16 @@
 package geom
 
+// A MultiPolygon is a collection of Polygons.
 type MultiPolygon struct {
 	geom3
 }
 
+// NewMultiPolygon returns a new MultiPolygon with no Polygons.
 func NewMultiPolygon(layout Layout) *MultiPolygon {
 	return NewMultiPolygonFlat(layout, nil, nil)
 }
 
+// NewMultiPolygonFlat returns a new MultiPolygon with the given flat coordinates.
 func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *MultiPolygon {
 	mp := new(MultiPolygon)
 	mp.layout = layout
@@ -17,10 +20,12 @@ func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *Mu
 	return mp
 }
 
+// Area returns the sum of the area of the individual Polygons.
 func (mp *MultiPolygon) Area() float64 {
 	return doubleArea3(mp.flatCoords, 0, mp.endss, mp.stride) / 2
 }
 
+// Clone returns a deep copy.
 func (mp *MultiPolygon) Clone() *MultiPolygon {
 	flatCoords := make([]float64, len(mp.flatCoords))
 	copy(flatCoords, mp.flatCoords)
@@ -32,23 +37,28 @@ func (mp *MultiPolygon) Clone() *MultiPolygon {
 	return NewMultiPolygonFlat(mp.layout, flatCoords, endss)
 }
 
+// Empty returns true if the collection is empty.
 func (mp *MultiPolygon) Empty() bool {
 	return mp.NumPolygons() == 0
 }
 
+// Length returns the sum of the perimeters of the Polygons.
 func (mp *MultiPolygon) Length() float64 {
 	return length3(mp.flatCoords, 0, mp.endss, mp.stride)
 }
 
+// MustSetCoords sets the coordinates and panics on any error.
 func (mp *MultiPolygon) MustSetCoords(coords [][][]Coord) *MultiPolygon {
 	Must(mp.SetCoords(coords))
 	return mp
 }
 
+// NumPolygons returns the number of Polygons.
 func (mp *MultiPolygon) NumPolygons() int {
 	return len(mp.endss)
 }
 
+// Polygon returns the ith Polygon.
 func (mp *MultiPolygon) Polygon(i int) *Polygon {
 	offset := 0
 	if i > 0 {
@@ -66,6 +76,7 @@ func (mp *MultiPolygon) Polygon(i int) *Polygon {
 	return NewPolygonFlat(mp.layout, mp.flatCoords[offset:mp.endss[i][len(mp.endss[i])-1]], ends)
 }
 
+// Push appends a Polygon.
 func (mp *MultiPolygon) Push(p *Polygon) error {
 	if p.layout != mp.layout {
 		return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
@@ -84,6 +95,7 @@ func (mp *MultiPolygon) Push(p *Polygon) error {
 	return nil
 }
 
+// SetCoords sets the coordinates.
 func (mp *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
 	if err := mp.setCoords(coords); err != nil {
 		return nil, err
