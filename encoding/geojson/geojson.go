@@ -1,3 +1,4 @@
+// Package geojson implements GeoJSON encoding and decoding.
 package geojson
 
 import (
