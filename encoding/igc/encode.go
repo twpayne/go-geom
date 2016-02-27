@@ -9,6 +9,7 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// An Encoder is an IGC encoder.
 type Encoder struct {
 	w io.Writer
 }
@@ -24,10 +25,12 @@ func clamp(x, min, max int) int {
 	}
 }
 
+// NewEncoder returns a new Encoder that writes to w.
 func NewEncoder(w io.Writer) *Encoder {
 	return &Encoder{w}
 }
 
+// Encode encodes a LineString.
 func (enc *Encoder) Encode(ls *geom.LineString) error {
 	var t0 time.Time
 	for i, n := 0, ls.NumCoords(); i < n; i++ {

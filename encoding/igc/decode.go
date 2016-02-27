@@ -14,20 +14,30 @@ import (
 )
 
 var (
-	ErrInvalidCharacter               = errors.New("invalid character")
+	// An ErrInvalidCharacter is returned when an invalid character is encountered.
+	ErrInvalidCharacter = errors.New("invalid character")
+	// An ErrInvalidCharactersBeforeARecord is returned when invalid characters are encountered before the A record.
 	ErrInvalidCharactersBeforeARecord = errors.New("invalid characters before A record")
-	ErrInvalidBRecord                 = errors.New("invalid B record")
-	ErrInvalidHRecord                 = errors.New("invalid H record")
-	ErrInvalidIRecord                 = errors.New("invalid I record")
-	ErrEmptyLine                      = errors.New("empty line")
-	ErrMissingARecord                 = errors.New("missing A record")
-	ErrOutOfRange                     = errors.New("out of range")
+	// An ErrInvalidBRecord is returned when an invalid B record is encountered.
+	ErrInvalidBRecord = errors.New("invalid B record")
+	// An ErrInvalidHRecord is returned when an invalid H record is encountered.
+	ErrInvalidHRecord = errors.New("invalid H record")
+	// An ErrInvalidIRecord is returned when an invalid I record is encountered.
+	ErrInvalidIRecord = errors.New("invalid I record")
+	// An ErrEmptyLine is returned when an empty line is encountered.
+	ErrEmptyLine = errors.New("empty line")
+	// An ErrMissingARecord is returned when no A record is found.
+	ErrMissingARecord = errors.New("missing A record")
+	// An ErrOutOfRange is returned when a value is out of range.
+	ErrOutOfRange = errors.New("out of range")
 
 	hRegexp = regexp.MustCompile(`H([FP])([A-Z]{3})(.*?):(.*?)\s*\z`)
 )
 
+// An Errors is a map of errors encountered at each line.
 type Errors map[int]error
 
+// A Header is an IGC header.
 type Header struct {
 	Source   string
 	Key      string
@@ -35,6 +45,7 @@ type Header struct {
 	Value    string
 }
 
+// A T represents a parsed IGC file.
 type T struct {
 	Headers    []Header
 	LineString *geom.LineString
