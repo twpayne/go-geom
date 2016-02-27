@@ -6,6 +6,7 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// ErrExpectedByteSlice is returned when a []byte is expected.
 type ErrExpectedByteSlice struct {
 	Value interface{}
 }
@@ -14,13 +15,37 @@ func (e ErrExpectedByteSlice) Error() string {
 	return fmt.Sprintf("wkb: want []byte, got %T", e.Value)
 }
 
-type Point struct{ geom.Point }
-type LineString struct{ geom.LineString }
-type Polygon struct{ geom.Polygon }
-type MultiPoint struct{ geom.MultiPoint }
-type MultiLineString struct{ geom.MultiLineString }
-type MultiPolygon struct{ geom.MultiPolygon }
+// A Point is a WKB-encoded Point.
+type Point struct {
+	geom.Point
+}
 
+// A LineString is a WKB-encoded LineString.
+type LineString struct {
+	geom.LineString
+}
+
+// A Polygon is a WKB-encoded Polygon.
+type Polygon struct {
+	geom.Polygon
+}
+
+// A MultiPoint is a WKB-encoded MultiPoint.
+type MultiPoint struct {
+	geom.MultiPoint
+}
+
+// A MultiLineString is a WKB-encoded MultiLineString.
+type MultiLineString struct {
+	geom.MultiLineString
+}
+
+// A MultiPolygon is a WKB-encoded MultiPolygon.
+type MultiPolygon struct {
+	geom.MultiPolygon
+}
+
+// Scan scans from a []byte.
 func (p *Point) Scan(src interface{}) error {
 	b, ok := src.([]byte)
 	if !ok {
@@ -38,6 +63,7 @@ func (p *Point) Scan(src interface{}) error {
 	return nil
 }
 
+// Scan scans from a []byte.
 func (ls *LineString) Scan(src interface{}) error {
 	b, ok := src.([]byte)
 	if !ok {
@@ -55,6 +81,7 @@ func (ls *LineString) Scan(src interface{}) error {
 	return nil
 }
 
+// Scan scans from a []byte.
 func (p *Polygon) Scan(src interface{}) error {
 	b, ok := src.([]byte)
 	if !ok {
@@ -72,6 +99,7 @@ func (p *Polygon) Scan(src interface{}) error {
 	return nil
 }
 
+// Scan scans from a []byte.
 func (mp *MultiPoint) Scan(src interface{}) error {
 	b, ok := src.([]byte)
 	if !ok {
@@ -89,6 +117,7 @@ func (mp *MultiPoint) Scan(src interface{}) error {
 	return nil
 }
 
+// Scan scans from a []byte.
 func (mls *MultiLineString) Scan(src interface{}) error {
 	b, ok := src.([]byte)
 	if !ok {
@@ -106,6 +135,7 @@ func (mls *MultiLineString) Scan(src interface{}) error {
 	return nil
 }
 
+// Scan scans from a []byte.
 func (mp *MultiPolygon) Scan(src interface{}) error {
 	b, ok := src.([]byte)
 	if !ok {

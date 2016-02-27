@@ -7,6 +7,7 @@ import (
 	"math"
 )
 
+// A Bounds represents a multi-dimensional bounding box.
 type Bounds struct {
 	layout Layout
 	min    Coord
@@ -59,10 +60,10 @@ func (b *Bounds) Min(dim int) float64 {
 	return b.min[dim]
 }
 
-// Overlaps returns true if b1 overlaps b2 in layout.
-func (b1 *Bounds) Overlaps(layout Layout, b2 *Bounds) bool {
+// Overlaps returns true if b overlaps b2 in layout.
+func (b *Bounds) Overlaps(layout Layout, b2 *Bounds) bool {
 	for i, stride := 0, layout.Stride(); i < stride; i++ {
-		if b1.min[i] > b2.max[i] || b1.max[i] < b2.min[i] {
+		if b.min[i] > b2.max[i] || b.max[i] < b2.min[i] {
 			return false
 		}
 	}

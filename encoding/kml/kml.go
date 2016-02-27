@@ -6,6 +6,7 @@ import (
 	"github.com/twpayne/go-kml"
 )
 
+// Encode encodes an aribtrary geometry.
 func Encode(g geom.T) (kml.Element, error) {
 	switch g.(type) {
 	case *geom.Point:
@@ -27,16 +28,19 @@ func Encode(g geom.T) (kml.Element, error) {
 	}
 }
 
+// EncodeLineString encodes a LineString.
 func EncodeLineString(ls *geom.LineString) kml.Element {
 	flatCoords := ls.FlatCoords()
 	return kml.LineString(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), ls.Stride(), dim(ls.Layout())))
 }
 
+// EncodeLinearRing encodes a LinearRing.
 func EncodeLinearRing(lr *geom.LinearRing) kml.Element {
 	flatCoords := lr.FlatCoords()
 	return kml.LinearRing(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), lr.Stride(), dim(lr.Layout())))
 }
 
+// EncodeMultiLineString encodes a MultiLineString.
 func EncodeMultiLineString(mls *geom.MultiLineString) kml.Element {
 	lineStrings := make([]kml.Element, mls.NumLineStrings())
 	flatCoords := mls.FlatCoords()
@@ -51,6 +55,7 @@ func EncodeMultiLineString(mls *geom.MultiLineString) kml.Element {
 	return kml.MultiGeometry(lineStrings...)
 }
 
+// EncodeMultiPoint encodes a MultiPoint.
 func EncodeMultiPoint(mp *geom.MultiPoint) kml.Element {
 	points := make([]kml.Element, mp.NumPoints())
 	flatCoords := mp.FlatCoords()
@@ -63,6 +68,7 @@ func EncodeMultiPoint(mp *geom.MultiPoint) kml.Element {
 	return kml.MultiGeometry(points...)
 }
 
+// EncodeMultiPolygon encodes a MultiPolygon.
 func EncodeMultiPolygon(mp *geom.MultiPolygon) kml.Element {
 	polygons := make([]kml.Element, mp.NumPolygons())
 	flatCoords := mp.FlatCoords()
@@ -86,11 +92,13 @@ func EncodeMultiPolygon(mp *geom.MultiPolygon) kml.Element {
 	return kml.MultiGeometry(polygons...)
 }
 
+// EncodePoint encodes a Point.
 func EncodePoint(p *geom.Point) kml.Element {
 	flatCoords := p.FlatCoords()
 	return kml.Point(kml.CoordinatesFlat(flatCoords, 0, len(flatCoords), p.Stride(), dim(p.Layout())))
 }
 
+// EncodePolygon encodes a Polygon.
 func EncodePolygon(p *geom.Polygon) kml.Element {
 	boundaries := make([]kml.Element, p.NumLinearRings())
 	stride := p.Stride()

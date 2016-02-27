@@ -33,10 +33,12 @@ func (ls *LineString) Clone() *LineString {
 	return NewLineStringFlat(ls.layout, flatCoords)
 }
 
+// Empty returns false.
 func (ls *LineString) Empty() bool {
 	return false
 }
 
+// Interpolate returns the index and delta of val in dimension dim.
 func (ls *LineString) Interpolate(val float64, dim int) (int, float64) {
 	n := len(ls.flatCoords)
 	if n == 0 {
@@ -92,7 +94,7 @@ func (ls *LineString) SubLineString(start, stop int) *LineString {
 	return NewLineStringFlat(ls.layout, ls.flatCoords[start*ls.stride:stop*ls.stride])
 }
 
-// Swap swaps the values of ls1 and ls2.
-func (ls1 *LineString) Swap(ls2 *LineString) {
-	ls1.geom1.swap(&ls2.geom1)
+// Swap swaps the values of ls and ls2.
+func (ls *LineString) Swap(ls2 *LineString) {
+	ls.geom1.swap(&ls2.geom1)
 }

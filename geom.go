@@ -15,13 +15,20 @@ import (
 type Layout int
 
 const (
-	NoLayout Layout = iota // Zero value
-	XY                     // 2D
-	XYZ                    // 3D
-	XYM                    // 2D with an M value
-	XYZM                   // 3D with an M value
+	// NoLayout is an unknown layout
+	NoLayout Layout = iota
+	// XY is a 2D layout (X and Y)
+	XY
+	// XYZ is 3D layout (X, Y, and Z)
+	XYZ
+	// XYM is a 2D layout with an M value
+	XYM
+	// XYZM is a 3D layout with an M value
+	XYZM
 )
 
+// An ErrLayoutMismatch is returned when geometries with different layouts
+// cannot be combined.
 type ErrLayoutMismatch struct {
 	Got  Layout
 	Want Layout
@@ -31,6 +38,8 @@ func (e ErrLayoutMismatch) Error() string {
 	return fmt.Sprintf("geom: layout mismatch, got %s, want %s", e.Got, e.Want)
 }
 
+// An ErrStrideMismatch is returned when the stride does not match the expected
+// stride.
 type ErrStrideMismatch struct {
 	Got  int
 	Want int
@@ -40,12 +49,15 @@ func (e ErrStrideMismatch) Error() string {
 	return fmt.Sprintf("geom: stride mismatch, got %d, want %d", e.Got, e.Want)
 }
 
+// An ErrUnsupportedLayout is returned when the requested layout is not
+// supported.
 type ErrUnsupportedLayout Layout
 
 func (e ErrUnsupportedLayout) Error() string {
 	return fmt.Sprintf("geom: unsupported layout %s", Layout(e))
 }
 
+// An ErrUnsupportedType is returned when the requested type is not supported.
 type ErrUnsupportedType struct {
 	Value interface{}
 }

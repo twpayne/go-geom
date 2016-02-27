@@ -88,7 +88,6 @@ func TestLinearRing(t *testing.T) {
 			},
 		},
 	} {
-
 		testLinearRingEquals(t, c.lr, c.tlr)
 	}
 }
