@@ -9,6 +9,7 @@ import (
 	"github.com/twpayne/go-geom/encoding/wkb"
 )
 
+// Encode encodes an arbitrary geometry to a string.
 func Encode(g geom.T, byteOrder binary.ByteOrder) (string, error) {
 	wkb, err := wkb.Marshal(g, byteOrder)
 	if err != nil {
@@ -17,6 +18,7 @@ func Encode(g geom.T, byteOrder binary.ByteOrder) (string, error) {
 	return hex.EncodeToString(wkb), nil
 }
 
+// Decode decodes an arbitrary geometry from a string.
 func Decode(s string) (geom.T, error) {
 	data, err := hex.DecodeString(s)
 	if err != nil {
