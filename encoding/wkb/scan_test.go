@@ -8,7 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func ExampleScan() {
+func Example_scan() {
 
 	type City struct {
 		Name     string
