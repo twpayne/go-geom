@@ -16,14 +16,26 @@ const (
 )
 
 var (
+	// XDR is big endian.
 	XDR = binary.BigEndian
+	// NDR is little endian.
 	NDR = binary.LittleEndian
 )
 
+// MaxGeometryElements is the maximum number of elements that will be decoded
+// at different levels. Its primary purpose is to prevent corrupt inputs from
+// causing excessive memory allocations (which could be used as a denial of
+// service attack).
 // FIXME This should be Codec-specific, not global
 // FIXME Consider overall per-geometry limit rather than per-level limit
-var MaxGeometryElements = [4]uint32{0, 1 << 20, 1 << 15, 1 << 10}
+var MaxGeometryElements = [4]uint32{
+	0,
+	1 << 20, // No LineString, LinearRing, or MultiPoint should contain more than 1048576 coordinates
+	1 << 15, // No MultiLineString or Polygon should contain more than 32768 LineStrings or LinearRings
+	1 << 10, // No MultiPolygon should contain more than 1024 Polygons
+}
 
+// An ErrGeometryTooLarge is returned when the geometry is too large.
 type ErrGeometryTooLarge struct {
 	Level int
 	N     uint32
@@ -34,32 +46,38 @@ func (e ErrGeometryTooLarge) Error() string {
 	return fmt.Sprintf("wkb: number of elements at level %d (%d) exceeds %d", e.Level, e.N, e.Limit)
 }
 
+// An ErrUnknownByteOrder is returned when an unknown byte order is encountered.
 type ErrUnknownByteOrder byte
 
 func (e ErrUnknownByteOrder) Error() string {
 	return fmt.Sprintf("wkb: unknown byte order: %b", byte(e))
 }
 
+// An ErrUnsupportedByteOrder is returned when an unsupported byte order is encountered.
 type ErrUnsupportedByteOrder struct{}
 
 func (e ErrUnsupportedByteOrder) Error() string {
 	return "wkb: unsupported byte order"
 }
 
+// A Type is a WKB code.
 type Type uint32
 
+// An ErrUnknownType is returned when an unknown type is encountered.
 type ErrUnknownType Type
 
 func (e ErrUnknownType) Error() string {
 	return fmt.Sprintf("wkb: unknown type: %d", uint(e))
 }
 
+// An ErrUnsupportedType is returned when an unsupported type is encountered.
 type ErrUnsupportedType Type
 
 func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("wkb: unsupported type: %d", uint(e))
 }
 
+// An ErrUnexpectedType is returned when an unexpected type is encountered.
 type ErrUnexpectedType struct {
 	Got  interface{}
 	Want interface{}
@@ -194,6 +212,7 @@ func readFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	return flatCoordss, ends, nil
 }
 
+// Read reads an arbitrary geometry from r.
 func Read(r io.Reader) (geom.T, error) {
 
 	var wkbByteOrder byte
@@ -315,6 +334,7 @@ func Read(r io.Reader) (geom.T, error) {
 
 }
 
+// Unmarshal unmrshals an arbitrary geometry from a []byte.
 func Unmarshal(data []byte) (geom.T, error) {
 	return Read(bytes.NewBuffer(data))
 }
@@ -344,6 +364,7 @@ func writeFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, flatCoords []floa
 	return nil
 }
 
+// Write writes an arbitrary geometry to w.
 func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 
 	var wkbByteOrder byte
@@ -441,6 +462,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 
 }
 
+// Marshal marshals an aribtrary geometry to a []byte.
 func Marshal(g geom.T, byteOrder binary.ByteOrder) ([]byte, error) {
 	w := bytes.NewBuffer(nil)
 	if err := Write(w, byteOrder, g); err != nil {
