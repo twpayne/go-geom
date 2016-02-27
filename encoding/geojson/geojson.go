@@ -7,57 +7,68 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// DefaultLayout is the default layout for empty geometries.
 // FIXME This should be Codec-specific, not global
 var DefaultLayout = geom.XY
 
+// ErrDimensionalityTooLow is returned when the dimensionality is too low.
 type ErrDimensionalityTooLow int
 
 func (e ErrDimensionalityTooLow) Error() string {
 	return fmt.Sprintf("geojson: dimensionality too low (%d)", int(e))
 }
 
+// ErrUnsupportedType is returned when the type is unsupported.
 type ErrUnsupportedType string
 
 func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
 }
 
+// A Point is a GeoJSON Point.
 type Point struct {
 	Type        string    `json:"type"`
 	Coordinates []float64 `json:"coordinates"`
 }
 
+// A LineString is a GeoJSON LineString.
 type LineString struct {
 	Type        string      `json:"type"`
 	Coordinates [][]float64 `json:"coordinates"`
 }
 
+// A Polygon is a GeoJSON Polygon.
 type Polygon struct {
 	Type        string        `json:"type"`
 	Coordinates [][][]float64 `json:"coordinates"`
 }
 
+// A MultiPoint is a GeoJSON MultiPolygon.
 type MultiPoint struct {
 	Type        string      `json:"type"`
 	Coordinates [][]float64 `json:"coordinates"`
 }
 
+// A MultiLineString is a GeoJSON MultiLineString.
 type MultiLineString struct {
 	Type        string        `json:"type"`
 	Coordinates [][][]float64 `json:"coordinates"`
 }
 
+// A MultiPolygon is a GeoJSON MultiPolygon.
 type MultiPolygon struct {
 	Type        string          `json:"type"`
 	Coordinates [][][][]float64 `json:"coordinates"`
 }
 
+// A Feature is a GeoJSON Feature.
 type Feature struct {
 	Type       string                 `json:"type"`
 	Geometry   interface{}            `json:"geometry"`
 	Properties map[string]interface{} `json:"properties"`
 }
 
+// A FeatureCollection is a GeoJSON FeatureCollection.
 type FeatureCollection struct {
 	Type     string    `json:"type"`
 	Features []Feature `json:"features"`
@@ -123,6 +134,7 @@ func guessLayout3(coords3 [][][][]float64) (geom.Layout, error) {
 	return guessLayout2(coords3[0])
 }
 
+// Marshal marshals an arbitrary geometry to a []byte.
 func Marshal(g geom.T) ([]byte, error) {
 	switch g.(type) {
 	case *geom.Point:
@@ -292,6 +304,7 @@ func unmarshalMultiPolygon(data []byte, g *geom.T) error {
 	return nil
 }
 
+// Unmarshal unmarshalls a []byte to an arbitrary geometry.
 func Unmarshal(data []byte, g *geom.T) error {
 	var t struct {
 		Type string `json:"type"`
