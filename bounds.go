@@ -85,6 +85,15 @@ func (b *Bounds) Set(args ...float64) *Bounds {
 	return b
 }
 
+func (b *Bounds) ContainsPoint(layout Layout, point Coord) bool {
+	for i, stride := 0, layout.Stride(); i < stride; i++ {
+		if b.min[i] > point[i] || b.max[i] < point[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func (b *Bounds) extendFlatCoords(flatCoords []float64, offset, end, stride int) *Bounds {
 	b.extendStride(stride)
 	for i := offset; i < end; i += stride {
