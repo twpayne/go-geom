@@ -91,6 +91,16 @@ func TestBoundsOverlaps(t *testing.T) {
 			overlaps: true,
 		},
 		{
+			bounds:   Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
+			other:    Bounds{layout: XYZ, min: Coord{-10, 0, 0}, max: Coord{-5, 10, 10}},
+			overlaps: true,
+		},
+		{
+			bounds:   Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
+			other:    Bounds{layout: XYZ, min: Coord{5, 5, -10}, max: Coord{10, 10, -5}},
+			overlaps: false,
+		},
+		{
 			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
 			other:    Bounds{layout: XY, min: Coord{-10, -10}, max: Coord{-0.000000000000000000000000000001, 0}},
 			overlaps: false,
@@ -112,4 +122,74 @@ func TestBoundsOverlaps(t *testing.T) {
 		}
 
 	}
+}
+
+func TestBoundsOverlapsPoint(t *testing.T) {
+	for i, testData := range []struct {
+		bounds   Bounds
+		point    Coord
+		overlaps bool
+	}{
+		{
+			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			point:    Coord{-10, 0},
+			overlaps: false,
+		},
+		{
+			bounds:   Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			point:    Coord{-10, 0},
+			overlaps: true,
+		},
+		{
+			bounds:   Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
+			point:    Coord{-5, 10, 10},
+			overlaps: true,
+		},
+		{
+			bounds:   Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
+			point:    Coord{5, 5, -10},
+			overlaps: false,
+		},
+		{
+			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}},
+			point:    Coord{-0.000000000000000000000000000001, 0},
+			overlaps: false,
+		},
+	} {
+		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
+
+		for j := 0; j < 10; j++ {
+			// do multiple checks to verify no obvious side effects are caused
+			overlaps := copy.OverlapsPoint(testData.bounds.layout, testData.point)
+			if overlaps != testData.overlaps {
+				t.Errorf("Test %v Failed.  Expected: %v but got: %v", i+1, testData.overlaps, overlaps)
+				break
+			}
+			if !reflect.DeepEqual(copy, testData.bounds) {
+				t.Errorf("Test %v Failed.  Function Overlaps modified internal state of bounds.  Before: \n%v After: \n%v", i+1, testData.bounds, copy)
+				break
+			}
+		}
+	}
+}
+
+func TestBoundsSet(t *testing.T) {
+	bounds := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
+	bounds.Set(0, 0, 20, 20)
+	expected := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{20, 20}}
+	if !reflect.DeepEqual(expected, bounds) {
+		t.Errorf("Expected %v but got %v", expected, bounds)
+	}
+
+	func() {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("Expected a panic but didn't get it as expected")
+			} else if !reflect.DeepEqual(expected, bounds) {
+				t.Errorf("Set modified bounds even though error was thrown.", expected, bounds)
+			}
+		}()
+
+		bounds.Set(2, 2, 2, 2, 2)
+	}()
 }
