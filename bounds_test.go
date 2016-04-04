@@ -193,3 +193,24 @@ func TestBoundsSet(t *testing.T) {
 		bounds.Set(2, 2, 2, 2, 2)
 	}()
 }
+
+func TestBoundsSetCoords(t *testing.T) {
+	bounds := &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
+	bounds.SetCoords(Coord{0, 0}, Coord{20, 20})
+	expected := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{20, 20}}
+	if !reflect.DeepEqual(expected, *bounds) {
+		t.Errorf("Expected %v but got %v", expected, *bounds)
+	}
+
+	bounds = NewBounds(XY)
+	bounds.SetCoords(Coord{0, 0}, Coord{20, 20})
+	if !reflect.DeepEqual(expected, *bounds) {
+		t.Errorf("Expected %v but got %v", expected, *bounds)
+	}
+
+	bounds = NewBounds(XY)
+	bounds.SetCoords(Coord{20, 0}, Coord{0, 20}) // set coords should ensure valid min / max
+	if !reflect.DeepEqual(expected, *bounds) {
+		t.Errorf("Expected %v but got %v", expected, *bounds)
+	}
+}

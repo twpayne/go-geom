@@ -1,4 +1,4 @@
-package cga
+package big_cga
 
 import (
 	"github.com/twpayne/go-geom"
@@ -11,22 +11,36 @@ import (
  */
 var dp_safe_epsilon = 1e-15
 
+type Orientation int
+
+const (
+	CLOCKWISE Orientation = iota - 1
+	COLLINEAR
+	COUNTER_CLOCKWISE
+)
+
+var orientationLabels = [3]string{"CLOCKWISE", "COLLINEAR", "COUNTER_CLOCKWISE"}
+
+func (o Orientation) String() string {
+	return orientationLabels[int(o+1)]
+}
+
 /**
- * Returns the index of the direction of the point <code>q</code> relative to
- * a vector specified by <code>p1-p2</code>.
+ * Returns the index of the direction of the point <code>point</code> relative to
+ * a vector specified by <code>vectorOrigin-vectorEnd</code>.
  *
- * @param p1 the origin point of the vector
- * @param p2 the final point of the vector
- * @param q the point to compute the direction to
+ * @param vectorOrigin the origin point of the vector
+ * @param vectorEnd the final point of the vector
+ * @param point the point to compute the direction to
  *
- * @return 1 if q is counter-clockwise (left) from p1-p2
- * @return -1 if q is clockwise (right) from p1-p2
- * @return 0 if q is collinear with p1-p2
+ * @return COUNTER_CLOCKWISE if point is counter-clockwise (left) from vectorOrigin-vectorEnd
+ * @return CLOCKWISE if point is clockwise (right) from vectorOrigin-vectorEnd
+ * @return COLLINEAR if point is collinear with vectorOrigin-vectorEnd
  */
-func OrientationIndex(p1, p2, q geom.Coord) int {
+func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
 	// fast filter for orientation index
 	// avoids use of slow extended-precision arithmetic in many cases
-	index := OrientationIndexFilter(p1, p2, q)
+	index := orientationIndexFilter(vectorOrigin, vectorEnd, point)
 	if index <= 1 {
 		return index
 	}
@@ -34,15 +48,17 @@ func OrientationIndex(p1, p2, q geom.Coord) int {
 	var dx1, dy1, dx2, dy2 big.Float
 
 	// normalize coordinates
-	dx1.SetFloat64(p2.X()).Add(&dx1, big.NewFloat(-p1.X()))
-	dy1.SetFloat64(p2.Y()).Add(&dy1, big.NewFloat(-p1.Y()))
-	dx2.SetFloat64(q.X()).Add(&dx2, big.NewFloat(-p2.X()))
-	dy2.SetFloat64(q.Y()).Add(&dy2, big.NewFloat(-p2.Y()))
+	dx1.SetFloat64(vectorEnd.X()).Add(&dx1, big.NewFloat(-vectorOrigin.X()))
+	dy1.SetFloat64(vectorEnd.Y()).Add(&dy1, big.NewFloat(-vectorOrigin.Y()))
+	dx2.SetFloat64(point.X()).Add(&dx2, big.NewFloat(-vectorEnd.X()))
+	dy2.SetFloat64(point.Y()).Add(&dy2, big.NewFloat(-vectorEnd.Y()))
 
-	// calculate determinant.  Calculation takes place in dx1
-	dx1.Mul(&dx1, &dy2).Sub(&dx1, dy1.Mul(&dx1, &dx2))
+	// calculate determinant.  Calculation takes place in dx1 for performance
+	dx1.Mul(&dx1, &dy2)
+	dy1.Mul(&dy1, &dx2)
+	dx1.Sub(&dx1, &dy1)
 
-	return bigSignum(dx1)
+	return Orientation(bigSignum(dx1))
 }
 
 /**
@@ -65,7 +81,7 @@ func OrientationIndex(p1, p2, q geom.Coord) int {
  * @return the orientation index if it can be computed safely
  * @return i > 1 if the orientation index cannot be computed safely
  */
-func OrientationIndexFilter(pa, pb, pc geom.Coord) int {
+func orientationIndexFilter(pa, pb, pc geom.Coord) Orientation {
 	var detsum float64
 
 	detleft := (pa.X() - pc.X()) * (pb.Y() - pc.Y())
@@ -96,18 +112,25 @@ func OrientationIndexFilter(pa, pb, pc geom.Coord) int {
 	return 2
 }
 
-func signum(x float64) int {
+func signum(x float64) Orientation {
 	if x > 0 {
-		return 1
+		return COUNTER_CLOCKWISE
 	}
 	if x < 0 {
-		return -1
+		return CLOCKWISE
 	}
-	return 0
+	return COLLINEAR
 }
-func bigSignum(x big.Float) int {
+func bigSignum(x big.Float) Orientation {
 	if x.IsInf() {
-		return 0
+		return COLLINEAR
 	}
-	return x.Sign()
+	switch x.Sign() {
+	case -1:
+		return CLOCKWISE
+	case 0:
+		return COLLINEAR
+	default:
+		return COUNTER_CLOCKWISE
+	}
 }

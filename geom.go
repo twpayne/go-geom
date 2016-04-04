@@ -5,6 +5,7 @@ package geom
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 // A Layout describes the meaning of an N-dimensional coordinate. Layout(N) for
@@ -102,6 +103,20 @@ func (c Coord) Equal(layout Layout, other Coord) bool {
 	}
 
 	return true
+}
+
+/**
+ * Computes the 2-dimensional Euclidean distance to another location.
+ * All non x,z ordinates are ignored.
+ *
+ * @param other the point to compare to
+ * @return the 2-dimensional Euclidean distance between the locations
+ */
+func (c Coord) Distance2D(other Coord) float64 {
+	dx := c[0] - other[0]
+	dy := c[1] - other[1]
+
+	return math.Sqrt(dx*dx + dy*dy)
 }
 
 // A T is a generic interface geomemented by all geometry types.
