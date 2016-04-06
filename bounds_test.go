@@ -91,6 +91,11 @@ func TestBoundsOverlaps(t *testing.T) {
 			overlaps: true,
 		},
 		{
+			bounds:   Bounds{layout: XY, min: Coord{1, 1}, max: Coord{5, 5}},
+			other:    Bounds{layout: XY, min: Coord{-5, -5}, max: Coord{-1, -1}},
+			overlaps: false,
+		},
+		{
 			bounds:   Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
 			other:    Bounds{layout: XYZ, min: Coord{-10, 0, 0}, max: Coord{-5, 10, 10}},
 			overlaps: true,

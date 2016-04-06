@@ -1,13 +1,14 @@
-package algorithm
+package algorithm_test
 
 import (
+	"github.com/twpayne/go-geom/algorithm"
 	"testing"
 )
 
 func TestNonRobustLineIntersectionPointOnLine(t *testing.T) {
-	exectuteLineIntersectionPointOnLineTest(t, NonRobustLineIntersector{})
+	exectuteLineIntersectionPointOnLineTest(t, algorithm.NonRobustLineIntersector{})
 }
 
 func TestNonRobustLineIntersectionLines(t *testing.T) {
-	executeLineIntersectionLinesTest(t, NonRobustLineIntersector{})
+	executeLineIntersectionLinesTest(t, algorithm.NonRobustLineIntersector{})
 }

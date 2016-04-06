@@ -23,17 +23,17 @@ func GetIntersection(line1End1, line1End2, line2End1, line2End2 geom.Coord) geom
 		line2End1: line2End1,
 		line2End2: line2End2}
 	intersector.compute()
-	return intersector.intPt
+	return intersector.intersectionPoint
 }
 
 type centralEndpointIntersector struct {
-	line1End1, line1End2, line2End1, line2End2, intPt geom.Coord
+	line1End1, line1End2, line2End1, line2End2, intersectionPoint geom.Coord
 }
 
 func (intersector *centralEndpointIntersector) compute() {
 	pts := [4]geom.Coord{intersector.line1End1, intersector.line1End2, intersector.line2End1, intersector.line2End2}
 	centroid := average(pts)
-	intersector.intPt = findNearestPoint(centroid, pts)
+	intersector.intersectionPoint = findNearestPoint(centroid, pts)
 }
 
 func average(pts [4]geom.Coord) geom.Coord {
@@ -51,16 +51,6 @@ func average(pts [4]geom.Coord) geom.Coord {
 	return avg
 }
 
-/**
- * Determines a point closest to the given point.
- *
- * @param p the point to compare against
- * @param p1 a potential result point
- * @param p2 a potential result point
- * @param q1 a potential result point
- * @param q2 a potential result point
- * @return the point closest to the input point p
- */
 func findNearestPoint(p geom.Coord, pts [4]geom.Coord) geom.Coord {
 	minDist := math.MaxFloat64
 	result := geom.Coord{}

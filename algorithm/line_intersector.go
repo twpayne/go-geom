@@ -56,9 +56,8 @@ func (intersector LineIntersector) LineIntersectsLine(line1End1, line1End2, line
 		intersections = intersectorData.intersectionPoints[:2]
 	}
 	return LineOnLineIntersection{
-		HasIntersection:  intersectorData.intersectionType != NO_INTERSECTION,
-		IntersectionType: intersectorData.intersectionType,
-		Intersection:     intersections,
+		intersectionType: intersectorData.intersectionType,
+		intersection:     intersections,
 	}
 }
 

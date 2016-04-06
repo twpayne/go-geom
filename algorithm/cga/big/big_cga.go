@@ -1,4 +1,4 @@
-package big_cga
+package big
 
 import (
 	"github.com/twpayne/go-geom"
@@ -22,6 +22,9 @@ const (
 var orientationLabels = [3]string{"CLOCKWISE", "COLLINEAR", "COUNTER_CLOCKWISE"}
 
 func (o Orientation) String() string {
+	if o > 1 {
+		return "Unsafe to calculate: " + o
+	}
 	return orientationLabels[int(o+1)]
 }
 
@@ -58,8 +61,10 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
 	dy1.Mul(&dy1, &dx2)
 	dx1.Sub(&dx1, &dy1)
 
-	return Orientation(bigSignum(dx1))
+	return Orientation(rientationBasedOnSignForBig(dx1))
 }
+
+/////////////////  Implementation /////////////////////////////////
 
 /**
  * A filter for computing the orientation index of three coordinates.
@@ -75,44 +80,41 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
  * <p>
  * Uses an approach due to Jonathan Shewchuk, which is in the public domain.
  *
- * @param pa a coordinate
- * @param pb a coordinate
- * @param pc a coordinate
- * @return the orientation index if it can be computed safely
- * @return i > 1 if the orientation index cannot be computed safely
+ * Return the orientation index if it can be computed safely
+ * Return i > 1 if the orientation index cannot be computed safely
  */
-func orientationIndexFilter(pa, pb, pc geom.Coord) Orientation {
+func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
 	var detsum float64
 
-	detleft := (pa.X() - pc.X()) * (pb.Y() - pc.Y())
-	detright := (pa.Y() - pc.Y()) * (pb.X() - pc.X())
+	detleft := (vectorOrigin.X() - point.X()) * (vectorEnd.Y() - point.Y())
+	detright := (vectorOrigin.Y() - point.Y()) * (vectorEnd.X() - point.X())
 	det := detleft - detright
 
 	if detleft > 0.0 {
 		if detright <= 0.0 {
-			return signum(det)
+			return orientationBasedOnSign(det)
 		} else {
 			detsum = detleft + detright
 		}
 	} else if detleft < 0.0 {
 		if detright >= 0.0 {
-			return signum(det)
+			return orientationBasedOnSign(det)
 		} else {
 			detsum = -detleft - detright
 		}
 	} else {
-		return signum(det)
+		return orientationBasedOnSign(det)
 	}
 
 	errbound := dp_safe_epsilon * detsum
 	if (det >= errbound) || (-det >= errbound) {
-		return signum(det)
+		return orientationBasedOnSign(det)
 	}
 
 	return 2
 }
 
-func signum(x float64) Orientation {
+func orientationBasedOnSign(x float64) Orientation {
 	if x > 0 {
 		return COUNTER_CLOCKWISE
 	}
@@ -121,7 +123,7 @@ func signum(x float64) Orientation {
 	}
 	return COLLINEAR
 }
-func bigSignum(x big.Float) Orientation {
+func rientationBasedOnSignForBig(x big.Float) Orientation {
 	if x.IsInf() {
 		return COLLINEAR
 	}

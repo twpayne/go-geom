@@ -14,30 +14,30 @@ import (
  * lie outside the envelope of the line segments themselves.  In order to increase the precision of the calculation
  * input points should be normalized before passing them to this routine.
  */
-func GetIntersection(p1, p2, q1, q2 geom.Coord) (geom.Coord, error) {
+func GetIntersection(line1End1, line1End2, line2End1, line2End2 geom.Coord) (geom.Coord, error) {
 	// unrolled computation
-	px := p1[1] - p2[1]
-	py := p2[0] - p1[0]
-	pw := p1[0]*p2[1] - p2[0]*p1[1]
+	line1Xdiff := line1End1[1] - line1End2[1]
+	line1Ydiff := line1End2[0] - line1End1[0]
+	line1W := line1End1[0]*line1End2[1] - line1End2[0]*line1End1[1]
 
-	qx := q1[1] - q2[1]
-	qy := q2[0] - q1[0]
-	qw := q1[0]*q2[1] - q2[0]*q1[1]
+	line2X := line2End1[1] - line2End2[1]
+	line2Y := line2End2[0] - line2End1[0]
+	line2W := line2End1[0]*line2End2[1] - line2End2[0]*line2End1[1]
 
-	x := py*qw - qy*pw
-	y := qx*pw - px*qw
-	w := px*qy - qx*py
+	x := line1Ydiff*line2W - line2Y*line1W
+	y := line2X*line1W - line1Xdiff*line2W
+	w := line1Xdiff*line2Y - line2X*line1Ydiff
 
-	xInt := x / w
-	yInt := y / w
+	xIntersection := x / w
+	yIntersection := y / w
 
-	if math.IsNaN(xInt) || math.IsNaN(xInt) || math.IsNaN(yInt) || math.IsNaN(yInt) {
+	if math.IsNaN(xIntersection) || math.IsNaN(xIntersection) || math.IsNaN(yIntersection) || math.IsNaN(yIntersection) {
 		return nil, fmt.Errorf("intersection cannot be calculated using the h-coords implementation")
 	}
 
-	if math.IsInf(xInt, 0) || math.IsInf(xInt, 0) || math.IsInf(yInt, 0) || math.IsInf(yInt, 0) {
+	if math.IsInf(xIntersection, 0) || math.IsInf(xIntersection, 0) || math.IsInf(yIntersection, 0) || math.IsInf(yIntersection, 0) {
 		return nil, fmt.Errorf("intersection cannot be calculated using the h-coords implementation")
 	}
 
-	return geom.Coord{xInt, yInt}, nil
+	return geom.Coord{xIntersection, yIntersection}, nil
 }
