@@ -3,6 +3,7 @@ package algorithm
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/central_endpoint"
+	"github.com/twpayne/go-geom/algorithm/cga"
 	"github.com/twpayne/go-geom/algorithm/cga/big"
 	"github.com/twpayne/go-geom/algorithm/hcoords"
 	"math"
@@ -15,7 +16,7 @@ func (intersector RobustLineIntersector) computePointOnLineIntersection(data *li
 	data.isProper = false
 	// do between check first, since it is faster than the orientation test
 	if isPointWithinLineBounds(data.layout, p, lineEndpoint1, lineEndpoint2) {
-		if big.OrientationIndex(lineEndpoint1, lineEndpoint2, p) == big.COLLINEAR && big.OrientationIndex(lineEndpoint2, lineEndpoint1, p) == big.COLLINEAR {
+		if big.OrientationIndex(lineEndpoint1, lineEndpoint2, p) == cga.COLLINEAR && big.OrientationIndex(lineEndpoint2, lineEndpoint1, p) == cga.COLLINEAR {
 			data.isProper = true
 			if p.Equal(data.layout, lineEndpoint1) || p.Equal(data.layout, lineEndpoint2) {
 				data.isProper = false
@@ -42,7 +43,7 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 	line2End1ToLine1Orientation := big.OrientationIndex(line1End1, line1End2, line2End1)
 	line2End2ToLine1Orientation := big.OrientationIndex(line1End1, line1End2, line2End2)
 
-	if (line2End1ToLine1Orientation > big.COLLINEAR && line2End2ToLine1Orientation > big.COLLINEAR) || (line2End1ToLine1Orientation < big.COLLINEAR && line2End2ToLine1Orientation < big.COLLINEAR) {
+	if (line2End1ToLine1Orientation > cga.COLLINEAR && line2End2ToLine1Orientation > cga.COLLINEAR) || (line2End1ToLine1Orientation < cga.COLLINEAR && line2End2ToLine1Orientation < cga.COLLINEAR) {
 		data.intersectionType = NO_INTERSECTION
 		return
 	}
@@ -50,13 +51,13 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 	line1End1ToLine2Orientation := big.OrientationIndex(line2End1, line2End2, line1End1)
 	line1End2ToLine2Orientation := big.OrientationIndex(line2End1, line2End2, line1End2)
 
-	if (line1End1ToLine2Orientation > big.COLLINEAR && line1End2ToLine2Orientation > big.COLLINEAR) || (line1End1ToLine2Orientation < 0 && line1End2ToLine2Orientation < 0) {
+	if (line1End1ToLine2Orientation > cga.COLLINEAR && line1End2ToLine2Orientation > cga.COLLINEAR) || (line1End1ToLine2Orientation < 0 && line1End2ToLine2Orientation < 0) {
 		data.intersectionType = NO_INTERSECTION
 		return
 	}
 
-	collinear := line2End1ToLine1Orientation == big.COLLINEAR && line2End2ToLine1Orientation == big.COLLINEAR &&
-		line1End1ToLine2Orientation == big.COLLINEAR && line1End2ToLine2Orientation == big.COLLINEAR
+	collinear := line2End1ToLine1Orientation == cga.COLLINEAR && line2End2ToLine1Orientation == cga.COLLINEAR &&
+		line1End1ToLine2Orientation == cga.COLLINEAR && line1End2ToLine2Orientation == cga.COLLINEAR
 
 	if collinear {
 		data.intersectionType = computeCollinearIntersection(data, line1End1, line1End2, line2End1, line2End2)
@@ -76,7 +77,7 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 	 *  the other line, since at this point we know that the inputLines must
 	 *  intersect.
 	 */
-	if line2End1ToLine1Orientation == big.COLLINEAR || line2End2ToLine1Orientation == big.COLLINEAR || line1End1ToLine2Orientation == big.COLLINEAR || line1End2ToLine2Orientation == big.COLLINEAR {
+	if line2End1ToLine1Orientation == cga.COLLINEAR || line2End2ToLine1Orientation == cga.COLLINEAR || line1End1ToLine2Orientation == cga.COLLINEAR || line1End2ToLine2Orientation == cga.COLLINEAR {
 		data.isProper = false
 
 		/*
@@ -99,14 +100,14 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 			copy(data.intersectionPoints[0], line1End1)
 		} else if line1End2.Equal(data.layout, line2End1) || line1End2.Equal(data.layout, line2End2) {
 			copy(data.intersectionPoints[0], line1End2)
-		} else if line2End1ToLine1Orientation == big.COLLINEAR {
+		} else if line2End1ToLine1Orientation == cga.COLLINEAR {
 			// Now check to see if any endpoint lies on the interior of the other segment.
 			copy(data.intersectionPoints[0], line2End1)
-		} else if line2End2ToLine1Orientation == big.COLLINEAR {
+		} else if line2End2ToLine1Orientation == cga.COLLINEAR {
 			copy(data.intersectionPoints[0], line2End2)
-		} else if line1End1ToLine2Orientation == big.COLLINEAR {
+		} else if line1End1ToLine2Orientation == cga.COLLINEAR {
 			copy(data.intersectionPoints[0], line1End1)
-		} else if line1End2ToLine2Orientation == big.COLLINEAR {
+		} else if line1End2ToLine2Orientation == cga.COLLINEAR {
 			copy(data.intersectionPoints[0], line1End2)
 		}
 	} else {

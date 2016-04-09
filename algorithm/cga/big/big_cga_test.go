@@ -2,6 +2,7 @@ package big_test
 
 import (
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/algorithm/cga"
 	"github.com/twpayne/go-geom/algorithm/cga/big"
 	"testing"
 )
@@ -9,44 +10,44 @@ import (
 func TestOrientationIndex(t *testing.T) {
 	for i, testData := range []struct {
 		vectorOrigin, vectorEnd, point geom.Coord
-		result                         big.Orientation
+		result                         cga.Orientation
 	}{
 
 		{
 			vectorOrigin: geom.Coord{-1.0, -1.0},
 			vectorEnd:    geom.Coord{1.0, 1.0},
 			point:        geom.Coord{0, 0},
-			result:       big.COLLINEAR,
+			result:       cga.COLLINEAR,
 		},
 		{
 			vectorOrigin: geom.Coord{1.0, 1.0},
 			vectorEnd:    geom.Coord{-1.0, -1.0},
 			point:        geom.Coord{0, 0},
-			result:       big.COLLINEAR,
+			result:       cga.COLLINEAR,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 10.0},
 			vectorEnd:    geom.Coord{20.0, 20.0},
 			point:        geom.Coord{10.0, 20.0},
-			result:       big.COUNTER_CLOCKWISE,
+			result:       cga.COUNTER_CLOCKWISE,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 10.0},
 			vectorEnd:    geom.Coord{20.0, 20.0},
 			point:        geom.Coord{20.0, 10.0},
-			result:       big.CLOCKWISE,
+			result:       cga.CLOCKWISE,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 20.0},
 			vectorEnd:    geom.Coord{20.0, 10.0},
 			point:        geom.Coord{10.0, 10.0},
-			result:       big.CLOCKWISE,
+			result:       cga.CLOCKWISE,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 20.0},
 			vectorEnd:    geom.Coord{20.0, 10.0},
 			point:        geom.Coord{20.0, 20.00},
-			result:       big.COUNTER_CLOCKWISE,
+			result:       cga.COUNTER_CLOCKWISE,
 		},
 	} {
 		orientationIndex := big.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)

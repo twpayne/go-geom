@@ -2,6 +2,7 @@ package big
 
 import (
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/algorithm/cga"
 	"math/big"
 )
 
@@ -10,23 +11,6 @@ import (
  * relative round-off error in double-precision numbers
  */
 var dp_safe_epsilon = 1e-15
-
-type Orientation int
-
-const (
-	CLOCKWISE Orientation = iota - 1
-	COLLINEAR
-	COUNTER_CLOCKWISE
-)
-
-var orientationLabels = [3]string{"CLOCKWISE", "COLLINEAR", "COUNTER_CLOCKWISE"}
-
-func (o Orientation) String() string {
-	if o > 1 {
-		return "Unsafe to calculate: " + o
-	}
-	return orientationLabels[int(o+1)]
-}
 
 /**
  * Returns the index of the direction of the point <code>point</code> relative to
@@ -40,7 +24,7 @@ func (o Orientation) String() string {
  * @return CLOCKWISE if point is clockwise (right) from vectorOrigin-vectorEnd
  * @return COLLINEAR if point is collinear with vectorOrigin-vectorEnd
  */
-func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
+func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) cga.Orientation {
 	// fast filter for orientation index
 	// avoids use of slow extended-precision arithmetic in many cases
 	index := orientationIndexFilter(vectorOrigin, vectorEnd, point)
@@ -61,7 +45,7 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
 	dy1.Mul(&dy1, &dx2)
 	dx1.Sub(&dx1, &dy1)
 
-	return Orientation(rientationBasedOnSignForBig(dx1))
+	return cga.Orientation(rientationBasedOnSignForBig(dx1))
 }
 
 /////////////////  Implementation /////////////////////////////////
@@ -83,7 +67,7 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
  * Return the orientation index if it can be computed safely
  * Return i > 1 if the orientation index cannot be computed safely
  */
-func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) Orientation {
+func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) cga.Orientation {
 	var detsum float64
 
 	detleft := (vectorOrigin.X() - point.X()) * (vectorEnd.Y() - point.Y())
@@ -114,25 +98,25 @@ func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) Orientati
 	return 2
 }
 
-func orientationBasedOnSign(x float64) Orientation {
+func orientationBasedOnSign(x float64) cga.Orientation {
 	if x > 0 {
-		return COUNTER_CLOCKWISE
+		return cga.COUNTER_CLOCKWISE
 	}
 	if x < 0 {
-		return CLOCKWISE
+		return cga.CLOCKWISE
 	}
-	return COLLINEAR
+	return cga.COLLINEAR
 }
-func rientationBasedOnSignForBig(x big.Float) Orientation {
+func rientationBasedOnSignForBig(x big.Float) cga.Orientation {
 	if x.IsInf() {
-		return COLLINEAR
+		return cga.COLLINEAR
 	}
 	switch x.Sign() {
 	case -1:
-		return CLOCKWISE
+		return cga.CLOCKWISE
 	case 0:
-		return COLLINEAR
+		return cga.COLLINEAR
 	default:
-		return COUNTER_CLOCKWISE
+		return cga.COUNTER_CLOCKWISE
 	}
 }
