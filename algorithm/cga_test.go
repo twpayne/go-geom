@@ -143,3 +143,58 @@ func TestIsRingCounterClockwise(t *testing.T) {
 		}
 	}
 }
+
+func TestDistanceFromPointToLine(t *testing.T) {
+	for i, tc := range []struct {
+		p                  geom.Coord
+		startLine, endLine geom.Coord
+		distance           float64
+	}{
+		{
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{1, 0},
+			endLine:   geom.Coord{1, 1},
+			distance:  1,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{1, 1},
+			endLine:   geom.Coord{1, -1},
+			distance:  1,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{0, 1},
+			endLine:   geom.Coord{0, -1},
+			distance:  0,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{1, 0},
+			endLine:   geom.Coord{2, 0},
+			distance:  1,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{2, 0},
+			endLine:   geom.Coord{1, 0},
+			distance:  1,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{2, 0},
+			endLine:   geom.Coord{0, 0},
+			distance:  0,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{0, 0},
+			endLine:   geom.Coord{0, 0},
+			distance:  0,
+		}, {
+			p:         geom.Coord{0, 0},
+			startLine: geom.Coord{1, 0},
+			endLine:   geom.Coord{1, 0},
+			distance:  1,
+		},
+	} {
+		calculatedDistance := algorithm.DistanceFromPointToLine(tc.p, tc.startLine, tc.endLine)
+		if tc.distance != calculatedDistance {
+			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
+		}
+	}
+}

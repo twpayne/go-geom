@@ -8,6 +8,7 @@ import (
 	"github.com/twpayne/go-geom/algorithm/internal/ray_crossing"
 	"github.com/twpayne/go-geom/algorithm/location"
 	"github.com/twpayne/go-geom/algorithm/orientation"
+	"math"
 )
 
 // Returns the index of the direction of the point <code>q</code> relative to
@@ -157,4 +158,50 @@ func IsRingCounterClockwise(ring []geom.Coord) bool {
 		isCCW = (disc > 0)
 	}
 	return isCCW
+}
+
+// Computes the distance from a point p to a line segment startLine/endLine
+//
+// Note: NON-ROBUST!
+//
+// Return the distance from p to line segment AB
+func DistanceFromPointToLine(p, startLine, endLine geom.Coord) float64 {
+	// if start = end, then just compute distance to one of the endpoints
+	if startLine[0] == endLine[0] && startLine[1] == endLine[1] {
+		return p.Distance2D(startLine)
+	}
+
+	// otherwise use comp.graphics.algorithms Frequently Asked Questions method
+
+	// (1) r = AC dot AB
+	//         ---------
+	//         ||AB||^2
+	//
+	// r has the following meaning:
+	//   r=0 P = A
+	//   r=1 P = B
+	//   r<0 P is on the backward extension of AB
+	//   r>1 P is on the forward extension of AB
+	//   0<r<1 P is interior to AB
+
+	len2 := (endLine[0]-startLine[0])*(endLine[0]-startLine[0]) + (endLine[1]-startLine[1])*(endLine[1]-startLine[1])
+	r := ((p[0]-startLine[0])*(endLine[0]-startLine[0]) + (p[1]-startLine[1])*(endLine[1]-startLine[1])) / len2
+
+	if r <= 0.0 {
+		return p.Distance2D(startLine)
+	}
+	if r >= 1.0 {
+		return p.Distance2D(endLine)
+	}
+
+	// (2) s = (Ay-Cy)(Bx-Ax)-(Ax-Cx)(By-Ay)
+	//         -----------------------------
+	//                    L^2
+	//
+	// Then the distance from C to P = |s|*L.
+	//
+	// This is the same calculation as {@link #distancePointLinePerpendicular}.
+	// Unrolled here for performance.
+	s := ((startLine[1]-p[1])*(endLine[0]-startLine[0]) - (startLine[0]-p[0])*(endLine[1]-startLine[1])) / len2
+	return math.Abs(s) * math.Sqrt(len2)
 }
