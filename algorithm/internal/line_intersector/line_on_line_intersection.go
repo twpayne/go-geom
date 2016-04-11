@@ -1,4 +1,4 @@
-package algorithm
+package line_intersector
 
 import "github.com/twpayne/go-geom"
 

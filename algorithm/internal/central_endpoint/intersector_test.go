@@ -2,7 +2,7 @@ package central_endpoint_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/central_endpoint"
+	"github.com/twpayne/go-geom/algorithm/internal/central_endpoint"
 	"testing"
 )
 

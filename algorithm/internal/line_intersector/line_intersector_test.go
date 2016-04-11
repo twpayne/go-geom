@@ -1,8 +1,8 @@
-package algorithm_test
+package line_intersector_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm"
+	"github.com/twpayne/go-geom/algorithm/internal/line_intersector"
 	"testing"
 )
 
@@ -33,7 +33,7 @@ func TestComputeEdgeDistance(t *testing.T) {
 			result: 4, err: nil,
 		},
 	} {
-		distance, err := algorithm.ComputeEdgeDistance(tc.p, tc.lineEndpoint1, tc.lineEndpoint2)
+		distance, err := line_intersector.ComputeEdgeDistance(tc.p, tc.lineEndpoint1, tc.lineEndpoint2)
 
 		if err != tc.err {
 			t.Errorf("Test '%v' failed: expected an error", i+1)

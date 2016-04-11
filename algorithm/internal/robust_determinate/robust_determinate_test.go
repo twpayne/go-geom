@@ -1,7 +1,7 @@
 package robust_determinate_test
 
 import (
-	"github.com/twpayne/go-geom/algorithm/robust_determinate"
+	"github.com/twpayne/go-geom/algorithm/internal/robust_determinate"
 	"testing"
 )
 

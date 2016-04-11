@@ -1,4 +1,4 @@
-package algorithm
+package line_intersector
 
 import (
 	"fmt"

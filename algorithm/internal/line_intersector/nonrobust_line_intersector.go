@@ -1,6 +1,9 @@
-package algorithm
+package line_intersector
 
-import "github.com/twpayne/go-geom"
+import (
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/algorithm/internal/utils"
+)
 
 type NonRobustLineIntersector struct {
 }
@@ -88,7 +91,7 @@ func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *
 	 *  Check signs of r3 and r4.  If both point 3 and point 4 lie on
 	 *  same side of line 1, the line segments do not intersect.
 	 */
-	if r3 != 0 && r4 != 0 && isSameSignAndNonZero(r3, r4) {
+	if r3 != 0 && r4 != 0 && utils.IsSameSignAndNonZero(r3, r4) {
 		data.intersectionType = NO_INTERSECTION
 		return
 	}
@@ -111,7 +114,7 @@ func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *
 	 *  on same side of second line segment, the line segments do
 	 *  not intersect.
 	 */
-	if r1 != 0 && r2 != 0 && isSameSignAndNonZero(r1, r2) {
+	if r1 != 0 && r2 != 0 && utils.IsSameSignAndNonZero(r1, r2) {
 		data.intersectionType = NO_INTERSECTION
 		return
 	}

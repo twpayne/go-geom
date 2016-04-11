@@ -1,4 +1,4 @@
-package algorithm
+package location
 
 import (
 	"fmt"

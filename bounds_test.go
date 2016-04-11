@@ -191,7 +191,7 @@ func TestBoundsSet(t *testing.T) {
 			if r := recover(); r == nil {
 				t.Error("Expected a panic but didn't get it as expected")
 			} else if !reflect.DeepEqual(expected, bounds) {
-				t.Errorf("Set modified bounds even though error was thrown.", expected, bounds)
+				t.Errorf("Set modified bounds even though error was thrown. Before %v aster %v", expected, bounds)
 			}
 		}()
 

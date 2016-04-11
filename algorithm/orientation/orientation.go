@@ -1,4 +1,4 @@
-package cga
+package orientation
 
 import "fmt"
 
@@ -13,8 +13,8 @@ const (
 var orientationLabels = [3]string{"CLOCKWISE", "COLLINEAR", "COUNTER_CLOCKWISE"}
 
 func (o Orientation) String() string {
-	if o > 1 {
-		return fmt.Sprintf("Unsafe to calculate: %v", o)
+	if o > 1 || o < -1 {
+		return fmt.Sprintf("Unsafe to calculate: %v", int(o))
 	}
 	return orientationLabels[int(o+1)]
 }

@@ -2,7 +2,7 @@ package big
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/cga"
+	"github.com/twpayne/go-geom/algorithm/orientation"
 	"math/big"
 )
 
@@ -24,7 +24,7 @@ var dp_safe_epsilon = 1e-15
  * @return CLOCKWISE if point is clockwise (right) from vectorOrigin-vectorEnd
  * @return COLLINEAR if point is collinear with vectorOrigin-vectorEnd
  */
-func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) cga.Orientation {
+func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Orientation {
 	// fast filter for orientation index
 	// avoids use of slow extended-precision arithmetic in many cases
 	index := orientationIndexFilter(vectorOrigin, vectorEnd, point)
@@ -45,7 +45,7 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) cga.Orientation
 	dy1.Mul(&dy1, &dx2)
 	dx1.Sub(&dx1, &dy1)
 
-	return cga.Orientation(rientationBasedOnSignForBig(dx1))
+	return orientation.Orientation(rientationBasedOnSignForBig(dx1))
 }
 
 /////////////////  Implementation /////////////////////////////////
@@ -67,7 +67,7 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) cga.Orientation
  * Return the orientation index if it can be computed safely
  * Return i > 1 if the orientation index cannot be computed safely
  */
-func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) cga.Orientation {
+func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientation.Orientation {
 	var detsum float64
 
 	detleft := (vectorOrigin.X() - point.X()) * (vectorEnd.Y() - point.Y())
@@ -98,25 +98,25 @@ func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) cga.Orien
 	return 2
 }
 
-func orientationBasedOnSign(x float64) cga.Orientation {
+func orientationBasedOnSign(x float64) orientation.Orientation {
 	if x > 0 {
-		return cga.COUNTER_CLOCKWISE
+		return orientation.COUNTER_CLOCKWISE
 	}
 	if x < 0 {
-		return cga.CLOCKWISE
+		return orientation.CLOCKWISE
 	}
-	return cga.COLLINEAR
+	return orientation.COLLINEAR
 }
-func rientationBasedOnSignForBig(x big.Float) cga.Orientation {
+func rientationBasedOnSignForBig(x big.Float) orientation.Orientation {
 	if x.IsInf() {
-		return cga.COLLINEAR
+		return orientation.COLLINEAR
 	}
 	switch x.Sign() {
 	case -1:
-		return cga.CLOCKWISE
+		return orientation.CLOCKWISE
 	case 0:
-		return cga.COLLINEAR
+		return orientation.COLLINEAR
 	default:
-		return cga.COUNTER_CLOCKWISE
+		return orientation.COUNTER_CLOCKWISE
 	}
 }

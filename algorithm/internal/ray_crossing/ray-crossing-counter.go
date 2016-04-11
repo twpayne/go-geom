@@ -2,11 +2,11 @@ package ray_crossing
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm"
-	"github.com/twpayne/go-geom/algorithm/robust_determinate"
+	"github.com/twpayne/go-geom/algorithm/internal/robust_determinate"
+	"github.com/twpayne/go-geom/algorithm/location"
 )
 
-func LocatePointInRing(p geom.Coord, ring []geom.Coord) algorithm.Location {
+func LocatePointInRing(p geom.Coord, ring []geom.Coord) location.Location {
 	counter := rayCrossingCounter{p: p}
 
 	for i := 1; i < len(ring); i++ {
@@ -36,17 +36,17 @@ type rayCrossingCounter struct {
 //
 // return the Location of the point
 
-func (counter rayCrossingCounter) getLocation() algorithm.Location {
+func (counter rayCrossingCounter) getLocation() location.Location {
 	if counter.isPointOnSegment {
-		return algorithm.BOUNDARY
+		return location.BOUNDARY
 	}
 
 	// The point is in the interior of the ring if the number of X-crossings is
 	// odd.
 	if (counter.crossingCount % 2) == 1 {
-		return algorithm.INTERIOR
+		return location.INTERIOR
 	}
-	return algorithm.EXTERIOR
+	return location.EXTERIOR
 }
 
 /**

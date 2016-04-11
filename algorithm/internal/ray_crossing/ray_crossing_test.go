@@ -2,8 +2,8 @@ package ray_crossing_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm"
-	"github.com/twpayne/go-geom/algorithm/ray_crossing"
+	"github.com/twpayne/go-geom/algorithm/internal/ray_crossing"
+	"github.com/twpayne/go-geom/algorithm/location"
 	"testing"
 )
 
@@ -22,72 +22,72 @@ func TestLocateInRing(t *testing.T) {
 	for i, tc := range []struct {
 		p        geom.Coord
 		coords   []geom.Coord
-		location algorithm.Location
+		location location.Location
 	}{
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(),
-			location: algorithm.EXTERIOR,
+			location: location.EXTERIOR,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(0, 0),
-			location: algorithm.EXTERIOR,
+			location: location.EXTERIOR,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(0, 0, 0, 0),
-			location: algorithm.BOUNDARY,
+			location: location.BOUNDARY,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(-1, -1),
-			location: algorithm.EXTERIOR,
+			location: location.EXTERIOR,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(0, 0, -1, -1),
-			location: algorithm.BOUNDARY,
+			location: location.BOUNDARY,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(0, 0, 1, 1),
-			location: algorithm.BOUNDARY,
+			location: location.BOUNDARY,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(-1, -1, 1, 1),
-			location: algorithm.BOUNDARY,
+			location: location.BOUNDARY,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(0, 1, 0, -1),
-			location: algorithm.BOUNDARY,
+			location: location.BOUNDARY,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(1, 0, -1, 0),
-			location: algorithm.BOUNDARY,
+			location: location.BOUNDARY,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(1, -1, -1, -1),
-			location: algorithm.EXTERIOR,
+			location: location.EXTERIOR,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(1, 1, 1, -1),
-			location: algorithm.INTERIOR,
+			location: location.INTERIOR,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(-1, 1, 1, 1, 1, -1, -1, -1, -1, 1),
-			location: algorithm.INTERIOR,
+			location: location.INTERIOR,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   coordArray(1, 1, 2, 1, 2, -1, 1, -1, 1, 1),
-			location: algorithm.EXTERIOR,
+			location: location.EXTERIOR,
 		},
 	} {
 		location := ray_crossing.LocatePointInRing(tc.p, tc.coords)

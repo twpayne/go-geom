@@ -1,6 +1,6 @@
-package algorithm
+package utils
 
-func isSameSignAndNonZero(a, b float64) bool {
+func IsSameSignAndNonZero(a, b float64) bool {
 	if a == 0 || b == 0 {
 		return false
 	}
