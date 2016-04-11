@@ -72,3 +72,89 @@ func IsOnLine(point geom.Coord, lineSegmentCoordinates []geom.Coord) bool {
 	}
 	return false
 }
+
+// Computes whether a ring defined by an array of geom.Coords is
+// oriented counter-clockwise.
+//
+// - The list of points is assumed to have the first and last points equal.
+// - This will handle coordinate lists which contain repeated points.
+//
+// This algorithm is <b>only</b> guaranteed to work with valid rings. If the
+// ring is invalid (e.g. self-crosses or touches), the computed result may not
+// be correct.
+//
+// Param ring - an array of Coordinates forming a ring
+// Returns true if the ring is oriented counter-clockwise.
+// Panics if there are too few points to determine orientation (< 3)
+func IsRingCounterClockwise(ring []geom.Coord) bool {
+	// # of points without closing endpoint
+	nPts := len(ring) - 1
+	// sanity check
+	if nPts < 3 {
+		panic("Ring has fewer than 3 points, so orientation cannot be determined")
+	}
+
+	// find highest point
+	hiPt := ring[0]
+	hiIndex := 0
+	for i := 1; i <= nPts; i++ {
+		p := ring[i]
+		if p[1] > hiPt[1] {
+			hiPt = p
+			hiIndex = i
+		}
+	}
+
+	// find distinct point before highest point
+	iPrev := hiIndex
+	for {
+		iPrev = iPrev - 1
+		if iPrev < 0 {
+			iPrev = nPts
+		}
+
+		if !ring[iPrev].Equal(geom.XY, hiPt) || iPrev == hiIndex {
+			break
+		}
+	}
+
+	// find distinct point after highest point
+	iNext := hiIndex
+	for {
+		iNext = (iNext + 1) % nPts
+
+		if !ring[iNext].Equal(geom.XY, hiPt) || iNext == hiIndex {
+			break
+		}
+	}
+
+	prev := ring[iPrev]
+	next := ring[iNext]
+
+	// This check catches cases where the ring contains an A-B-A configuration
+	// of points. This can happen if the ring does not contain 3 distinct points
+	// (including the case where the input array has fewer than 4 elements), or
+	// it contains coincident line segments.
+	if prev.Equal(geom.XY, hiPt) || next.Equal(geom.XY, hiPt) || prev.Equal(geom.XY, next) {
+		return false
+	}
+
+	disc := OrientationIndex(prev, hiPt, next)
+
+	// If disc is exactly 0, lines are collinear. There are two possible cases:
+	// (1) the lines lie along the x axis in opposite directions (2) the lines
+	// lie on top of one another
+	//
+	// (1) is handled by checking if next is left of prev ==> CCW (2) will never
+	// happen if the ring is valid, so don't check for it (Might want to assert
+	// this)
+	isCCW := false
+	if disc == 0 {
+		// poly is CCW if prev x is right of next x
+		isCCW = (prev[0] > next[0])
+	} else {
+		// if area is positive, points are ordered CCW
+		isCCW = (disc > 0)
+	}
+	return isCCW
+}
