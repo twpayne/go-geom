@@ -3,6 +3,7 @@ package big
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/orientation"
+	"math"
 	"math/big"
 )
 
@@ -45,28 +46,77 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Ori
 	dy1.Mul(&dy1, &dx2)
 	dx1.Sub(&dx1, &dy1)
 
-	return orientation.Orientation(rientationBasedOnSignForBig(dx1))
+	return orientation.Orientation(orientationBasedOnSignForBig(dx1))
+}
+
+// Computes the intersection point of the two lines using math.big.Float arithmetic.
+// The lines are considered infinate in length.  For example, (0,0), (1, 0) and (2, 1) (2, 2) will have intersection of (2, 0)
+// Currently does not handle case of parallel lines.
+func Intersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Coord {
+	var denom1, denom2, denom, tmp1, tmp2 big.Float
+
+	denom1.SetFloat64(line2End[1]).Sub(&denom1, tmp2.SetFloat64(line2Start[1])).Mul(&denom1, tmp1.SetFloat64(line1End[0]).Sub(&tmp1, tmp2.SetFloat64(line1Start[0])))
+	denom2.SetFloat64(line2End[0]).Sub(&denom2, tmp2.SetFloat64(line2Start[0])).Mul(&denom2, tmp1.SetFloat64(line1End[1]).Sub(&tmp1, tmp2.SetFloat64(line1Start[1])))
+	denom.Sub(&denom1, &denom2)
+
+	// Cases:
+	// - denom is 0 if lines are parallel
+	// - intersection point lies within line segment p if fracP is between 0 and 1
+	// - intersection point lies within line segment q if fracQ is between 0 and 1
+
+	// reusing previous variables for performance
+	numx1 := &denom1
+	numx2 := &denom2
+	var numx big.Float
+
+	numx1.SetFloat64(line2End[0]).Sub(numx1, tmp2.SetFloat64(line2Start[0])).Mul(numx1, tmp1.SetFloat64(line1Start[1]).Sub(&tmp1, tmp2.SetFloat64(line2Start[1])))
+	numx2.SetFloat64(line2End[1]).Sub(numx2, tmp2.SetFloat64(line2Start[1])).Mul(numx2, tmp1.SetFloat64(line1Start[0]).Sub(&tmp1, tmp2.SetFloat64(line2Start[0])))
+	numx.Sub(numx1, numx2)
+
+	fracP, _ := numx.Quo(&numx, &denom).Float64()
+
+	x, _ := numx1.SetFloat64(line1Start[0]).Add(numx1, tmp2.SetFloat64(line1End[0])).Sub(numx1, tmp2.SetFloat64(line1Start[0])).Mul(numx1, tmp1.SetFloat64(fracP)).Float64()
+
+	// reusing previous variables for performance
+	numy1 := &denom1
+	numy2 := &denom2
+	var numy big.Float
+
+	numy1.SetFloat64(line1End[0]).Sub(numy1, tmp2.SetFloat64(line1Start[0])).Mul(numy1, tmp1.SetFloat64(line1Start[1]).Sub(&tmp1, tmp2.SetFloat64(line2Start[1])))
+	numy2.SetFloat64(line1End[1]).Sub(numy2, tmp2.SetFloat64(line1Start[1])).Mul(numy2, tmp1.SetFloat64(line1Start[0]).Sub(&tmp1, tmp2.SetFloat64(line2Start[0])))
+	numy.Sub(numy1, numy2)
+
+	fracQ, _ := numy.Quo(&numy, &denom).Float64()
+
+	tmp2.SetFloat64(line1End[1]).Sub(&tmp2, tmp1.SetFloat64(line1Start[1]))
+
+	if tmp2.IsInf() && fracQ == 0 || tmp1.SetFloat64(0).Cmp(&tmp2) == 0 && math.IsInf(fracQ, 0) {
+		// can't perform calculation
+		return geom.Coord{math.Inf(1), math.Inf(1)}
+	}
+
+	y, _ := numx1.SetFloat64(line1Start[1]).Add(numx1, tmp2.Mul(&tmp2, tmp1.SetFloat64(fracQ))).Float64()
+
+	return geom.Coord{x, y}
 }
 
 /////////////////  Implementation /////////////////////////////////
 
-/**
- * A filter for computing the orientation index of three coordinates.
- * <p>
- * If the orientation can be computed safely using standard DP
- * arithmetic, this routine returns the orientation index.
- * Otherwise, a value i > 1 is returned.
- * In this case the orientation index must
- * be computed using some other more robust method.
- * The filter is fast to compute, so can be used to
- * avoid the use of slower robust methods except when they are really needed,
- * thus providing better average performance.
- * <p>
- * Uses an approach due to Jonathan Shewchuk, which is in the public domain.
- *
- * Return the orientation index if it can be computed safely
- * Return i > 1 if the orientation index cannot be computed safely
- */
+// A filter for computing the orientation index of three coordinates.
+//
+// If the orientation can be computed safely using standard DP
+// arithmetic, this routine returns the orientation index.
+// Otherwise, a value i > 1 is returned.
+// In this case the orientation index must
+// be computed using some other more robust method.
+// The filter is fast to compute, so can be used to
+// avoid the use of slower robust methods except when they are really needed,
+// thus providing better average performance.
+//
+// Uses an approach due to Jonathan Shewchuk, which is in the public domain.
+//
+// Return the orientation index if it can be computed safely
+// Return i > 1 if the orientation index cannot be computed safely
 func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientation.Orientation {
 	var detsum float64
 
@@ -107,7 +157,7 @@ func orientationBasedOnSign(x float64) orientation.Orientation {
 	}
 	return orientation.COLLINEAR
 }
-func rientationBasedOnSignForBig(x big.Float) orientation.Orientation {
+func orientationBasedOnSignForBig(x big.Float) orientation.Orientation {
 	if x.IsInf() {
 		return orientation.COLLINEAR
 	}
