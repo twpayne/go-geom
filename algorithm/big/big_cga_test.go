@@ -1,7 +1,6 @@
 package big_test
 
 import (
-	"fmt"
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/orientation"
@@ -108,7 +107,6 @@ func TestIntersection(t *testing.T) {
 			result:     geom.Coord{2, 0},
 		},
 	} {
-		fmt.Println(tc.desc)
 		calculatedIntersection := big.Intersection(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
 		if !reflect.DeepEqual(calculatedIntersection, tc.result) {
 			t.Errorf("Test %v (%v) Failed. Expected: %v but was %v ", i+1, tc.desc, tc.result, calculatedIntersection)

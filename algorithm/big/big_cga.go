@@ -36,10 +36,10 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Ori
 	var dx1, dy1, dx2, dy2 big.Float
 
 	// normalize coordinates
-	dx1.SetFloat64(vectorEnd.X()).Add(&dx1, big.NewFloat(-vectorOrigin.X()))
-	dy1.SetFloat64(vectorEnd.Y()).Add(&dy1, big.NewFloat(-vectorOrigin.Y()))
-	dx2.SetFloat64(point.X()).Add(&dx2, big.NewFloat(-vectorEnd.X()))
-	dy2.SetFloat64(point.Y()).Add(&dy2, big.NewFloat(-vectorEnd.Y()))
+	dx1.SetFloat64(vectorEnd[0]).Add(&dx1, big.NewFloat(-vectorOrigin[0]))
+	dy1.SetFloat64(vectorEnd[1]).Add(&dy1, big.NewFloat(-vectorOrigin[1]))
+	dx2.SetFloat64(point[0]).Add(&dx2, big.NewFloat(-vectorEnd[0]))
+	dy2.SetFloat64(point[1]).Add(&dy2, big.NewFloat(-vectorEnd[1]))
 
 	// calculate determinant.  Calculation takes place in dx1 for performance
 	dx1.Mul(&dx1, &dy2)
@@ -120,8 +120,8 @@ func Intersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Co
 func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientation.Orientation {
 	var detsum float64
 
-	detleft := (vectorOrigin.X() - point.X()) * (vectorEnd.Y() - point.Y())
-	detright := (vectorOrigin.Y() - point.Y()) * (vectorEnd.X() - point.X())
+	detleft := (vectorOrigin[0] - point[0]) * (vectorEnd[1] - point[1])
+	detright := (vectorOrigin[1] - point[1]) * (vectorEnd[0] - point[0])
 	det := detleft - detright
 
 	if detleft > 0.0 {

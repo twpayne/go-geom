@@ -1,10 +1,11 @@
-package algorithm_test
+package flat_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm"
-	"github.com/twpayne/go-geom/algorithm/internal"
+	"github.com/twpayne/go-geom/algorithm/flat"
+	"github.com/twpayne/go-geom/algorithm/flat/internal"
 	"math"
+	"math/rand"
 	"testing"
 )
 
@@ -16,54 +17,61 @@ func TestIsOnLinePanic(t *testing.T) {
 		// good panic was expected
 	}()
 
-	algorithm.IsOnLine(geom.Coord{0, 0}, []geom.Coord{geom.Coord{0, 0}})
+	flat.IsOnLine(geom.XY, geom.Coord{0, 0}, []float64{0, 0})
 }
 
 func TestIsOnLine(t *testing.T) {
 	for i, tc := range []struct {
 		desc         string
 		p            geom.Coord
-		lineSegments []geom.Coord
+		lineSegments []float64
+		layout       geom.Layout
 		intersects   bool
 	}{
 		{
 			desc:         "Point on center of line",
 			p:            geom.Coord{0, 0},
-			lineSegments: []geom.Coord{geom.Coord{-1, 0}, geom.Coord{1, 0}},
+			lineSegments: []float64{-1, 0, 1, 0},
+			layout:       geom.XY,
 			intersects:   true,
 		},
 		{
 			desc:         "Point not on line",
 			p:            geom.Coord{0, 0},
-			lineSegments: []geom.Coord{geom.Coord{-1, 1}, geom.Coord{1, 0}},
+			lineSegments: []float64{-1, 1, 1, 0},
+			layout:       geom.XY,
 			intersects:   false,
 		},
 		{
 			desc:         "Point not on second line segment",
 			p:            geom.Coord{0, 0},
-			lineSegments: []geom.Coord{geom.Coord{-1, 1}, geom.Coord{1, 0}, geom.Coord{-1, 0}},
+			lineSegments: []float64{-1, 1, 1, 0, -1, 0},
+			layout:       geom.XY,
 			intersects:   true,
 		},
 		{
 			desc:         "Point not on any line segments",
 			p:            geom.Coord{0, 0},
-			lineSegments: []geom.Coord{geom.Coord{-1, 1}, geom.Coord{1, 0}, geom.Coord{2, 0}},
+			lineSegments: []float64{-1, 1, 1, 0, 2, 0},
+			layout:       geom.XY,
 			intersects:   false,
 		},
 		{
 			desc:         "Point in unclosed ring",
 			p:            geom.Coord{0, 0},
-			lineSegments: []geom.Coord{geom.Coord{-1, 1}, geom.Coord{1, 1}, geom.Coord{1, -1}, geom.Coord{-1, -1}, geom.Coord{-1, 1.00000000000000000000000000001}},
+			lineSegments: []float64{-1, 1, 1, 1, 1, -1, -1, -1, -1, 1.00000000000000000000000000001},
+			layout:       geom.XY,
 			intersects:   false,
 		},
 		{
 			desc:         "Point in ring",
 			p:            geom.Coord{0, 0},
-			lineSegments: []geom.Coord{geom.Coord{-1, 1}, geom.Coord{1, 1}, geom.Coord{1, -1}, geom.Coord{-1, -1}, geom.Coord{-1, 1}},
+			lineSegments: []float64{-1, 1, 1, 1, 1, -1, -1, -1, -1, 1},
+			layout:       geom.XY,
 			intersects:   false,
 		},
 	} {
-		if tc.intersects != algorithm.IsOnLine(tc.p, tc.lineSegments) {
+		if tc.intersects != flat.IsOnLine(tc.layout, tc.p, tc.lineSegments) {
 			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.intersects, !tc.intersects)
 		}
 	}
@@ -76,56 +84,79 @@ func TestIsRingCounterClockwiseNotEnoughPoints(t *testing.T) {
 		}
 
 	}()
-	algorithm.IsRingCounterClockwise([]geom.Coord{geom.Coord{0, 0}, geom.Coord{1, 0}, geom.Coord{1, 1}})
+	flat.IsRingCounterClockwise(geom.XY, []float64{0, 0, 1, 0, 1, 1})
 }
+
 func TestIsRingCounterClockwise(t *testing.T) {
 	for i, tc := range []struct {
 		desc         string
-		lineSegments []geom.Coord
+		lineSegments []float64
 		ccw          bool
 	}{
 		{
 			desc:         "counter-clockwise ring 3 points",
-			lineSegments: []geom.Coord{geom.Coord{0, 0}, geom.Coord{1, 0}, geom.Coord{1, 1}, geom.Coord{0, 0}},
+			lineSegments: []float64{0, 0, 1, 0, 1, 1, 0, 0},
 			ccw:          true,
 		},
 		{
 			desc:         "counter-clockwise ring 4 points, not closed, highest at end",
-			lineSegments: []geom.Coord{geom.Coord{0, 0}, geom.Coord{1, 0}, geom.Coord{1, .5}, geom.Coord{0, 1}},
+			lineSegments: []float64{0, 0, 1, 0, 1, .5, 0, 1},
 			ccw:          true,
 		},
 		{
 			desc:         "counter-clockwise ring 4 points",
-			lineSegments: []geom.Coord{geom.Coord{0, 0}, geom.Coord{1, 0}, geom.Coord{1, 1}, geom.Coord{0, 1}, geom.Coord{0, 0}},
+			lineSegments: []float64{0, 0, 1, 0, 1, 1, 0, 1, 0, 0},
 			ccw:          true,
 		},
 		{
 			desc:         "clockwise ring 3 points",
-			lineSegments: []geom.Coord{geom.Coord{0, 0}, geom.Coord{0, 1}, geom.Coord{1, 1}, geom.Coord{0, 0}},
+			lineSegments: []float64{0, 0, 0, 1, 1, 1, 0, 0},
 			ccw:          false,
 		},
 		{
 			desc:         "clockwise ring 4 points",
-			lineSegments: []geom.Coord{geom.Coord{0, 0}, geom.Coord{0, 1}, geom.Coord{1, 1}, geom.Coord{1, 0}, geom.Coord{0, 0}},
+			lineSegments: []float64{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
 			ccw:          false,
 		},
 		{
 			desc:         "clockwise ring many points",
-			lineSegments: internal.RING.Coords(),
+			lineSegments: internal.RING.FlatCoords(),
 			ccw:          false,
 		},
 		{
 			desc:         "counter-clockwise tiny ring",
-			lineSegments: []geom.Coord{geom.Coord{0, 0}, geom.Coord{1e55, 0}, geom.Coord{1e55, 1e55}, geom.Coord{0, 0}},
+			lineSegments: []float64{0, 0, 1e55, 0, 1e55, 1e55, 0, 0},
 			ccw:          true,
 		},
 	} {
-		if tc.ccw != algorithm.IsRingCounterClockwise(tc.lineSegments) {
+		if tc.ccw != flat.IsRingCounterClockwise(geom.XY, tc.lineSegments) {
 			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.ccw, !tc.ccw)
 		}
+
+		// test with another ordinate per point
+		copied := make3DCopy(tc.lineSegments)
+		if tc.ccw != flat.IsRingCounterClockwise(geom.XYZ, copied) {
+			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.ccw, !tc.ccw)
+		}
+
 	}
 }
 
+func make3DCopy(coords []float64) []float64 {
+
+	len := len(coords)
+	copied := make([]float64, len+(len/2))
+
+	j := 0
+	for i := 0; i < len; i += 2 {
+		copied[j] = coords[i]
+		copied[j+1] = coords[i+1]
+		copied[j+2] = rand.Float64()
+		j += 3
+	}
+
+	return copied
+}
 func TestDistanceFromPointToLine(t *testing.T) {
 	for i, tc := range []struct {
 		p                  geom.Coord
@@ -142,7 +173,8 @@ func TestDistanceFromPointToLine(t *testing.T) {
 			startLine: geom.Coord{1, 1},
 			endLine:   geom.Coord{1, -1},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{0, 1},
 			endLine:   geom.Coord{0, -1},
@@ -179,7 +211,7 @@ func TestDistanceFromPointToLine(t *testing.T) {
 			distance:  5,
 		},
 	} {
-		calculatedDistance := algorithm.DistanceFromPointToLine(tc.p, tc.startLine, tc.endLine)
+		calculatedDistance := flat.DistanceFromPointToLine(tc.p, tc.startLine, tc.endLine)
 		if tc.distance != calculatedDistance {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
 		}
@@ -239,7 +271,7 @@ func TestPerpendicularDistanceFromPointToLine(t *testing.T) {
 			distance:  3,
 		},
 	} {
-		calculatedDistance := algorithm.PerpendicularDistanceFromPointToLine(tc.p, tc.startLine, tc.endLine)
+		calculatedDistance := flat.PerpendicularDistanceFromPointToLine(tc.p, tc.startLine, tc.endLine)
 		if math.IsNaN(tc.distance) {
 			if !math.IsNaN(calculatedDistance) {
 				t.Errorf("Test '%v' failed: expected Nan but was %v", i+1, tc.distance, calculatedDistance)
@@ -253,21 +285,24 @@ func TestPerpendicularDistanceFromPointToLine(t *testing.T) {
 func TestDistanceFromPointToMultiline(t *testing.T) {
 	for i, tc := range []struct {
 		p        geom.Coord
-		lines    []geom.Coord
+		lines    []float64
+		layout   geom.Layout
 		distance float64
 	}{
 		{
 			p:        geom.Coord{0, 0},
-			lines:    []geom.Coord{geom.Coord{1, 0}, geom.Coord{1, 1}, geom.Coord{2, 0}},
+			lines:    []float64{1, 0, 1, 1, 2, 0},
+			layout:   geom.XY,
 			distance: 1,
 		},
 		{
 			p:        geom.Coord{0, 0},
-			lines:    []geom.Coord{geom.Coord{2, 0}, geom.Coord{1, 1}, geom.Coord{1, 0}},
+			lines:    []float64{2, 0, 1, 1, 1, 0},
+			layout:   geom.XY,
 			distance: 1,
 		},
 	} {
-		calculatedDistance := algorithm.DistanceFromPointToMultiline(tc.p, tc.lines)
+		calculatedDistance := flat.DistanceFromPointToMultiline(tc.layout, tc.p, tc.lines)
 		if tc.distance != calculatedDistance {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
 		}
@@ -337,7 +372,7 @@ func TestDistanceFromLineToLine(t *testing.T) {
 			distance:   1,
 		},
 	} {
-		calculatedDistance := algorithm.DistanceFromLineToLine(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
+		calculatedDistance := flat.DistanceFromLineToLine(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
 		if tc.distance != calculatedDistance {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
 		}
@@ -347,48 +382,57 @@ func TestDistanceFromLineToLine(t *testing.T) {
 func TestSignedArea(t *testing.T) {
 	for i, tc := range []struct {
 		desc        string
-		lines       []geom.Coord
+		lines       []float64
 		area        float64
 		areaReverse float64
 	}{
 		{
 			desc:        "A line",
-			lines:       []geom.Coord{geom.Coord{1, 0}, geom.Coord{1, 1}},
+			lines:       []float64{1, 0, 1, 1},
 			area:        0,
 			areaReverse: 0,
 		},
 		{
 			desc:        "A unclosed 2 line multiline, right angle, Counter Clockwise",
-			lines:       []geom.Coord{geom.Coord{0, 0}, geom.Coord{3, 0}, geom.Coord{3, 4}},
+			lines:       []float64{0, 0, 3, 0, 3, 4},
 			area:        -6,
-			areaReverse: 0, // Odd result, must be because it isn't closed.  Same result as Java impl
+			areaReverse: -6,
 		},
 		{
 			desc:        "A square, Counter Clockwise",
-			lines:       []geom.Coord{geom.Coord{0, 0}, geom.Coord{3, 0}, geom.Coord{3, 3}, geom.Coord{0, 3}, geom.Coord{0, 0}},
+			lines:       []float64{0, 0, 3, 0, 3, 3, 0, 3, 0, 0},
 			area:        -9,
-			areaReverse: 9,
+			areaReverse: -9,
 		},
 		{
 			desc:        "A more complex ring, Counter Clockwise",
-			lines:       internal.RING.Coords(),
+			lines:       internal.RING.FlatCoords(),
 			area:        -0.024959177231354802,
-			areaReverse: 0.0249591772313548,
+			areaReverse: -0.024959177231354795,
 		},
 	} {
-		calculatedArea := algorithm.SignedArea(tc.lines)
+		calculatedArea := flat.SignedArea(geom.XY, tc.lines)
 		if tc.area != calculatedArea {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.area, calculatedArea, tc.lines)
 		}
-		calculatedArea = algorithm.SignedArea(reverseCopy(tc.lines))
+
+		calculatedArea = flat.SignedArea(geom.XY, reverseCopy(tc.lines))
 		if tc.areaReverse != calculatedArea {
-			t.Errorf("Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.areaReverse, calculatedArea, reverseCopy(tc.lines))
+			t.Errorf("Reversed Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.areaReverse, calculatedArea, reverseCopy(tc.lines))
+		}
+
+		// test with another ordinate per point
+		copied := make3DCopy(tc.lines)
+		calculatedArea = flat.SignedArea(geom.XYZ, copied)
+
+		if tc.area != calculatedArea {
+			t.Errorf("Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.area, calculatedArea, tc.lines)
 		}
 	}
 }
 
-func reverseCopy(coords []geom.Coord) []geom.Coord {
-	copy := make([]geom.Coord, len(coords), len(coords))
+func reverseCopy(coords []float64) []float64 {
+	copy := make([]float64, len(coords), len(coords))
 
 	for i := 0; i < len(coords); i++ {
 		copy[i] = coords[len(coords)-1-i]
@@ -401,35 +445,40 @@ func TestIsPointInRing(t *testing.T) {
 	for i, tc := range []struct {
 		desc   string
 		p      geom.Coord
-		ring   []geom.Coord
+		ring   []float64
+		layout geom.Layout
 		within bool
 	}{
 		{
 			desc:   "Point in ring",
 			p:      geom.Coord{0, 0},
-			ring:   []geom.Coord{geom.Coord{-1, -1}, geom.Coord{1, -1}, geom.Coord{1, 1}, geom.Coord{-1, 1}, geom.Coord{-1, -1}},
+			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
+			layout: geom.XY,
 			within: true,
 		},
 		{
 			desc:   "Point on ring border",
 			p:      geom.Coord{-1, 0},
-			ring:   []geom.Coord{geom.Coord{-1, -1}, geom.Coord{1, -1}, geom.Coord{1, 1}, geom.Coord{-1, 1}, geom.Coord{-1, -1}},
+			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
+			layout: geom.XY,
 			within: true,
 		},
 		{
 			desc:   "Point on ring vertex",
 			p:      geom.Coord{-1, -1},
-			ring:   []geom.Coord{geom.Coord{-1, -1}, geom.Coord{1, -1}, geom.Coord{1, 1}, geom.Coord{-1, 1}, geom.Coord{-1, -1}},
+			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
+			layout: geom.XY,
 			within: true,
 		},
 		{
 			desc:   "Point outside of ring",
 			p:      geom.Coord{-2, -1},
-			ring:   []geom.Coord{geom.Coord{-1, -1}, geom.Coord{1, -1}, geom.Coord{1, 1}, geom.Coord{-1, 1}, geom.Coord{-1, -1}},
+			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
+			layout: geom.XY,
 			within: false,
 		},
 	} {
-		if tc.within != algorithm.IsPointInRing(tc.p, tc.ring) {
+		if tc.within != flat.IsPointInRing(tc.layout, tc.p, tc.ring) {
 			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.within, !tc.within)
 		}
 	}
