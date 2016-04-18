@@ -16,7 +16,7 @@ type LineIntersector struct {
 	Layout   geom.Layout
 }
 
-func (intersector LineIntersector) PointIntersectsLine(point geom.Coord, lineStart, lineEnd geom.Coord) (hasIntersection bool) {
+func (intersector LineIntersector) PointIntersectsLine(point, lineStart, lineEnd geom.Coord) (hasIntersection bool) {
 	intersectorData := &lineIntersectorData{
 		layout:             intersector.Layout,
 		strategy:           intersector.Strategy,

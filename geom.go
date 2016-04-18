@@ -113,8 +113,12 @@ func (c Coord) Equal(layout Layout, other Coord) bool {
  * @return the 2-dimensional Euclidean distance between the locations
  */
 func (c Coord) Distance2D(other Coord) float64 {
-	dx := c[0] - other[0]
-	dy := c[1] - other[1]
+	return Distance2D(c, other)
+}
+
+func Distance2D(c1, c2 Coord) float64 {
+	dx := c1[0] - c2[0]
+	dy := c1[1] - c2[1]
 
 	return math.Sqrt(dx*dx + dy*dy)
 }

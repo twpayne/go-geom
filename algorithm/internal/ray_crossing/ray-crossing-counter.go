@@ -6,12 +6,15 @@ import (
 	"github.com/twpayne/go-geom/algorithm/location"
 )
 
-func LocatePointInRing(p geom.Coord, ring []geom.Coord) location.Location {
+func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Location {
 	counter := rayCrossingCounter{p: p}
 
-	for i := 1; i < len(ring); i++ {
-		p1 := ring[i]
-		p2 := ring[i-1]
+	stride := layout.Stride()
+
+	for i := stride; i < len(ring); i += stride {
+		p1 := geom.Coord(ring[i : i+2])
+		p2 := geom.Coord(ring[i-stride : i-stride+2])
+
 		counter.countSegment(p1, p2)
 		if counter.isPointOnSegment {
 			return counter.getLocation()
