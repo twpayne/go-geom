@@ -8,6 +8,7 @@ import (
 
 type centroidAreaCalculator struct {
 	layout        geom.Layout
+	stride        int
 	basePt        geom.Coord
 	triangleCent3 geom.Coord // temporary variable to hold centroid of triangle
 	areasum2      float64    // Partial area sum
@@ -68,6 +69,7 @@ func MultiPolygonsCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 func NewAreaCalculator(layout geom.Layout) *centroidAreaCalculator {
 	return &centroidAreaCalculator{
 		layout:        layout,
+		stride:        layout.Stride(),
 		centSum:       geom.Coord(make([]float64, layout.Stride())),
 		triangleCent3: geom.Coord(make([]float64, layout.Stride())),
 		cg3:           geom.Coord(make([]float64, layout.Stride())),
@@ -76,7 +78,7 @@ func NewAreaCalculator(layout geom.Layout) *centroidAreaCalculator {
 
 // Get the calculated centroid
 func (calculator *centroidAreaCalculator) GetCentroid() geom.Coord {
-	cent := geom.Coord(make([]float64, calculator.layout.Stride()))
+	cent := geom.Coord(make([]float64, calculator.stride))
 
 	if calculator.centSum == nil {
 		return cent
@@ -98,10 +100,9 @@ func (calculator *centroidAreaCalculator) AddPolygon(polygon *geom.Polygon) {
 
 	calculator.setBasePoint(polygon.Coord(0))
 
-	layout := polygon.Layout()
-	calculator.addShell(layout, polygon.LinearRing(0).FlatCoords())
+	calculator.addShell(polygon.LinearRing(0).FlatCoords())
 	for i := 1; i < polygon.NumLinearRings(); i++ {
-		calculator.addHole(layout, polygon.LinearRing(i).FlatCoords())
+		calculator.addHole(polygon.LinearRing(i).FlatCoords())
 	}
 }
 
@@ -111,10 +112,10 @@ func (calculator *centroidAreaCalculator) setBasePoint(basePt geom.Coord) {
 	}
 }
 
-func (calculator *centroidAreaCalculator) addShell(layout geom.Layout, pts []float64) {
-	stride := layout.Stride()
+func (calculator *centroidAreaCalculator) addShell(pts []float64) {
+	stride := calculator.stride
 
-	isPositiveArea := !algorithm.IsRingCounterClockwise(layout, pts)
+	isPositiveArea := !algorithm.IsRingCounterClockwise(calculator.layout, pts)
 	p1 := geom.Coord{0, 0}
 	p2 := geom.Coord{0, 0}
 
@@ -125,12 +126,12 @@ func (calculator *centroidAreaCalculator) addShell(layout geom.Layout, pts []flo
 		p2[1] = pts[i+stride+1]
 		calculator.addTriangle(calculator.basePt, p1, p2, isPositiveArea)
 	}
-	calculator.addLinearSegments(layout, pts)
+	calculator.addLinearSegments(pts)
 }
-func (calculator *centroidAreaCalculator) addHole(layout geom.Layout, pts []float64) {
-	stride := layout.Stride()
+func (calculator *centroidAreaCalculator) addHole(pts []float64) {
+	stride := calculator.stride
 
-	isPositiveArea := algorithm.IsRingCounterClockwise(layout, pts)
+	isPositiveArea := algorithm.IsRingCounterClockwise(calculator.layout, pts)
 	p1 := geom.Coord{0, 0}
 	p2 := geom.Coord{0, 0}
 
@@ -141,7 +142,7 @@ func (calculator *centroidAreaCalculator) addHole(layout geom.Layout, pts []floa
 		p2[1] = pts[i+stride+1]
 		calculator.addTriangle(calculator.basePt, p1, p2, isPositiveArea)
 	}
-	calculator.addLinearSegments(layout, pts)
+	calculator.addLinearSegments(pts)
 }
 
 func (calculator *centroidAreaCalculator) addTriangle(p0, p1, p2 geom.Coord, isPositiveArea bool) {
@@ -175,8 +176,8 @@ func area2(p1, p2, p3 geom.Coord) float64 {
 // in which case the linear centroid is computed instead.
 //
 // Param pts - an array of Coords
-func (calculator *centroidAreaCalculator) addLinearSegments(layout geom.Layout, pts []float64) {
-	stride := layout.Stride()
+func (calculator *centroidAreaCalculator) addLinearSegments(pts []float64) {
+	stride := calculator.stride
 	for i := 0; i < len(pts)-stride; i += stride {
 		segmentLen := geom.Distance2D(geom.Coord(pts[i:i+2]), pts[i+stride:i+stride+2])
 		calculator.totalLength += segmentLen
