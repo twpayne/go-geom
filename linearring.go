@@ -5,12 +5,12 @@ type LinearRing struct {
 	geom1
 }
 
-// NewLinearRing returns a new linear ring with no coordinates.
+// NewLinearRing returns a new LinearRing with no coordinates.
 func NewLinearRing(layout Layout) *LinearRing {
 	return NewLinearRingFlat(layout, nil)
 }
 
-// NewLinearRingFlat returns a new linear ring with the given flat coordinates.
+// NewLinearRingFlat returns a new LinearRing with the given flat coordinates.
 func NewLinearRingFlat(layout Layout, flatCoords []float64) *LinearRing {
 	lr := new(LinearRing)
 	lr.layout = layout
