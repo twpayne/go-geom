@@ -6,7 +6,7 @@ go:
         - 1.4.3
 
 install:
-        - go get github.com/mattn/go-sqlite3
         - go get github.com/twpayne/go-kml
+        - go get gopkg.in/DATA-DOG/go-sqlmock.v1
 
 sudo: false
