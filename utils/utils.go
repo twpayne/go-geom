@@ -104,10 +104,10 @@ func Compare2D(v1, v2 []float64) CoordEquality {
 
 }
 
-func NewFlatCoordSorter2D(layout geom.Layout, coordData []float64) flatCoordSorter {
-	return NewFlatCoordSorter(layout, coordData, Compare2D)
+func NewFlatCoordSorting2D(layout geom.Layout, coordData []float64) flatCoordSorter {
+	return NewFlatCoordSorting(layout, coordData, Compare2D)
 }
-func NewFlatCoordSorter(layout geom.Layout, coordData []float64, comparator func(v1, v2 []float64) CoordEquality) flatCoordSorter {
+func NewFlatCoordSorting(layout geom.Layout, coordData []float64, comparator func(v1, v2 []float64) CoordEquality) flatCoordSorter {
 	return flatCoordSorter{
 		coords: coordData,
 		layout: layout,

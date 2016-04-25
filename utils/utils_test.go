@@ -53,7 +53,7 @@ func TestCompare2D(t *testing.T) {
 	}
 }
 
-func TestNewFlatCoordSorter(t *testing.T) {
+func TestNewFlatCoordSorting2D(t *testing.T) {
 	for i, tc := range []struct {
 		c1, result []float64
 		layout     geom.Layout
@@ -81,7 +81,7 @@ func TestNewFlatCoordSorter(t *testing.T) {
 	} {
 		actual := make([]float64, len(tc.c1))
 		copy(actual, tc.c1)
-		sort.Sort(utils.NewFlatCoordSorter2D(tc.layout, actual))
+		sort.Sort(utils.NewFlatCoordSorting2D(tc.layout, actual))
 
 		if !reflect.DeepEqual(tc.result, actual) {
 			t.Errorf("Test %d: Failed to sort coordinates correctly. Expected: \n\t%v\nBut was:\n\t%v", i+1, tc.result, actual)

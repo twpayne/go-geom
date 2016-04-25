@@ -5,9 +5,10 @@ import (
 	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/orientation"
 	"github.com/twpayne/go-geom/utils"
+	"sort"
 )
 
-func NewRadialComparator(layout geom.Layout, coordData []float64, origin geom.Coord) {
+func NewRadialSorting(layout geom.Layout, coordData []float64, origin geom.Coord) sort.Interface {
 	comparator := func(v1, v2 []float64) utils.CoordEquality {
 		dxp := v1[0] - origin[0]
 		dyp := v1[1] - origin[1]
@@ -17,22 +18,22 @@ func NewRadialComparator(layout geom.Layout, coordData []float64, origin geom.Co
 		orient := big.OrientationIndex(origin, v1, v2)
 
 		if orient == orientation.COUNTER_CLOCKWISE {
-			return 1
+			return utils.GREATER
 		}
 		if orient == orientation.CLOCKWISE {
-			return -1
+			return utils.LESS
 		}
 
 		// points are collinear - check distance
 		op := dxp*dxp + dyp*dyp
 		oq := dxq*dxq + dyq*dyq
 		if op < oq {
-			return -1
+			return utils.LESS
 		}
 		if op > oq {
-			return 1
+			return utils.GREATER
 		}
-		return 0
+		return utils.EQUAL
 	}
-	return utils.NewFlatCoordSorter(layout, coordData, comparator)
+	return utils.NewFlatCoordSorting(layout, coordData, comparator)
 }

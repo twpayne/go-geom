@@ -66,9 +66,7 @@ func (calc *convexHullCalculator) preSort(pts []float64) {
 	}
 
 	// sort the points radially around the focal point.
-	sort.Sort(utils.NewFlatCoordSorter2D(calc.layout, pts))
-
-	return pts
+	sort.Sort(NewRadialSorting(calc.layout, pts, geom.Coord(pts[0:1])))
 }
 
 // Uses a heuristic to reduce the number of points scanned
