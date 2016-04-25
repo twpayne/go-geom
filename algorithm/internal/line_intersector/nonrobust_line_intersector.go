@@ -2,8 +2,8 @@ package line_intersector
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/internal/utils"
 	"github.com/twpayne/go-geom/algorithm/line_intersection"
+	"github.com/twpayne/go-geom/utils"
 )
 
 type NonRobustLineIntersector struct {

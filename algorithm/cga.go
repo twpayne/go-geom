@@ -6,9 +6,9 @@ import (
 	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/internal/line_intersector"
 	"github.com/twpayne/go-geom/algorithm/internal/ray_crossing"
-	"github.com/twpayne/go-geom/algorithm/internal/utils"
 	"github.com/twpayne/go-geom/algorithm/location"
 	"github.com/twpayne/go-geom/algorithm/orientation"
+	"github.com/twpayne/go-geom/utils"
 	"math"
 )
 
@@ -117,7 +117,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 			iPrev = nOrds
 		}
 
-		if !equal2D(ring, iPrev, ring, hiIndex) || iPrev == hiIndex {
+		if !utils.Equal2D(ring, iPrev, ring, hiIndex) || iPrev == hiIndex {
 			break
 		}
 	}
@@ -127,7 +127,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	for {
 		iNext = (iNext + stride) % nOrds
 
-		if !equal2D(ring, iNext, ring, hiIndex) || iNext == hiIndex {
+		if !utils.Equal2D(ring, iNext, ring, hiIndex) || iNext == hiIndex {
 			break
 		}
 	}
@@ -136,7 +136,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// of points. This can happen if the ring does not contain 3 distinct points
 	// (including the case where the input array has fewer than 4 elements), or
 	// it contains coincident line segments.
-	if equal2D(ring, iPrev, ring, hiIndex) || equal2D(ring, iNext, ring, hiIndex) || equal2D(ring, iPrev, ring, iNext) {
+	if utils.Equal2D(ring, iPrev, ring, hiIndex) || utils.Equal2D(ring, iNext, ring, hiIndex) || utils.Equal2D(ring, iPrev, ring, iNext) {
 		return false
 	}
 
@@ -158,19 +158,6 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 		isCCW = (disc > 0)
 	}
 	return isCCW
-}
-
-func equal2D(coords1 []float64, start1 int, coords2 []float64, start2 int) bool {
-
-	if coords1[start1] != coords2[start2] {
-		return false
-	}
-
-	if coords1[start1+1] != coords2[start2+1] {
-		return false
-	}
-
-	return true
 }
 
 // Computes the distance from a point p to a line segment lineStart/lineEnd
@@ -303,7 +290,7 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 	//   If the numerator in eqn 1 is also zero, AB & CD are collinear.
 
 	noIntersection := false
-	if !utils.DoLinesOverlap(geom.XY, line1Start, line1End, line2Start, line2End) {
+	if !utils.DoLinesOverlap2D(geom.XY, line1Start, line1End, line2Start, line2End) {
 		noIntersection = true
 	} else {
 		denom := (line1End[0]-line1Start[0])*(line2End[1]-line2Start[1]) - (line1End[1]-line1Start[1])*(line2End[0]-line2Start[0])
