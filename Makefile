@@ -2,7 +2,7 @@ goversion=$(word 3,$(shell go version))
 
 all:
 	go test -v ./...
-	if [ "${goversion}" = "go1.6" ]; then \
+	if [ "${goversion}" = "go1.6.2" ]; then \
 		go test -cover -race ./... ; \
 		go vet ./... ; \
 	fi
