@@ -67,7 +67,8 @@ func TestAreaGetCentroid(t *testing.T) {
 		lastEnd := 0
 		for _, p := range tc.polygons {
 			coords = append(coords, p.FlatCoords()...)
-			ends := p.Ends()
+			ends := append([]int{}, p.Ends()...)
+
 			for i := range p.Ends() {
 				ends[i] += lastEnd
 			}
