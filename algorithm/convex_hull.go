@@ -3,7 +3,8 @@ package algorithm
 import (
 	"fmt"
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/utils"
+	"github.com/twpayne/go-geom/algorithm/internal"
+	"github.com/twpayne/go-geom/sorting"
 	"sort"
 )
 
@@ -137,7 +138,7 @@ func (calc *convexHullCalculator) computeOctRing(inputPts []float64) []float64 {
 	octPts := calc.computeOctPts(inputPts)
 	copyTo := 0
 	for i := stride; i < len(octPts); i += stride {
-		if !utils.Equal2D(octPts, i-stride, octPts, i) {
+		if !internal.Equal(octPts, i-stride, octPts, i) {
 			copyTo += stride
 		}
 		for j := 0; j < stride; j++ {
@@ -273,10 +274,10 @@ func (set *treeSet) insertImpl(t *tree, v []float64) (*tree, bool) {
 	}
 
 	added := false
-	switch utils.Compare2D(v, t.value) {
-	case utils.LESS:
+	switch sorting.Compare2D(v, t.value) {
+	case sorting.LESS:
 		t.left, added = set.insertImpl(t.left, v)
-	case utils.GREATER:
+	case sorting.GREATER:
 		t.right, added = set.insertImpl(t.right, v)
 	}
 

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/big"
+	"github.com/twpayne/go-geom/algorithm/internal"
 	"github.com/twpayne/go-geom/algorithm/internal/line_intersector"
 	"github.com/twpayne/go-geom/algorithm/internal/ray_crossing"
 	"github.com/twpayne/go-geom/algorithm/location"
 	"github.com/twpayne/go-geom/algorithm/orientation"
-	"github.com/twpayne/go-geom/utils"
 	"math"
 )
 
@@ -117,7 +117,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 			iPrev = nOrds
 		}
 
-		if !utils.Equal2D(ring, iPrev, ring, hiIndex) || iPrev == hiIndex {
+		if !internal.Equal(ring, iPrev, ring, hiIndex) || iPrev == hiIndex {
 			break
 		}
 	}
@@ -127,7 +127,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	for {
 		iNext = (iNext + stride) % nOrds
 
-		if !utils.Equal2D(ring, iNext, ring, hiIndex) || iNext == hiIndex {
+		if !internal.Equal(ring, iNext, ring, hiIndex) || iNext == hiIndex {
 			break
 		}
 	}
@@ -136,7 +136,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// of points. This can happen if the ring does not contain 3 distinct points
 	// (including the case where the input array has fewer than 4 elements), or
 	// it contains coincident line segments.
-	if utils.Equal2D(ring, iPrev, ring, hiIndex) || utils.Equal2D(ring, iNext, ring, hiIndex) || utils.Equal2D(ring, iPrev, ring, iNext) {
+	if internal.Equal(ring, iPrev, ring, hiIndex) || internal.Equal(ring, iNext, ring, hiIndex) || internal.Equal(ring, iPrev, ring, iNext) {
 		return false
 	}
 
@@ -290,7 +290,7 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 	//   If the numerator in eqn 1 is also zero, AB & CD are collinear.
 
 	noIntersection := false
-	if !utils.DoLinesOverlap2D(geom.XY, line1Start, line1End, line2Start, line2End) {
+	if !internal.DoLinesOverlap(geom.XY, line1Start, line1End, line2Start, line2End) {
 		noIntersection = true
 	} else {
 		denom := (line1End[0]-line1Start[0])*(line2End[1]-line2Start[1]) - (line1End[1]-line1Start[1])*(line2End[0]-line2Start[0])
@@ -310,7 +310,7 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 		}
 	}
 	if noIntersection {
-		return utils.Min(
+		return internal.Min(
 			DistanceFromPointToLine(line1Start, line2Start, line2End),
 			DistanceFromPointToLine(line1End, line2Start, line2End),
 			DistanceFromPointToLine(line2Start, line1Start, line1End),
@@ -340,4 +340,16 @@ func SignedArea(layout geom.Layout, ring []float64) float64 {
 		sum += x * (y2 - y1)
 	}
 	return sum / 2.0
+}
+
+func IsPointWithinLineBounds(layout geom.Layout, p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
+	return internal.IsPointWithinLineBounds(layout, p, lineEndpoint1, lineEndpoint2)
+}
+
+func DoLinesOverlap(layout geom.Layout, line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
+	return internal.DoLinesOverlap(layout, line1End1, line1End2, line2End1, line2End2)
+}
+
+func Equal(coords1 []float64, start1 int, coords2 []float64, start2 int) bool {
+	return internal.Equal(coords1, start1, coords2, start2)
 }

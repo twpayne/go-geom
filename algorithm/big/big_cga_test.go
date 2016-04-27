@@ -51,6 +51,12 @@ func TestOrientationIndex(t *testing.T) {
 			point:        geom.Coord{20.0, 20.00},
 			result:       orientation.COUNTER_CLOCKWISE,
 		},
+		{
+			vectorOrigin: geom.Coord{-71.104126, 42.314675},
+			vectorEnd:    geom.Coord{-17.104138, 42.314732},
+			point:        geom.Coord{-17.1041375307579, 42.3147318674446},
+			result:       orientation.CLOCKWISE,
+		},
 	} {
 		orientationIndex := big.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)
 		if orientationIndex != testData.result {
