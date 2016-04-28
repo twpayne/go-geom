@@ -274,7 +274,7 @@ func TestPerpendicularDistanceFromPointToLine(t *testing.T) {
 		calculatedDistance := algorithm.PerpendicularDistanceFromPointToLine(tc.p, tc.startLine, tc.endLine)
 		if math.IsNaN(tc.distance) {
 			if !math.IsNaN(calculatedDistance) {
-				t.Errorf("Test '%v' failed: expected Nan but was %v", i+1, tc.distance, calculatedDistance)
+				t.Errorf("Test '%v' failed: expected Nan but was %v", i+1, calculatedDistance)
 			}
 		} else if tc.distance != calculatedDistance {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
