@@ -302,7 +302,7 @@ func TestDistanceFromPointToMultiline(t *testing.T) {
 			distance: 1,
 		},
 	} {
-		calculatedDistance := algorithm.DistanceFromPointToMultiline(tc.layout, tc.p, tc.lines)
+		calculatedDistance := algorithm.DistanceFromPointToLineString(tc.layout, tc.p, tc.lines)
 		if tc.distance != calculatedDistance {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
 		}

@@ -9,7 +9,7 @@ import (
 )
 
 func TestPointCentroidCalculator_GetCentroid_NoCoordsAdded(t *testing.T) {
-	calculator := algorithm.NewPointCentroid()
+	calculator := algorithm.NewPointCentroidCalculator()
 	centroid := calculator.GetCentroid()
 	if !centroid.Equal(geom.XY, geom.Coord{math.NaN(), math.NaN()}) {
 		t.Errorf("centroid with no coords added should return the [NaN NaN] coord but was: %v", centroid)
@@ -78,7 +78,7 @@ func checkPointCentroidFlatFunc(t *testing.T, i int, tc pointTestData) {
 
 }
 func checkAddEachPoint(t *testing.T, i int, tc pointTestData) {
-	calc := algorithm.NewPointCentroid()
+	calc := algorithm.NewPointCentroidCalculator()
 	for _, p := range tc.points {
 		calc.AddPoint(p)
 	}

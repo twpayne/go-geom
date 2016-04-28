@@ -2,8 +2,8 @@ package algorithm
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/orientation"
+	"github.com/twpayne/go-geom/big"
 	"github.com/twpayne/go-geom/sorting"
 	"sort"
 )
@@ -15,14 +15,14 @@ import (
 // Counter clockwise indicates a greater value and clockwise indicates a lesser value
 // If co-linear then the coordinate nearer to the focalPoint is considered less.
 func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.Coord) sort.Interface {
-	comparator := func(v1, v2 []float64) sorting.CoordEquality {
+	isLess := func(v1, v2 []float64) bool {
 		orient := big.OrientationIndex(focalPoint, v1, v2)
 
 		if orient == orientation.CounterClockwise {
-			return sorting.Greater
+			return false
 		}
 		if orient == orientation.Clockwise {
-			return sorting.Less
+			return true
 		}
 
 		dxp := v1[0] - focalPoint[0]
@@ -34,12 +34,10 @@ func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.C
 		op := dxp*dxp + dyp*dyp
 		oq := dxq*dxq + dyq*dyq
 		if op < oq {
-			return sorting.Less
+			return true
 		}
-		if op > oq {
-			return sorting.Greater
-		}
-		return sorting.Equal
+
+		return false
 	}
-	return sorting.NewFlatCoordSorting(layout, coordData, comparator)
+	return sorting.NewFlatCoordSorting(layout, coordData, isLess)
 }

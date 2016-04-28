@@ -25,6 +25,22 @@ const (
 	None
 )
 
+func (t Type) String() string {
+
+	switch t {
+	case Exterior:
+		return "Exterior"
+	case Boundary:
+		return "Boundary"
+	case Interior:
+		return "Interior"
+	case None:
+		return "None"
+	}
+
+	panic(fmt.Sprintf("Unknown location value: %v", int(t)))
+}
+
 // Symbol converts the location value to a location symbol, for example, Exterior => 'e'
 // locationValue
 // Returns either 'e', 'b', 'i' or '-'
@@ -39,5 +55,5 @@ func (l Type) Symbol() rune {
 	case None:
 		return '-'
 	}
-	panic(fmt.Sprintf("Unknown location value: %v", l))
+	panic(fmt.Sprintf("Unknown location value: %v", int(l)))
 }

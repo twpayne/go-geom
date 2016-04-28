@@ -277,11 +277,14 @@ func (set *treeSet) insertImpl(t *tree, v []float64) (*tree, bool) {
 		return &tree{nil, v, nil}, true
 	}
 
-	added := false
-	switch sorting.Compare2D(v, t.value) {
-	case sorting.Less:
+	if internal.Equal(v, 0, t.value, 0) {
+		return t, false
+	}
+
+	var added bool
+	if sorting.Compare2D(v, t.value) {
 		t.left, added = set.insertImpl(t.left, v)
-	case sorting.Greater:
+	} else {
 		t.right, added = set.insertImpl(t.right, v)
 	}
 

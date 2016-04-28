@@ -13,9 +13,8 @@ type Strategy interface {
 }
 
 // PointIntersectsLine tests if point intersects the line
-func PointIntersectsLine(strategy Strategy, layout geom.Layout, point, lineStart, lineEnd geom.Coord) (hasIntersection bool) {
+func PointIntersectsLine(strategy Strategy, point, lineStart, lineEnd geom.Coord) (hasIntersection bool) {
 	intersectorData := &lineIntersectorData{
-		layout:             layout,
 		strategy:           strategy,
 		inputLines:         [2][2]geom.Coord{[2]geom.Coord{lineStart, lineEnd}, [2]geom.Coord{}},
 		intersectionPoints: [2]geom.Coord{geom.Coord{0, 0}, geom.Coord{0, 0}},
@@ -32,9 +31,8 @@ func PointIntersectsLine(strategy Strategy, layout geom.Layout, point, lineStart
 // LineIntersectsLine tests if the first line (line1Start,line1End) intersects the second line (line2Start, line2End)
 // and returns a data structure that indicates if there was an intersection, the type of intersection and where the intersection
 // was.  See lineintersection.Result for a more detailed explanation of the result object
-func LineIntersectsLine(strategy Strategy, layout geom.Layout, line1Start, line1End, line2Start, line2End geom.Coord) lineintersection.Result {
+func LineIntersectsLine(strategy Strategy, line1Start, line1End, line2Start, line2End geom.Coord) lineintersection.Result {
 	intersectorData := &lineIntersectorData{
-		layout:             layout,
 		strategy:           strategy,
 		inputLines:         [2][2]geom.Coord{[2]geom.Coord{line2Start, line2End}, [2]geom.Coord{line1Start, line1End}},
 		intersectionPoints: [2]geom.Coord{geom.Coord{0, 0}, geom.Coord{0, 0}},
@@ -74,7 +72,6 @@ type lineIntersectorData struct {
 	intLineIndex [2][2]int
 	isProper     bool
 	pa, pb       geom.Coord
-	layout       geom.Layout
 	strategy     Strategy
 }
 

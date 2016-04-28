@@ -10,7 +10,7 @@ import (
 )
 
 func TestLineCentroidCalculator_GetCentroid_NoGeomsAdded(t *testing.T) {
-	calculator := algorithm.NewLineCentroid(geom.XY)
+	calculator := algorithm.NewLineCentroidCalculator(geom.XY)
 	centroid := calculator.GetCentroid()
 	if !centroid.Equal(geom.XY, geom.Coord{math.NaN(), math.NaN()}) {
 		t.Errorf("centroid with no coords added should return the [NaN NaN] coord but was: %v", centroid)
@@ -89,7 +89,7 @@ func TestLineGetCentroidLines(t *testing.T) {
 
 func TestLineGetCentroidPolygons(t *testing.T) {
 	for i, tc := range polygonTestData {
-		calc := algorithm.NewLineCentroid(tc.polygons[0].Layout())
+		calc := algorithm.NewLineCentroidCalculator(tc.polygons[0].Layout())
 		for _, p := range tc.polygons {
 			calc.AddPolygon(p)
 		}

@@ -3,12 +3,12 @@ package algorithm
 import (
 	"fmt"
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/internal"
 	"github.com/twpayne/go-geom/algorithm/internal/lineintersector"
 	"github.com/twpayne/go-geom/algorithm/internal/raycrossing"
 	"github.com/twpayne/go-geom/algorithm/location"
 	"github.com/twpayne/go-geom/algorithm/orientation"
+	"github.com/twpayne/go-geom/big"
 	"math"
 )
 
@@ -69,7 +69,7 @@ func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []flo
 		segmentStart := lineSegmentCoordinates[i-stride : i-stride+2]
 		segmentEnd := lineSegmentCoordinates[i : i+2]
 
-		if lineintersector.PointIntersectsLine(strategy, geom.XY, geom.Coord(point), geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
+		if lineintersector.PointIntersectsLine(strategy, geom.Coord(point), geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
 			return true
 		}
 	}
@@ -226,7 +226,7 @@ func PerpendicularDistanceFromPointToLine(p, lineStart, lineEnd geom.Coord) floa
 //
 // Param p - a point
 // Param line - a sequence of contiguous line segments defined by their vertices
-func DistanceFromPointToMultiline(layout geom.Layout, p geom.Coord, line []float64) float64 {
+func DistanceFromPointToLineString(layout geom.Layout, p geom.Coord, line []float64) float64 {
 	if len(line) < 2 {
 		panic(fmt.Sprintf("Line array must contain at least one vertex: %v", line))
 	}
@@ -290,7 +290,7 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 	//   If the numerator in eqn 1 is also zero, AB & CD are collinear.
 
 	noIntersection := false
-	if !internal.DoLinesOverlap(geom.XY, line1Start, line1End, line2Start, line2End) {
+	if !internal.DoLinesOverlap(line1Start, line1End, line2Start, line2End) {
 		noIntersection = true
 	} else {
 		denom := (line1End[0]-line1Start[0])*(line2End[1]-line2Start[1]) - (line1End[1]-line1Start[1])*(line2End[0]-line2Start[0])
@@ -344,14 +344,14 @@ func SignedArea(layout geom.Layout, ring []float64) float64 {
 
 // IsPointWithinLineBounds calculates if the point p lays within the bounds of the line
 // between end points lineEndpoint1 and lineEndpoint2
-func IsPointWithinLineBounds(layout geom.Layout, p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
-	return internal.IsPointWithinLineBounds(layout, p, lineEndpoint1, lineEndpoint2)
+func IsPointWithinLineBounds(p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
+	return internal.IsPointWithinLineBounds(p, lineEndpoint1, lineEndpoint2)
 }
 
 // DoLinesOverlap calculates if the bounding boxes of the two lines (line1End1, line1End2) and
 // (line2End1, line2End2) overlap
-func DoLinesOverlap(layout geom.Layout, line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
-	return internal.DoLinesOverlap(layout, line1End1, line1End2, line2End1, line2End2)
+func DoLinesOverlap(line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
+	return internal.DoLinesOverlap(line1End1, line1End2, line2End1, line2End2)
 }
 
 // Equal checks if the point starting at start one in array coords1 is equal to the

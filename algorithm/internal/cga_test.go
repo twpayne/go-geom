@@ -55,7 +55,6 @@ func TestEqual2D(t *testing.T) {
 func TestDoLinesOverlap(t *testing.T) {
 	for i, tc := range []struct {
 		line1End1, line1End2, line2End1, line2End2 geom.Coord
-		layout                                     geom.Layout
 		overlap                                    bool
 	}{
 		{
@@ -63,7 +62,6 @@ func TestDoLinesOverlap(t *testing.T) {
 			line1End2: geom.Coord{1, 0},
 			line2End1: geom.Coord{2, 0},
 			line2End2: geom.Coord{3, 0},
-			layout:    geom.XY,
 			overlap:   false,
 		},
 		{
@@ -71,7 +69,6 @@ func TestDoLinesOverlap(t *testing.T) {
 			line1End2: geom.Coord{2, 0},
 			line2End1: geom.Coord{2, 0},
 			line2End2: geom.Coord{3, 0},
-			layout:    geom.XY,
 			overlap:   true,
 		},
 		{
@@ -79,7 +76,6 @@ func TestDoLinesOverlap(t *testing.T) {
 			line1End2: geom.Coord{2, 2},
 			line2End1: geom.Coord{2, 0},
 			line2End2: geom.Coord{3, 0},
-			layout:    geom.XY,
 			overlap:   true,
 		},
 		{
@@ -87,7 +83,6 @@ func TestDoLinesOverlap(t *testing.T) {
 			line1End2: geom.Coord{0, 0},
 			line2End1: geom.Coord{0.1, 0},
 			line2End2: geom.Coord{3, 0},
-			layout:    geom.XY,
 			overlap:   false,
 		},
 		{
@@ -95,11 +90,10 @@ func TestDoLinesOverlap(t *testing.T) {
 			line1End2: geom.Coord{0, 0},
 			line2End1: geom.Coord{0, 0},
 			line2End2: geom.Coord{3, 0},
-			layout:    geom.XY,
 			overlap:   true,
 		},
 	} {
-		actual := DoLinesOverlap(tc.layout, tc.line1End1, tc.line1End2, tc.line2End1, tc.line2End2)
+		actual := DoLinesOverlap(tc.line1End1, tc.line1End2, tc.line2End1, tc.line2End2)
 
 		if actual != tc.overlap {
 			t.Errorf("Test %d failed.", i+1)
@@ -111,46 +105,40 @@ func TestDoLinesOverlap(t *testing.T) {
 func TestIsPointWithinLineBounds(t *testing.T) {
 	for i, tc := range []struct {
 		pt, line2End1, line2End2 geom.Coord
-		layout                   geom.Layout
 		overlap                  bool
 	}{
 		{
 			pt:        geom.Coord{0, 0},
 			line2End1: geom.Coord{0, 0},
 			line2End2: geom.Coord{2, 2},
-			layout:    geom.XY,
 			overlap:   true,
 		},
 		{
 			pt:        geom.Coord{-0.001, 0},
 			line2End1: geom.Coord{0, 0},
 			line2End2: geom.Coord{2, 2},
-			layout:    geom.XY,
 			overlap:   false,
 		},
 		{
 			pt:        geom.Coord{1, 0},
 			line2End1: geom.Coord{0, 0},
 			line2End2: geom.Coord{2, 2},
-			layout:    geom.XY,
 			overlap:   true,
 		},
 		{
 			pt:        geom.Coord{1, -0.0001},
 			line2End1: geom.Coord{0, 0},
 			line2End2: geom.Coord{2, 2},
-			layout:    geom.XY,
 			overlap:   false,
 		},
 		{
 			pt:        geom.Coord{1.5, 1},
 			line2End1: geom.Coord{0, 0},
 			line2End2: geom.Coord{2, 2},
-			layout:    geom.XY,
 			overlap:   true,
 		},
 	} {
-		actual := IsPointWithinLineBounds(tc.layout, tc.pt, tc.line2End1, tc.line2End2)
+		actual := IsPointWithinLineBounds(tc.pt, tc.line2End1, tc.line2End2)
 
 		if actual != tc.overlap {
 			t.Errorf("Test %d failed.", i+1)

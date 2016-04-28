@@ -7,31 +7,35 @@ import (
 
 // IsPointWithinLineBounds calculates if the point p lays within the bounds of the line
 // between end points lineEndpoint1 and lineEndpoint2
-func IsPointWithinLineBounds(layout geom.Layout, p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
+func IsPointWithinLineBounds(p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
 	minx := math.Min(lineEndpoint1[0], lineEndpoint2[0])
 	maxx := math.Max(lineEndpoint1[0], lineEndpoint2[0])
 	miny := math.Min(lineEndpoint1[1], lineEndpoint2[1])
 	maxy := math.Max(lineEndpoint1[1], lineEndpoint2[1])
-	return geom.NewBounds(layout).Set(minx, miny, maxx, maxy).OverlapsPoint(layout, p)
+	return minx <= p[0] && maxx >= p[0] && miny <= p[1] && maxy >= p[1]
 }
 
 // DoLinesOverlap calculates if the bounding boxes of the two lines (line1End1, line1End2) and
 // (line2End1, line2End2) overlap
-func DoLinesOverlap(layout geom.Layout, line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
+func DoLinesOverlap(line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
 
 	min1x := math.Min(line1End1[0], line1End2[0])
 	max1x := math.Max(line1End1[0], line1End2[0])
 	min1y := math.Min(line1End1[1], line1End2[1])
 	max1y := math.Max(line1End1[1], line1End2[1])
-	bounds1 := geom.NewBounds(layout).Set(min1x, min1y, max1x, max1y)
 
 	min2x := math.Min(line2End1[0], line2End2[0])
 	max2x := math.Max(line2End1[0], line2End2[0])
 	min2y := math.Min(line2End1[1], line2End2[1])
 	max2y := math.Max(line2End1[1], line2End2[1])
-	bounds2 := geom.NewBounds(layout).Set(min2x, min2y, max2x, max2y)
 
-	return bounds1.Overlaps(layout, bounds2)
+	if min1x > max2x || max1x < min2x {
+		return false
+	}
+	if min1y > max2y || max1y < min2y {
+		return false
+	}
+	return true
 }
 
 // Equal checks if the point starting at start one in array coords1 is equal to the

@@ -2,8 +2,8 @@ package big_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/orientation"
+	"github.com/twpayne/go-geom/big"
 	"math"
 	"reflect"
 	"testing"

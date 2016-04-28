@@ -1,7 +1,6 @@
 package lineintersector
 
 import (
-	"github.com/twpayne/go-geom"
 	"reflect"
 	"runtime/debug"
 	"testing"
@@ -23,7 +22,7 @@ func TestRobustLineIntersectionLines(t *testing.T) {
 
 func exectuteLineIntersectionPointOnLineTest(t *testing.T, intersectionStrategy Strategy) {
 	for i, tc := range pointOnLineIntersectionTestData {
-		calculatedResult := PointIntersectsLine(intersectionStrategy, geom.XY, tc.P, tc.LineEnd1, tc.LineEnd2)
+		calculatedResult := PointIntersectsLine(intersectionStrategy, tc.P, tc.LineEnd1, tc.LineEnd2)
 		if !reflect.DeepEqual(tc.Result, calculatedResult) {
 			t.Errorf("Test '%v' failed: expected \n%v was \n%v", i+1, tc.Result, calculatedResult)
 		}
@@ -43,7 +42,7 @@ func doLineIntersectsLineTest(t *testing.T, intersectionStrategy Strategy, i int
 		}
 	}()
 
-	calculatedResult := LineIntersectsLine(intersectionStrategy, geom.XY, tc.P1, tc.P2, tc.P3, tc.P4)
+	calculatedResult := LineIntersectsLine(intersectionStrategy, tc.P1, tc.P2, tc.P3, tc.P4)
 
 	if !reflect.DeepEqual(calculatedResult, tc.Result) {
 		t.Errorf("%T - Test '%v' (%v) failed: expected \n%v but was \n%v", intersectionStrategy, i+1, tc.Desc, tc.Result, calculatedResult)

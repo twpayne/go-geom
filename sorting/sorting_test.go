@@ -11,37 +11,37 @@ import (
 func TestCompare2D(t *testing.T) {
 	for i, tc := range []struct {
 		c1, c2 []float64
-		result sorting.CoordEquality
+		result bool
 	}{
 		{
 			c1:     []float64{0, 0},
 			c2:     []float64{0, 0},
-			result: sorting.Equal,
+			result: false,
 		},
 		{
 			c1:     []float64{1, 0},
 			c2:     []float64{0, 1},
-			result: sorting.Greater,
+			result: false,
 		},
 		{
 			c1:     []float64{1, 0},
 			c2:     []float64{0, 0},
-			result: sorting.Greater,
+			result: false,
 		},
 		{
 			c1:     []float64{0, 1},
 			c2:     []float64{0, 0},
-			result: sorting.Greater,
+			result: false,
 		},
 		{
 			c1:     []float64{0, 0},
 			c2:     []float64{0, 1},
-			result: sorting.Less,
+			result: true,
 		},
 		{
 			c1:     []float64{0, 0},
 			c2:     []float64{1, 0},
-			result: sorting.Less,
+			result: true,
 		},
 	} {
 		actual := sorting.Compare2D(tc.c1, tc.c2)

@@ -10,7 +10,7 @@ import (
 )
 
 func TestAreaCentroidCalculator_GetCentroid_NoGeomsAdded(t *testing.T) {
-	calculator := algorithm.NewAreaCentroid(geom.XY)
+	calculator := algorithm.NewAreaCentroidCalculator(geom.XY)
 	centroid := calculator.GetCentroid()
 	if !centroid.Equal(geom.XY, geom.Coord{math.NaN(), math.NaN()}) {
 		t.Errorf("centroid with no coords added should return the [NaN NaN] coord but was: %v", centroid)

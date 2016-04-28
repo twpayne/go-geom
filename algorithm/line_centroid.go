@@ -9,7 +9,7 @@ import (
 //
 // Algorithm: Compute the average of the midpoints of all line segments weighted by the segment length.
 func LinesCentroid(line *geom.LineString, extraLines ...*geom.LineString) (centroid geom.Coord) {
-	calculator := NewLineCentroid(line.Layout())
+	calculator := NewLineCentroidCalculator(line.Layout())
 	calculator.AddLine(line)
 
 	for _, l := range extraLines {
@@ -23,7 +23,7 @@ func LinesCentroid(line *geom.LineString, extraLines ...*geom.LineString) (centr
 //
 // Algorithm: Compute the average of the midpoints of all line segments weighted by the segment length.
 func MultiLineCentroid(line *geom.MultiLineString) (centroid geom.Coord) {
-	calculator := NewLineCentroid(line.Layout())
+	calculator := NewLineCentroidCalculator(line.Layout())
 	start := 0
 	for _, end := range line.Ends() {
 		calculator.addLine(line.FlatCoords(), start, end)
@@ -33,22 +33,22 @@ func MultiLineCentroid(line *geom.MultiLineString) (centroid geom.Coord) {
 	return calculator.GetCentroid()
 }
 
-// LineCentroid is the data structure that contains the centroid calculation
+// LineCentroidCalculator is the data structure that contains the centroid calculation
 // data.  This type cannot be used using its 0 values, it must be created
 // using NewLineCentroid
-type LineCentroid struct {
+type LineCentroidCalculator struct {
 	layout      geom.Layout
 	stride      int
 	centSum     geom.Coord
 	totalLength float64
 }
 
-// NewLineCentroid creates a new instance of the calculator.
+// NewLineCentroidCalculator creates a new instance of the calculator.
 // Once a calculator is created polygons, linestrings or linear rings can be added and the
 // GetCentroid method can be used at any point to get the current centroid
 // the centroid will naturally change each time a geometry is added
-func NewLineCentroid(layout geom.Layout) *LineCentroid {
-	return &LineCentroid{
+func NewLineCentroidCalculator(layout geom.Layout) *LineCentroidCalculator {
+	return &LineCentroidCalculator{
 		layout:  layout,
 		stride:  layout.Stride(),
 		centSum: geom.Coord(make([]float64, layout.Stride())),
@@ -56,7 +56,7 @@ func NewLineCentroid(layout geom.Layout) *LineCentroid {
 }
 
 // GetCentroid obtains centroid currently calculated.  Returns a 0 coord if no geometries have been added
-func (calc *LineCentroid) GetCentroid() geom.Coord {
+func (calc *LineCentroidCalculator) GetCentroid() geom.Coord {
 	cent := geom.Coord(make([]float64, calc.layout.Stride()))
 	cent[0] = calc.centSum[0] / calc.totalLength
 	cent[1] = calc.centSum[1] / calc.totalLength
@@ -64,7 +64,7 @@ func (calc *LineCentroid) GetCentroid() geom.Coord {
 }
 
 // AddPolygon adds a Polygon to the calculation.
-func (calc *LineCentroid) AddPolygon(polygon *geom.Polygon) *LineCentroid {
+func (calc *LineCentroidCalculator) AddPolygon(polygon *geom.Polygon) *LineCentroidCalculator {
 	for i := 0; i < polygon.NumLinearRings(); i++ {
 		calc.AddLinearRing(polygon.LinearRing(i))
 	}
@@ -73,20 +73,20 @@ func (calc *LineCentroid) AddPolygon(polygon *geom.Polygon) *LineCentroid {
 }
 
 // AddLine adds a LineString to the current calculation
-func (calc *LineCentroid) AddLine(line *geom.LineString) *LineCentroid {
+func (calc *LineCentroidCalculator) AddLine(line *geom.LineString) *LineCentroidCalculator {
 	coords := line.FlatCoords()
 	calc.addLine(coords, 0, len(coords))
 	return calc
 }
 
 // AddLinearRing adds a LinearRing to the current calculation
-func (calc *LineCentroid) AddLinearRing(line *geom.LinearRing) *LineCentroid {
+func (calc *LineCentroidCalculator) AddLinearRing(line *geom.LinearRing) *LineCentroidCalculator {
 	coords := line.FlatCoords()
 	calc.addLine(coords, 0, len(coords))
 	return calc
 }
 
-func (calc *LineCentroid) addLine(line []float64, startLine, endLine int) {
+func (calc *LineCentroidCalculator) addLine(line []float64, startLine, endLine int) {
 	lineMinusLastPoint := endLine - calc.stride
 	for i := startLine; i < lineMinusLastPoint; i += calc.stride {
 		segmentLen := internal.Distance2D(geom.Coord(line[i:i+2]), geom.Coord(line[i+calc.stride:i+calc.stride+2]))

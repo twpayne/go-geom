@@ -21,7 +21,7 @@ import (
 // In this case, the centroid of the line segments in the polygon will be returned.
 func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centroid geom.Coord) {
 
-	calc := NewAreaCentroid(polygon.Layout())
+	calc := NewAreaCentroidCalculator(polygon.Layout())
 	calc.AddPolygon(polygon)
 	for _, p := range extraPolys {
 		calc.AddPolygon(p)
@@ -45,7 +45,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 // In this case, the centroid of the line segments in the polygon will be returned.
 func MultiPolygonsCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 
-	calc := NewAreaCentroid(polygon.Layout())
+	calc := NewAreaCentroidCalculator(polygon.Layout())
 	for i := 0; i < polygon.NumPolygons(); i++ {
 		calc.AddPolygon(polygon.Polygon(i))
 	}
@@ -53,10 +53,10 @@ func MultiPolygonsCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 
 }
 
-// AreaCentroid is the data structure that contains the centroid calculation
+// AreaCentroidCalculator is the data structure that contains the centroid calculation
 // data.  This type cannot be used using its 0 values, it must be created
 // using NewAreaCentroid
-type AreaCentroid struct {
+type AreaCentroidCalculator struct {
 	layout        geom.Layout
 	stride        int
 	basePt        geom.Coord
@@ -68,12 +68,12 @@ type AreaCentroid struct {
 	totalLength float64
 }
 
-// NewAreaCentroid creates a new instance of the calculator.
+// NewAreaCentroidCalculator creates a new instance of the calculator.
 // Once a calculator is created polygons can be added to it and the
 // GetCentroid method can be used at any point to get the current centroid
 // the centroid will naturally change each time a polygon is added
-func NewAreaCentroid(layout geom.Layout) *AreaCentroid {
-	return &AreaCentroid{
+func NewAreaCentroidCalculator(layout geom.Layout) *AreaCentroidCalculator {
+	return &AreaCentroidCalculator{
 		layout:        layout,
 		stride:        layout.Stride(),
 		centSum:       geom.Coord(make([]float64, layout.Stride())),
@@ -83,7 +83,7 @@ func NewAreaCentroid(layout geom.Layout) *AreaCentroid {
 }
 
 // GetCentroid obtains centroid currently calculated.  Returns a 0 coord if no geometries have been added
-func (calc *AreaCentroid) GetCentroid() geom.Coord {
+func (calc *AreaCentroidCalculator) GetCentroid() geom.Coord {
 	cent := geom.Coord(make([]float64, calc.stride))
 
 	if calc.centSum == nil {
@@ -102,7 +102,7 @@ func (calc *AreaCentroid) GetCentroid() geom.Coord {
 }
 
 // AddPolygon adds a polygon to the calculation.
-func (calc *AreaCentroid) AddPolygon(polygon *geom.Polygon) {
+func (calc *AreaCentroidCalculator) AddPolygon(polygon *geom.Polygon) {
 
 	calc.setBasePoint(polygon.Coord(0))
 
@@ -112,13 +112,13 @@ func (calc *AreaCentroid) AddPolygon(polygon *geom.Polygon) {
 	}
 }
 
-func (calc *AreaCentroid) setBasePoint(basePt geom.Coord) {
+func (calc *AreaCentroidCalculator) setBasePoint(basePt geom.Coord) {
 	if calc.basePt == nil {
 		calc.basePt = basePt
 	}
 }
 
-func (calc *AreaCentroid) addShell(pts []float64) {
+func (calc *AreaCentroidCalculator) addShell(pts []float64) {
 	stride := calc.stride
 
 	isPositiveArea := !IsRingCounterClockwise(calc.layout, pts)
@@ -134,7 +134,7 @@ func (calc *AreaCentroid) addShell(pts []float64) {
 	}
 	calc.addLinearSegments(pts)
 }
-func (calc *AreaCentroid) addHole(pts []float64) {
+func (calc *AreaCentroidCalculator) addHole(pts []float64) {
 	stride := calc.stride
 
 	isPositiveArea := IsRingCounterClockwise(calc.layout, pts)
@@ -151,7 +151,7 @@ func (calc *AreaCentroid) addHole(pts []float64) {
 	calc.addLinearSegments(pts)
 }
 
-func (calc *AreaCentroid) addTriangle(p0, p1, p2 geom.Coord, isPositiveArea bool) {
+func (calc *AreaCentroidCalculator) addTriangle(p0, p1, p2 geom.Coord, isPositiveArea bool) {
 	sign := float64(1.0)
 	if isPositiveArea {
 		sign = -1.0
@@ -182,7 +182,7 @@ func area2(p1, p2, p3 geom.Coord) float64 {
 // in which case the linear centroid is computed instead.
 //
 // Param pts - an array of Coords
-func (calc *AreaCentroid) addLinearSegments(pts []float64) {
+func (calc *AreaCentroidCalculator) addLinearSegments(pts []float64) {
 	stride := calc.stride
 	for i := 0; i < len(pts)-stride; i += stride {
 		segmentLen := internal.Distance2D(geom.Coord(pts[i:i+2]), pts[i+stride:i+stride+2])
