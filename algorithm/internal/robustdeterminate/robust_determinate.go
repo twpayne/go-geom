@@ -1,4 +1,4 @@
-// Implements an algorithm to compute the
+// Package robustdeterminate implements an algorithm to compute the
 // sign of a 2x2 determinant for double precision values robustly.
 // It is a direct translation of code developed by Olivier Devillers.
 //
@@ -20,21 +20,25 @@
 //                  BP 93 06902 Sophia Antipolis Cedex, France.
 //                           All rights reserved
 ///////////////////////////////////////////////////////////////////////////
-package robust_determinate
+package robustdeterminate
 
 import (
 	"math"
 )
 
+// Sign enumerates the different possible signs
 type Sign int
 
 const (
-	NEGATIVE Sign = iota - 1
-	ZERO
-	POSITIVE
+	// Negative indicates a negative determinate
+	Negative Sign = iota - 1
+	// Zero indicates the determinate is 0
+	Zero
+	// Positive indicates a positive determinate
+	Positive
 )
 
-// Computes the sign of the determinant of the 2x2 matrix
+// SignOfDet2x2 computes the sign of the determinant of the 2x2 matrix
 // with the given entries, in a robust way.
 //
 // return -1 if the determinant is negative,
@@ -50,38 +54,33 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 	 */
 	if (x1 == 0.0) || (y2 == 0.0) {
 		if (y1 == 0.0) || (x2 == 0.0) {
-			return ZERO
+			return Zero
 		} else if y1 > 0 {
 			if x2 > 0 {
-				return NEGATIVE
-			} else {
-				return POSITIVE
+				return Negative
 			}
+			return Positive
 		} else {
 			if x2 > 0 {
-				return POSITIVE
-			} else {
-				return NEGATIVE
+				return Positive
 			}
+			return Negative
 		}
 	}
 	if (y1 == 0.0) || (x2 == 0.0) {
 		if y2 > 0 {
 			if x1 > 0 {
-				return POSITIVE
-			} else {
-				return NEGATIVE
+				return Positive
 			}
-		} else {
-			if x1 > 0 {
-				return NEGATIVE
-			} else {
-				return POSITIVE
-			}
+			return Negative
 		}
+		if x1 > 0 {
+			return Negative
+		}
+		return Positive
 	}
 
-	sign := POSITIVE
+	sign := Positive
 
 	/*
 	 *  making y coordinates positive and permuting the entries
@@ -94,7 +93,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			if y1 <= y2 {
 
 			} else {
-				sign = NEGATIVE
+				sign = Negative
 				swap = x1
 				x1 = x2
 				x2 = swap
@@ -104,7 +103,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			}
 		} else {
 			if y1 <= -y2 {
-				sign = NEGATIVE
+				sign = Negative
 				x2 = -x2
 				y2 = -y2
 			} else {
@@ -119,7 +118,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 	} else {
 		if 0.0 < y2 {
 			if -y1 <= y2 {
-				sign = NEGATIVE
+				sign = Negative
 				x1 = -x1
 				y1 = -y1
 			} else {
@@ -138,7 +137,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 				y2 = -y2
 
 			} else {
-				sign = NEGATIVE
+				sign = Negative
 				swap = -x1
 				x1 = -x2
 				x2 = swap
@@ -167,15 +166,13 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 	} else {
 		if 0.0 < x2 {
 			return Sign(-sign)
+		}
+		if x1 >= x2 {
+			sign = Sign(-sign)
+			x1 = -x1
+			x2 = -x2
 		} else {
-			if x1 >= x2 {
-				sign = Sign(-sign)
-				x1 = -x1
-				x2 = -x2
-
-			} else {
-				return Sign(-sign)
-			}
+			return Sign(-sign)
 		}
 	}
 
@@ -210,18 +207,16 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 		} else {
 			if y1 > y2+y2 {
 				return Sign(-sign)
-			} else {
-				x2 = x1 - x2
-				y2 = y1 - y2
-				sign = Sign(-sign)
 			}
+			x2 = x1 - x2
+			y2 = y1 - y2
+			sign = Sign(-sign)
 		}
 		if y2 == 0.0 {
 			if x2 == 0.0 {
 				return 0
-			} else {
-				return Sign(-sign)
 			}
+			return Sign(-sign)
 		}
 		if x2 == 0.0 {
 			return sign
@@ -256,18 +251,16 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 		} else {
 			if y2 > y1+y1 {
 				return sign
-			} else {
-				x1 = x2 - x1
-				y1 = y2 - y1
-				sign = Sign(-sign)
 			}
+			x1 = x2 - x1
+			y1 = y2 - y1
+			sign = Sign(-sign)
 		}
 		if y1 == 0.0 {
 			if x1 == 0.0 {
 				return 0
-			} else {
-				return sign
 			}
+			return sign
 		}
 		if x1 == 0.0 {
 			return Sign(-sign)

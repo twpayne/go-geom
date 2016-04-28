@@ -1,8 +1,8 @@
-package central_endpoint_test
+package centralendpoint_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/internal/central_endpoint"
+	"github.com/twpayne/go-geom/algorithm/internal/centralendpoint"
 	"testing"
 )
 
@@ -33,7 +33,7 @@ func TestGetIntersection(t *testing.T) {
 			result: geom.Coord{20.0, 20.0},
 		},
 	} {
-		calculatedResult := central_endpoint.GetIntersection(tc.p1, tc.p2, tc.p3, tc.p4)
+		calculatedResult := centralendpoint.GetIntersection(tc.p1, tc.p2, tc.p3, tc.p4)
 
 		if !calculatedResult.Equal(tc.layout, tc.result) {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.result, calculatedResult)

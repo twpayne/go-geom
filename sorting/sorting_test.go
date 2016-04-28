@@ -16,32 +16,32 @@ func TestCompare2D(t *testing.T) {
 		{
 			c1:     []float64{0, 0},
 			c2:     []float64{0, 0},
-			result: sorting.EQUAL,
+			result: sorting.Equal,
 		},
 		{
 			c1:     []float64{1, 0},
 			c2:     []float64{0, 1},
-			result: sorting.GREATER,
+			result: sorting.Greater,
 		},
 		{
 			c1:     []float64{1, 0},
 			c2:     []float64{0, 0},
-			result: sorting.GREATER,
+			result: sorting.Greater,
 		},
 		{
 			c1:     []float64{0, 1},
 			c2:     []float64{0, 0},
-			result: sorting.GREATER,
+			result: sorting.Greater,
 		},
 		{
 			c1:     []float64{0, 0},
 			c2:     []float64{0, 1},
-			result: sorting.LESS,
+			result: sorting.Less,
 		},
 		{
 			c1:     []float64{0, 0},
 			c2:     []float64{1, 0},
-			result: sorting.LESS,
+			result: sorting.Less,
 		},
 	} {
 		actual := sorting.Compare2D(tc.c1, tc.c2)

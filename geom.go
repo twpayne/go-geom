@@ -70,19 +70,24 @@ func (e ErrUnsupportedType) Error() string {
 // A Coord represents an N-dimensional coordinate.
 type Coord []float64
 
+// X returns the x coordinate of the coordinate.  X is assumed to be the first ordinate
 func (c Coord) X() float64 {
 	return c[0]
 }
+
+// Y returns the x coordinate of the coordinate.  Y is assumed to be the second ordinate
 func (c Coord) Y() float64 {
 	return c[1]
 }
 
+// Set copies the ordinate data from the other coord to this coord
 func (c Coord) Set(other Coord) {
 	for i := 0; i < len(c) && i < len(other); i++ {
 		c[i] = other[i]
 	}
 }
 
+// Equal compares that all ordinates are the same in this and the other coords.
 // It is assumed that this coord and other coord both have the same (provided) layout
 func (c Coord) Equal(layout Layout, other Coord) bool {
 
@@ -97,30 +102,16 @@ func (c Coord) Equal(layout Layout, other Coord) bool {
 	}
 
 	for i := 0; i < numOrds; i++ {
-		if c[i] != other[i] {
+		if math.IsNaN(c[i]) || math.IsNaN(other[i]) {
+			if !math.IsNaN(c[i]) || !math.IsNaN(other[i]) {
+				return false
+			}
+		} else if c[i] != other[i] {
 			return false
 		}
 	}
 
 	return true
-}
-
-/**
- * Computes the 2-dimensional Euclidean distance to another location.
- * All non x,z ordinates are ignored.
- *
- * @param other the point to compare to
- * @return the 2-dimensional Euclidean distance between the locations
- */
-func (c Coord) Distance2D(other Coord) float64 {
-	return Distance2D(c, other)
-}
-
-func Distance2D(c1, c2 Coord) float64 {
-	dx := c1[0] - c2[0]
-	dy := c1[1] - c2[1]
-
-	return math.Sqrt(dx*dx + dy*dy)
 }
 
 // A T is a generic interface geomemented by all geometry types.

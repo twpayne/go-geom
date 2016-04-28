@@ -2,6 +2,7 @@ package internal
 
 import "github.com/twpayne/go-geom"
 
+// RING is a real-world geometry for use in tests
 var RING = geom.NewLinearRingFlat(geom.XY, []float64{
 	-71.1031880899493, 42.3152774590236, -71.1031627617667, 42.3152960829043,
 	-71.102923838298, 42.3149156848307, -71.1023097974109, 42.3151969047397,

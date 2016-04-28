@@ -1,12 +1,13 @@
-package ray_crossing
+package raycrossing
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/internal/robust_determinate"
+	"github.com/twpayne/go-geom/algorithm/internal/robustdeterminate"
 	"github.com/twpayne/go-geom/algorithm/location"
 )
 
-func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Location {
+// LocatePointInRing determine where the point is with regards to the ring
+func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Type {
 	counter := rayCrossingCounter{p: p}
 
 	stride := layout.Stride()
@@ -39,17 +40,17 @@ type rayCrossingCounter struct {
 //
 // return the Location of the point
 
-func (counter rayCrossingCounter) getLocation() location.Location {
+func (counter rayCrossingCounter) getLocation() location.Type {
 	if counter.isPointOnSegment {
-		return location.BOUNDARY
+		return location.Boundary
 	}
 
 	// The point is in the interior of the ring if the number of X-crossings is
 	// odd.
 	if (counter.crossingCount % 2) == 1 {
-		return location.INTERIOR
+		return location.Interior
 	}
-	return location.EXTERIOR
+	return location.Exterior
 }
 
 /**
@@ -117,7 +118,7 @@ func (counter *rayCrossingCounter) countSegment(p1, p2 geom.Coord) {
 		// double xIntSign = RobustDeterminant.signOfDet2x2(x1, y1, x2, y2) / (y2
 		// - y1);
 		// MD - faster & more robust computation?
-		xIntSign := robust_determinate.SignOfDet2x2(x1, y1, x2, y2)
+		xIntSign := robustdeterminate.SignOfDet2x2(x1, y1, x2, y2)
 		if xIntSign == 0.0 {
 			counter.isPointOnSegment = true
 			return

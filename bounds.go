@@ -85,7 +85,7 @@ func (b *Bounds) Set(args ...float64) *Bounds {
 	return b
 }
 
-// Set sets the minimum and maximum values.
+// SetCoords sets the minimum and maximum values of the Bounds.
 func (b *Bounds) SetCoords(min, max Coord) *Bounds {
 	b.min = Coord(make([]float64, b.layout.Stride()))
 	b.max = Coord(make([]float64, b.layout.Stride()))
@@ -98,6 +98,7 @@ func (b *Bounds) SetCoords(min, max Coord) *Bounds {
 	return b
 }
 
+// OverlapsPoint determines if the bounding box overlaps the point (point is within or on the border of the bounds)
 func (b *Bounds) OverlapsPoint(layout Layout, point Coord) bool {
 	for i, stride := 0, layout.Stride(); i < stride; i++ {
 		if b.min[i] > point[i] || b.max[i] < point[i] {

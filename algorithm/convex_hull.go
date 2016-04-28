@@ -14,6 +14,10 @@ type convexHullCalculator struct {
 	inputPts []float64
 }
 
+// ConvexHull computes the convex hull of the geometry.
+// A convex hull is the smallest convex geometry that contains
+// all the points in the input geometry
+// Uses the Graham Scan algorithm
 func ConvexHull(geometry *geom.T) {
 
 }
@@ -218,6 +222,12 @@ func (calc *convexHullCalculator) computeOctPts(inputPts []float64) []float64 {
 
 }
 
+type tree struct {
+	left  *tree
+	value []float64
+	right *tree
+}
+
 type treeSet struct {
 	tree   *tree
 	size   int
@@ -225,25 +235,25 @@ type treeSet struct {
 	stride int
 }
 
-func (t *treeSet) insert(v []float64) {
-	if t.stride == 0 {
-		t.stride = t.layout.Stride()
+func (set *treeSet) insert(v []float64) {
+	if set.stride == 0 {
+		set.stride = set.layout.Stride()
 	}
-	if len(v) < t.stride {
-		panic(fmt.Sprintf("Coordinate inserted into tree does not have a sufficient number of points for the provided layout.  Length of Coord was %v but should have been %v", len(v), t.stride))
+	if len(v) < set.stride {
+		panic(fmt.Sprintf("Coordinate inserted into tree does not have a sufficient number of points for the provided layout.  Length of Coord was %v but should have been %v", len(v), set.stride))
 	}
-	if tree, added := t.insertImpl(t.tree, v); added {
-		t.tree = tree
-		t.size++
+	if tree, added := set.insertImpl(set.tree, v); added {
+		set.tree = tree
+		set.size++
 	}
 }
 
-func (t *treeSet) toArray() []float64 {
-	stride := t.layout.Stride()
-	array := make([]float64, t.size*stride, t.size*stride)
+func (set *treeSet) toArray() []float64 {
+	stride := set.layout.Stride()
+	array := make([]float64, set.size*stride, set.size*stride)
 
 	i := 0
-	t.walk(t.tree, func(v []float64) {
+	set.walk(set.tree, func(v []float64) {
 		for j := 0; j < stride; j++ {
 			array[i+j] = v[j]
 		}
@@ -251,12 +261,6 @@ func (t *treeSet) toArray() []float64 {
 	})
 
 	return array
-}
-
-type tree struct {
-	left  *tree
-	value []float64
-	right *tree
 }
 
 func (set *treeSet) walk(t *tree, visitor func([]float64)) {
@@ -275,9 +279,9 @@ func (set *treeSet) insertImpl(t *tree, v []float64) (*tree, bool) {
 
 	added := false
 	switch sorting.Compare2D(v, t.value) {
-	case sorting.LESS:
+	case sorting.Less:
 		t.left, added = set.insertImpl(t.left, v)
-	case sorting.GREATER:
+	case sorting.Greater:
 		t.right, added = set.insertImpl(t.right, v)
 	}
 

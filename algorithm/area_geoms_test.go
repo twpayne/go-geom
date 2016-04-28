@@ -1,12 +1,21 @@
-package centroid_calculator_test
+package algorithm_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/centroid_calculator"
+	"github.com/twpayne/go-geom/algorithm"
 	"github.com/twpayne/go-geom/algorithm/internal"
+	"math"
 	"reflect"
 	"testing"
 )
+
+func TestAreaCentroidCalculator_GetCentroid_NoGeomsAdded(t *testing.T) {
+	calculator := algorithm.NewAreaCentroid(geom.XY)
+	centroid := calculator.GetCentroid()
+	if !centroid.Equal(geom.XY, geom.Coord{math.NaN(), math.NaN()}) {
+		t.Errorf("centroid with no coords added should return the [NaN NaN] coord but was: %v", centroid)
+	}
+}
 
 var polygonTestData = []struct {
 	polygons                   []*geom.Polygon
@@ -56,7 +65,7 @@ var polygonTestData = []struct {
 
 func TestAreaGetCentroid(t *testing.T) {
 	for i, tc := range polygonTestData {
-		centroid := centroid_calculator.PolygonsCentroid(tc.polygons[0], tc.polygons[1:]...)
+		centroid := algorithm.PolygonsCentroid(tc.polygons[0], tc.polygons[1:]...)
 
 		if !reflect.DeepEqual(tc.areaCentroid, centroid) {
 			t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)
@@ -78,7 +87,7 @@ func TestAreaGetCentroid(t *testing.T) {
 
 		layout := tc.polygons[0].Layout()
 		multiPolygon := geom.NewMultiPolygonFlat(layout, coords, endss)
-		centroid = centroid_calculator.MultiPolygonsCentroid(multiPolygon)
+		centroid = algorithm.MultiPolygonsCentroid(multiPolygon)
 
 		if !reflect.DeepEqual(tc.areaCentroid, centroid) {
 			t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)

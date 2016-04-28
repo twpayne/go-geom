@@ -1,24 +1,12 @@
-package centroid_calculator
+package algorithm
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm"
+	"github.com/twpayne/go-geom/algorithm/internal"
 	"math"
 )
 
-type centroidAreaCalculator struct {
-	layout        geom.Layout
-	stride        int
-	basePt        geom.Coord
-	triangleCent3 geom.Coord // temporary variable to hold centroid of triangle
-	areasum2      float64    // Partial area sum
-	cg3           geom.Coord // partial centroid sum
-
-	centSum     geom.Coord // data for linear centroid computation, if needed
-	totalLength float64
-}
-
-// Computes the centroid of an area geometry. (Polygon)
+// PolygonsCentroid computes the centroid of an area geometry. (Polygon)
 //
 // Algorithm
 // Based on the usual algorithm for calculating the centroid as a weighted sum of the centroids
@@ -33,7 +21,7 @@ type centroidAreaCalculator struct {
 // In this case, the centroid of the line segments in the polygon will be returned.
 func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centroid geom.Coord) {
 
-	calc := NewAreaCalculator(polygon.Layout())
+	calc := NewAreaCentroid(polygon.Layout())
 	calc.AddPolygon(polygon)
 	for _, p := range extraPolys {
 		calc.AddPolygon(p)
@@ -42,7 +30,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 
 }
 
-// Computes the centroid of an area geometry. (MultiPolygon)
+// MultiPolygonsCentroid computes the centroid of an area geometry. (MultiPolygon)
 //
 // Algorithm
 // Based on the usual algorithm for calculating the centroid as a weighted sum of the centroids
@@ -57,7 +45,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 // In this case, the centroid of the line segments in the polygon will be returned.
 func MultiPolygonsCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 
-	calc := NewAreaCalculator(polygon.Layout())
+	calc := NewAreaCentroid(polygon.Layout())
 	for i := 0; i < polygon.NumPolygons(); i++ {
 		calc.AddPolygon(polygon.Polygon(i))
 	}
@@ -65,9 +53,27 @@ func MultiPolygonsCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 
 }
 
-// Create a new instance of the calculator.
-func NewAreaCalculator(layout geom.Layout) *centroidAreaCalculator {
-	return &centroidAreaCalculator{
+// AreaCentroid is the data structure that contains the centroid calculation
+// data.  This type cannot be used using its 0 values, it must be created
+// using NewAreaCentroid
+type AreaCentroid struct {
+	layout        geom.Layout
+	stride        int
+	basePt        geom.Coord
+	triangleCent3 geom.Coord // temporary variable to hold centroid of triangle
+	areasum2      float64    // Partial area sum
+	cg3           geom.Coord // partial centroid sum
+
+	centSum     geom.Coord // data for linear centroid computation, if needed
+	totalLength float64
+}
+
+// NewAreaCentroid creates a new instance of the calculator.
+// Once a calculator is created polygons can be added to it and the
+// GetCentroid method can be used at any point to get the current centroid
+// the centroid will naturally change each time a polygon is added
+func NewAreaCentroid(layout geom.Layout) *AreaCentroid {
+	return &AreaCentroid{
 		layout:        layout,
 		stride:        layout.Stride(),
 		centSum:       geom.Coord(make([]float64, layout.Stride())),
@@ -76,46 +82,46 @@ func NewAreaCalculator(layout geom.Layout) *centroidAreaCalculator {
 	}
 }
 
-// Get the calculated centroid
-func (calculator *centroidAreaCalculator) GetCentroid() geom.Coord {
-	cent := geom.Coord(make([]float64, calculator.stride))
+// GetCentroid obtains centroid currently calculated.  Returns a 0 coord if no geometries have been added
+func (calc *AreaCentroid) GetCentroid() geom.Coord {
+	cent := geom.Coord(make([]float64, calc.stride))
 
-	if calculator.centSum == nil {
+	if calc.centSum == nil {
 		return cent
 	}
 
-	if math.Abs(calculator.areasum2) > 0.0 {
-		cent[0] = calculator.cg3[0] / 3 / calculator.areasum2
-		cent[1] = calculator.cg3[1] / 3 / calculator.areasum2
+	if math.Abs(calc.areasum2) > 0.0 {
+		cent[0] = calc.cg3[0] / 3 / calc.areasum2
+		cent[1] = calc.cg3[1] / 3 / calc.areasum2
 	} else {
 		// if polygon was degenerate, compute linear centroid instead
-		cent[0] = calculator.centSum[0] / calculator.totalLength
-		cent[1] = calculator.centSum[1] / calculator.totalLength
+		cent[0] = calc.centSum[0] / calc.totalLength
+		cent[1] = calc.centSum[1] / calc.totalLength
 	}
 	return cent
 }
 
-// Add a polygon to the calculation.
-func (calculator *centroidAreaCalculator) AddPolygon(polygon *geom.Polygon) {
+// AddPolygon adds a polygon to the calculation.
+func (calc *AreaCentroid) AddPolygon(polygon *geom.Polygon) {
 
-	calculator.setBasePoint(polygon.Coord(0))
+	calc.setBasePoint(polygon.Coord(0))
 
-	calculator.addShell(polygon.LinearRing(0).FlatCoords())
+	calc.addShell(polygon.LinearRing(0).FlatCoords())
 	for i := 1; i < polygon.NumLinearRings(); i++ {
-		calculator.addHole(polygon.LinearRing(i).FlatCoords())
+		calc.addHole(polygon.LinearRing(i).FlatCoords())
 	}
 }
 
-func (calculator *centroidAreaCalculator) setBasePoint(basePt geom.Coord) {
-	if calculator.basePt == nil {
-		calculator.basePt = basePt
+func (calc *AreaCentroid) setBasePoint(basePt geom.Coord) {
+	if calc.basePt == nil {
+		calc.basePt = basePt
 	}
 }
 
-func (calculator *centroidAreaCalculator) addShell(pts []float64) {
-	stride := calculator.stride
+func (calc *AreaCentroid) addShell(pts []float64) {
+	stride := calc.stride
 
-	isPositiveArea := !algorithm.IsRingCounterClockwise(calculator.layout, pts)
+	isPositiveArea := !IsRingCounterClockwise(calc.layout, pts)
 	p1 := geom.Coord{0, 0}
 	p2 := geom.Coord{0, 0}
 
@@ -124,14 +130,14 @@ func (calculator *centroidAreaCalculator) addShell(pts []float64) {
 		p1[1] = pts[i+1]
 		p2[0] = pts[i+stride]
 		p2[1] = pts[i+stride+1]
-		calculator.addTriangle(calculator.basePt, p1, p2, isPositiveArea)
+		calc.addTriangle(calc.basePt, p1, p2, isPositiveArea)
 	}
-	calculator.addLinearSegments(pts)
+	calc.addLinearSegments(pts)
 }
-func (calculator *centroidAreaCalculator) addHole(pts []float64) {
-	stride := calculator.stride
+func (calc *AreaCentroid) addHole(pts []float64) {
+	stride := calc.stride
 
-	isPositiveArea := algorithm.IsRingCounterClockwise(calculator.layout, pts)
+	isPositiveArea := IsRingCounterClockwise(calc.layout, pts)
 	p1 := geom.Coord{0, 0}
 	p2 := geom.Coord{0, 0}
 
@@ -140,21 +146,21 @@ func (calculator *centroidAreaCalculator) addHole(pts []float64) {
 		p1[1] = pts[i+1]
 		p2[0] = pts[i+stride]
 		p2[1] = pts[i+stride+1]
-		calculator.addTriangle(calculator.basePt, p1, p2, isPositiveArea)
+		calc.addTriangle(calc.basePt, p1, p2, isPositiveArea)
 	}
-	calculator.addLinearSegments(pts)
+	calc.addLinearSegments(pts)
 }
 
-func (calculator *centroidAreaCalculator) addTriangle(p0, p1, p2 geom.Coord, isPositiveArea bool) {
+func (calc *AreaCentroid) addTriangle(p0, p1, p2 geom.Coord, isPositiveArea bool) {
 	sign := float64(1.0)
 	if isPositiveArea {
 		sign = -1.0
 	}
-	centroid3(p0, p1, p2, calculator.triangleCent3)
+	centroid3(p0, p1, p2, calc.triangleCent3)
 	area2 := area2(p0, p1, p2)
-	calculator.cg3[0] += sign * area2 * calculator.triangleCent3[0]
-	calculator.cg3[1] += sign * area2 * calculator.triangleCent3[1]
-	calculator.areasum2 += sign * area2
+	calc.cg3[0] += sign * area2 * calc.triangleCent3[0]
+	calc.cg3[1] += sign * area2 * calc.triangleCent3[1]
+	calc.areasum2 += sign * area2
 }
 
 // Returns three times the centroid of the triangle p1-p2-p3.
@@ -176,15 +182,15 @@ func area2(p1, p2, p3 geom.Coord) float64 {
 // in which case the linear centroid is computed instead.
 //
 // Param pts - an array of Coords
-func (calculator *centroidAreaCalculator) addLinearSegments(pts []float64) {
-	stride := calculator.stride
+func (calc *AreaCentroid) addLinearSegments(pts []float64) {
+	stride := calc.stride
 	for i := 0; i < len(pts)-stride; i += stride {
-		segmentLen := geom.Distance2D(geom.Coord(pts[i:i+2]), pts[i+stride:i+stride+2])
-		calculator.totalLength += segmentLen
+		segmentLen := internal.Distance2D(geom.Coord(pts[i:i+2]), pts[i+stride:i+stride+2])
+		calc.totalLength += segmentLen
 
 		midx := (pts[i] + pts[i+stride]) / 2
-		calculator.centSum[0] += segmentLen * midx
+		calc.centSum[0] += segmentLen * midx
 		midy := (pts[i+1] + pts[i+stride+1]) / 2
-		calculator.centSum[1] += segmentLen * midy
+		calc.centSum[1] += segmentLen * midy
 	}
 }

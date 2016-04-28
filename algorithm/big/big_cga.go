@@ -7,25 +7,21 @@ import (
 	"math/big"
 )
 
-/**
- * A value which is safely greater than the
- * relative round-off error in double-precision numbers
- */
-var dp_safe_epsilon = 1e-15
+// A value which is safely greater than the
+// relative round-off error in double-precision numbers
+var dpSafeEpsilon = 1e-15
 
-/**
- * Returns the index of the direction of the point <code>point</code> relative to
- * a vector specified by <code>vectorOrigin-vectorEnd</code>.
- *
- * @param vectorOrigin the origin point of the vector
- * @param vectorEnd the final point of the vector
- * @param point the point to compute the direction to
- *
- * @return COUNTER_CLOCKWISE if point is counter-clockwise (left) from vectorOrigin-vectorEnd
- * @return CLOCKWISE if point is clockwise (right) from vectorOrigin-vectorEnd
- * @return COLLINEAR if point is collinear with vectorOrigin-vectorEnd
- */
-func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Orientation {
+// OrientationIndex returns the index of the direction of the point point relative to
+// a vector specified by vectorOrigin-vectorEnd
+//
+// vectorOrigin - the origin point of the vector
+// vectorEnd - the final point of the vector
+// point - the point to compute the direction to
+//
+// Returns COUNTER_CLOCKWISE if point is counter-clockwise (left) from vectorOrigin-vectorEnd
+// Returns CLOCKWISE if point is clockwise (right) from vectorOrigin-vectorEnd
+// Returns Collinear if point is collinear with vectorOrigin-vectorEnd
+func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Type {
 	// fast filter for orientation index
 	// avoids use of slow extended-precision arithmetic in many cases
 	index := orientationIndexFilter(vectorOrigin, vectorEnd, point)
@@ -46,10 +42,10 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Ori
 	dy1.Mul(&dy1, &dx2)
 	dx1.Sub(&dx1, &dy1)
 
-	return orientation.Orientation(orientationBasedOnSignForBig(dx1))
+	return orientation.Type(orientationBasedOnSignForBig(dx1))
 }
 
-// Computes the intersection point of the two lines using math.big.Float arithmetic.
+// Intersection computes the intersection point of the two lines using math.big.Float arithmetic.
 // The lines are considered infinate in length.  For example, (0,0), (1, 0) and (2, 1) (2, 2) will have intersection of (2, 0)
 // Currently does not handle case of parallel lines.
 func Intersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Coord {
@@ -117,7 +113,7 @@ func Intersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Co
 //
 // Return the orientation index if it can be computed safely
 // Return i > 1 if the orientation index cannot be computed safely
-func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientation.Orientation {
+func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientation.Type {
 	var detsum float64
 
 	detleft := (vectorOrigin[0] - point[0]) * (vectorEnd[1] - point[1])
@@ -127,20 +123,19 @@ func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientati
 	if detleft > 0.0 {
 		if detright <= 0.0 {
 			return orientationBasedOnSign(det)
-		} else {
-			detsum = detleft + detright
 		}
+
+		detsum = detleft + detright
 	} else if detleft < 0.0 {
 		if detright >= 0.0 {
 			return orientationBasedOnSign(det)
-		} else {
-			detsum = -detleft - detright
 		}
+		detsum = -detleft - detright
 	} else {
 		return orientationBasedOnSign(det)
 	}
 
-	errbound := dp_safe_epsilon * detsum
+	errbound := dpSafeEpsilon * detsum
 	if (det >= errbound) || (-det >= errbound) {
 		return orientationBasedOnSign(det)
 	}
@@ -148,25 +143,25 @@ func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientati
 	return 2
 }
 
-func orientationBasedOnSign(x float64) orientation.Orientation {
+func orientationBasedOnSign(x float64) orientation.Type {
 	if x > 0 {
-		return orientation.COUNTER_CLOCKWISE
+		return orientation.CounterClockwise
 	}
 	if x < 0 {
-		return orientation.CLOCKWISE
+		return orientation.Clockwise
 	}
-	return orientation.COLLINEAR
+	return orientation.Collinear
 }
-func orientationBasedOnSignForBig(x big.Float) orientation.Orientation {
+func orientationBasedOnSignForBig(x big.Float) orientation.Type {
 	if x.IsInf() {
-		return orientation.COLLINEAR
+		return orientation.Collinear
 	}
 	switch x.Sign() {
 	case -1:
-		return orientation.CLOCKWISE
+		return orientation.Clockwise
 	case 0:
-		return orientation.COLLINEAR
+		return orientation.Collinear
 	default:
-		return orientation.COUNTER_CLOCKWISE
+		return orientation.CounterClockwise
 	}
 }

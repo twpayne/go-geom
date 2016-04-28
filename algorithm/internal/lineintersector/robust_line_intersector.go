@@ -1,15 +1,17 @@
-package line_intersector
+package lineintersector
 
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/big"
 	"github.com/twpayne/go-geom/algorithm/internal"
-	"github.com/twpayne/go-geom/algorithm/internal/central_endpoint"
+	"github.com/twpayne/go-geom/algorithm/internal/centralendpoint"
 	"github.com/twpayne/go-geom/algorithm/internal/hcoords"
-	"github.com/twpayne/go-geom/algorithm/line_intersection"
+	"github.com/twpayne/go-geom/algorithm/lineintersection"
 	"github.com/twpayne/go-geom/algorithm/orientation"
 )
 
+// RobustLineIntersector is a less performant implementation when compared to the non robust implementation but
+// provides more consistent results in extreme cases
 type RobustLineIntersector struct {
 }
 
@@ -17,16 +19,16 @@ func (intersector RobustLineIntersector) computePointOnLineIntersection(data *li
 	data.isProper = false
 	// do between check first, since it is faster than the orientation test
 	if internal.IsPointWithinLineBounds(data.layout, point, lineStart, lineEnd) {
-		if big.OrientationIndex(lineStart, lineEnd, point) == orientation.COLLINEAR && big.OrientationIndex(lineEnd, lineStart, point) == orientation.COLLINEAR {
+		if big.OrientationIndex(lineStart, lineEnd, point) == orientation.Collinear && big.OrientationIndex(lineEnd, lineStart, point) == orientation.Collinear {
 			data.isProper = true
 			if point.Equal(data.layout, lineStart) || point.Equal(data.layout, lineEnd) {
 				data.isProper = false
 			}
-			data.intersectionType = line_intersection.POINT_INTERSECTION
+			data.intersectionType = lineintersection.PointIntersection
 			return
 		}
 	}
-	data.intersectionType = line_intersection.NO_INTERSECTION
+	data.intersectionType = lineintersection.NoIntersection
 }
 
 func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lineIntersectorData, line1Start, line1End, line2Start, line2End geom.Coord) {
@@ -34,7 +36,7 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 
 	// first try a fast test to see if the envelopes of the lines intersect
 	if !internal.DoLinesOverlap(data.layout, line1Start, line1End, line2Start, line2End) {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
@@ -44,21 +46,21 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 	line2StartToLine1Orientation := big.OrientationIndex(line1Start, line1End, line2Start)
 	line2EndToLine1Orientation := big.OrientationIndex(line1Start, line1End, line2End)
 
-	if (line2StartToLine1Orientation > orientation.COLLINEAR && line2EndToLine1Orientation > orientation.COLLINEAR) || (line2StartToLine1Orientation < orientation.COLLINEAR && line2EndToLine1Orientation < orientation.COLLINEAR) {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+	if (line2StartToLine1Orientation > orientation.Collinear && line2EndToLine1Orientation > orientation.Collinear) || (line2StartToLine1Orientation < orientation.Collinear && line2EndToLine1Orientation < orientation.Collinear) {
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
 	line1StartToLine2Orientation := big.OrientationIndex(line2Start, line2End, line1Start)
 	line1EndToLine2Orientation := big.OrientationIndex(line2Start, line2End, line1End)
 
-	if (line1StartToLine2Orientation > orientation.COLLINEAR && line1EndToLine2Orientation > orientation.COLLINEAR) || (line1StartToLine2Orientation < 0 && line1EndToLine2Orientation < 0) {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+	if (line1StartToLine2Orientation > orientation.Collinear && line1EndToLine2Orientation > orientation.Collinear) || (line1StartToLine2Orientation < 0 && line1EndToLine2Orientation < 0) {
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
-	collinear := line2StartToLine1Orientation == orientation.COLLINEAR && line2EndToLine1Orientation == orientation.COLLINEAR &&
-		line1StartToLine2Orientation == orientation.COLLINEAR && line1EndToLine2Orientation == orientation.COLLINEAR
+	collinear := line2StartToLine1Orientation == orientation.Collinear && line2EndToLine1Orientation == orientation.Collinear &&
+		line1StartToLine2Orientation == orientation.Collinear && line1EndToLine2Orientation == orientation.Collinear
 
 	if collinear {
 		data.intersectionType = computeCollinearIntersection(data, line1Start, line1End, line2Start, line2End)
@@ -78,8 +80,8 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 	 *  the other line, since at this point we know that the inputLines must
 	 *  intersect.
 	 */
-	if line2StartToLine1Orientation == orientation.COLLINEAR || line2EndToLine1Orientation == orientation.COLLINEAR ||
-		line1StartToLine2Orientation == orientation.COLLINEAR || line1EndToLine2Orientation == orientation.COLLINEAR {
+	if line2StartToLine1Orientation == orientation.Collinear || line2EndToLine1Orientation == orientation.Collinear ||
+		line1StartToLine2Orientation == orientation.Collinear || line1EndToLine2Orientation == orientation.Collinear {
 		data.isProper = false
 
 		/*
@@ -102,14 +104,14 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 			copy(data.intersectionPoints[0], line1Start)
 		} else if line1End.Equal(data.layout, line2Start) || line1End.Equal(data.layout, line2End) {
 			copy(data.intersectionPoints[0], line1End)
-		} else if line2StartToLine1Orientation == orientation.COLLINEAR {
+		} else if line2StartToLine1Orientation == orientation.Collinear {
 			// Now check to see if any endpoint lies on the interior of the other segment.
 			copy(data.intersectionPoints[0], line2Start)
-		} else if line2EndToLine1Orientation == orientation.COLLINEAR {
+		} else if line2EndToLine1Orientation == orientation.Collinear {
 			copy(data.intersectionPoints[0], line2End)
-		} else if line1StartToLine2Orientation == orientation.COLLINEAR {
+		} else if line1StartToLine2Orientation == orientation.Collinear {
 			copy(data.intersectionPoints[0], line1Start)
-		} else if line1EndToLine2Orientation == orientation.COLLINEAR {
+		} else if line1EndToLine2Orientation == orientation.Collinear {
 			copy(data.intersectionPoints[0], line1End)
 		}
 	} else {
@@ -117,10 +119,10 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 		data.intersectionPoints[0] = intersection(data, line1Start, line1End, line2Start, line2End)
 	}
 
-	data.intersectionType = line_intersection.POINT_INTERSECTION
+	data.intersectionType = lineintersection.PointIntersection
 }
 
-func computeCollinearIntersection(data *lineIntersectorData, line1Start, line1End, line2Start, line2End geom.Coord) line_intersection.LineIntersectionType {
+func computeCollinearIntersection(data *lineIntersectorData, line1Start, line1End, line2Start, line2End geom.Coord) lineintersection.Type {
 	line2StartWithinLine1Bounds := internal.IsPointWithinLineBounds(data.layout, line2Start, line1Start, line1End)
 	line2EndWithinLine1Bounds := internal.IsPointWithinLineBounds(data.layout, line2End, line1Start, line1End)
 	line1StartWithinLine2Bounds := internal.IsPointWithinLineBounds(data.layout, line1Start, line2Start, line2End)
@@ -129,13 +131,13 @@ func computeCollinearIntersection(data *lineIntersectorData, line1Start, line1En
 	if line1StartWithinLine2Bounds && line1EndWithinLine2Bounds {
 		data.intersectionPoints[0] = line1Start
 		data.intersectionPoints[1] = line1End
-		return line_intersection.COLLINEAR_INTERSECTION
+		return lineintersection.CollinearIntersection
 	}
 
 	if line2StartWithinLine1Bounds && line2EndWithinLine1Bounds {
 		data.intersectionPoints[0] = line2Start
 		data.intersectionPoints[1] = line2End
-		return line_intersection.COLLINEAR_INTERSECTION
+		return lineintersection.CollinearIntersection
 	}
 
 	if line2StartWithinLine1Bounds && line1StartWithinLine2Bounds {
@@ -165,15 +167,14 @@ func computeCollinearIntersection(data *lineIntersectorData, line1Start, line1En
 		return isPointOrCollinearIntersection(data, line2End, line1End, line2StartWithinLine1Bounds, line1StartWithinLine2Bounds)
 	}
 
-	return line_intersection.NO_INTERSECTION
+	return lineintersection.NoIntersection
 }
 
-func isPointOrCollinearIntersection(data *lineIntersectorData, lineStart, lineEnd geom.Coord, intersection1, intersection2 bool) line_intersection.LineIntersectionType {
+func isPointOrCollinearIntersection(data *lineIntersectorData, lineStart, lineEnd geom.Coord, intersection1, intersection2 bool) lineintersection.Type {
 	if lineStart.Equal(data.layout, lineEnd) && !intersection1 && !intersection2 {
-		return line_intersection.POINT_INTERSECTION
-	} else {
-		return line_intersection.COLLINEAR_INTERSECTION
+		return lineintersection.PointIntersection
 	}
+	return lineintersection.CollinearIntersection
 }
 
 /**
@@ -194,7 +195,7 @@ func intersection(data *lineIntersectorData, line1Start, line1End, line2Start, l
 	 * This code checks this condition and forces a more reasonable answer
 	 */
 	if !isInSegmentEnvelopes(data, intPt) {
-		intPt = central_endpoint.GetIntersection(line1Start, line1End, line2Start, line2End)
+		intPt = centralendpoint.GetIntersection(line1Start, line1End, line2Start, line2End)
 	}
 
 	// TODO Enable if we add a precision model
@@ -230,11 +231,11 @@ func intersectionWithNormalization(line1Start, line1End, line2Start, line2End ge
  * If this happens, a reasonable approximation is computed instead.
  */
 func safeHCoordinateIntersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Coord {
-	if intPt, err := hcoords.GetIntersection(line1Start, line1End, line2Start, line2End); err != nil {
-		return central_endpoint.GetIntersection(line1Start, line1End, line2Start, line2End)
-	} else {
-		return intPt
+	intPt, err := hcoords.GetIntersection(line1Start, line1End, line2Start, line2End)
+	if err != nil {
+		return centralendpoint.GetIntersection(line1Start, line1End, line2Start, line2End)
 	}
+	return intPt
 }
 
 /*

@@ -158,3 +158,73 @@ func TestIsPointWithinLineBounds(t *testing.T) {
 
 	}
 }
+
+func TestCoordDistance2D(t *testing.T) {
+	const diagOf1 = 1.4142135623730951
+	for i, tc := range []struct {
+		src, other geom.Coord
+		expected   float64
+	}{
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{1, 0},
+			expected: 1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{0, 1},
+			expected: 1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{-1, 0},
+			expected: 1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{0, -1},
+			expected: 1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{1, 1},
+			expected: diagOf1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{1, -1},
+			expected: diagOf1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{-1, -1},
+			expected: diagOf1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{-1, 1},
+			expected: diagOf1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{1, -1},
+			expected: diagOf1,
+		},
+		{
+			src:      geom.Coord{0, 0},
+			other:    geom.Coord{0, 0},
+			expected: 0,
+		},
+		{
+			src:      geom.Coord{-100, 23},
+			other:    geom.Coord{1, 2},
+			expected: 103.16006979447037,
+		},
+	} {
+
+		distance := Distance2D(tc.src, tc.other)
+		if distance != tc.expected {
+			t.Errorf("Test %v failed: expected %v but got %v.  Test Data: %v", i+1, tc.expected, distance, tc)
+		}
+	}
+}

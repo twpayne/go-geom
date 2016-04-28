@@ -1,8 +1,8 @@
-package ray_crossing_test
+package raycrossing_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/internal/ray_crossing"
+	"github.com/twpayne/go-geom/algorithm/internal/raycrossing"
 	"github.com/twpayne/go-geom/algorithm/location"
 	"testing"
 )
@@ -11,75 +11,75 @@ func TestLocateInRing(t *testing.T) {
 	for i, tc := range []struct {
 		p        geom.Coord
 		coords   []float64
-		location location.Location
+		location location.Type
 	}{
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{},
-			location: location.EXTERIOR,
+			location: location.Exterior,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{0, 0},
-			location: location.EXTERIOR,
+			location: location.Exterior,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{0, 0, 0, 0},
-			location: location.BOUNDARY,
+			location: location.Boundary,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{-1, -1},
-			location: location.EXTERIOR,
+			location: location.Exterior,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{0, 0, -1, -1},
-			location: location.BOUNDARY,
+			location: location.Boundary,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{0, 0, 1, 1},
-			location: location.BOUNDARY,
+			location: location.Boundary,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{-1, -1, 1, 1},
-			location: location.BOUNDARY,
+			location: location.Boundary,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{0, 1, 0, -1},
-			location: location.BOUNDARY,
+			location: location.Boundary,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{1, 0, -1, 0},
-			location: location.BOUNDARY,
+			location: location.Boundary,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{1, -1, -1, -1},
-			location: location.EXTERIOR,
+			location: location.Exterior,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{1, 1, 1, -1},
-			location: location.INTERIOR,
+			location: location.Interior,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{-1, 1, 1, 1, 1, -1, -1, -1, -1, 1},
-			location: location.INTERIOR,
+			location: location.Interior,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			coords:   []float64{1, 1, 2, 1, 2, -1, 1, -1, 1, 1},
-			location: location.EXTERIOR,
+			location: location.Exterior,
 		},
 	} {
-		location := ray_crossing.LocatePointInRing(geom.XY, tc.p, tc.coords)
+		location := raycrossing.LocatePointInRing(geom.XY, tc.p, tc.coords)
 
 		if location != tc.location {
 			t.Errorf("Test %v (%v, %v) failed: expected %v but was %v", i+1, tc.p, tc.coords, tc.location, location)

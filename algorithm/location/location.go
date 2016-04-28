@@ -4,41 +4,39 @@ import (
 	"fmt"
 )
 
-// Constants representing the different topological locations which can occur in a {@link Geometry}.
+// Type enumerates the different topological locations which can occur in a {@link Geometry}.
 // The constants are also used as the row and column indices of DE-9IM {@link IntersectionMatrix}es.
-type Location int
+type Type int
 
 const (
-	// The location value for the interior of a geometry.
+	// Interior is the location value for the interior of a geometry.
 	// Also, DE-9IM row index of the interior of the first geometry and column index of
-	//  the interior of the second geometry.
-	INTERIOR Location = iota
-
-	// The location value for the boundary of a geometry.
+	// the interior of the second geometry.
+	Interior Type = iota
+	// Boundary is the location value for the boundary of a geometry.
 	// Also, DE-9IM row index of the boundary of the first geometry and column index of
 	// the boundary of the second geometry.
-	BOUNDARY
-	// The location value for the exterior of a geometry.
+	Boundary
+	// Exterior is the location value for the exterior of a geometry.
 	// Also, DE-9IM row index of the exterior of the first geometry and column index of
 	// the exterior of the second geometry.
-	EXTERIOR
-
-	// Used for uninitialized location values.
-	NONE
+	Exterior
+	// None is used for uninitialized location values.
+	None
 )
 
-// Converts the location value to a location symbol, for example, <code>EXTERIOR => 'e'</code>
-// locationValue - either EXTERIOR, BOUNDARY, INTERIOR or NONE
+// Symbol converts the location value to a location symbol, for example, Exterior => 'e'
+// locationValue
 // Returns either 'e', 'b', 'i' or '-'
-func (l Location) ToLocationSymbol() rune {
+func (l Type) Symbol() rune {
 	switch l {
-	case EXTERIOR:
+	case Exterior:
 		return 'e'
-	case BOUNDARY:
+	case Boundary:
 		return 'b'
-	case INTERIOR:
+	case Interior:
 		return 'i'
-	case NONE:
+	case None:
 		return '-'
 	}
 	panic(fmt.Sprintf("Unknown location value: %v", l))

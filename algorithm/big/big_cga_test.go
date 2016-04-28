@@ -12,50 +12,50 @@ import (
 func TestOrientationIndex(t *testing.T) {
 	for i, testData := range []struct {
 		vectorOrigin, vectorEnd, point geom.Coord
-		result                         orientation.Orientation
+		result                         orientation.Type
 	}{
 
 		{
 			vectorOrigin: geom.Coord{-1.0, -1.0},
 			vectorEnd:    geom.Coord{1.0, 1.0},
 			point:        geom.Coord{0, 0},
-			result:       orientation.COLLINEAR,
+			result:       orientation.Collinear,
 		},
 		{
 			vectorOrigin: geom.Coord{1.0, 1.0},
 			vectorEnd:    geom.Coord{-1.0, -1.0},
 			point:        geom.Coord{0, 0},
-			result:       orientation.COLLINEAR,
+			result:       orientation.Collinear,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 10.0},
 			vectorEnd:    geom.Coord{20.0, 20.0},
 			point:        geom.Coord{10.0, 20.0},
-			result:       orientation.COUNTER_CLOCKWISE,
+			result:       orientation.CounterClockwise,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 10.0},
 			vectorEnd:    geom.Coord{20.0, 20.0},
 			point:        geom.Coord{20.0, 10.0},
-			result:       orientation.CLOCKWISE,
+			result:       orientation.Clockwise,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 20.0},
 			vectorEnd:    geom.Coord{20.0, 10.0},
 			point:        geom.Coord{10.0, 10.0},
-			result:       orientation.CLOCKWISE,
+			result:       orientation.Clockwise,
 		},
 		{
 			vectorOrigin: geom.Coord{10.0, 20.0},
 			vectorEnd:    geom.Coord{20.0, 10.0},
 			point:        geom.Coord{20.0, 20.00},
-			result:       orientation.COUNTER_CLOCKWISE,
+			result:       orientation.CounterClockwise,
 		},
 		{
 			vectorOrigin: geom.Coord{-71.104126, 42.314675},
 			vectorEnd:    geom.Coord{-17.104138, 42.314732},
 			point:        geom.Coord{-17.1041375307579, 42.3147318674446},
-			result:       orientation.CLOCKWISE,
+			result:       orientation.Clockwise,
 		},
 	} {
 		orientationIndex := big.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)

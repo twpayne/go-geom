@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+// IsPointWithinLineBounds calculates if the point p lays within the bounds of the line
+// between end points lineEndpoint1 and lineEndpoint2
 func IsPointWithinLineBounds(layout geom.Layout, p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
 	minx := math.Min(lineEndpoint1[0], lineEndpoint2[0])
 	maxx := math.Max(lineEndpoint1[0], lineEndpoint2[0])
@@ -13,6 +15,8 @@ func IsPointWithinLineBounds(layout geom.Layout, p, lineEndpoint1, lineEndpoint2
 	return geom.NewBounds(layout).Set(minx, miny, maxx, maxy).OverlapsPoint(layout, p)
 }
 
+// DoLinesOverlap calculates if the bounding boxes of the two lines (line1End1, line1End2) and
+// (line2End1, line2End2) overlap
 func DoLinesOverlap(layout geom.Layout, line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
 
 	min1x := math.Min(line1End1[0], line1End2[0])
@@ -30,8 +34,12 @@ func DoLinesOverlap(layout geom.Layout, line1End1, line1End2, line2End1, line2En
 	return bounds1.Overlaps(layout, bounds2)
 }
 
+// Equal checks if the point starting at start one in array coords1 is equal to the
+// point starting at start2 in the array coords2.
+// Only x and y ordinates are compared and x is assumed to be the first ordinate and y as the second
+// This is a utility method intended to be used only when performance is critical as it
+// reduces readability.
 func Equal(coords1 []float64, start1 int, coords2 []float64, start2 int) bool {
-
 	if coords1[start1] != coords2[start2] {
 		return false
 	}
@@ -41,4 +49,12 @@ func Equal(coords1 []float64, start1 int, coords2 []float64, start2 int) bool {
 	}
 
 	return true
+}
+
+// Distance2D calculates the 2d distance between the two coordinates
+func Distance2D(c1, c2 geom.Coord) float64 {
+	dx := c1[0] - c2[0]
+	dy := c1[1] - c2[1]
+
+	return math.Sqrt(dx*dx + dy*dy)
 }

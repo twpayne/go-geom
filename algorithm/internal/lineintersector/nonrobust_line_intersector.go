@@ -1,15 +1,16 @@
-package line_intersector
+package lineintersector
 
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/internal"
-	"github.com/twpayne/go-geom/algorithm/line_intersection"
+	"github.com/twpayne/go-geom/algorithm/lineintersection"
 )
 
+// NonRobustLineIntersector is a performant but non robust line intersection implementation.
 type NonRobustLineIntersector struct {
 }
 
-func (intersector NonRobustLineIntersector) computePointOnLineIntersection(data *lineIntersectorData, p, lineStart, lineEnd geom.Coord) {
+func (li NonRobustLineIntersector) computePointOnLineIntersection(data *lineIntersectorData, p, lineStart, lineEnd geom.Coord) {
 
 	/*
 	 *  Coefficients of line eqns.
@@ -35,7 +36,7 @@ func (intersector NonRobustLineIntersector) computePointOnLineIntersection(data 
 
 	// if r != 0 the point does not lie on the line
 	if r != 0 {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
@@ -43,7 +44,7 @@ func (intersector NonRobustLineIntersector) computePointOnLineIntersection(data 
 
 	dist := rParameter(lineStart, lineEnd, p)
 	if dist < 0.0 || dist > 1.0 {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
@@ -51,10 +52,10 @@ func (intersector NonRobustLineIntersector) computePointOnLineIntersection(data 
 	if p.Equal(geom.XY, lineStart) || p.Equal(geom.XY, lineEnd) {
 		data.isProper = false
 	}
-	data.intersectionType = line_intersection.POINT_INTERSECTION
+	data.intersectionType = lineintersection.PointIntersection
 }
 
-func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *lineIntersectorData, line1Start, line1End, line2Start, line2End geom.Coord) {
+func (li NonRobustLineIntersector) computeLineOnLineIntersection(data *lineIntersectorData, line1Start, line1End, line2Start, line2End geom.Coord) {
 	/*
 	 *  Coefficients of line eqns.
 	 */
@@ -93,7 +94,7 @@ func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *
 	 *  same side of line 1, the line segments do not intersect.
 	 */
 	if r3 != 0 && r4 != 0 && internal.IsSameSignAndNonZero(r3, r4) {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
@@ -116,7 +117,7 @@ func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *
 	 *  not intersect.
 	 */
 	if r1 != 0 && r2 != 0 && internal.IsSameSignAndNonZero(r1, r2) {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
@@ -125,7 +126,7 @@ func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *
 	 */
 	denom := a1*b2 - a2*b1
 	if denom == 0 {
-		intersector.computeCollinearIntersection(data, line1Start, line1End, line2Start, line2End)
+		li.computeCollinearIntersection(data, line1Start, line1End, line2Start, line2End)
 		return
 	}
 	numX := b1*c2 - b2*c1
@@ -141,7 +142,7 @@ func (intersector NonRobustLineIntersector) computeLineOnLineIntersection(data *
 		data.isProper = false
 	}
 
-	data.intersectionType = line_intersection.POINT_INTERSECTION
+	data.intersectionType = lineintersection.PointIntersection
 }
 
 func (li NonRobustLineIntersector) computeCollinearIntersection(data *lineIntersectorData, line1Start, line1End, line2Start, line2End geom.Coord) {
@@ -164,13 +165,13 @@ func (li NonRobustLineIntersector) computeCollinearIntersection(data *lineInters
 		t4 = r3
 	}
 	if t3 > r2 || t4 < r1 {
-		data.intersectionType = line_intersection.NO_INTERSECTION
+		data.intersectionType = lineintersection.NoIntersection
 	} else if &q4 == &line1Start {
 		copy(data.pa, line1Start)
-		data.intersectionType = line_intersection.POINT_INTERSECTION
+		data.intersectionType = lineintersection.PointIntersection
 	} else if &q3 == &line1End {
 		copy(data.pa, line1End)
-		data.intersectionType = line_intersection.POINT_INTERSECTION
+		data.intersectionType = lineintersection.PointIntersection
 	} else {
 		// intersection MUST be a segment - compute endpoints
 		copy(data.pa, line1Start)
@@ -181,6 +182,6 @@ func (li NonRobustLineIntersector) computeCollinearIntersection(data *lineInters
 		if t4 < r2 {
 			copy(data.pb, q4)
 		}
-		data.intersectionType = line_intersection.COLLINEAR_INTERSECTION
+		data.intersectionType = lineintersection.CollinearIntersection
 	}
 }

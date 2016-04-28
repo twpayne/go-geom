@@ -1,11 +1,20 @@
-package centroid_calculator_test
+package algorithm_test
 
 import (
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/algorithm/centroid_calculator"
+	"github.com/twpayne/go-geom/algorithm"
+	"math"
 	"reflect"
 	"testing"
 )
+
+func TestPointCentroidCalculator_GetCentroid_NoCoordsAdded(t *testing.T) {
+	calculator := algorithm.NewPointCentroid()
+	centroid := calculator.GetCentroid()
+	if !centroid.Equal(geom.XY, geom.Coord{math.NaN(), math.NaN()}) {
+		t.Errorf("centroid with no coords added should return the [NaN NaN] coord but was: %v", centroid)
+	}
+}
 
 type pointTestData struct {
 	points   []*geom.Point
@@ -47,7 +56,7 @@ func TestPointGetCentroid(t *testing.T) {
 }
 
 func checkPointsCentroidFunc(t *testing.T, i int, tc pointTestData) {
-	centroid := centroid_calculator.PointsCentroid(tc.points[0], tc.points[1:]...)
+	centroid := algorithm.PointsCentroid(tc.points[0], tc.points[1:]...)
 
 	if !reflect.DeepEqual(tc.centroid, centroid) {
 		t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.centroid, centroid)
@@ -61,7 +70,7 @@ func checkPointCentroidFlatFunc(t *testing.T, i int, tc pointTestData) {
 		data[i*2] = p.FlatCoords()[0]
 		data[(i*2)+1] = p.FlatCoords()[1]
 	}
-	centroid := centroid_calculator.PointsCentroidFlat(geom.XY, data)
+	centroid := algorithm.PointsCentroidFlat(geom.XY, data)
 
 	if !reflect.DeepEqual(tc.centroid, centroid) {
 		t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.centroid, centroid)
@@ -69,7 +78,7 @@ func checkPointCentroidFlatFunc(t *testing.T, i int, tc pointTestData) {
 
 }
 func checkAddEachPoint(t *testing.T, i int, tc pointTestData) {
-	calc := centroid_calculator.NewPointCentroidCalculator()
+	calc := algorithm.NewPointCentroid()
 	for _, p := range tc.points {
 		calc.AddPoint(p)
 	}
