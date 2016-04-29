@@ -7,7 +7,7 @@ import (
 	"github.com/twpayne/go-geom/algorithm/internal/hcoords"
 	"github.com/twpayne/go-geom/algorithm/lineintersection"
 	"github.com/twpayne/go-geom/algorithm/orientation"
-	"github.com/twpayne/go-geom/big"
+	"github.com/twpayne/go-geom/bigplanar"
 )
 
 // RobustLineIntersector is a less performant implementation when compared to the non robust implementation but
@@ -19,7 +19,7 @@ func (intersector RobustLineIntersector) computePointOnLineIntersection(data *li
 	data.isProper = false
 	// do between check first, since it is faster than the orientation test
 	if internal.IsPointWithinLineBounds(point, lineStart, lineEnd) {
-		if big.OrientationIndex(lineStart, lineEnd, point) == orientation.Collinear && big.OrientationIndex(lineEnd, lineStart, point) == orientation.Collinear {
+		if bigplanar.OrientationIndex(lineStart, lineEnd, point) == orientation.Collinear && bigplanar.OrientationIndex(lineEnd, lineStart, point) == orientation.Collinear {
 			data.isProper = true
 			if internal.Equal(point, 0, lineStart, 0) || internal.Equal(point, 0, lineEnd, 0) {
 				data.isProper = false
@@ -43,16 +43,16 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 	// for each endpoint, compute which side of the other segment it lies
 	// if both endpoints lie on the same side of the other segment,
 	// the segments do not intersect
-	line2StartToLine1Orientation := big.OrientationIndex(line1Start, line1End, line2Start)
-	line2EndToLine1Orientation := big.OrientationIndex(line1Start, line1End, line2End)
+	line2StartToLine1Orientation := bigplanar.OrientationIndex(line1Start, line1End, line2Start)
+	line2EndToLine1Orientation := bigplanar.OrientationIndex(line1Start, line1End, line2End)
 
 	if (line2StartToLine1Orientation > orientation.Collinear && line2EndToLine1Orientation > orientation.Collinear) || (line2StartToLine1Orientation < orientation.Collinear && line2EndToLine1Orientation < orientation.Collinear) {
 		data.intersectionType = lineintersection.NoIntersection
 		return
 	}
 
-	line1StartToLine2Orientation := big.OrientationIndex(line2Start, line2End, line1Start)
-	line1EndToLine2Orientation := big.OrientationIndex(line2Start, line2End, line1End)
+	line1StartToLine2Orientation := bigplanar.OrientationIndex(line2Start, line2End, line1Start)
+	line1EndToLine2Orientation := bigplanar.OrientationIndex(line2Start, line2End, line1End)
 
 	if (line1StartToLine2Orientation > orientation.Collinear && line1EndToLine2Orientation > orientation.Collinear) || (line1StartToLine2Orientation < 0 && line1EndToLine2Orientation < 0) {
 		data.intersectionType = lineintersection.NoIntersection

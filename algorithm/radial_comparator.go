@@ -3,7 +3,7 @@ package algorithm
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/orientation"
-	"github.com/twpayne/go-geom/big"
+	"github.com/twpayne/go-geom/bigplanar"
 	"github.com/twpayne/go-geom/sorting"
 	"sort"
 )
@@ -16,7 +16,7 @@ import (
 // If co-linear then the coordinate nearer to the focalPoint is considered less.
 func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.Coord) sort.Interface {
 	isLess := func(v1, v2 []float64) bool {
-		orient := big.OrientationIndex(focalPoint, v1, v2)
+		orient := bigplanar.OrientationIndex(focalPoint, v1, v2)
 
 		if orient == orientation.CounterClockwise {
 			return false

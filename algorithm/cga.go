@@ -8,7 +8,7 @@ import (
 	"github.com/twpayne/go-geom/algorithm/internal/raycrossing"
 	"github.com/twpayne/go-geom/algorithm/location"
 	"github.com/twpayne/go-geom/algorithm/orientation"
-	"github.com/twpayne/go-geom/big"
+	"github.com/twpayne/go-geom/bigplanar"
 	"math"
 )
 
@@ -19,7 +19,7 @@ import (
 // vectorEnd - the final point of the vector
 // point - the point to compute the direction to
 func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Type {
-	return big.OrientationIndex(vectorOrigin, vectorEnd, point)
+	return bigplanar.OrientationIndex(vectorOrigin, vectorEnd, point)
 }
 
 // IsPointInRing tests whether a point lies inside or on a ring. The ring may be oriented in
@@ -140,7 +140,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 		return false
 	}
 
-	disc := big.OrientationIndex(geom.Coord(ring[iPrev:iPrev+2]), geom.Coord(ring[hiIndex:hiIndex+2]), geom.Coord(ring[iNext:iNext+2]))
+	disc := bigplanar.OrientationIndex(geom.Coord(ring[iPrev:iPrev+2]), geom.Coord(ring[hiIndex:hiIndex+2]), geom.Coord(ring[iNext:iNext+2]))
 
 	// If disc is exactly 0, lines are collinear. There are two possible cases:
 	// (1) the lines lie along the x axis in opposite directions (2) the lines

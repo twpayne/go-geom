@@ -1,4 +1,4 @@
-package big
+package bigplanar
 
 import (
 	"github.com/twpayne/go-geom"

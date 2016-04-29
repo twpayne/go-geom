@@ -1,9 +1,9 @@
-package big_test
+package bigplanar_test
 
 import (
 	"fmt"
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/big"
+	"github.com/twpayne/go-geom/bigplanar"
 )
 
 func ExampleOrientationIndex() {
@@ -11,7 +11,7 @@ func ExampleOrientationIndex() {
 	vectorEnd := geom.Coord{20.0, 20.0}
 	target := geom.Coord{10.0, 20.0}
 
-	orientation := big.OrientationIndex(vectorOrigin, vectorEnd, target)
+	orientation := bigplanar.OrientationIndex(vectorOrigin, vectorEnd, target)
 
 	fmt.Println(orientation)
 	// Output: CounterClockwise
@@ -23,7 +23,7 @@ func ExampleIntersection() {
 	line2Start := geom.Coord{-1, 0}
 	line2End := geom.Coord{1, 0}
 
-	intersection := big.Intersection(line1Start, line1End, line2Start, line2End)
+	intersection := bigplanar.Intersection(line1Start, line1End, line2Start, line2End)
 
 	fmt.Println(intersection)
 	// Output: [0 0]

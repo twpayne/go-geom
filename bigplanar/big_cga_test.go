@@ -1,9 +1,9 @@
-package big_test
+package bigplanar_test
 
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/algorithm/orientation"
-	"github.com/twpayne/go-geom/big"
+	"github.com/twpayne/go-geom/bigplanar"
 	"math"
 	"reflect"
 	"testing"
@@ -58,7 +58,7 @@ func TestOrientationIndex(t *testing.T) {
 			result:       orientation.Clockwise,
 		},
 	} {
-		orientationIndex := big.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)
+		orientationIndex := bigplanar.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)
 		if orientationIndex != testData.result {
 			t.Errorf("Test %v Failed. Expected: %v (%v) but was %v (%v) : TestData: %v", i+1, testData.result, int(testData.result), orientationIndex, int(orientationIndex), testData)
 		}
@@ -113,7 +113,7 @@ func TestIntersection(t *testing.T) {
 			result:     geom.Coord{2, 0},
 		},
 	} {
-		calculatedIntersection := big.Intersection(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
+		calculatedIntersection := bigplanar.Intersection(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
 		if !reflect.DeepEqual(calculatedIntersection, tc.result) {
 			t.Errorf("Test %v (%v) Failed. Expected: %v but was %v ", i+1, tc.desc, tc.result, calculatedIntersection)
 		}
