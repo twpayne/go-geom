@@ -19,7 +19,7 @@ type FlatCoord struct {
 // returns true is v1 is less than v2
 type IsLess func(v1, v2 []float64) bool
 
-// Compare2D is a comparator that compares based on the size of the x and y coords.
+// IsLess2D is a comparator that compares based on the size of the x and y coords.
 //
 // First the x coordinates are compared.
 // if x coords are equal then the y coords are compared

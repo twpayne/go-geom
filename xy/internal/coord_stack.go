@@ -35,7 +35,7 @@ func (stack *CoordStack) Pop() ([]float64, int) {
 	return coord, stack.Size()
 }
 
-// Pop the last pushed coordinate off the stack and return the coordinate
+// Peek returns the most recently pushed coord without modifying the stack
 func (stack *CoordStack) Peek() []float64 {
 	numOrds := len(stack.Data)
 	start := numOrds - stack.stride

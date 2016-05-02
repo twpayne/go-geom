@@ -31,9 +31,9 @@ func ConvexHull(geometry geom.T) geom.T {
 	return calc.getConvexHull()
 }
 
-// ConvexHull computes the convex hull of the geometry.
+// ConvexHullFlat computes the convex hull of the geometry.
 // A convex hull is the smallest convex geometry that contains
-// all the points in the input geometry
+// all the points in the input coordinates
 // Uses the Graham Scan algorithm
 func ConvexHullFlat(layout geom.Layout, coords []float64) geom.T {
 	calc := convexHullCalculator{
