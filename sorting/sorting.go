@@ -15,7 +15,7 @@ type FlatCoord struct {
 	stride int
 }
 
-// Comparator the function used by FlatCoord to sort the coordinate array
+// IsLess the function used by FlatCoord to sort the coordinate array
 // returns true is v1 is less than v2
 type IsLess func(v1, v2 []float64) bool
 
@@ -23,7 +23,7 @@ type IsLess func(v1, v2 []float64) bool
 //
 // First the x coordinates are compared.
 // if x coords are equal then the y coords are compared
-func Compare2D(v1, v2 []float64) bool {
+func IsLess2D(v1, v2 []float64) bool {
 	if v1[0] < v2[0] {
 		return true
 	}
@@ -39,7 +39,7 @@ func Compare2D(v1, v2 []float64) bool {
 
 // NewFlatCoordSorting2D creates a Compare2D based sort.Interface implementation
 func NewFlatCoordSorting2D(layout geom.Layout, coordData []float64) FlatCoord {
-	return NewFlatCoordSorting(layout, coordData, Compare2D)
+	return NewFlatCoordSorting(layout, coordData, IsLess2D)
 }
 
 // NewFlatCoordSorting creates a sort.Interface implementation based on the Comparator function

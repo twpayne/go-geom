@@ -44,7 +44,7 @@ func TestCompare2D(t *testing.T) {
 			result: true,
 		},
 	} {
-		actual := sorting.Compare2D(tc.c1, tc.c2)
+		actual := sorting.IsLess2D(tc.c1, tc.c2)
 
 		if actual != tc.result {
 			t.Errorf("Test %d failed.  Expected %v but got %v", i+1, tc.result, actual)
