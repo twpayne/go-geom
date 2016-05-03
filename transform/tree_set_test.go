@@ -1,4 +1,4 @@
-package filtering
+package transform
 
 import (
 	"github.com/twpayne/go-geom"

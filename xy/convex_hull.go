@@ -3,8 +3,8 @@ package xy
 import (
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
-	"github.com/twpayne/go-geom/filtering"
 	"github.com/twpayne/go-geom/sorting"
+	"github.com/twpayne/go-geom/transform"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/orientation"
 	"sort"
@@ -54,8 +54,8 @@ func (calc convexHullCalculator) getConvexHull() geom.T {
 		return geom.NewLineStringFlat(calc.layout, calc.inputPts)
 	}
 
-	coordFilter := filtering.NewUniqueCoordFilter(calc.layout, comparator{})
-	reducedPts := filtering.FlatCoords(calc.layout, calc.inputPts, coordFilter)
+	reducedPts := transform.UniqueCoords(calc.layout, comparator{}, calc.inputPts)
+
 	// use heuristic to reduce points, if large
 	if len(calc.inputPts)/calc.stride > 50 {
 		reducedPts = calc.reduce(calc.inputPts)
@@ -179,7 +179,7 @@ func (calc *convexHullCalculator) reduce(inputPts []float64) []float64 {
 	}
 
 	// add points defining polygon
-	reducedSet := filtering.NewTreeSet(calc.layout, comparator{})
+	reducedSet := transform.NewTreeSet(calc.layout, comparator{})
 	for i := 0; i < len(polyPts); i += calc.stride {
 		reducedSet.Insert(polyPts[i : i+calc.stride])
 	}

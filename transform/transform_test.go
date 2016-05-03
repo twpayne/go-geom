@@ -1,4 +1,4 @@
-package filtering
+package transform
 
 import (
 	"github.com/twpayne/go-geom"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestNewUniqueCoordFilter(t *testing.T) {
+func TestUniqueCoords(t *testing.T) {
 	for i, tc := range []struct {
 		pts, expected []float64
 		compare       Compare
@@ -23,8 +23,7 @@ func TestNewUniqueCoordFilter(t *testing.T) {
 			compare: testCompare{},
 		},
 	} {
-		filter := NewUniqueCoordFilter(tc.layout, tc.compare)
-		filteredCoords := FlatCoords(geom.XY, tc.pts, filter)
+		filteredCoords := UniqueCoords(tc.layout, tc.compare, tc.pts)
 
 		if !reflect.DeepEqual(filteredCoords, tc.expected) {
 			t.Errorf("Test %v Failed: FlatCoords(%v, ..., %v) didn't result in the expected result.  Expected\n\t%v\nbut was\n\t%v", i+1, tc.layout, tc.compare, tc.expected, filteredCoords)
