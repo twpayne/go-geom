@@ -142,3 +142,144 @@ func TestVerify(t *testing.T) {
 		}
 	}
 }
+
+func TestEqualCoords(t *testing.T) {
+	for _, tc := range []struct {
+		c1, c2 Coord
+		layout Layout
+		equal  bool
+	}{
+		{
+			c1:     Coord{},
+			c2:     Coord{0, 0},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{},
+			c2:     Coord{},
+			layout: XY,
+			equal:  true,
+		},
+		{
+			c1:     Coord{1, 0},
+			c2:     Coord{},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{1, 0},
+			c2:     Coord{1},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{1},
+			c2:     Coord{},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{1},
+			c2:     Coord{1},
+			layout: XY,
+			equal:  true,
+		},
+		{
+			c1:     Coord{1},
+			c2:     Coord{0},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{0, 0},
+			c2:     Coord{0, 0},
+			layout: XY,
+			equal:  true,
+		},
+		{
+			c1:     Coord{0, 0},
+			c2:     Coord{1, 0},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{0, 1},
+			c2:     Coord{0, 0},
+			layout: XY,
+			equal:  false,
+		},
+		{
+			c1:     Coord{0, 0, 3},
+			c2:     Coord{0, 0},
+			layout: XY,
+			equal:  true,
+		},
+		{
+			c1:     Coord{0, 0, 3},
+			c2:     Coord{0, 0, 3},
+			layout: XYZ,
+			equal:  true,
+		},
+		{
+			c1:     Coord{0, 0, 3},
+			c2:     Coord{0, 0, 4},
+			layout: XYZ,
+			equal:  false,
+		},
+		{
+			c1:     Coord{0, 0, 3, 4, 5, 6, 7, 8, 9, 10},
+			c2:     Coord{0, 0, 3, 4, 5, 6, 7, 8, 9, 10},
+			layout: Layout(10),
+			equal:  true,
+		},
+		{
+			c1:     Coord{0, 0, 3, 4, 5, 6, 7, 8, 9, 10},
+			c2:     Coord{0, 0, 3, 4, 5, 6, 8, 8, 9, 10},
+			layout: Layout(10),
+			equal:  false,
+		},
+	} {
+		if tc.c1.Equal(tc.layout, tc.c2) != tc.equal {
+			t.Errorf("%v.Equals(%s, %v) is not '%v'", tc.c1, tc.layout, tc.c2, tc.equal)
+		}
+	}
+}
+func TestSetCoord(t *testing.T) {
+	for _, tc := range []struct {
+		src, dest Coord
+		expected  Coord
+		layout    Layout
+	}{
+		{
+			src:      Coord{0, 0},
+			dest:     Coord{1, 1},
+			expected: Coord{0, 0},
+			layout:   XY,
+		},
+		{
+			src:      Coord{1, 0},
+			dest:     Coord{},
+			expected: Coord{},
+			layout:   Layout(0),
+		},
+		{
+			src:      Coord{},
+			dest:     Coord{1, 2},
+			expected: Coord{1, 2},
+			layout:   XY,
+		},
+		{
+			src:      Coord{3},
+			dest:     Coord{1, 2},
+			expected: Coord{3, 2},
+			layout:   XY,
+		},
+	} {
+
+		tc.dest.Set(tc.src)
+		if !tc.dest.Equal(tc.layout, tc.expected) {
+			t.Errorf("Setting %v with %v did not result in %v", tc.dest, tc.src, tc.dest)
+		}
+	}
+}

@@ -1,6 +1,8 @@
 goversion=$(word 3,$(shell go version))
 
-all:
+all: build committed
+
+build:
 	go test -v ./...
 	if [ "${goversion}" = "go1.6.2" ]; then \
 		go test -cover -race ./... && \
@@ -10,4 +12,7 @@ all:
 	fi
 	test -z "$(go fmt -s ./...)"
 	go generate ./...
+
+committed:
 	git diff --exit-code
+

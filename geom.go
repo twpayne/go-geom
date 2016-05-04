@@ -5,6 +5,7 @@ package geom
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 // A Layout describes the meaning of an N-dimensional coordinate. Layout(N) for
@@ -68,6 +69,50 @@ func (e ErrUnsupportedType) Error() string {
 
 // A Coord represents an N-dimensional coordinate.
 type Coord []float64
+
+// X returns the x coordinate of the coordinate.  X is assumed to be the first ordinate
+func (c Coord) X() float64 {
+	return c[0]
+}
+
+// Y returns the x coordinate of the coordinate.  Y is assumed to be the second ordinate
+func (c Coord) Y() float64 {
+	return c[1]
+}
+
+// Set copies the ordinate data from the other coord to this coord
+func (c Coord) Set(other Coord) {
+	for i := 0; i < len(c) && i < len(other); i++ {
+		c[i] = other[i]
+	}
+}
+
+// Equal compares that all ordinates are the same in this and the other coords.
+// It is assumed that this coord and other coord both have the same (provided) layout
+func (c Coord) Equal(layout Layout, other Coord) bool {
+
+	numOrds := len(c)
+
+	if layout.Stride() < numOrds {
+		numOrds = layout.Stride()
+	}
+
+	if (len(c) < layout.Stride() || len(other) < layout.Stride()) && len(c) != len(other) {
+		return false
+	}
+
+	for i := 0; i < numOrds; i++ {
+		if math.IsNaN(c[i]) || math.IsNaN(other[i]) {
+			if !math.IsNaN(c[i]) || !math.IsNaN(other[i]) {
+				return false
+			}
+		} else if c[i] != other[i] {
+			return false
+		}
+	}
+
+	return true
+}
 
 // A T is a generic interface geomemented by all geometry types.
 type T interface {
