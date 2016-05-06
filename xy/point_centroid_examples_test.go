@@ -17,6 +17,18 @@ func ExamplePointsCentroid() {
 	// Output: [1 1]
 }
 
+func ExampleMultiPointCentroid() {
+	multiPoint := geom.NewMultiPointFlat(geom.XY, []float64{
+		0,0,
+		2,0,
+		2,2,
+		0,2})
+	centroid := xy.MultiPointCentroid(multiPoint)
+
+	fmt.Println(centroid)
+	// Output: [1 1]
+}
+
 func ExamplePointsCentroidFlat() {
 	multiPoint := geom.NewMultiPointFlat(geom.XY, []float64{0, 0, 2, 0, 2, 2, 0, 2})
 	centroid := xy.PointsCentroidFlat(multiPoint.Layout(), multiPoint.FlatCoords())

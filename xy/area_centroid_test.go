@@ -87,7 +87,7 @@ func TestAreaGetCentroid(t *testing.T) {
 
 		layout := tc.polygons[0].Layout()
 		multiPolygon := geom.NewMultiPolygonFlat(layout, coords, endss)
-		centroid = xy.MultiPolygonsCentroid(multiPolygon)
+		centroid = xy.MultiPolygonCentroid(multiPolygon)
 
 		if !reflect.DeepEqual(tc.areaCentroid, centroid) {
 			t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)

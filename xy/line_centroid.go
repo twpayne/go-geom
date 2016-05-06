@@ -19,6 +19,20 @@ func LinesCentroid(line *geom.LineString, extraLines ...*geom.LineString) (centr
 	return calculator.GetCentroid()
 }
 
+// LineRingCentroid computes the centroid of all the LinearRings provided as arguments.
+//
+// Algorithm: Compute the average of the midpoints of all line segments weighted by the segment length.
+func LinearRingsCentroid(line *geom.LinearRing, extraLines ...*geom.LinearRing) (centroid geom.Coord) {
+	calculator := NewLineCentroidCalculator(line.Layout())
+	calculator.AddLinearRing(line)
+
+	for _, l := range extraLines {
+		calculator.AddLinearRing(l)
+	}
+
+	return calculator.GetCentroid()
+}
+
 // MultiLineCentroid computes the centroid of the MultiLineString string
 //
 // Algorithm: Compute the average of the midpoints of all line segments weighted by the segment length.
