@@ -6,7 +6,7 @@ import (
 	"math"
 )
 
-const PI_TIMES_2 = math.Pi * 2
+const piTimes2 = math.Pi * 2
 
 // ToDegrees converts from radians to degrees.
 //
@@ -119,10 +119,10 @@ func AngleOrientation(ang1, ang2 float64) orientation.Type {
 // equivalent angle in the range ( -Pi, Pi ].
 func Normalize(angle float64) float64 {
 	for angle > math.Pi {
-		angle -= PI_TIMES_2
+		angle -= piTimes2
 	}
 	for angle <= -math.Pi {
-		angle += PI_TIMES_2
+		angle += piTimes2
 	}
 	return angle
 }
@@ -142,15 +142,15 @@ func Normalize(angle float64) float64 {
 func NormalizePositive(angle float64) float64 {
 	if angle < 0.0 {
 		for angle < 0.0 {
-			angle += PI_TIMES_2
+			angle += piTimes2
 		}
 		// in case round-off error bumps the value over
-		if angle >= PI_TIMES_2 {
+		if angle >= piTimes2 {
 			angle = 0.0
 		}
 	} else {
-		for angle >= PI_TIMES_2 {
-			angle -= PI_TIMES_2
+		for angle >= piTimes2 {
+			angle -= piTimes2
 		}
 		// in case round-off error bumps the value under
 		if angle < 0.0 {
@@ -176,7 +176,7 @@ func Diff(ang1, ang2 float64) float64 {
 	}
 
 	if delAngle > math.Pi {
-		delAngle = PI_TIMES_2 - delAngle
+		delAngle = piTimes2 - delAngle
 	}
 
 	return delAngle
