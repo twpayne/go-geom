@@ -93,7 +93,7 @@ func InteriorAngle(p0, p1, p2 geom.Coord) float64 {
 func AngleOrientation(ang1, ang2 float64) orientation.Type {
 	crossproduct := math.Sin(ang2 - ang1)
 
-	switch crossproduct {
+	switch {
 	case crossproduct > 0:
 		return orientation.CounterClockwise
 	case crossproduct < 0:
