@@ -365,7 +365,7 @@ func Equal(coords1 []float64, start1 int, coords2 []float64, start2 int) bool {
 	return internal.Equal(coords1, start1, coords2, start2)
 }
 
-// Distance2D calculates the 2d distance between the two coordinates
-func Distance2D(c1, c2 geom.Coord) float64 {
+// Distance calculates the 2d distance between the two coordinates
+func Distance(c1, c2 geom.Coord) float64 {
 	return internal.Distance2D(c1, c2)
 }
