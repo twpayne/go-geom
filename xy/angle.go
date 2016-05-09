@@ -1,26 +1,13 @@
 package xy
 
 import (
+	"math"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/orientation"
-	"math"
 )
 
 const piTimes2 = math.Pi * 2
-
-// ToDegrees converts from radians to degrees.
-//
-// Param radians - an angle in radians
-func ToDegrees(radians float64) float64 {
-	return (radians * 180) / (math.Pi)
-}
-
-// ToRadians converts from degrees to radians.
-//
-// Param AngleDegrees - an angle in degrees
-func ToRadians(angleDegrees float64) float64 {
-	return (angleDegrees * math.Pi) / 180.0
-}
 
 // Angle calculates the angle of the vector from p0 to p1,
 // relative to the positive X-axis.
@@ -106,13 +93,14 @@ func InteriorAngle(p0, p1, p2 geom.Coord) float64 {
 func AngleOrientation(ang1, ang2 float64) orientation.Type {
 	crossproduct := math.Sin(ang2 - ang1)
 
-	if crossproduct > 0 {
+	switch crossproduct {
+	case crossproduct > 0:
 		return orientation.CounterClockwise
-	}
-	if crossproduct < 0 {
+	case crossproduct < 0:
 		return orientation.Clockwise
+	default:
+		return orientation.Collinear
 	}
-	return orientation.Collinear
 }
 
 // Normalize computes the normalized value of an angle, which is the

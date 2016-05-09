@@ -6,16 +6,6 @@ import (
 	"github.com/twpayne/go-geom/xy"
 )
 
-func ExampleToDegrees() {
-	fmt.Println(xy.ToDegrees(3.839724354387525))
-	// Output: 220
-}
-
-func ExampleToRadians() {
-	fmt.Println(xy.ToRadians(220))
-	// Output: 3.839724354387525
-}
-
 func ExampleAngle() {
 	p1 := geom.Coord{-4.007890598483777E8, 7.149034067497588E8, -4.122305737303918E7}
 	p2 := geom.Coord{6.452880325856061E8, -7.013452035812421E7, 6.060122721006607E8}

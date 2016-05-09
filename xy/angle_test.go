@@ -7,52 +7,6 @@ import (
 	"testing"
 )
 
-func TestToDegreesAndToRadian(t *testing.T) {
-	for i, tc := range []struct {
-		radian, degree float64
-	}{
-		{
-			degree: 220.0,
-			radian: 3.839724354387525,
-		},
-		{
-			degree: 47.0,
-			radian: 0.8203047484373349,
-		},
-		{
-			degree: 59.99999999999999,
-			radian: 1.0471975511965976,
-		},
-		{
-			degree: 219.00000000000003,
-			radian: 3.822271061867582,
-		},
-		{
-			degree: 107.0,
-			radian: 1.8675022996339325,
-		},
-		{
-			degree: 328.0,
-			radian: 5.7246799465414,
-		},
-		{
-			degree: 890.0,
-			radian: 15.533430342749531,
-		},
-	} {
-		calcDegree := xy.ToDegrees(tc.radian)
-		calcRadian := xy.ToRadians(tc.degree)
-
-		if calcDegree != tc.degree {
-			t.Errorf("Test %v failed: expected xy.ToDegrees(%v) expected %v but got %v", i+1, tc.radian, tc.degree, calcRadian)
-		}
-
-		if calcRadian != tc.radian {
-			t.Errorf("Test %v failed: expected xy.ToRadians(%v) expected %v but got %v", i+1, tc.degree, tc.radian, calcDegree)
-		}
-	}
-}
-
 func TestAngle(t *testing.T) {
 
 	for i, tc := range []struct {
