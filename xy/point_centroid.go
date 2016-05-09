@@ -18,13 +18,13 @@ func PointsCentroid(point *geom.Point, extra ...*geom.Point) geom.Coord {
 
 // MultiPointCentroid computes the centroid of the multi point argument
 //
-// Algorithm: average of all points
+// Algorithm: average of all points in MultiPoint
 func MultiPointCentroid(point *geom.MultiPoint) geom.Coord {
 	calc := NewPointCentroidCalculator()
 	coords := point.FlatCoords()
 	stride := point.Layout().Stride()
 	for i := 0; i < len(coords); i += stride {
-		calc.AddCoord(geom.Coord(coords[i:i+stride]))
+		calc.AddCoord(geom.Coord(coords[i : i+stride]))
 	}
 
 	return calc.GetCentroid()

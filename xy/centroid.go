@@ -1,29 +1,31 @@
 package xy
 
 import (
-	"github.com/twpayne/go-geom"
 	"fmt"
+	"github.com/twpayne/go-geom"
 )
 
 // Centroid calculates the centroid of the geometry.  The centroid may be outside of the geometry depending
 // on the topology of the geometry
-func Centroid(geometry geom.T) geom.Coord {
+func Centroid(geometry geom.T) (centroid geom.Coord, err error) {
 	switch t := geometry.(type) {
 	case *geom.Point:
-		return PointsCentroid(t)
+		centroid = PointsCentroid(t)
 	case *geom.MultiPoint:
-		return MultiPointCentroid(t)
+		centroid = MultiPointCentroid(t)
 	case *geom.LineString:
-		return LinesCentroid(t)
+		centroid = LinesCentroid(t)
 	case *geom.LinearRing:
-		return LinearRingsCentroid(t)
+		centroid = LinearRingsCentroid(t)
 	case *geom.MultiLineString:
-		return MultiLineCentroid(t)
+		centroid = MultiLineCentroid(t)
 	case *geom.Polygon:
-		return PolygonsCentroid(t)
+		centroid = PolygonsCentroid(t)
 	case *geom.MultiPolygon:
-		return MultiPolygonCentroid(t)
+		centroid = MultiPolygonCentroid(t)
 	default:
-		panic(fmt.Sprintf("%v is not a supported type for centroid calculation", t))
+		err = fmt.Errorf("%v is not a supported type for centroid calculation", t)
 	}
+
+	return centroid, err
 }

@@ -30,7 +30,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 
 }
 
-// MultiPolygonsCentroid computes the centroid of an area geometry. (MultiPolygon)
+// MultiPolygonCentroid computes the centroid of an area geometry. (MultiPolygon)
 //
 // Algorithm
 // Based on the usual algorithm for calculating the centroid as a weighted sum of the centroids
