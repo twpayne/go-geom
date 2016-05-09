@@ -1,8 +1,9 @@
 package xyz
 
 import (
-	"github.com/twpayne/go-geom"
 	"math"
+
+	"github.com/twpayne/go-geom"
 )
 
 // VectorDot calculates the dot product of two vectors
@@ -18,8 +19,8 @@ func VectorDot(v1Start, v1End, v2Start, v2End geom.Coord) float64 {
 
 // VectorNormalize creates a coordinate that is the normalized vector from 0,0,0 to vector
 func VectorNormalize(vector geom.Coord) geom.Coord {
-	len := VectorLength(vector)
-	return geom.Coord{vector[0] / len, vector[1] / len, vector[2] / len}
+	vLen := VectorLength(vector)
+	return geom.Coord{vector[0] / vLen, vector[1] / vLen, vector[2] / vLen}
 }
 
 // VectorLength calculates the length of the vector from 0,0,0 to vector
