@@ -27,7 +27,7 @@ func ExampleLocatePointInGeom3() {
 	polygon := geom.NewPolygonFlat(geom.XY, []float64{
 		0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
 		0.25, 0.25, 0.75, 0.25, 0.75, 0.75, 0.25, 0.75, 0.25, 0.25}, []int{10, 20})
-	// exterior is coord is in a hole of a polygon
+	// Exterior if coord is in a hole of a polygon
 	loc := xy.LocatePointInGeom(coord, polygon)
 	fmt.Println(loc)
 	//Output: Exterior
