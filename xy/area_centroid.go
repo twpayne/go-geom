@@ -30,7 +30,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 
 }
 
-// MultiPolygonsCentroid computes the centroid of an area geometry. (MultiPolygon)
+// MultiPolygonCentroid computes the centroid of an area geometry. (MultiPolygon)
 //
 // Algorithm
 // Based on the usual algorithm for calculating the centroid as a weighted sum of the centroids
@@ -43,7 +43,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 // The code has also be extended to handle degenerate (zero-area) polygons.
 //
 // In this case, the centroid of the line segments in the polygon will be returned.
-func MultiPolygonsCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
+func MultiPolygonCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 
 	calc := NewAreaCentroidCalculator(polygon.Layout())
 	for i := 0; i < polygon.NumPolygons(); i++ {
