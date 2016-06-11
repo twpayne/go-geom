@@ -114,7 +114,7 @@ func (c Coord) Equal(layout Layout, other Coord) bool {
 	return true
 }
 
-// A T is a generic interface geomemented by all geometry types.
+// T is a generic interface implemented by all geometry types.
 type T interface {
 	Layout() Layout
 	Stride() int
