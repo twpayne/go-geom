@@ -108,7 +108,9 @@ func TestMultiPointPush(t *testing.T) {
 		coords: []Coord{},
 		bounds: NewBounds(XY),
 	})
-	mp.Push(NewPoint(XY).MustSetCoords(Coord{1, 2}))
+	if err := mp.Push(NewPoint(XY).MustSetCoords(Coord{1, 2})); err != nil {
+		t.Error(err)
+	}
 	testMultiPointEquals(t, mp, &testMultiPoint{
 		layout:     XY,
 		stride:     2,
@@ -116,7 +118,9 @@ func TestMultiPointPush(t *testing.T) {
 		flatCoords: []float64{1, 2},
 		bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 	})
-	mp.Push(NewPoint(XY).MustSetCoords(Coord{3, 4}))
+	if err := mp.Push(NewPoint(XY).MustSetCoords(Coord{3, 4})); err != nil {
+		t.Error(err)
+	}
 	testMultiPointEquals(t, mp, &testMultiPoint{
 		layout:     XY,
 		stride:     2,
