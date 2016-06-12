@@ -33,11 +33,7 @@ func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.C
 		// points are collinear - check distance
 		op := dxp*dxp + dyp*dyp
 		oq := dxq*dxq + dyq*dyq
-		if op < oq {
-			return true
-		}
-
-		return false
+		return op < oq
 	}
 	return sorting.NewFlatCoordSorting(layout, coordData, isLess)
 }
