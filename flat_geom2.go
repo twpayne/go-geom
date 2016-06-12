@@ -15,10 +15,8 @@ func (g *geom2) Ends() []int {
 
 func (g *geom2) setCoords(coords2 [][]Coord) error {
 	var err error
-	if g.flatCoords, g.ends, err = deflate2(nil, nil, coords2, g.stride); err != nil {
-		return err
-	}
-	return nil
+	g.flatCoords, g.ends, err = deflate2(nil, nil, coords2, g.stride)
+	return err
 }
 
 func (g *geom2) swap(g2 *geom2) {
