@@ -69,8 +69,8 @@ func checkPointCentroidFlatFunc(t *testing.T, i int, tc pointTestData) {
 	data := make([]float64, len(tc.points)*2, len(tc.points)*2)
 
 	for i, p := range tc.points {
-		data[i*2] = p.FlatCoords()[0]
-		data[(i*2)+1] = p.FlatCoords()[1]
+		data[i*2] = p.X()
+		data[(i*2)+1] = p.Y()
 	}
 	centroid := xy.PointsCentroidFlat(geom.XY, data)
 
@@ -83,9 +83,8 @@ func checkPointCentroidMultiPoint(t *testing.T, i int, tc pointTestData) {
 	data := make([]float64, len(tc.points)*2, len(tc.points)*2)
 
 	for i, p := range tc.points {
-		flatCoords := p.FlatCoords()
-		data[i*2] = flatCoords[0]
-		data[(i*2)+1] = flatCoords[1]
+		data[i*2] = p.X()
+		data[(i*2)+1] = p.Y()
 	}
 	line := geom.NewMultiPointFlat(geom.XY, data)
 	centroid := xy.MultiPointCentroid(line)
