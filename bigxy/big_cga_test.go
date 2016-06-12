@@ -1,12 +1,13 @@
 package bigxy_test
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/bigxy"
-	"github.com/twpayne/go-geom/xy/orientation"
 	"math"
 	"reflect"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/bigxy"
+	"github.com/twpayne/go-geom/xy/orientation"
 )
 
 func TestOrientationIndex(t *testing.T) {

@@ -1,11 +1,12 @@
 package xy_test
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 	"github.com/twpayne/go-geom/xy/internal"
-	"reflect"
-	"testing"
 )
 
 func TestCentroid(t *testing.T) {

@@ -1,10 +1,11 @@
 package xyz_test
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xyz"
 	"reflect"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xyz"
 )
 
 func TestVectorDot(t *testing.T) {

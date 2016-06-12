@@ -1,13 +1,14 @@
 package xy
 
 import (
+	"sort"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/sorting"
 	"github.com/twpayne/go-geom/transform"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/orientation"
-	"sort"
 )
 
 type convexHullCalculator struct {

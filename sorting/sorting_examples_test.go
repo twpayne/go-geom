@@ -2,9 +2,10 @@ package sorting_test
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
-	"sort"
 )
 
 func ExampleNewFlatCoordSorting2D() {

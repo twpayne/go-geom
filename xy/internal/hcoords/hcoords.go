@@ -2,8 +2,9 @@ package hcoords
 
 import (
 	"fmt"
-	"github.com/twpayne/go-geom"
 	"math"
+
+	"github.com/twpayne/go-geom"
 )
 
 // GetIntersection Computes the (approximate) intersection point between two line segments

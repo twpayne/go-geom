@@ -1,11 +1,12 @@
 package xy_test
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xy"
 	"math"
 	"reflect"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy"
 )
 
 func TestPointCentroidCalculator_GetCentroid_NoCoordsAdded(t *testing.T) {

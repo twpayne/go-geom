@@ -1,11 +1,12 @@
 package sorting_test
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/sorting"
 	"reflect"
 	"sort"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/sorting"
 )
 
 func TestCompare2D(t *testing.T) {

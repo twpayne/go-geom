@@ -1,12 +1,13 @@
 package xy_test
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xy"
-	"github.com/twpayne/go-geom/xy/internal"
 	"reflect"
 	"sort"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy"
+	"github.com/twpayne/go-geom/xy/internal"
 )
 
 func TestNewRadialSorting(t *testing.T) {

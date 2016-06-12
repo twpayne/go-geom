@@ -6,10 +6,11 @@
 package bigxy
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xy/orientation"
 	"math"
 	"math/big"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy/orientation"
 )
 
 // dpSafeEpsilon is the value which is safely greater than the

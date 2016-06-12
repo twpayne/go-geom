@@ -1,9 +1,10 @@
 package centralendpoint
 
 import (
+	"math"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/internal"
-	"math"
 )
 
 // GetIntersection computes an approximate intersection of two line segments by taking the most central of the endpoints of the segments.

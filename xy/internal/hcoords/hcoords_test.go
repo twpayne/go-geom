@@ -1,9 +1,10 @@
 package hcoords_test
 
 import (
+	"testing"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/internal/hcoords"
-	"testing"
 )
 
 func TestGetIntersection(t *testing.T) {

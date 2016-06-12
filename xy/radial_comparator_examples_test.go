@@ -2,9 +2,10 @@ package xy_test
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
-	"sort"
 )
 
 func ExampleNewRadialSorting() {

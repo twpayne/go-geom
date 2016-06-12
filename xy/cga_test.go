@@ -1,12 +1,13 @@
 package xy_test
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xy"
-	"github.com/twpayne/go-geom/xy/internal"
 	"math"
 	"math/rand"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy"
+	"github.com/twpayne/go-geom/xy/internal"
 )
 
 func TestIsOnLinePanic(t *testing.T) {
