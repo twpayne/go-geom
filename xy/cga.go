@@ -71,7 +71,7 @@ func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []flo
 		segmentStart := lineSegmentCoordinates[i-stride : i-stride+2]
 		segmentEnd := lineSegmentCoordinates[i : i+2]
 
-		if lineintersector.PointIntersectsLine(strategy, geom.Coord(point), geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
+		if lineintersector.PointIntersectsLine(strategy, point, geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
 			return true
 		}
 	}

@@ -165,14 +165,14 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 		}
 	} else {
 		if 0.0 < x2 {
-			return Sign(-sign)
+			return -sign
 		}
 		if x1 >= x2 {
-			sign = Sign(-sign)
+			sign = -sign
 			x1 = -x1
 			x2 = -x2
 		} else {
-			return Sign(-sign)
+			return -sign
 		}
 	}
 
@@ -191,7 +191,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 		 *  testing if R (new U2) is in U1 rectangle
 		 */
 		if y2 < 0.0 {
-			return Sign(-sign)
+			return -sign
 		}
 		if y2 > y1 {
 			return sign
@@ -206,17 +206,17 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			}
 		} else {
 			if y1 > y2+y2 {
-				return Sign(-sign)
+				return -sign
 			}
 			x2 = x1 - x2
 			y2 = y1 - y2
-			sign = Sign(-sign)
+			sign = -sign
 		}
 		if y2 == 0.0 {
 			if x2 == 0.0 {
 				return 0
 			}
-			return Sign(-sign)
+			return -sign
 		}
 		if x2 == 0.0 {
 			return sign
@@ -238,7 +238,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			return sign
 		}
 		if y1 > y2 {
-			return Sign(-sign)
+			return -sign
 		}
 
 		/*
@@ -246,7 +246,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 		 */
 		if x2 > x1+x1 {
 			if y2 < y1+y1 {
-				return Sign(-sign)
+				return -sign
 			}
 		} else {
 			if y2 > y1+y1 {
@@ -254,7 +254,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			}
 			x1 = x2 - x1
 			y1 = y2 - y1
-			sign = Sign(-sign)
+			sign = -sign
 		}
 		if y1 == 0.0 {
 			if x1 == 0.0 {
@@ -263,7 +263,7 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			return sign
 		}
 		if x1 == 0.0 {
-			return Sign(-sign)
+			return -sign
 		}
 	}
 
