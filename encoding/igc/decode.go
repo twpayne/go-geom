@@ -86,7 +86,6 @@ func parseDecInRange(s string, start, stop, min, max int) (int, error) {
 
 // parser contains the state of a parser.
 type parser struct {
-	state             int
 	headers           []Header
 	coords            []float64
 	year, month, day  int
@@ -123,7 +122,8 @@ func (p *parser) parseB(line string) error {
 		return err
 	}
 	if p.tdsStart != 0 {
-		decisecond, err := parseDecInRange(line, p.tdsStart, p.tdsStop, 0, 10)
+		var decisecond int
+		decisecond, err = parseDecInRange(line, p.tdsStart, p.tdsStop, 0, 10)
 		if err != nil {
 			return err
 		}
@@ -150,7 +150,8 @@ func (p *parser) parseB(line string) error {
 	}
 	lat := float64(60000*latDeg+latMilliMin) / 60000.
 	if p.ladStart != 0 {
-		if lad, err := parseDec(line, p.ladStart, p.ladStop); err == nil {
+		var lad int
+		if lad, err = parseDec(line, p.ladStart, p.ladStop); err == nil {
 			lat += float64(lad) / 6000000.
 		} else {
 			return err
@@ -173,7 +174,8 @@ func (p *parser) parseB(line string) error {
 	}
 	lng := float64(60000*lngDeg+lngMilliMin) / 60000.
 	if p.lodStart != 0 {
-		if lod, err := parseDec(line, p.lodStart, p.lodStop); err == nil {
+		var lod int
+		if lod, err = parseDec(line, p.lodStart, p.lodStop); err == nil {
 			lng += float64(lod) / 6000000.
 		} else {
 			return err

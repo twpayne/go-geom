@@ -2,6 +2,7 @@ package transform_test
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
 	"github.com/twpayne/go-geom/transform"

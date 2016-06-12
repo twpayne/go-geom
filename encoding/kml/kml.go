@@ -6,7 +6,7 @@ import (
 	"github.com/twpayne/go-kml"
 )
 
-// Encode encodes an aribtrary geometry.
+// Encode encodes an arbitrary geometry.
 func Encode(g geom.T) (kml.Element, error) {
 	switch g.(type) {
 	case *geom.Point:

@@ -6,10 +6,11 @@
 package bigxy
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xy/orientation"
 	"math"
 	"math/big"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy/orientation"
 )
 
 // dpSafeEpsilon is the value which is safely greater than the
@@ -47,7 +48,7 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Typ
 	dy1.Mul(&dy1, &dx2)
 	dx1.Sub(&dx1, &dy1)
 
-	return orientation.Type(orientationBasedOnSignForBig(dx1))
+	return orientationBasedOnSignForBig(dx1)
 }
 
 // Intersection computes the intersection point of the two lines using math.big.Float arithmetic.

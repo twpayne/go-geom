@@ -1,13 +1,14 @@
 package xy
 
 import (
+	"sort"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/sorting"
 	"github.com/twpayne/go-geom/transform"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/orientation"
-	"sort"
 )
 
 type convexHullCalculator struct {
@@ -132,7 +133,7 @@ func (calc *convexHullCalculator) grahamScan(coordData []float64) []float64 {
 			p, _ = coordStack.Pop()
 		}
 		coordStack.Push(p, 0)
-		p = coordStack.Push(coordData, i)
+		coordStack.Push(coordData, i)
 	}
 	coordStack.Push(coordData, 0)
 	return coordStack.Data

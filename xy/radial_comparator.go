@@ -1,11 +1,12 @@
 package xy
 
 import (
+	"sort"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/sorting"
 	"github.com/twpayne/go-geom/xy/orientation"
-	"sort"
 )
 
 // NewRadialSorting creates an implementation sort.Interface which will sort the wrapped coordinate array
@@ -33,11 +34,7 @@ func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.C
 		// points are collinear - check distance
 		op := dxp*dxp + dyp*dyp
 		oq := dxq*dxq + dyq*dyq
-		if op < oq {
-			return true
-		}
-
-		return false
+		return op < oq
 	}
 	return sorting.NewFlatCoordSorting(layout, coordData, isLess)
 }

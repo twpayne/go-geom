@@ -50,10 +50,8 @@ func (g *geom0) swap(g2 *geom0) {
 
 func (g *geom0) setCoords(coords0 []float64) error {
 	var err error
-	if g.flatCoords, err = deflate0(nil, coords0, g.stride); err != nil {
-		return err
-	}
-	return nil
+	g.flatCoords, err = deflate0(nil, coords0, g.stride)
+	return err
 }
 
 func (g *geom0) Stride() int {

@@ -1,9 +1,10 @@
 package internal_test
 
 import (
-	"github.com/twpayne/go-geom/xy/internal"
 	"math"
 	"testing"
+
+	"github.com/twpayne/go-geom/xy/internal"
 )
 
 func TestIsSameSignAndNonZero(t *testing.T) {

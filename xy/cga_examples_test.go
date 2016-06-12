@@ -2,6 +2,7 @@ package xy_test
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 )
@@ -35,7 +36,7 @@ func ExampleLocatePointInRing() {
 func ExampleIsOnLine() {
 	line := geom.NewLineString(geom.XY)
 	line.MustSetCoords([]geom.Coord{
-		geom.Coord{0, 0}, geom.Coord{10, 0}, geom.Coord{10, 20},
+		{0, 0}, {10, 0}, {10, 20},
 	})
 	onLine := xy.IsOnLine(line.Layout(), geom.Coord{5, 0}, line.FlatCoords())
 	fmt.Println(onLine)
@@ -115,7 +116,7 @@ func ExampleEqual() {
 	// Output: false
 }
 
-func ExampleDistance2D() {
+func ExampleDistance() {
 	coords := []float64{10, 10, 10, -10}
 	distance := xy.Distance(geom.Coord(coords[0:2]), geom.Coord(coords[2:4]))
 	fmt.Println(distance)

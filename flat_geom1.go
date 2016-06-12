@@ -18,10 +18,8 @@ func (g *geom1) NumCoords() int {
 
 func (g *geom1) setCoords(coords1 []Coord) error {
 	var err error
-	if g.flatCoords, err = deflate1(nil, coords1, g.stride); err != nil {
-		return err
-	}
-	return nil
+	g.flatCoords, err = deflate1(nil, coords1, g.stride)
+	return err
 }
 
 func (g *geom1) swap(g2 *geom1) {

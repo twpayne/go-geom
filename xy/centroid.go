@@ -2,6 +2,7 @@ package xy
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 )
 

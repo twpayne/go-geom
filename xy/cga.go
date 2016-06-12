@@ -4,6 +4,8 @@ package xy
 
 import (
 	"fmt"
+	"math"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/xy/internal"
@@ -11,7 +13,6 @@ import (
 	"github.com/twpayne/go-geom/xy/internal/raycrossing"
 	"github.com/twpayne/go-geom/xy/location"
 	"github.com/twpayne/go-geom/xy/orientation"
-	"math"
 )
 
 // OrientationIndex returns the index of the direction of the point <code>q</code> relative to
@@ -71,7 +72,7 @@ func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []flo
 		segmentStart := lineSegmentCoordinates[i-stride : i-stride+2]
 		segmentEnd := lineSegmentCoordinates[i : i+2]
 
-		if lineintersector.PointIntersectsLine(strategy, geom.Coord(point), geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
+		if lineintersector.PointIntersectsLine(strategy, point, geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
 			return true
 		}
 	}

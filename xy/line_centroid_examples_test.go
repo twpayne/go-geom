@@ -2,6 +2,7 @@ package xy_test
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 )
@@ -14,8 +15,8 @@ func ExampleLinesCentroid() {
 	//Output: [6.5 6.5]
 }
 
-func ExampleLinearRingCentroid() {
-	line1 := geom.NewLinearRingFlat(geom.XY, []float64{0, 0, 1, 1, 3, 3, 0,0})
+func ExampleLinearRingsCentroid() {
+	line1 := geom.NewLinearRingFlat(geom.XY, []float64{0, 0, 1, 1, 3, 3, 0, 0})
 	line2 := geom.NewLinearRingFlat(geom.XY, []float64{10, 10, 11, 11, 13, 13, 10, 10})
 	centroid := xy.LinearRingsCentroid(line1, line2)
 	fmt.Println(centroid)

@@ -1,10 +1,11 @@
 package transform
 
 import (
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/sorting"
 	"reflect"
 	"testing"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/sorting"
 )
 
 func TestTree(t *testing.T) {

@@ -1,11 +1,12 @@
 package xy_test
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 	"github.com/twpayne/go-geom/xy/internal"
-	"reflect"
-	"testing"
 )
 
 func TestCentroid(t *testing.T) {
@@ -21,7 +22,7 @@ func TestCentroid(t *testing.T) {
 		},
 		{
 			id:       2,
-			geometry: geom.NewMultiPolygonFlat(geom.XY, []float64{-100, 100, 100, 100, 10, -100, -10, -100, -100, 100}, [][]int{[]int{10}}),
+			geometry: geom.NewMultiPolygonFlat(geom.XY, []float64{-100, 100, 100, 100, 10, -100, -10, -100, -100, 100}, [][]int{{10}}),
 			centroid: geom.Coord{0.0, 27.272727272727273},
 		},
 		{

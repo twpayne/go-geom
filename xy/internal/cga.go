@@ -1,8 +1,9 @@
 package internal
 
 import (
-	"github.com/twpayne/go-geom"
 	"math"
+
+	"github.com/twpayne/go-geom"
 )
 
 // IsPointWithinLineBounds calculates if the point p lays within the bounds of the line

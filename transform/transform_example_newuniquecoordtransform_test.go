@@ -2,6 +2,7 @@ package transform_test
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
 	"github.com/twpayne/go-geom/transform"
@@ -16,7 +17,7 @@ func (c coordTransformExampleCompare) IsLess(x, y geom.Coord) bool {
 	return sorting.IsLess2D(x, y)
 }
 
-func ExampleNewUniqueCoordFilter() {
+func ExampleUniqueCoords() {
 	coordData := []float64{0, 0, 1, 1, 1, 1, 3, 3, 0, 0}
 	layout := geom.XY
 

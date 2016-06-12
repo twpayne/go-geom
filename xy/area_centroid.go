@@ -1,9 +1,10 @@
 package xy
 
 import (
+	"math"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/internal"
-	"math"
 )
 
 // PolygonsCentroid computes the centroid of an area geometry. (Polygon)

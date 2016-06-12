@@ -1,9 +1,10 @@
 package transform
 
 import (
-	"github.com/twpayne/go-geom"
 	"reflect"
 	"testing"
+
+	"github.com/twpayne/go-geom"
 )
 
 func TestUniqueCoords(t *testing.T) {

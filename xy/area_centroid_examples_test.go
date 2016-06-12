@@ -2,6 +2,7 @@ package xy_test
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 )
@@ -16,7 +17,7 @@ func ExamplePolygonsCentroid() {
 	// Output: [0 0]
 }
 
-func ExampleAreaCentroid_AddPolygon() {
+func ExampleAreaCentroidCalculator_AddPolygon() {
 	polygons := []*geom.Polygon{
 		geom.NewPolygonFlat(geom.XY, []float64{0, 0, -10, 0, -10, -10, 0, -10, 0, 0}, []int{10}),
 		geom.NewPolygonFlat(geom.XY, []float64{0, 0, 10, 0, 10, 10, 0, 10, 0, 0}, []int{10}),

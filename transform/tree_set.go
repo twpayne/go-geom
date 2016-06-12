@@ -2,6 +2,7 @@ package transform
 
 import (
 	"fmt"
+
 	"github.com/twpayne/go-geom"
 )
 
@@ -86,12 +87,12 @@ func (set *TreeSet) insertImpl(t *tree, v []float64) (*tree, bool) {
 		return &tree{nil, v, nil}, true
 	}
 
-	if set.compare.IsEquals(geom.Coord(v), geom.Coord(t.value)) {
+	if set.compare.IsEquals(geom.Coord(v), t.value) {
 		return t, false
 	}
 
 	var added bool
-	if set.compare.IsLess(geom.Coord(v), geom.Coord(t.value)) {
+	if set.compare.IsLess(geom.Coord(v), t.value) {
 		t.left, added = set.insertImpl(t.left, v)
 	} else {
 		t.right, added = set.insertImpl(t.right, v)

@@ -1,10 +1,11 @@
 package xy_test
 
 import (
+	"testing"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 	"github.com/twpayne/go-geom/xy/orientation"
-	"testing"
 )
 
 func TestAngle(t *testing.T) {

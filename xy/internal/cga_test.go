@@ -1,8 +1,9 @@
 package internal
 
 import (
-	"github.com/twpayne/go-geom"
 	"testing"
+
+	"github.com/twpayne/go-geom"
 )
 
 func TestEqual2D(t *testing.T) {

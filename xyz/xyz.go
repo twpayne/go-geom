@@ -4,9 +4,10 @@
 package xyz
 
 import (
+	"math"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
-	"math"
 )
 
 // Distance calculates the distance between the two coordinates in 3d space.
