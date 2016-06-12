@@ -132,7 +132,7 @@ func (calc *convexHullCalculator) grahamScan(coordData []float64) []float64 {
 			p, _ = coordStack.Pop()
 		}
 		coordStack.Push(p, 0)
-		p = coordStack.Push(coordData, i)
+		coordStack.Push(coordData, i)
 	}
 	coordStack.Push(coordData, 0)
 	return coordStack.Data
