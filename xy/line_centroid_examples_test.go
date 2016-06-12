@@ -15,7 +15,7 @@ func ExampleLinesCentroid() {
 }
 
 func ExampleLinearRingCentroid() {
-	line1 := geom.NewLinearRingFlat(geom.XY, []float64{0, 0, 1, 1, 3, 3, 0,0})
+	line1 := geom.NewLinearRingFlat(geom.XY, []float64{0, 0, 1, 1, 3, 3, 0, 0})
 	line2 := geom.NewLinearRingFlat(geom.XY, []float64{10, 10, 11, 11, 13, 13, 10, 10})
 	centroid := xy.LinearRingsCentroid(line1, line2)
 	fmt.Println(centroid)

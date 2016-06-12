@@ -21,7 +21,7 @@ func TestCentroid(t *testing.T) {
 		},
 		{
 			id:       2,
-			geometry: geom.NewMultiPolygonFlat(geom.XY, []float64{-100, 100, 100, 100, 10, -100, -10, -100, -100, 100}, [][]int{[]int{10}}),
+			geometry: geom.NewMultiPolygonFlat(geom.XY, []float64{-100, 100, 100, 100, 10, -100, -10, -100, -100, 100}, [][]int{{10}}),
 			centroid: geom.Coord{0.0, 27.272727272727273},
 		},
 		{

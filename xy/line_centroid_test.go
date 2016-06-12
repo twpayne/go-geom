@@ -65,8 +65,8 @@ var lineTestData = []lineDataType{
 func TestLineGetCentroidLines(t *testing.T) {
 	for i, tc := range lineTestData {
 		verifyLineCentroid(t, i, tc)
-		verifyMultiLineCentroid(t, i , tc)
-		verifyLinearRingsCentroid(t, i , tc)
+		verifyMultiLineCentroid(t, i, tc)
+		verifyLinearRingsCentroid(t, i, tc)
 	}
 
 }
@@ -74,7 +74,7 @@ func verifyLineCentroid(t *testing.T, i int, tc lineDataType) {
 	centroid := xy.LinesCentroid(tc.lines[0], tc.lines[1:]...)
 
 	if !reflect.DeepEqual(tc.lineCentroid, centroid) {
-		t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i + 1, tc.lineCentroid, centroid)
+		t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 
 }
@@ -92,7 +92,7 @@ func verifyMultiLineCentroid(t *testing.T, i int, tc lineDataType) {
 	centroid := xy.MultiLineCentroid(multiPolygon)
 
 	if !reflect.DeepEqual(tc.lineCentroid, centroid) {
-		t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i + 1, tc.lineCentroid, centroid)
+		t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 
 }
@@ -100,7 +100,7 @@ func verifyLinearRingsCentroid(t *testing.T, i int, tc lineDataType) {
 	rings := make([]*geom.LinearRing, len(tc.lines))
 	for i, p := range tc.lines {
 		coords := append([]float64{}, p.FlatCoords()...)
-		if coords[0] != coords[len(coords) - 2] ||coords[1] != coords[len(coords) - 1] {
+		if coords[0] != coords[len(coords)-2] || coords[1] != coords[len(coords)-1] {
 			coords = append(coords, coords[0], coords[1])
 		}
 		rings[i] = geom.NewLinearRingFlat(p.Layout(), coords)
@@ -109,7 +109,7 @@ func verifyLinearRingsCentroid(t *testing.T, i int, tc lineDataType) {
 	centroid := xy.LinearRingsCentroid(rings[0], rings[1:]...)
 
 	if !reflect.DeepEqual(tc.lineCentroid, centroid) {
-		t.Errorf("Test '%v' failed: expected centroid for linear rings to be\n%v but was \n%v", i + 1, tc.lineCentroid, centroid)
+		t.Errorf("Test '%v' failed: expected centroid for linear rings to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 }
 
@@ -122,7 +122,7 @@ func TestLineGetCentroidPolygons(t *testing.T) {
 		centroid := calc.GetCentroid()
 
 		if !reflect.DeepEqual(tc.lineCentroid, centroid) {
-			t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i + 1, tc.lineCentroid, centroid)
+			t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 		}
 	}
 

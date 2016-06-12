@@ -35,7 +35,7 @@ func ExampleLocatePointInRing() {
 func ExampleIsOnLine() {
 	line := geom.NewLineString(geom.XY)
 	line.MustSetCoords([]geom.Coord{
-		geom.Coord{0, 0}, geom.Coord{10, 0}, geom.Coord{10, 20},
+		{0, 0}, {10, 0}, {10, 20},
 	})
 	onLine := xy.IsOnLine(line.Layout(), geom.Coord{5, 0}, line.FlatCoords())
 	fmt.Println(onLine)

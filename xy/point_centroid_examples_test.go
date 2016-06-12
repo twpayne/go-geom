@@ -19,10 +19,10 @@ func ExamplePointsCentroid() {
 
 func ExampleMultiPointCentroid() {
 	multiPoint := geom.NewMultiPointFlat(geom.XY, []float64{
-		0,0,
-		2,0,
-		2,2,
-		0,2})
+		0, 0,
+		2, 0,
+		2, 2,
+		0, 2})
 	centroid := xy.MultiPointCentroid(multiPoint)
 
 	fmt.Println(centroid)
