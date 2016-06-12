@@ -86,7 +86,6 @@ func parseDecInRange(s string, start, stop, min, max int) (int, error) {
 
 // parser contains the state of a parser.
 type parser struct {
-	state             int
 	headers           []Header
 	coords            []float64
 	year, month, day  int
