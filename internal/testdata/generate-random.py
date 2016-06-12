@@ -103,6 +103,7 @@ def main(argv):
     print >>f, '\t"github.com/twpayne/go-geom"'
     print >>f, ')'
     print >>f
+    print >>f, '// Random is a collection of randomly-generated test data.'
     print >>f, 'var Random = []struct {'
     print >>f, '\tG   geom.T'
     print >>f, '\tHex string'

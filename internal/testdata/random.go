@@ -6,6 +6,7 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// Random is a collection of randomly-generated test data.
 var Random = []struct {
 	G   geom.T
 	Hex string
