@@ -71,7 +71,7 @@ func ExampleInteriorAngle() {
 	// Output: 0.44900284899855447
 }
 
-func ExampleGetAngleOrientation() {
+func ExampleAngleOrientation() {
 	p1 := 1.5973282539123574E8
 	p2 := 1.0509666695558771E9
 

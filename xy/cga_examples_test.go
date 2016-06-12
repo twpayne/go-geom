@@ -115,7 +115,7 @@ func ExampleEqual() {
 	// Output: false
 }
 
-func ExampleDistance2D() {
+func ExampleDistance() {
 	coords := []float64{10, 10, 10, -10}
 	distance := xy.Distance(geom.Coord(coords[0:2]), geom.Coord(coords[2:4]))
 	fmt.Println(distance)

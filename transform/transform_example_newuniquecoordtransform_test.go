@@ -16,7 +16,7 @@ func (c coordTransformExampleCompare) IsLess(x, y geom.Coord) bool {
 	return sorting.IsLess2D(x, y)
 }
 
-func ExampleNewUniqueCoordFilter() {
+func ExampleUniqueCoords() {
 	coordData := []float64{0, 0, 1, 1, 1, 1, 3, 3, 0, 0}
 	layout := geom.XY
 
