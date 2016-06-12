@@ -32,8 +32,8 @@ func Example_scan() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Longitude: %v\n", c.Location.Coords()[0])
-	fmt.Printf("Latitude: %v\n", c.Location.Coords()[1])
+	fmt.Printf("Longitude: %v\n", c.Location.X())
+	fmt.Printf("Latitude: %v\n", c.Location.Y())
 
 	// Output:
 	// Longitude: 0.1275
