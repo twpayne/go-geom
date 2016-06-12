@@ -9,8 +9,8 @@ build:
 		go vet ./... && \
 		go get github.com/golang/lint/golint && \
 		golint ./... ; \
+		test -z "$(gofmt -s -d ./...)" ; \
 	fi
-	test -z "$(go fmt -s ./...)"
 	go generate ./...
 
 committed:
