@@ -29,11 +29,11 @@ func GetIntersection(line1End1, line1End2, line2End1, line2End2 geom.Coord) (geo
 	xIntersection := x / w
 	yIntersection := y / w
 
-	if math.IsNaN(xIntersection) || math.IsNaN(xIntersection) || math.IsNaN(yIntersection) || math.IsNaN(yIntersection) {
+	if math.IsNaN(xIntersection) || math.IsNaN(yIntersection) {
 		return nil, fmt.Errorf("intersection cannot be calculated using the h-coords implementation")
 	}
 
-	if math.IsInf(xIntersection, 0) || math.IsInf(xIntersection, 0) || math.IsInf(yIntersection, 0) || math.IsInf(yIntersection, 0) {
+	if math.IsInf(xIntersection, 0) || math.IsInf(yIntersection, 0) {
 		return nil, fmt.Errorf("intersection cannot be calculated using the h-coords implementation")
 	}
 
