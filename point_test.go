@@ -170,3 +170,48 @@ func TestPointStrideMismatch(t *testing.T) {
 		}
 	}
 }
+
+func TestPointXYZM(t *testing.T) {
+	for _, tc := range []struct {
+		p          *Point
+		x, y, z, m float64
+	}{
+		{
+			p: NewPoint(XY).MustSetCoords([]float64{1, 2}),
+			x: 1,
+			y: 2,
+		},
+		{
+			p: NewPoint(XYZ).MustSetCoords([]float64{1, 2, 3}),
+			x: 1,
+			y: 2,
+			z: 3,
+		},
+		{
+			p: NewPoint(XYM).MustSetCoords([]float64{1, 2, 3}),
+			x: 1,
+			y: 2,
+			m: 3,
+		},
+		{
+			p: NewPoint(XYZM).MustSetCoords([]float64{1, 2, 3, 4}),
+			x: 1,
+			y: 2,
+			z: 3,
+			m: 4,
+		},
+	} {
+		if got := tc.p.X(); got != tc.x {
+			t.Errorf("%v.X() == %f, want %f", tc.p, got, tc.x)
+		}
+		if got := tc.p.Y(); got != tc.y {
+			t.Errorf("%v.Y() == %f, want %f", tc.p, got, tc.y)
+		}
+		if got := tc.p.Z(); got != tc.z {
+			t.Errorf("%v.Z() == %f, want %f", tc.p, got, tc.z)
+		}
+		if got := tc.p.M(); got != tc.m {
+			t.Errorf("%v.M() == %f, want %f", tc.p, got, tc.m)
+		}
+	}
+}

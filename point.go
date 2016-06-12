@@ -59,3 +59,31 @@ func (p *Point) SetCoords(coords Coord) (*Point, error) {
 func (p *Point) Swap(p2 *Point) {
 	p.geom0.swap(&p2.geom0)
 }
+
+// X returns p's X-coordinate.
+func (p *Point) X() float64 {
+	return p.flatCoords[0]
+}
+
+// Y returns p's Y-coordinate.
+func (p *Point) Y() float64 {
+	return p.flatCoords[1]
+}
+
+// Z returns p's Z-coordinate, or zero if p has no Z-coordinate.
+func (p *Point) Z() float64 {
+	zIndex := p.layout.ZIndex()
+	if zIndex == -1 {
+		return 0
+	}
+	return p.flatCoords[zIndex]
+}
+
+// M returns p's M-coordinate, or zero if p has no M-coordinate.
+func (p *Point) M() float64 {
+	mIndex := p.layout.MIndex()
+	if mIndex == -1 {
+		return 0
+	}
+	return p.flatCoords[mIndex]
+}
