@@ -462,7 +462,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 
 }
 
-// Marshal marshals an aribtrary geometry to a []byte.
+// Marshal marshals an arbitrary geometry to a []byte.
 func Marshal(g geom.T, byteOrder binary.ByteOrder) ([]byte, error) {
 	w := bytes.NewBuffer(nil)
 	if err := Write(w, byteOrder, g); err != nil {
