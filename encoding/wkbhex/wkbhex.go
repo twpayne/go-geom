@@ -1,5 +1,6 @@
-// Package hex implements Well Known Binary encoding and decoding of strings.
-package hex
+// Package wkbhex implements Well Known Binary encoding and decoding of
+// strings.
+package wkbhex
 
 import (
 	"encoding/binary"
