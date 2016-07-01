@@ -1,9 +1,11 @@
 package geojson
 
 import (
+	"encoding/json"
 	"reflect"
 	"testing"
 
+	"github.com/d4l3k/messagediff"
 	"github.com/twpayne/go-geom"
 )
 
@@ -99,6 +101,117 @@ func TestGeometry(t *testing.T) {
 		var g geom.T
 		if err := Unmarshal([]byte(tc.s), &g); err != nil || !reflect.DeepEqual(g, tc.g) {
 			t.Errorf("Unmarshal(%#v, %#v) == %v, want %#v, nil", tc.s, g, err, tc.g)
+		}
+	}
+}
+
+func TestFeature(t *testing.T) {
+	for _, tc := range []struct {
+		f *Feature
+		s string
+	}{
+		{
+			f: &Feature{
+				Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
+				Properties: map[string]interface{}{
+					"name": "Dinagat Islands",
+				},
+			},
+			s: `{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}`,
+		},
+		{
+			f: &Feature{
+				Geometry: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{102, 0}, {103, 1}, {104, 0}, {105, 1}}),
+				Properties: map[string]interface{}{
+					"prop0": "value0",
+					"prop1": 0.0,
+				},
+			},
+			s: `{"type":"Feature","geometry":{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]},"properties":{"prop0":"value0","prop1":0}}`,
+		},
+		{
+			f: &Feature{
+				Geometry: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{100, 0}, {101, 0}, {101, 1}, {100, 1}, {100, 0}}}),
+				Properties: map[string]interface{}{
+					"prop0": "value0",
+					"prop1": map[string]interface{}{
+						"this": "that",
+					},
+				},
+			},
+			s: `{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}`,
+		},
+	} {
+		if got, err := json.Marshal(tc.f); err != nil || string(got) != tc.s {
+			t.Errorf("json.Marshal(%+v) == %v, %v, want %v, nil", tc.f, string(got), err, tc.s)
+		}
+		f := &Feature{}
+		if err := json.Unmarshal([]byte(tc.s), f); err != nil {
+			t.Errorf("json.Unmarshal(%v, ...) == %v, want nil", tc.s, err)
+		}
+		if diff, equal := messagediff.PrettyDiff(tc.f, f); !equal {
+			t.Errorf("json.Unmarshal(%v, ...), diff\n%s", tc.s, diff)
+		}
+	}
+}
+
+func TestFeatureCollection(t *testing.T) {
+	for _, tc := range []struct {
+		fc *FeatureCollection
+		s  string
+	}{
+		{
+			fc: &FeatureCollection{
+				Features: []*Feature{
+					&Feature{
+						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
+						Properties: map[string]interface{}{
+							"name": "Dinagat Islands",
+						},
+					},
+				},
+			},
+			s: `{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}]}`,
+		},
+		{
+			fc: &FeatureCollection{
+				Features: []*Feature{
+					&Feature{
+						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
+						Properties: map[string]interface{}{
+							"name": "Dinagat Islands",
+						},
+					},
+					&Feature{
+						Geometry: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{102, 0}, {103, 1}, {104, 0}, {105, 1}}),
+						Properties: map[string]interface{}{
+							"prop0": "value0",
+							"prop1": 0.0,
+						},
+					},
+					&Feature{
+						Geometry: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{100, 0}, {101, 0}, {101, 1}, {100, 1}, {100, 0}}}),
+						Properties: map[string]interface{}{
+							"prop0": "value0",
+							"prop1": map[string]interface{}{
+								"this": "that",
+							},
+						},
+					},
+				},
+			},
+			s: `{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]},"properties":{"prop0":"value0","prop1":0}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}]}`,
+		},
+	} {
+		if got, err := json.Marshal(tc.fc); err != nil || string(got) != tc.s {
+			t.Errorf("json.Marshal(%+v) == %v, %v, want %v, nil", tc.fc, string(got), err, tc.s)
+		}
+		fc := &FeatureCollection{}
+		if err := json.Unmarshal([]byte(tc.s), fc); err != nil {
+			t.Errorf("json.Unmarshal(%v, ...) == %v, want nil", tc.s, err)
+		}
+		if diff, equal := messagediff.PrettyDiff(tc.fc, fc); !equal {
+			t.Errorf("json.Unmarshal(%v, ...), diff\n%s", tc.s, diff)
 		}
 	}
 }
