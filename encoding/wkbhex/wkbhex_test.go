@@ -1,4 +1,4 @@
-package hex
+package wkbhex
 
 import (
 	"reflect"
