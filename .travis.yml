@@ -5,6 +5,7 @@ go:
         - 1.5.4
 
 install:
+        - go get github.com/d4l3k/messagediff
         - go get github.com/twpayne/go-kml
         - go get gopkg.in/DATA-DOG/go-sqlmock.v1
 
