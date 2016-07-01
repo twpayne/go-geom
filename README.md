@@ -5,7 +5,18 @@
 
 Package geom implements efficient geometry types.
 
-See https://godoc.org/github.com/twpayne/go-geom.
+Encoding and decoding:
+
+ * [GeoJSON](https://godoc.org/github.com/twpayne/go-geom/encoding/geojson)
+ * [IGC](https://godoc.org/github.com/twpayne/go-geom/encoding/igc)
+ * [KML](https://godoc.org/github.com/twpayne/go-geom/encoding/kml)
+ * [WKB](https://godoc.org/github.com/twpayne/go-geom/encoding/wkb)
+ * [WKB Hex](https://godoc.org/github.com/twpayne/go-geom/encoding/wkbhex)
+
+Geometry functions:
+
+ * [XY](https://godoc.org/github.com/twpayne/go-geom/xy) 2D geometry functions
+ * [XYZ](https://godoc.org/github.com/twpayne/go-geom/xyz) 3D geometry functions
 
 Example:
 
