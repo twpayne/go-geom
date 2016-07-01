@@ -3,7 +3,6 @@ package geojson
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/twpayne/go-geom"
@@ -352,7 +351,7 @@ func (f *Feature) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	if gf.Type != "Feature" {
-		return errors.New("expected Feature")
+		return ErrUnsupportedType(gf.Type)
 	}
 	var err error
 	f.Geometry, err = gf.Geometry.Decode()
