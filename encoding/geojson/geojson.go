@@ -231,114 +231,104 @@ func Marshal(g geom.T) ([]byte, error) {
 }
 
 func unmarshalCoords0(data []byte) (geom.Layout, geom.Coord, error) {
-	var t struct {
-		Coordinates geom.Coord `json:"coordinates"`
-	}
-	if err := json.Unmarshal(data, &t); err != nil {
+	var coords geom.Coord
+	if err := json.Unmarshal(data, &coords); err != nil {
 		return geom.NoLayout, nil, err
 	}
-	layout, err := guessLayout0(t.Coordinates)
+	layout, err := guessLayout0(coords)
 	if err != nil {
 		return geom.NoLayout, nil, err
 	}
-	return layout, t.Coordinates, nil
+	return layout, coords, nil
 }
 
 func unmarshalCoords1(data []byte) (geom.Layout, []geom.Coord, error) {
-	var t struct {
-		Coordinates []geom.Coord `json:"coordinates"`
-	}
-	if err := json.Unmarshal(data, &t); err != nil {
+	var coords []geom.Coord
+	if err := json.Unmarshal(data, &coords); err != nil {
 		return geom.NoLayout, nil, err
 	}
-	layout, err := guessLayout1(t.Coordinates)
+	layout, err := guessLayout1(coords)
 	if err != nil {
 		return geom.NoLayout, nil, err
 	}
-	return layout, t.Coordinates, nil
+	return layout, coords, nil
 }
 
 func unmarshalCoords2(data []byte) (geom.Layout, [][]geom.Coord, error) {
-	var t struct {
-		Coordinates [][]geom.Coord `json:"coordinates"`
-	}
-	if err := json.Unmarshal(data, &t); err != nil {
+	var coords [][]geom.Coord
+	if err := json.Unmarshal(data, &coords); err != nil {
 		return geom.NoLayout, nil, err
 	}
-	layout, err := guessLayout2(t.Coordinates)
+	layout, err := guessLayout2(coords)
 	if err != nil {
 		return geom.NoLayout, nil, err
 	}
-	return layout, t.Coordinates, nil
+	return layout, coords, nil
 }
 
 func unmarshalCoords3(data []byte) (geom.Layout, [][][]geom.Coord, error) {
-	var t struct {
-		Coordinates [][][]geom.Coord `json:"coordinates"`
-	}
-	if err := json.Unmarshal(data, &t); err != nil {
+	var coords [][][]geom.Coord
+	if err := json.Unmarshal(data, &coords); err != nil {
 		return geom.NoLayout, nil, err
 	}
-	layout, err := guessLayout3(t.Coordinates)
+	layout, err := guessLayout3(coords)
 	if err != nil {
 		return geom.NoLayout, nil, err
 	}
-	return layout, t.Coordinates, nil
+	return layout, coords, nil
 }
 
 // Unmarshal unmarshalls a []byte to an arbitrary geometry.
 func Unmarshal(data []byte, g *geom.T) error {
-	var t struct {
-		Type string `json:"type"`
-	}
-	if err := json.Unmarshal(data, &t); err != nil {
+	gg := &Geometry{}
+	if err := json.Unmarshal(data, gg); err != nil {
 		return err
 	}
-	switch t.Type {
+	switch gg.Type {
 	case "Point":
-		layout, coords, err := unmarshalCoords0(data)
+		layout, coords, err := unmarshalCoords0(gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewPoint(layout).MustSetCoords(coords)
 		return nil
 	case "LineString":
-		layout, coords, err := unmarshalCoords1(data)
+		layout, coords, err := unmarshalCoords1(gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewLineString(layout).MustSetCoords(coords)
 		return nil
 	case "Polygon":
-		layout, coords, err := unmarshalCoords2(data)
+		layout, coords, err := unmarshalCoords2(gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewPolygon(layout).MustSetCoords(coords)
 		return nil
 	case "MultiPoint":
-		layout, coords, err := unmarshalCoords1(data)
+		layout, coords, err := unmarshalCoords1(gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewMultiPoint(layout).MustSetCoords(coords)
 		return nil
 	case "MultiLineString":
-		layout, coords, err := unmarshalCoords2(data)
+		layout, coords, err := unmarshalCoords2(gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewMultiLineString(layout).MustSetCoords(coords)
 		return nil
 	case "MultiPolygon":
-		layout, coords, err := unmarshalCoords3(data)
+		layout, coords, err := unmarshalCoords3(gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewMultiPolygon(layout).MustSetCoords(coords)
 		return nil
 	default:
-		return ErrUnsupportedType(t.Type)
+		return ErrUnsupportedType(gg.Type)
 	}
 }
 
