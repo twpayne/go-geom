@@ -82,9 +82,7 @@ func (c Coord) Y() float64 {
 
 // Set copies the ordinate data from the other coord to this coord
 func (c Coord) Set(other Coord) {
-	for i := 0; i < len(c) && i < len(other); i++ {
-		c[i] = other[i]
-	}
+	copy(c, other)
 }
 
 // Equal compares that all ordinates are the same in this and the other coords.
