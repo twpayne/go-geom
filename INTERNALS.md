@@ -52,7 +52,7 @@ closed) yet all share a similar underlying structure.
     coordinates. Again, the semantics vary: a `Polygon` is a weakly ordered
 collection of `LinearRing`s (the first `LinearRing` is the outer boundary,
 subsequent `LinearRing`s are inner boundaries (holes)). A `MultiLineString` is
-an unordered collection of `LinearRing`s.
+an unordered collection of `LineString`s.
 
 3.  A `MultiPolygon` is an unordered collection of `Polygon`s.
 
@@ -116,4 +116,4 @@ collector to manage.
 
 Parts of the underlying array can be shared between multitple objects. For
 example, retrieving the outer ring of a `Polygon` returns a `LinearRing` that
-references the coordinates of the `Polygon`. No coordinate data is copied.
+references the coordinates of the `Polygon`. No coordinate data are copied.
