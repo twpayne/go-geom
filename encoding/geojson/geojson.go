@@ -29,7 +29,7 @@ func (e ErrUnsupportedType) Error() string {
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
 	Type        string          `json:"type"`
-	Coordinates json.RawMessage `json:"coordinates"`
+	Coordinates *json.RawMessage `json:"coordinates"`
 }
 
 // A Feature is a GeoJSON Feature.
@@ -95,7 +95,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 	switch g.Type {
 	case "Point":
 		var coords geom.Coord
-		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
 		layout, err := guessLayout0(coords)
@@ -105,7 +105,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 		return geom.NewPoint(layout).SetCoords(coords)
 	case "LineString":
 		var coords []geom.Coord
-		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
 		layout, err := guessLayout1(coords)
@@ -115,7 +115,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 		return geom.NewLineString(layout).SetCoords(coords)
 	case "Polygon":
 		var coords [][]geom.Coord
-		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
 		layout, err := guessLayout2(coords)
@@ -125,7 +125,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 		return geom.NewPolygon(layout).SetCoords(coords)
 	case "MultiPoint":
 		var coords []geom.Coord
-		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
 		layout, err := guessLayout1(coords)
@@ -135,7 +135,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 		return geom.NewMultiPoint(layout).SetCoords(coords)
 	case "MultiLineString":
 		var coords [][]geom.Coord
-		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
 		layout, err := guessLayout2(coords)
@@ -145,7 +145,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 		return geom.NewMultiLineString(layout).SetCoords(coords)
 	case "MultiPolygon":
 		var coords [][][]geom.Coord
-		if err := json.Unmarshal(g.Coordinates, &coords); err != nil {
+		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
 		layout, err := guessLayout3(coords)
@@ -160,60 +160,68 @@ func (g *Geometry) Decode() (geom.T, error) {
 
 // Encode encodes g as a GeoJSON geometry.
 func Encode(g geom.T) (*Geometry, error) {
+	
 	switch g := g.(type) {
 	case *geom.Point:
+		var coords json.RawMessage
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
 		}
 		return &Geometry{
 			Type:        "Point",
-			Coordinates: coords,
+			Coordinates:  &coords,
 		}, nil
 	case *geom.LineString:
+		var coords json.RawMessage
+		
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
 		}
 		return &Geometry{
 			Type:        "LineString",
-			Coordinates: coords,
+			Coordinates: &coords,
 		}, nil
 	case *geom.Polygon:
+		var coords json.RawMessage
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
 		}
 		return &Geometry{
 			Type:        "Polygon",
-			Coordinates: coords,
+			Coordinates: &coords,
 		}, nil
 	case *geom.MultiPoint:
+		var coords json.RawMessage
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
 		}
 		return &Geometry{
 			Type:        "MultiPoint",
-			Coordinates: coords,
+			Coordinates: &coords,
 		}, nil
 	case *geom.MultiLineString:
+		var coords json.RawMessage
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
 		}
 		return &Geometry{
 			Type:        "MultiLineString",
-			Coordinates: coords,
+			Coordinates: &coords,
 		}, nil
 	case *geom.MultiPolygon:
+		var coords json.RawMessage
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
 		}
 		return &Geometry{
 			Type:        "MultiPolygon",
-			Coordinates: coords,
+			Coordinates: &coords,
 		}, nil
 	default:
 		return nil, geom.ErrUnsupportedType{Value: g}
@@ -285,42 +293,42 @@ func Unmarshal(data []byte, g *geom.T) error {
 	}
 	switch gg.Type {
 	case "Point":
-		layout, coords, err := unmarshalCoords0(gg.Coordinates)
+		layout, coords, err := unmarshalCoords0(*gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewPoint(layout).MustSetCoords(coords)
 		return nil
 	case "LineString":
-		layout, coords, err := unmarshalCoords1(gg.Coordinates)
+		layout, coords, err := unmarshalCoords1(*gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewLineString(layout).MustSetCoords(coords)
 		return nil
 	case "Polygon":
-		layout, coords, err := unmarshalCoords2(gg.Coordinates)
+		layout, coords, err := unmarshalCoords2(*gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewPolygon(layout).MustSetCoords(coords)
 		return nil
 	case "MultiPoint":
-		layout, coords, err := unmarshalCoords1(gg.Coordinates)
+		layout, coords, err := unmarshalCoords1(*gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewMultiPoint(layout).MustSetCoords(coords)
 		return nil
 	case "MultiLineString":
-		layout, coords, err := unmarshalCoords2(gg.Coordinates)
+		layout, coords, err := unmarshalCoords2(*gg.Coordinates)
 		if err != nil {
 			return err
 		}
 		*g = geom.NewMultiLineString(layout).MustSetCoords(coords)
 		return nil
 	case "MultiPolygon":
-		layout, coords, err := unmarshalCoords3(gg.Coordinates)
+		layout, coords, err := unmarshalCoords3(*gg.Coordinates)
 		if err != nil {
 			return err
 		}
