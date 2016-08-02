@@ -102,9 +102,9 @@ const (
 
 const (
 	wkbXYID   = 0
-	wkbXYZID  = 1000
-	wkbXYMID  = 2000
-	wkbXYZMID = 3000
+	wkbXYZID  = 0x80000000
+	wkbXYMID  = 0x40000000
+	wkbXYZMID = 0xC0000000
 )
 
 const (
@@ -233,8 +233,9 @@ func Read(r io.Reader) (geom.T, error) {
 	if err := binary.Read(r, byteOrder, &wkbGeometryType); err != nil {
 		return nil, err
 	}
-
-	t := Type(wkbGeometryType)
+    geoType := wkbGeometryType & 0xDFFFFFFF
+	//remove SRID flag
+	t := Type(geoType )
 	layout, err := t.layout()
 	if err != nil {
 		return nil, err
