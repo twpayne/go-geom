@@ -11,6 +11,7 @@ Encoding and decoding:
  * [IGC](https://godoc.org/github.com/twpayne/go-geom/encoding/igc)
  * [KML](https://godoc.org/github.com/twpayne/go-geom/encoding/kml)
  * [WKB](https://godoc.org/github.com/twpayne/go-geom/encoding/wkb)
+ * [EWKB](https://godoc.org/github.com/twpayne/go-geom/encoding/ewkb)
  * [WKB Hex](https://godoc.org/github.com/twpayne/go-geom/encoding/wkbhex)
 
 Geometry functions:
