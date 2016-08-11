@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -32,6 +33,21 @@ var (
 func aliases(x, y []float64) bool {
 	// http://golang.org/src/pkg/math/big/nat.go#L340
 	return cap(x) > 0 && cap(y) > 0 && &x[0:cap(x)][cap(x)-1] == &y[0:cap(y)][cap(y)-1]
+}
+
+func TestSet(t *testing.T) {
+	for _, tc := range []struct {
+		c, other, want Coord
+	}{
+		{Coord{1.0, 2.0}, Coord{2.0, 3.0}, Coord{2.0, 3.0}},
+		{Coord{1.0, 2.0, 3.0}, Coord{2.0, 3.0, 4.0}, Coord{2.0, 3.0, 4.0}},
+		{Coord{1.0, 2.0}, Coord{2.0, 3.0, 4.0}, Coord{2.0, 3.0}},
+		{Coord{1.0, 2.0, 3.0}, Coord{2.0, 3.0}, Coord{2.0, 3.0, 3.0}},
+	} {
+		if tc.c.Set(tc.other); !reflect.DeepEqual(tc.c, tc.want) {
+			t.Errorf("%v.Set(%v); got %v, want %v", tc.c, tc.other, tc.c, tc.want)
+		}
+	}
 }
 
 func TestLayoutString(t *testing.T) {
