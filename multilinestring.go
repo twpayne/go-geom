@@ -82,6 +82,12 @@ func (mls *MultiLineString) SetCoords(coords [][]Coord) (*MultiLineString, error
 	return mls, nil
 }
 
+// SetSRID sets the SRID of mls.
+func (mls *MultiLineString) SetSRID(srid int) *MultiLineString {
+	mls.srid = srid
+	return mls
+}
+
 // Swap swaps the values of mls and mls2.
 func (mls *MultiLineString) Swap(mls2 *MultiLineString) {
 	mls.geom2.swap(&mls2.geom2)

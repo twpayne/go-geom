@@ -88,6 +88,12 @@ func (ls *LineString) SetCoords(coords []Coord) (*LineString, error) {
 	return ls, nil
 }
 
+// SetSRID sets the SRID of ls.
+func (ls *LineString) SetSRID(srid int) *LineString {
+	ls.srid = srid
+	return ls
+}
+
 // SubLineString returns a LineString from starts at index start and stops at
 // index stop of ls. The returned LineString aliases ls.
 func (ls *LineString) SubLineString(start, stop int) *LineString {

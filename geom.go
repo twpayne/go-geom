@@ -122,6 +122,7 @@ type T interface {
 	FlatCoords() []float64
 	Ends() []int
 	Endss() [][]int
+	SRID() int
 }
 
 // MIndex returns the index of the M dimension, or -1 if the l does not have an M dimension.
