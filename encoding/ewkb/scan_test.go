@@ -20,7 +20,7 @@ func Example_scan() {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`SELECT name, location FROM cities WHERE name = \?;`).
+	mock.ExpectQuery(`SELECT name, ST_AsEWKB\(location\) FROM cities WHERE name = \?;`).
 		WithArgs("London").
 		WillReturnRows(
 			sqlmock.NewRows([]string{"name", "location"}).
@@ -28,7 +28,7 @@ func Example_scan() {
 		)
 
 	var c City
-	if err := db.QueryRow(`SELECT name, location FROM cities WHERE name = ?;`, "London").Scan(&c.Name, &c.Location); err != nil {
+	if err := db.QueryRow(`SELECT name, ST_AsEWKB(location) FROM cities WHERE name = ?;`, "London").Scan(&c.Name, &c.Location); err != nil {
 		log.Fatal(err)
 	}
 
