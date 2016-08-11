@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
 // ErrExpectedByteSlice is returned when a []byte is expected.
@@ -57,7 +58,7 @@ func (p *Point) Scan(src interface{}) error {
 	}
 	p1, ok := got.(*geom.Point)
 	if !ok {
-		return ErrUnexpectedType{Got: p1, Want: p}
+		return wkbcommon.ErrUnexpectedType{Got: p1, Want: p}
 	}
 	p.Swap(p1)
 	return nil
@@ -75,7 +76,7 @@ func (ls *LineString) Scan(src interface{}) error {
 	}
 	p1, ok := got.(*geom.LineString)
 	if !ok {
-		return ErrUnexpectedType{Got: p1, Want: ls}
+		return wkbcommon.ErrUnexpectedType{Got: p1, Want: ls}
 	}
 	ls.Swap(p1)
 	return nil
@@ -93,7 +94,7 @@ func (p *Polygon) Scan(src interface{}) error {
 	}
 	p1, ok := got.(*geom.Polygon)
 	if !ok {
-		return ErrUnexpectedType{Got: p1, Want: p}
+		return wkbcommon.ErrUnexpectedType{Got: p1, Want: p}
 	}
 	p.Swap(p1)
 	return nil
@@ -111,7 +112,7 @@ func (mp *MultiPoint) Scan(src interface{}) error {
 	}
 	mp1, ok := got.(*geom.MultiPoint)
 	if !ok {
-		return ErrUnexpectedType{Got: mp1, Want: mp}
+		return wkbcommon.ErrUnexpectedType{Got: mp1, Want: mp}
 	}
 	mp.Swap(mp1)
 	return nil
@@ -129,7 +130,7 @@ func (mls *MultiLineString) Scan(src interface{}) error {
 	}
 	mls1, ok := got.(*geom.MultiLineString)
 	if !ok {
-		return ErrUnexpectedType{Got: mls1, Want: mls}
+		return wkbcommon.ErrUnexpectedType{Got: mls1, Want: mls}
 	}
 	mls.Swap(mls1)
 	return nil
@@ -147,7 +148,7 @@ func (mp *MultiPolygon) Scan(src interface{}) error {
 	}
 	mp1, ok := got.(*geom.MultiPolygon)
 	if !ok {
-		return ErrUnexpectedType{Got: mp1, Want: mp}
+		return wkbcommon.ErrUnexpectedType{Got: mp1, Want: mp}
 	}
 	mp.Swap(mp1)
 	return nil
