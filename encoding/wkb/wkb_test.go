@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/wkbcommon"
 	"github.com/twpayne/go-geom/internal/testdata"
 )
 
@@ -259,7 +260,7 @@ func TestCrashes(t *testing.T) {
 				"\x81\x10h!N\xdcf\n\xf0-\xeaL\x02\xba\xe9\x03\xd6/G\xc2" +
 				"\x1cj\r\xd8 \xbc\xd6r\x05աTS\xb3\xa5\xdc\xd8\xfb\")" +
 				"\xab\x19\xf7̏\x8a\x9f9\x81\x10h!N\xdcf\n\xf0-\xeaL",
-			want: ErrGeometryTooLarge{Level: 1, N: 1946157063, Limit: MaxGeometryElements[1]},
+			want: wkbcommon.ErrGeometryTooLarge{Level: 1, N: 1946157063, Limit: wkbcommon.MaxGeometryElements[1]},
 		},
 	} {
 		if _, err := Unmarshal([]byte(tc.s)); !reflect.DeepEqual(err, tc.want) {

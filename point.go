@@ -55,6 +55,12 @@ func (p *Point) SetCoords(coords Coord) (*Point, error) {
 	return p, nil
 }
 
+// SetSRID sets the SRID of p.
+func (p *Point) SetSRID(srid int) *Point {
+	p.srid = srid
+	return p
+}
+
 // Swap swaps the values of p and p2.
 func (p *Point) Swap(p2 *Point) {
 	p.geom0.swap(&p2.geom0)

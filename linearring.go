@@ -55,6 +55,12 @@ func (lr *LinearRing) SetCoords(coords []Coord) (*LinearRing, error) {
 	return lr, nil
 }
 
+// SetSRID sets the SRID of lr.
+func (lr *LinearRing) SetSRID(srid int) *LinearRing {
+	lr.srid = srid
+	return lr
+}
+
 // Swap swaps the values of lr and lr2.
 func (lr *LinearRing) Swap(lr2 *LinearRing) {
 	lr.geom1.swap(&lr2.geom1)

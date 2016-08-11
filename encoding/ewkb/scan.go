@@ -1,4 +1,4 @@
-package wkb
+package ewkb
 
 import (
 	"fmt"
@@ -16,32 +16,32 @@ func (e ErrExpectedByteSlice) Error() string {
 	return fmt.Sprintf("wkb: want []byte, got %T", e.Value)
 }
 
-// A Point is a WKB-encoded Point.
+// A Point is a EWKB-encoded Point.
 type Point struct {
 	geom.Point
 }
 
-// A LineString is a WKB-encoded LineString.
+// A LineString is a EWKB-encoded LineString.
 type LineString struct {
 	geom.LineString
 }
 
-// A Polygon is a WKB-encoded Polygon.
+// A Polygon is a EWKB-encoded Polygon.
 type Polygon struct {
 	geom.Polygon
 }
 
-// A MultiPoint is a WKB-encoded MultiPoint.
+// A MultiPoint is a EWKB-encoded MultiPoint.
 type MultiPoint struct {
 	geom.MultiPoint
 }
 
-// A MultiLineString is a WKB-encoded MultiLineString.
+// A MultiLineString is a EWKB-encoded MultiLineString.
 type MultiLineString struct {
 	geom.MultiLineString
 }
 
-// A MultiPolygon is a WKB-encoded MultiPolygon.
+// A MultiPolygon is a EWKB-encoded MultiPolygon.
 type MultiPolygon struct {
 	geom.MultiPolygon
 }

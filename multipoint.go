@@ -55,6 +55,12 @@ func (mp *MultiPoint) SetCoords(coords []Coord) (*MultiPoint, error) {
 	return mp, nil
 }
 
+// SetSRID sets the SRID of mp.
+func (mp *MultiPoint) SetSRID(srid int) *MultiPoint {
+	mp.srid = srid
+	return mp
+}
+
 // NumPoints returns the number of Points.
 func (mp *MultiPoint) NumPoints() int {
 	return mp.NumCoords()
