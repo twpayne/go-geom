@@ -7,15 +7,15 @@ import (
 	"io"
 )
 
+// Byte order IDs.
 const (
 	XDRID = 0
 	NDRID = 1
 )
 
+// Byte orders.
 var (
-	// XDR is big endian.
 	XDR = binary.BigEndian
-	// NDR is little endian.
 	NDR = binary.LittleEndian
 )
 
@@ -84,6 +84,7 @@ func (e ErrGeometryTooLarge) Error() string {
 	return fmt.Sprintf("wkb: number of elements at level %d (%d) exceeds %d", e.Level, e.N, e.Limit)
 }
 
+// Geometry type IDs.
 const (
 	PointID              = 1
 	LineStringID         = 2
@@ -97,6 +98,7 @@ const (
 	TriangleID           = 17
 )
 
+// ReadFlatCoords0 reads flat coordinates 0.
 func ReadFlatCoords0(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, error) {
 	coord := make([]float64, stride)
 	if err := binary.Read(r, byteOrder, &coord); err != nil {
@@ -105,6 +107,7 @@ func ReadFlatCoords0(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	return coord, nil
 }
 
+// ReadFlatCoords1 reads flat coordinates 1.
 func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, error) {
 	var n uint32
 	if err := binary.Read(r, byteOrder, &n); err != nil {
@@ -120,6 +123,7 @@ func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	return flatCoords, nil
 }
 
+// ReadFlatCoords2 reads flat coordinates 2.
 func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, []int, error) {
 	var n uint32
 	if err := binary.Read(r, byteOrder, &n); err != nil {
@@ -141,10 +145,12 @@ func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	return flatCoordss, ends, nil
 }
 
+// WriteFlatCoords0 writes flat coordinates 0.
 func WriteFlatCoords0(w io.Writer, byteOrder binary.ByteOrder, coord []float64) error {
 	return binary.Write(w, byteOrder, coord)
 }
 
+// WriteFlatCoords1 writes flat coordinates 1.
 func WriteFlatCoords1(w io.Writer, byteOrder binary.ByteOrder, coords []float64, stride int) error {
 	if err := binary.Write(w, byteOrder, uint32(len(coords)/stride)); err != nil {
 		return err
@@ -152,6 +158,7 @@ func WriteFlatCoords1(w io.Writer, byteOrder binary.ByteOrder, coords []float64,
 	return binary.Write(w, byteOrder, coords)
 }
 
+// WriteFlatCoords2 writes flat coordinates 2.
 func WriteFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, flatCoords []float64, ends []int, stride int) error {
 	if err := binary.Write(w, byteOrder, uint32(len(ends))); err != nil {
 		return err
