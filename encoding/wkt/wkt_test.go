@@ -16,8 +16,32 @@ func TestMarshal(t *testing.T) {
 			s: "POINT (1 2)",
 		},
 		{
+			g: geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{1, 2, 3}),
+			s: "POINT Z (1 2 3)",
+		},
+		{
+			g: geom.NewPoint(geom.XYM).MustSetCoords(geom.Coord{1, 2, 3}),
+			s: "POINT M (1 2 3)",
+		},
+		{
+			g: geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1, 2, 3, 4}),
+			s: "POINT ZM (1 2 3 4)",
+		},
+		{
 			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
 			s: "LINESTRING (1 2, 3 4)",
+		},
+		{
+			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
+			s: "LINESTRING Z (1 2 3, 4 5 6)",
+		},
+		{
+			g: geom.NewLineString(geom.XYM).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
+			s: "LINESTRING M (1 2 3, 4 5 6)",
+		},
+		{
+			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}}),
+			s: "LINESTRING ZM (1 2 3 4, 5 6 7 8)",
 		},
 		{
 			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}}}),
