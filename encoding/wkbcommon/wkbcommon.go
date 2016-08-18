@@ -23,14 +23,14 @@ var (
 type ErrUnknownByteOrder byte
 
 func (e ErrUnknownByteOrder) Error() string {
-	return fmt.Sprintf("ewkb: unknown byte order: %b", byte(e))
+	return fmt.Sprintf("wkb: unknown byte order: %b", byte(e))
 }
 
 // An ErrUnsupportedByteOrder is returned when an unsupported byte order is encountered.
 type ErrUnsupportedByteOrder struct{}
 
 func (e ErrUnsupportedByteOrder) Error() string {
-	return "ewkb: unsupported byte order"
+	return "wkb: unsupported byte order"
 }
 
 // A Type is a WKB code.
