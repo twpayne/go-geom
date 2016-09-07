@@ -17,8 +17,8 @@ type Strategy interface {
 func PointIntersectsLine(strategy Strategy, point, lineStart, lineEnd geom.Coord) (hasIntersection bool) {
 	intersectorData := &lineIntersectorData{
 		strategy:           strategy,
-		inputLines:         [2][2]geom.Coord{[2]geom.Coord{lineStart, lineEnd}, [2]geom.Coord{}},
-		intersectionPoints: [2]geom.Coord{geom.Coord{0, 0}, geom.Coord{0, 0}},
+		inputLines:         [2][2]geom.Coord{{lineStart, lineEnd}, {}},
+		intersectionPoints: [2]geom.Coord{{0, 0}, {0, 0}},
 	}
 
 	intersectorData.pa = intersectorData.intersectionPoints[0]
@@ -35,8 +35,8 @@ func PointIntersectsLine(strategy Strategy, point, lineStart, lineEnd geom.Coord
 func LineIntersectsLine(strategy Strategy, line1Start, line1End, line2Start, line2End geom.Coord) lineintersection.Result {
 	intersectorData := &lineIntersectorData{
 		strategy:           strategy,
-		inputLines:         [2][2]geom.Coord{[2]geom.Coord{line2Start, line2End}, [2]geom.Coord{line1Start, line1End}},
-		intersectionPoints: [2]geom.Coord{geom.Coord{0, 0}, geom.Coord{0, 0}},
+		inputLines:         [2][2]geom.Coord{{line2Start, line2End}, {line1Start, line1End}},
+		intersectionPoints: [2]geom.Coord{{0, 0}, {0, 0}},
 	}
 
 	intersectorData.pa = intersectorData.intersectionPoints[0]

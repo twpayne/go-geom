@@ -1,12 +1,13 @@
 package ewkbhex
 
 import (
+	"encoding/hex"
 	"reflect"
 	"testing"
-        "encoding/hex"
+
 	"github.com/twpayne/go-geom"
-        "github.com/twpayne/go-geom/encoding/wkbcommon"
 	"github.com/twpayne/go-geom/encoding/ewkb"
+	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
 func test(t *testing.T, g geom.T, xdr string, ndr string) {
@@ -124,7 +125,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPolygon{*g.(*geom.MultiPolygon)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp,ewkb.MultiPolygon{*g.(*geom.MultiPolygon)})
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, ewkb.MultiPolygon{*g.(*geom.MultiPolygon)})
 			}
 		}
 		if ndr != "" {
