@@ -124,7 +124,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPolygon{*g.(*geom.MultiPolygon)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp,ewkb.MultiPolygon{*g.(*geom.MultiPolygon)})
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, ewkb.MultiPolygon{*g.(*geom.MultiPolygon)})
 			}
 		}
 		if ndr != "" {

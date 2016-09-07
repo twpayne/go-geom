@@ -28,7 +28,7 @@ func (e ErrUnsupportedType) Error() string {
 
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
-	Type        string          `json:"type"`
+	Type        string           `json:"type"`
 	Coordinates *json.RawMessage `json:"coordinates"`
 }
 
@@ -160,7 +160,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 
 // Encode encodes g as a GeoJSON geometry.
 func Encode(g geom.T) (*Geometry, error) {
-	
+
 	switch g := g.(type) {
 	case *geom.Point:
 		var coords json.RawMessage
@@ -170,11 +170,11 @@ func Encode(g geom.T) (*Geometry, error) {
 		}
 		return &Geometry{
 			Type:        "Point",
-			Coordinates:  &coords,
+			Coordinates: &coords,
 		}, nil
 	case *geom.LineString:
 		var coords json.RawMessage
-		
+
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err
