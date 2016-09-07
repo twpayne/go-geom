@@ -13,6 +13,7 @@ Encoding and decoding:
  * [WKB](https://godoc.org/github.com/twpayne/go-geom/encoding/wkb)
  * [EWKB](https://godoc.org/github.com/twpayne/go-geom/encoding/ewkb)
  * [WKB Hex](https://godoc.org/github.com/twpayne/go-geom/encoding/wkbhex)
+ * [EWKB Hex](https://godoc.org/github.com/twpayne/go-geom/encoding/ewkbhex)
 
 Geometry functions:
 
