@@ -103,6 +103,12 @@ func (mp *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
 	return mp, nil
 }
 
+// SetSRID sets the SRID of mp.
+func (mp *MultiPolygon) SetSRID(srid int) *MultiPolygon {
+	mp.srid = srid
+	return mp
+}
+
 // Swap swaps the values of mp and mp2.
 func (mp *MultiPolygon) Swap(mp2 *MultiPolygon) {
 	mp.geom3.swap(&mp2.geom3)

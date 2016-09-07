@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -34,6 +35,21 @@ func aliases(x, y []float64) bool {
 	return cap(x) > 0 && cap(y) > 0 && &x[0:cap(x)][cap(x)-1] == &y[0:cap(y)][cap(y)-1]
 }
 
+func TestSet(t *testing.T) {
+	for _, tc := range []struct {
+		c, other, want Coord
+	}{
+		{Coord{1.0, 2.0}, Coord{2.0, 3.0}, Coord{2.0, 3.0}},
+		{Coord{1.0, 2.0, 3.0}, Coord{2.0, 3.0, 4.0}, Coord{2.0, 3.0, 4.0}},
+		{Coord{1.0, 2.0}, Coord{2.0, 3.0, 4.0}, Coord{2.0, 3.0}},
+		{Coord{1.0, 2.0, 3.0}, Coord{2.0, 3.0}, Coord{2.0, 3.0, 3.0}},
+	} {
+		if tc.c.Set(tc.other); !reflect.DeepEqual(tc.c, tc.want) {
+			t.Errorf("%v.Set(%v); got %v, want %v", tc.c, tc.other, tc.c, tc.want)
+		}
+	}
+}
+
 func TestLayoutString(t *testing.T) {
 	for _, tc := range []struct {
 		l    Layout
@@ -64,15 +80,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom0{NoLayout, 0, Coord{0, 0}},
+			&geom0{NoLayout, 0, Coord{0, 0}, 0},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom0{XY, 1, Coord{0, 0}},
+			&geom0{XY, 1, Coord{0, 0}, 0},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom0{XY, 2, Coord{0}},
+			&geom0{XY, 2, Coord{0}, 0},
 			errLengthStrideMismatch,
 		},
 		{
@@ -80,15 +96,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom1{geom0{NoLayout, 0, Coord{0}}},
+			&geom1{geom0{NoLayout, 0, Coord{0}, 0}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom1{geom0{XY, 1, Coord{0, 0}}},
+			&geom1{geom0{XY, 1, Coord{0, 0}, 0}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom1{geom0{XY, 2, Coord{0}}},
+			&geom1{geom0{XY, 2, Coord{0}, 0}},
 			errLengthStrideMismatch,
 		},
 		{
@@ -96,39 +112,39 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, Coord{0}}}, []int{}},
+			&geom2{geom1{geom0{NoLayout, 0, Coord{0}, 0}}, []int{}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, Coord{}}}, []int{4}},
+			&geom2{geom1{geom0{NoLayout, 0, Coord{}, 0}}, []int{4}},
 			errNonEmptyEnds,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0}}}, []int{4}},
+			&geom2{geom1{geom0{XY, 2, Coord{0}, 0}}, []int{4}},
 			errLengthStrideMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 1, Coord{0, 0, 0, 0}}}, []int{-1}},
+			&geom2{geom1{geom0{XY, 1, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}}}, []int{-1}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}}}, []int{3}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{3}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{8, 4}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{8, 4}},
 			errOutOfOrderEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 4}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 4}},
 			errIncorrectEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}}}, []int{4, 12}},
+			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 12}},
 			errIncorrectEnd,
 		},
 		{

@@ -1,5 +1,6 @@
-// Package wkb implements Well Known Binary encoding and decoding.
-package wkb
+// Package ewkb implements Extended Well Known Binary encoding and decoding.
+// See https://github.com/postgis/postgis/blob/2.1.0/doc/ZMSgeoms.txt.
+package ewkb
 
 import (
 	"bytes"
@@ -18,68 +19,74 @@ var (
 )
 
 const (
-	wkbXYID   = 0
-	wkbXYZID  = 1000
-	wkbXYMID  = 2000
-	wkbXYZMID = 3000
+	ewkbZ    = 0x80000000
+	ewkbM    = 0x40000000
+	ewkbSRID = 0x20000000
 )
 
 // Read reads an arbitrary geometry from r.
 func Read(r io.Reader) (geom.T, error) {
 
-	var wkbByteOrder byte
-	if err := binary.Read(r, binary.LittleEndian, &wkbByteOrder); err != nil {
+	var ewkbByteOrder byte
+	if err := binary.Read(r, binary.LittleEndian, &ewkbByteOrder); err != nil {
 		return nil, err
 	}
 	var byteOrder binary.ByteOrder
-	switch wkbByteOrder {
+	switch ewkbByteOrder {
 	case wkbcommon.XDRID:
 		byteOrder = XDR
 	case wkbcommon.NDRID:
 		byteOrder = NDR
 	default:
-		return nil, wkbcommon.ErrUnknownByteOrder(wkbByteOrder)
+		return nil, wkbcommon.ErrUnknownByteOrder(ewkbByteOrder)
 	}
 
-	var wkbGeometryType uint32
-	if err := binary.Read(r, byteOrder, &wkbGeometryType); err != nil {
+	var ewkbGeometryType uint32
+	if err := binary.Read(r, byteOrder, &ewkbGeometryType); err != nil {
 		return nil, err
 	}
-	t := wkbcommon.Type(wkbGeometryType)
+	t := wkbcommon.Type(ewkbGeometryType)
 
 	layout := geom.NoLayout
-	switch 1000 * (t / 1000) {
-	case wkbXYID:
+	switch t & (ewkbZ | ewkbM) {
+	case 0:
 		layout = geom.XY
-	case wkbXYZID:
+	case ewkbZ:
 		layout = geom.XYZ
-	case wkbXYMID:
+	case ewkbM:
 		layout = geom.XYM
-	case wkbXYZMID:
+	case ewkbZ | ewkbM:
 		layout = geom.XYZM
 	default:
 		return nil, wkbcommon.ErrUnknownType(t)
 	}
 
-	switch t % 1000 {
+	var srid uint32
+	if ewkbGeometryType&ewkbSRID != 0 {
+		if err := binary.Read(r, byteOrder, &srid); err != nil {
+			return nil, err
+		}
+	}
+
+	switch t &^ (ewkbZ | ewkbM | ewkbSRID) {
 	case wkbcommon.PointID:
 		flatCoords, err := wkbcommon.ReadFlatCoords0(r, byteOrder, layout.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPointFlat(layout, flatCoords), nil
+		return geom.NewPointFlat(layout, flatCoords).SetSRID(int(srid)), nil
 	case wkbcommon.LineStringID:
 		flatCoords, err := wkbcommon.ReadFlatCoords1(r, byteOrder, layout.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewLineStringFlat(layout, flatCoords), nil
+		return geom.NewLineStringFlat(layout, flatCoords).SetSRID(int(srid)), nil
 	case wkbcommon.PolygonID:
 		flatCoords, ends, err := wkbcommon.ReadFlatCoords2(r, byteOrder, layout.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPolygonFlat(layout, flatCoords, ends), nil
+		return geom.NewPolygonFlat(layout, flatCoords, ends).SetSRID(int(srid)), nil
 	case wkbcommon.MultiPointID:
 		var n uint32
 		if err := binary.Read(r, byteOrder, &n); err != nil {
@@ -88,7 +95,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if n > wkbcommon.MaxGeometryElements[1] {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: n, Limit: wkbcommon.MaxGeometryElements[1]}
 		}
-		mp := geom.NewMultiPoint(layout)
+		mp := geom.NewMultiPoint(layout).SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -111,7 +118,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if n > wkbcommon.MaxGeometryElements[2] {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: n, Limit: wkbcommon.MaxGeometryElements[2]}
 		}
-		mls := geom.NewMultiLineString(layout)
+		mls := geom.NewMultiLineString(layout).SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -134,7 +141,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if n > wkbcommon.MaxGeometryElements[3] {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: n, Limit: wkbcommon.MaxGeometryElements[3]}
 		}
-		mp := geom.NewMultiPolygon(layout)
+		mp := geom.NewMultiPolygon(layout).SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -150,7 +157,7 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return mp, nil
 	default:
-		return nil, wkbcommon.ErrUnsupportedType(wkbGeometryType)
+		return nil, wkbcommon.ErrUnsupportedType(ewkbGeometryType)
 	}
 
 }
@@ -163,50 +170,58 @@ func Unmarshal(data []byte) (geom.T, error) {
 // Write writes an arbitrary geometry to w.
 func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 
-	var wkbByteOrder byte
+	var ewkbByteOrder byte
 	switch byteOrder {
 	case XDR:
-		wkbByteOrder = wkbcommon.XDRID
+		ewkbByteOrder = wkbcommon.XDRID
 	case NDR:
-		wkbByteOrder = wkbcommon.NDRID
+		ewkbByteOrder = wkbcommon.NDRID
 	default:
 		return wkbcommon.ErrUnsupportedByteOrder{}
 	}
-	if err := binary.Write(w, byteOrder, wkbByteOrder); err != nil {
+	if err := binary.Write(w, byteOrder, ewkbByteOrder); err != nil {
 		return err
 	}
 
-	var wkbGeometryType uint32
+	var ewkbGeometryType uint32
 	switch g.(type) {
 	case *geom.Point:
-		wkbGeometryType = wkbcommon.PointID
+		ewkbGeometryType = wkbcommon.PointID
 	case *geom.LineString:
-		wkbGeometryType = wkbcommon.LineStringID
+		ewkbGeometryType = wkbcommon.LineStringID
 	case *geom.Polygon:
-		wkbGeometryType = wkbcommon.PolygonID
+		ewkbGeometryType = wkbcommon.PolygonID
 	case *geom.MultiPoint:
-		wkbGeometryType = wkbcommon.MultiPointID
+		ewkbGeometryType = wkbcommon.MultiPointID
 	case *geom.MultiLineString:
-		wkbGeometryType = wkbcommon.MultiLineStringID
+		ewkbGeometryType = wkbcommon.MultiLineStringID
 	case *geom.MultiPolygon:
-		wkbGeometryType = wkbcommon.MultiPolygonID
+		ewkbGeometryType = wkbcommon.MultiPolygonID
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
 	switch g.Layout() {
 	case geom.XY:
-		wkbGeometryType += wkbXYID
 	case geom.XYZ:
-		wkbGeometryType += wkbXYZID
+		ewkbGeometryType |= ewkbZ
 	case geom.XYM:
-		wkbGeometryType += wkbXYMID
+		ewkbGeometryType |= ewkbM
 	case geom.XYZM:
-		wkbGeometryType += wkbXYZMID
+		ewkbGeometryType |= ewkbZ | ewkbM
 	default:
 		return geom.ErrUnsupportedLayout(g.Layout())
 	}
-	if err := binary.Write(w, byteOrder, wkbGeometryType); err != nil {
+	srid := g.SRID()
+	if srid != 0 {
+		ewkbGeometryType |= ewkbSRID
+	}
+	if err := binary.Write(w, byteOrder, ewkbGeometryType); err != nil {
 		return err
+	}
+	if ewkbGeometryType&ewkbSRID != 0 {
+		if err := binary.Write(w, byteOrder, uint32(srid)); err != nil {
+			return err
+		}
 	}
 
 	switch g.(type) {

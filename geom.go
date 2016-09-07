@@ -82,9 +82,7 @@ func (c Coord) Y() float64 {
 
 // Set copies the ordinate data from the other coord to this coord
 func (c Coord) Set(other Coord) {
-	for i := 0; i < len(c) && i < len(other); i++ {
-		c[i] = other[i]
-	}
+	copy(c, other)
 }
 
 // Equal compares that all ordinates are the same in this and the other coords.
@@ -122,6 +120,7 @@ type T interface {
 	FlatCoords() []float64
 	Ends() []int
 	Endss() [][]int
+	SRID() int
 }
 
 // MIndex returns the index of the M dimension, or -1 if the l does not have an M dimension.

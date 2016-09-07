@@ -84,6 +84,12 @@ func (p *Polygon) SetCoords(coords [][]Coord) (*Polygon, error) {
 	return p, nil
 }
 
+// SetSRID sets the SRID of p.
+func (p *Polygon) SetSRID(srid int) *Polygon {
+	p.srid = srid
+	return p
+}
+
 // Swap swaps the values of p and p2.
 func (p *Polygon) Swap(p2 *Polygon) {
 	p.geom2.swap(&p2.geom2)
