@@ -10,7 +10,8 @@ build:
 		go vet ./... ; \
 		go get github.com/golang/lint/golint ; \
 		golint ./... ; \
-		! gofmt -s -l ${SRC} 2>&1 | read ; \
+		go get golang.org/x/tools/cmd/goimports ; \
+		! goimports -l ${SRC} 2>&1 | read ; \
 	fi
 	go generate ./...
 
