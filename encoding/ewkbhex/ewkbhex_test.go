@@ -1,12 +1,13 @@
 package ewkbhex
 
 import (
+	"encoding/hex"
 	"reflect"
 	"testing"
-        "encoding/hex"
+
 	"github.com/twpayne/go-geom"
-        "github.com/twpayne/go-geom/encoding/wkbcommon"
 	"github.com/twpayne/go-geom/encoding/ewkb"
+	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
 func test(t *testing.T, g geom.T, xdr string, ndr string) {
