@@ -163,7 +163,7 @@ func TestFeatureCollection(t *testing.T) {
 		{
 			fc: &FeatureCollection{
 				Features: []*Feature{
-					&Feature{
+					{
 						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
 						Properties: map[string]interface{}{
 							"name": "Dinagat Islands",
@@ -176,20 +176,20 @@ func TestFeatureCollection(t *testing.T) {
 		{
 			fc: &FeatureCollection{
 				Features: []*Feature{
-					&Feature{
+					{
 						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
 						Properties: map[string]interface{}{
 							"name": "Dinagat Islands",
 						},
 					},
-					&Feature{
+					{
 						Geometry: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{102, 0}, {103, 1}, {104, 0}, {105, 1}}),
 						Properties: map[string]interface{}{
 							"prop0": "value0",
 							"prop1": 0.0,
 						},
 					},
-					&Feature{
+					{
 						Geometry: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{100, 0}, {101, 0}, {101, 1}, {100, 1}, {100, 0}}}),
 						Properties: map[string]interface{}{
 							"prop0": "value0",
