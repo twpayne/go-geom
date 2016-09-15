@@ -141,6 +141,20 @@ func TestFeature(t *testing.T) {
 			},
 			s: `{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}`,
 		},
+		{
+			f: &Feature{
+				Id:       "0",
+				Geometry: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
+			},
+			s: `{"type":"Feature","id":"0","geometry":{"type":"Point","coordinates":[1,2]}}`,
+		},
+		{
+			f: &Feature{
+				Id:       "f",
+				Geometry: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
+			},
+			s: `{"type":"Feature","id":"f","geometry":{"type":"Point","coordinates":[1,2]}}`,
+		},
 	} {
 		if got, err := json.Marshal(tc.f); err != nil || string(got) != tc.s {
 			t.Errorf("json.Marshal(%+v) == %v, %v, want %v, nil", tc.f, string(got), err, tc.s)
