@@ -27,8 +27,8 @@ const (
 // Read reads an arbitrary geometry from r.
 func Read(r io.Reader) (geom.T, error) {
 
-	var wkbByteOrder byte
-	if err := binary.Read(r, binary.LittleEndian, &wkbByteOrder); err != nil {
+	var wkbByteOrder, err = wkbcommon.ReadByte(r)
+	if err != nil {
 		return nil, err
 	}
 	var byteOrder binary.ByteOrder
@@ -41,8 +41,8 @@ func Read(r io.Reader) (geom.T, error) {
 		return nil, wkbcommon.ErrUnknownByteOrder(wkbByteOrder)
 	}
 
-	var wkbGeometryType uint32
-	if err := binary.Read(r, byteOrder, &wkbGeometryType); err != nil {
+	wkbGeometryType, err := wkbcommon.ReadUInt32(r, byteOrder)
+	if err != nil {
 		return nil, err
 	}
 	t := wkbcommon.Type(wkbGeometryType)
@@ -81,8 +81,8 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return geom.NewPolygonFlat(layout, flatCoords, ends), nil
 	case wkbcommon.MultiPointID:
-		var n uint32
-		if err := binary.Read(r, byteOrder, &n); err != nil {
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 		if n > wkbcommon.MaxGeometryElements[1] {
@@ -104,8 +104,8 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return mp, nil
 	case wkbcommon.MultiLineStringID:
-		var n uint32
-		if err := binary.Read(r, byteOrder, &n); err != nil {
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 		if n > wkbcommon.MaxGeometryElements[2] {
@@ -127,8 +127,8 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return mls, nil
 	case wkbcommon.MultiPolygonID:
-		var n uint32
-		if err := binary.Read(r, byteOrder, &n); err != nil {
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 		if n > wkbcommon.MaxGeometryElements[3] {
@@ -172,7 +172,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	default:
 		return wkbcommon.ErrUnsupportedByteOrder{}
 	}
-	if err := binary.Write(w, byteOrder, wkbByteOrder); err != nil {
+	if err := wkbcommon.WriteByte(w, wkbByteOrder); err != nil {
 		return err
 	}
 
@@ -205,7 +205,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	default:
 		return geom.ErrUnsupportedLayout(g.Layout())
 	}
-	if err := binary.Write(w, byteOrder, wkbGeometryType); err != nil {
+	if err := wkbcommon.WriteUInt32(w, byteOrder, wkbGeometryType); err != nil {
 		return err
 	}
 
@@ -219,7 +219,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case *geom.MultiPoint:
 		mp := g.(*geom.MultiPoint)
 		n := mp.NumPoints()
-		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
+		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
 		for i := 0; i < n; i++ {
@@ -231,7 +231,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case *geom.MultiLineString:
 		mls := g.(*geom.MultiLineString)
 		n := mls.NumLineStrings()
-		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
+		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
 		for i := 0; i < n; i++ {
@@ -243,7 +243,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case *geom.MultiPolygon:
 		mp := g.(*geom.MultiPolygon)
 		n := mp.NumPolygons()
-		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
+		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
 		for i := 0; i < n; i++ {
