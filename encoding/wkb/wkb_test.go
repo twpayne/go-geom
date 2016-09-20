@@ -236,6 +236,26 @@ func TestRandom(t *testing.T) {
 	}
 }
 
+func BenchmarkUnmarshal(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		for _, tc := range testdata.Random {
+			if _, err := Unmarshal(tc.WKB); err != nil {
+				b.Errorf("unmarshal error %v", err)
+			}
+		}
+	}
+}
+
+func BenchmarkMarshal(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		for _, tc := range testdata.Random {
+			if _, err := Marshal(tc.G, NDR); err != nil {
+				b.Errorf("marshal error %v", err)
+			}
+		}
+	}
+}
+
 func TestCrashes(t *testing.T) {
 	for _, tc := range []struct {
 		s    string
