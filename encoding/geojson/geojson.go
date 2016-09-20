@@ -34,14 +34,14 @@ type Geometry struct {
 
 // A Feature is a GeoJSON Feature.
 type Feature struct {
-	Id         string
+	ID         string
 	Geometry   geom.T
 	Properties map[string]interface{}
 }
 
 type geojsonFeature struct {
 	Type       string                 `json:"type,omitempty"`
-	Id         string                 `json:"id,omitempty"`
+	ID         string                 `json:"id,omitempty"`
 	Geometry   *Geometry              `json:"geometry,omitempty"`
 	Properties map[string]interface{} `json:"properties,omitempty"`
 }
@@ -348,7 +348,7 @@ func (f *Feature) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	return json.Marshal(&geojsonFeature{
-		Id:         f.Id,
+		ID:         f.ID,
 		Type:       "Feature",
 		Geometry:   geometry,
 		Properties: f.Properties,
@@ -364,7 +364,7 @@ func (f *Feature) UnmarshalJSON(data []byte) error {
 	if gf.Type != "Feature" {
 		return ErrUnsupportedType(gf.Type)
 	}
-	f.Id = gf.Id
+	f.ID = gf.ID
 	var err error
 	f.Geometry, err = gf.Geometry.Decode()
 	if err != nil {
