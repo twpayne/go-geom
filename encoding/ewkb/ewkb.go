@@ -27,8 +27,8 @@ const (
 // Read reads an arbitrary geometry from r.
 func Read(r io.Reader) (geom.T, error) {
 
-	var ewkbByteOrder byte
-	if err := binary.Read(r, binary.LittleEndian, &ewkbByteOrder); err != nil {
+	ewkbByteOrder, err := wkbcommon.ReadByte(r)
+	if err != nil {
 		return nil, err
 	}
 	var byteOrder binary.ByteOrder
@@ -41,8 +41,8 @@ func Read(r io.Reader) (geom.T, error) {
 		return nil, wkbcommon.ErrUnknownByteOrder(ewkbByteOrder)
 	}
 
-	var ewkbGeometryType uint32
-	if err := binary.Read(r, byteOrder, &ewkbGeometryType); err != nil {
+	ewkbGeometryType, err := wkbcommon.ReadUInt32(r, byteOrder)
+	if err != nil {
 		return nil, err
 	}
 	t := wkbcommon.Type(ewkbGeometryType)
@@ -63,7 +63,8 @@ func Read(r io.Reader) (geom.T, error) {
 
 	var srid uint32
 	if ewkbGeometryType&ewkbSRID != 0 {
-		if err := binary.Read(r, byteOrder, &srid); err != nil {
+		srid, err = wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 	}
@@ -88,8 +89,8 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return geom.NewPolygonFlat(layout, flatCoords, ends).SetSRID(int(srid)), nil
 	case wkbcommon.MultiPointID:
-		var n uint32
-		if err := binary.Read(r, byteOrder, &n); err != nil {
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 		if n > wkbcommon.MaxGeometryElements[1] {
@@ -111,8 +112,8 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return mp, nil
 	case wkbcommon.MultiLineStringID:
-		var n uint32
-		if err := binary.Read(r, byteOrder, &n); err != nil {
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 		if n > wkbcommon.MaxGeometryElements[2] {
@@ -134,8 +135,8 @@ func Read(r io.Reader) (geom.T, error) {
 		}
 		return mls, nil
 	case wkbcommon.MultiPolygonID:
-		var n uint32
-		if err := binary.Read(r, byteOrder, &n); err != nil {
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
 			return nil, err
 		}
 		if n > wkbcommon.MaxGeometryElements[3] {
