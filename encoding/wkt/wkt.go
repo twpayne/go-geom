@@ -7,6 +7,7 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// Marshal marshals an arbitrary geometry.
 func Marshal(g geom.T) (string, error) {
 	typeString := ""
 	switch g := g.(type) {
