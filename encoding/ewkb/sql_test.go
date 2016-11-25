@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	geom "github.com/twpayne/go-geom"
+
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
@@ -40,5 +42,39 @@ func Example_scan() {
 	// Longitude: 0.1275
 	// Latitude: 51.50722
 	// SRID: 4326
+
+}
+
+func Example_value() {
+
+	type City struct {
+		Name     string
+		Location Point
+	}
+
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	mock.ExpectExec(`INSERT INTO cities \(name, location\) VALUES \(\?, \?\);`).
+		WithArgs("London", []byte("\x01\x01\x00\x00\x20\xe6\x10\x00\x00\x52\xb8\x1e\x85\xeb\x51\xc0\x3f\x45\xf0\xbf\x95\xec\xc0\x49\x40")).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	c := City{
+		Name:     "London",
+		Location: Point{geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0.1275, 51.50722}).SetSRID(4326)},
+	}
+
+	result, err := db.Exec(`INSERT INTO cities (name, location) VALUES (?, ?);`, c.Name, &c.Location)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rowsAffected, _ := result.RowsAffected()
+	fmt.Printf("%d rows affected", rowsAffected)
+
+	// Output:
+	// 1 rows affected
 
 }
