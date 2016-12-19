@@ -62,12 +62,20 @@ func (es Errors) Error() string {
 // parseDec parses a decimal value in s[start:stop].
 func parseDec(s string, start, stop int) (int, error) {
 	result := 0
+	neg := false
+	if s[start] == '-' {
+		neg = true
+		start++
+	}
 	for i := start; i < stop; i++ {
 		if c := s[i]; '0' <= c && c <= '9' {
 			result = 10*result + int(c) - '0'
 		} else {
 			return 0, ErrInvalidCharacter
 		}
+	}
+	if neg {
+		result = -result
 	}
 	return result, nil
 }
