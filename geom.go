@@ -39,6 +39,17 @@ func (e ErrLayoutMismatch) Error() string {
 	return fmt.Sprintf("geom: layout mismatch, got %s, want %s", e.Got, e.Want)
 }
 
+// An ErrSRIDMismatch is returned when an SRID does not match the expected
+// SRID.
+type ErrSRIDMismatch struct {
+	Got  int
+	Want int
+}
+
+func (e ErrSRIDMismatch) Error() string {
+	return fmt.Sprintf("geom: SRID mismatch, got %d, want %d", e.Got, e.Want)
+}
+
 // An ErrStrideMismatch is returned when the stride does not match the expected
 // stride.
 type ErrStrideMismatch struct {
