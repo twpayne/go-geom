@@ -162,7 +162,6 @@ func (g *Geometry) Decode() (geom.T, error) {
 
 // Encode encodes g as a GeoJSON geometry.
 func Encode(g geom.T) (*Geometry, error) {
-
 	switch g := g.(type) {
 	case *geom.Point:
 		var coords json.RawMessage
@@ -176,7 +175,6 @@ func Encode(g geom.T) (*Geometry, error) {
 		}, nil
 	case *geom.LineString:
 		var coords json.RawMessage
-
 		coords, err := json.Marshal(g.Coords())
 		if err != nil {
 			return nil, err

@@ -33,7 +33,6 @@ func TestBoundsExtend(t *testing.T) {
 	} {
 		extended := Bounds{layout: testData.initial.layout, min: testData.initial.min, max: testData.initial.max}
 		extended.Extend(testData.expandBy)
-
 		if !reflect.DeepEqual(extended, testData.expected) {
 			t.Errorf("Test %v Failed.  Expected: \n%v but got: \n%v", i+1, testData.expected, extended)
 		}
@@ -58,7 +57,6 @@ func TestBoundsIsEmpty(t *testing.T) {
 		},
 	} {
 		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-
 		for j := 0; j < 10; j++ {
 			// do multiple checks to verify no obvious side effects are caused
 			isEmpty := copy.IsEmpty()
@@ -112,7 +110,6 @@ func TestBoundsOverlaps(t *testing.T) {
 		},
 	} {
 		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-
 		for j := 0; j < 10; j++ {
 			// do multiple checks to verify no obvious side effects are caused
 			overlaps := copy.Overlaps(testData.bounds.layout, &testData.other)
@@ -162,7 +159,6 @@ func TestBoundsOverlapsPoint(t *testing.T) {
 		},
 	} {
 		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-
 		for j := 0; j < 10; j++ {
 			// do multiple checks to verify no obvious side effects are caused
 			overlaps := copy.OverlapsPoint(testData.bounds.layout, testData.point)
@@ -185,7 +181,6 @@ func TestBoundsSet(t *testing.T) {
 	if !reflect.DeepEqual(expected, bounds) {
 		t.Errorf("Expected %v but got %v", expected, bounds)
 	}
-
 	func() {
 		defer func() {
 			if r := recover(); r == nil {
@@ -194,7 +189,6 @@ func TestBoundsSet(t *testing.T) {
 				t.Errorf("Set modified bounds even though error was thrown. Before %v aster %v", expected, bounds)
 			}
 		}()
-
 		bounds.Set(2, 2, 2, 2, 2)
 	}()
 }
