@@ -25,6 +25,15 @@ func NewBounds(layout Layout) *Bounds {
 	}
 }
 
+// Clone returns a deep copy of b.
+func (b *Bounds) Clone() *Bounds {
+	return &Bounds{
+		layout: b.layout,
+		min:    b.min.Clone(),
+		max:    b.max.Clone(),
+	}
+}
+
 // Extend extends b to include geometry g.
 func (b *Bounds) Extend(g T) *Bounds {
 	b.extendLayout(g.Layout())
