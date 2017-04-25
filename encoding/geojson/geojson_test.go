@@ -94,6 +94,13 @@ func TestGeometry(t *testing.T) {
 			g: geom.NewMultiPolygon(geom.XYZ).MustSetCoords([][][]geom.Coord{{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}, {{-1, -2, -3}, {-4, -5, -6}, {-7, -8, -9}, {-1, -2, -3}}}}),
 			s: `{"type":"MultiPolygon","coordinates":[[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]],[[-1,-2,-3],[-4,-5,-6],[-7,-8,-9],[-1,-2,-3]]]]}`,
 		},
+		{
+			g: geom.NewGeometryCollection().MustPush([]geom.T{
+				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{100, 0}),
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{101, 0}, {102, 1}}),
+			}...),
+			s: `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100,0]},{"type":"LineString","coordinates":[[101,0],[102,1]]}]}`,
+		},
 	} {
 		if got, err := Marshal(tc.g); err != nil || string(got) != tc.s {
 			t.Errorf("Marshal(%#v) == %#v, %v, want %#v, nil", tc.g, string(got), err, tc.s)
