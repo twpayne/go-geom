@@ -30,6 +30,26 @@ func TestBoundsExtend(t *testing.T) {
 			expected: Bounds{layout: XYZ, min: Coord{0, -10, 0}, max: Coord{10, 10, 10}},
 			expandBy: NewPolygonFlat(XYZ, []float64{5, -10, 3}, []int{2}),
 		},
+		{
+			initial:  Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{10, 10, 10}},
+			expected: Bounds{layout: XYZM, min: Coord{-1, -1, 0, -1}, max: Coord{11, 11, 10, 11}},
+			expandBy: NewMultiPointFlat(XYM, []float64{-1, -1, -1, 11, 11, 11}),
+		},
+		{
+			initial:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}},
+			expected: Bounds{layout: XYM, min: Coord{-1, -1, -1}, max: Coord{11, 11, 11}},
+			expandBy: NewMultiPointFlat(XYM, []float64{-1, -1, -1, 11, 11, 11}),
+		},
+		{
+			initial:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}},
+			expected: Bounds{layout: XYZ, min: Coord{-1, -1, -1}, max: Coord{11, 11, 11}},
+			expandBy: NewMultiPointFlat(XYZ, []float64{-1, -1, -1, 11, 11, 11}),
+		},
+		{
+			initial:  Bounds{layout: XYM, min: Coord{0, 0, 0}, max: Coord{10, 10, 10}},
+			expected: Bounds{layout: XYZM, min: Coord{-1, -1, -1, 0}, max: Coord{11, 11, 11, 10}},
+			expandBy: NewMultiPointFlat(XYZ, []float64{-1, -1, -1, 11, 11, 11}),
+		},
 	} {
 		extended := Bounds{layout: testData.initial.layout, min: testData.initial.min, max: testData.initial.max}
 		extended.Extend(testData.expandBy)
@@ -186,7 +206,7 @@ func TestBoundsSet(t *testing.T) {
 			if r := recover(); r == nil {
 				t.Error("Expected a panic but didn't get it as expected")
 			} else if !reflect.DeepEqual(expected, bounds) {
-				t.Errorf("Set modified bounds even though error was thrown. Before %v aster %v", expected, bounds)
+				t.Errorf("Set modified bounds even though error was thrown. Before %v after %v", expected, bounds)
 			}
 		}()
 		bounds.Set(2, 2, 2, 2, 2)
