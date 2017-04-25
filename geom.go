@@ -39,6 +39,17 @@ func (e ErrLayoutMismatch) Error() string {
 	return fmt.Sprintf("geom: layout mismatch, got %s, want %s", e.Got, e.Want)
 }
 
+// An ErrSRIDMismatch is returned when an SRID does not match the expected
+// SRID.
+type ErrSRIDMismatch struct {
+	Got  int
+	Want int
+}
+
+func (e ErrSRIDMismatch) Error() string {
+	return fmt.Sprintf("geom: SRID mismatch, got %d, want %d", e.Got, e.Want)
+}
+
 // An ErrStrideMismatch is returned when the stride does not match the expected
 // stride.
 type ErrStrideMismatch struct {
@@ -69,6 +80,13 @@ func (e ErrUnsupportedType) Error() string {
 
 // A Coord represents an N-dimensional coordinate.
 type Coord []float64
+
+// Clone returns a deep copy of c.
+func (c Coord) Clone() Coord {
+	clone := make(Coord, len(c))
+	copy(clone, c)
+	return clone
+}
 
 // X returns the x coordinate of the coordinate.  X is assumed to be the first ordinate
 func (c Coord) X() float64 {

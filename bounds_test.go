@@ -6,36 +6,54 @@ import (
 )
 
 func TestBoundsExtend(t *testing.T) {
-	for i, testData := range []struct {
-		initial, expected Bounds
-		expandBy          T
+	for _, tc := range []struct {
+		b    *Bounds
+		g    T
+		want *Bounds
 	}{
 		{
-			initial:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			expected: Bounds{layout: XY, min: Coord{0, -10}, max: Coord{10, 0}},
-			expandBy: NewPointFlat(XY, []float64{10, -10}),
+			b:    NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
+			g:    NewPoint(XY).MustSetCoords(Coord{10, -10}),
+			want: NewBounds(XY).SetCoords(Coord{0, -10}, Coord{10, 0}),
 		},
 		{
-			initial:  Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
-			expected: Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
-			expandBy: NewPointFlat(XY, []float64{10, -10}),
+			b:    NewBounds(XY).SetCoords(Coord{-100, -100}, Coord{100, 100}),
+			g:    NewPoint(XY).MustSetCoords(Coord{-10, 10}),
+			want: NewBounds(XY).SetCoords(Coord{-100, -100}, Coord{100, 100}),
 		},
 		{
-			initial:  Bounds{layout: XYZ, min: Coord{0, 0, -1}, max: Coord{10, 10, 1}},
-			expected: Bounds{layout: XYZ, min: Coord{0, -10, -1}, max: Coord{10, 10, 1}},
-			expandBy: NewPointFlat(XY, []float64{5, -10}),
+			b:    NewBounds(XYZ).SetCoords(Coord{0, 0, -1}, Coord{10, 10, 1}),
+			g:    NewPoint(XY).MustSetCoords(Coord{5, -10}),
+			want: NewBounds(XYZ).SetCoords(Coord{0, -10, -1}, Coord{10, 10, 1}),
 		},
 		{
-			initial:  Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{10, 10, 10}},
-			expected: Bounds{layout: XYZ, min: Coord{0, -10, 0}, max: Coord{10, 10, 10}},
-			expandBy: NewPolygonFlat(XYZ, []float64{5, -10, 3}, []int{2}),
+			b:    NewBounds(XYZ).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
+			g:    NewPoint(XYZ).MustSetCoords(Coord{5, -10, 3}),
+			want: NewBounds(XYZ).SetCoords(Coord{0, -10, 0}, Coord{10, 10, 10}),
+		},
+		{
+			b:    NewBounds(XYZ).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
+			g:    NewMultiPoint(XYM).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			want: NewBounds(XYZM).SetCoords(Coord{-1, -1, 0, -1}, Coord{11, 11, 10, 11}),
+		},
+		{
+			b:    NewBounds(XY).SetCoords(Coord{0, 0}, Coord{10, 10}),
+			g:    NewMultiPoint(XYM).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			want: NewBounds(XYM).SetCoords(Coord{-1, -1, -1}, Coord{11, 11, 11}),
+		},
+		{
+			b:    NewBounds(XY).SetCoords(Coord{0, 0}, Coord{10, 10}),
+			g:    NewMultiPoint(XYZ).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			want: NewBounds(XYZ).SetCoords(Coord{-1, -1, -1}, Coord{11, 11, 11}),
+		},
+		{
+			b:    NewBounds(XYM).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
+			g:    NewMultiPoint(XYZ).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			want: NewBounds(XYZM).SetCoords(Coord{-1, -1, -1, 0}, Coord{11, 11, 11, 10}),
 		},
 	} {
-		extended := Bounds{layout: testData.initial.layout, min: testData.initial.min, max: testData.initial.max}
-		extended.Extend(testData.expandBy)
-
-		if !reflect.DeepEqual(extended, testData.expected) {
-			t.Errorf("Test %v Failed.  Expected: \n%v but got: \n%v", i+1, testData.expected, extended)
+		if got := tc.b.Clone().Extend(tc.g); !reflect.DeepEqual(got, tc.want) {
+			t.Errorf("%+v.Extend(%+v) == %+v, want %+v", tc.b, tc.g, got, tc.want)
 		}
 	}
 }
@@ -58,7 +76,6 @@ func TestBoundsIsEmpty(t *testing.T) {
 		},
 	} {
 		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-
 		for j := 0; j < 10; j++ {
 			// do multiple checks to verify no obvious side effects are caused
 			isEmpty := copy.IsEmpty()
@@ -112,7 +129,6 @@ func TestBoundsOverlaps(t *testing.T) {
 		},
 	} {
 		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-
 		for j := 0; j < 10; j++ {
 			// do multiple checks to verify no obvious side effects are caused
 			overlaps := copy.Overlaps(testData.bounds.layout, &testData.other)
@@ -162,7 +178,6 @@ func TestBoundsOverlapsPoint(t *testing.T) {
 		},
 	} {
 		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-
 		for j := 0; j < 10; j++ {
 			// do multiple checks to verify no obvious side effects are caused
 			overlaps := copy.OverlapsPoint(testData.bounds.layout, testData.point)
@@ -185,16 +200,14 @@ func TestBoundsSet(t *testing.T) {
 	if !reflect.DeepEqual(expected, bounds) {
 		t.Errorf("Expected %v but got %v", expected, bounds)
 	}
-
 	func() {
 		defer func() {
 			if r := recover(); r == nil {
 				t.Error("Expected a panic but didn't get it as expected")
 			} else if !reflect.DeepEqual(expected, bounds) {
-				t.Errorf("Set modified bounds even though error was thrown. Before %v aster %v", expected, bounds)
+				t.Errorf("Set modified bounds even though error was thrown. Before %v after %v", expected, bounds)
 			}
 		}()
-
 		bounds.Set(2, 2, 2, 2, 2)
 	}()
 }
