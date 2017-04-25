@@ -81,6 +81,13 @@ func (e ErrUnsupportedType) Error() string {
 // A Coord represents an N-dimensional coordinate.
 type Coord []float64
 
+// Clone returns a deep copy of c.
+func (c Coord) Clone() Coord {
+	clone := make(Coord, len(c))
+	copy(clone, c)
+	return clone
+}
+
 // X returns the x coordinate of the coordinate.  X is assumed to be the first ordinate
 func (c Coord) X() float64 {
 	return c[0]
