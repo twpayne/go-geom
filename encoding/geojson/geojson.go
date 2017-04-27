@@ -26,6 +26,13 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
 }
 
+// ErrInvalidInput is returned when the input is invalid
+type ErrInvalidInput struct{}
+
+func (e ErrInvalidInput) Error() string {
+	return fmt.Sprint("geojson: invalid input, couldn't retrieve coordinates")
+}
+
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
 	Type        string           `json:"type"`
@@ -95,6 +102,9 @@ func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
 
 // Decode decodes g to a geometry.
 func (g *Geometry) Decode() (geom.T, error) {
+	if g.Coordinates == nil {
+		return nil, ErrInvalidInput{}
+	}
 	switch g.Type {
 	case "Point":
 		var coords geom.Coord
