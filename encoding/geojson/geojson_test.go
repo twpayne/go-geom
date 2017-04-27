@@ -9,6 +9,17 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+func TestGeometryDecode_NilCoordinates(t *testing.T) {
+	geometry := Geometry{
+		Type:        "LineString",
+		Coordinates: nil,
+	}
+	if _, err := geometry.Decode(); err == nil {
+		t.Fatalf("Decode of Geometry with nil Coordinates didn't return an error even though we expected one")
+	}
+
+}
+
 func TestGeometry(t *testing.T) {
 	for _, tc := range []struct {
 		g geom.T
