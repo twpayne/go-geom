@@ -225,7 +225,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		}
 	}
 
-	switch g.(type) {
+	switch g := g.(type) {
 	case *geom.Point:
 		return wkbcommon.WriteFlatCoords0(w, byteOrder, g.FlatCoords())
 	case *geom.LineString:
@@ -233,37 +233,34 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	case *geom.Polygon:
 		return wkbcommon.WriteFlatCoords2(w, byteOrder, g.FlatCoords(), g.Ends(), g.Stride())
 	case *geom.MultiPoint:
-		mp := g.(*geom.MultiPoint)
-		n := mp.NumPoints()
+		n := g.NumPoints()
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
 		for i := 0; i < n; i++ {
-			if err := Write(w, byteOrder, mp.Point(i)); err != nil {
+			if err := Write(w, byteOrder, g.Point(i)); err != nil {
 				return err
 			}
 		}
 		return nil
 	case *geom.MultiLineString:
-		mls := g.(*geom.MultiLineString)
-		n := mls.NumLineStrings()
+		n := g.NumLineStrings()
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
 		for i := 0; i < n; i++ {
-			if err := Write(w, byteOrder, mls.LineString(i)); err != nil {
+			if err := Write(w, byteOrder, g.LineString(i)); err != nil {
 				return err
 			}
 		}
 		return nil
 	case *geom.MultiPolygon:
-		mp := g.(*geom.MultiPolygon)
-		n := mp.NumPolygons()
+		n := g.NumPolygons()
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
 		for i := 0; i < n; i++ {
-			if err := Write(w, byteOrder, mp.Polygon(i)); err != nil {
+			if err := Write(w, byteOrder, g.Polygon(i)); err != nil {
 				return err
 			}
 		}
