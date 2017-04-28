@@ -97,6 +97,9 @@ func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
 func (g *Geometry) Decode() (geom.T, error) {
 	switch g.Type {
 	case "Point":
+		if g.Coordinates == nil {
+			return geom.NewPoint(geom.NoLayout), nil
+		}
 		var coords geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
@@ -107,6 +110,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 		}
 		return geom.NewPoint(layout).SetCoords(coords)
 	case "LineString":
+		if g.Coordinates == nil {
+			return geom.NewLineString(geom.NoLayout), nil
+		}
 		var coords []geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
@@ -117,6 +123,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 		}
 		return geom.NewLineString(layout).SetCoords(coords)
 	case "Polygon":
+		if g.Coordinates == nil {
+			return geom.NewPolygon(geom.NoLayout), nil
+		}
 		var coords [][]geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
@@ -127,6 +136,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 		}
 		return geom.NewPolygon(layout).SetCoords(coords)
 	case "MultiPoint":
+		if g.Coordinates == nil {
+			return geom.NewMultiPoint(geom.NoLayout), nil
+		}
 		var coords []geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
@@ -137,6 +149,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 		}
 		return geom.NewMultiPoint(layout).SetCoords(coords)
 	case "MultiLineString":
+		if g.Coordinates == nil {
+			return geom.NewMultiLineString(geom.NoLayout), nil
+		}
 		var coords [][]geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
@@ -147,6 +162,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 		}
 		return geom.NewMultiLineString(layout).SetCoords(coords)
 	case "MultiPolygon":
+		if g.Coordinates == nil {
+			return geom.NewMultiPolygon(geom.NoLayout), nil
+		}
 		var coords [][][]geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
