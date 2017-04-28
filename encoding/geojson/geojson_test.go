@@ -10,14 +10,43 @@ import (
 )
 
 func TestGeometryDecode_NilCoordinates(t *testing.T) {
-	geometry := Geometry{
-		Type:        "LineString",
-		Coordinates: nil,
+	for _, tc := range []struct {
+		geometry Geometry
+		want     geom.T
+	}{
+		{
+			geometry: Geometry{Type: "Point"},
+			want:     geom.NewPoint(geom.NoLayout),
+		},
+		{
+			geometry: Geometry{Type: "LineString"},
+			want:     geom.NewLineString(geom.NoLayout),
+		},
+		{
+			geometry: Geometry{Type: "Polygon"},
+			want:     geom.NewPolygon(geom.NoLayout),
+		},
+		{
+			geometry: Geometry{Type: "MultiPoint"},
+			want:     geom.NewMultiPoint(geom.NoLayout),
+		},
+		{
+			geometry: Geometry{Type: "MultiLineString"},
+			want:     geom.NewMultiLineString(geom.NoLayout),
+		},
+		{
+			geometry: Geometry{Type: "MultiPolygon"},
+			want:     geom.NewMultiPolygon(geom.NoLayout),
+		},
+		{
+			geometry: Geometry{Type: "GeometryCollection"},
+			want:     geom.NewGeometryCollection(),
+		},
+	} {
+		if got, err := tc.geometry.Decode(); err != nil || !reflect.DeepEqual(got, tc.want) {
+			t.Errorf("%+v.Decode() == %v, %v, want %v, nil", tc.geometry, got, err, tc.want)
+		}
 	}
-	if _, err := geometry.Decode(); err == nil {
-		t.Fatalf("Decode of Geometry with nil Coordinates didn't return an error even though we expected one")
-	}
-
 }
 
 func TestGeometry(t *testing.T) {
