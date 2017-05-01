@@ -23,6 +23,8 @@ func Encode(g geom.T) (kml.Element, error) {
 		return EncodeMultiPolygon(g), nil
 	case *geom.Polygon:
 		return EncodePolygon(g), nil
+	case *geom.GeometryCollection:
+		return EncodeGeometryCollection(g)
 	default:
 		return nil, geom.ErrUnsupportedType{Value: g}
 	}
@@ -115,6 +117,19 @@ func EncodePolygon(p *geom.Polygon) kml.Element {
 		offset = end
 	}
 	return kml.Polygon(boundaries...)
+}
+
+// EncodeGeometryCollection encodes a GeometryCollection.
+func EncodeGeometryCollection(g *geom.GeometryCollection) (kml.Element, error) {
+	geometries := make([]kml.Element, g.NumGeoms())
+	for i, g := range g.Geoms() {
+		var err error
+		geometries[i], err = Encode(g)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return kml.MultiGeometry(geometries...), nil
 }
 
 func dim(l geom.Layout) int {
