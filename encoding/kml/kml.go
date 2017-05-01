@@ -8,21 +8,21 @@ import (
 
 // Encode encodes an arbitrary geometry.
 func Encode(g geom.T) (kml.Element, error) {
-	switch g.(type) {
+	switch g := g.(type) {
 	case *geom.Point:
-		return EncodePoint(g.(*geom.Point)), nil
+		return EncodePoint(g), nil
 	case *geom.LineString:
-		return EncodeLineString(g.(*geom.LineString)), nil
+		return EncodeLineString(g), nil
 	case *geom.LinearRing:
-		return EncodeLinearRing(g.(*geom.LinearRing)), nil
+		return EncodeLinearRing(g), nil
 	case *geom.MultiLineString:
-		return EncodeMultiLineString(g.(*geom.MultiLineString)), nil
+		return EncodeMultiLineString(g), nil
 	case *geom.MultiPoint:
-		return EncodeMultiPoint(g.(*geom.MultiPoint)), nil
+		return EncodeMultiPoint(g), nil
 	case *geom.MultiPolygon:
-		return EncodeMultiPolygon(g.(*geom.MultiPolygon)), nil
+		return EncodeMultiPolygon(g), nil
 	case *geom.Polygon:
-		return EncodePolygon(g.(*geom.Polygon)), nil
+		return EncodePolygon(g), nil
 	default:
 		return nil, geom.ErrUnsupportedType{Value: g}
 	}
