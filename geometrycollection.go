@@ -70,6 +70,11 @@ func (gc *GeometryCollection) Bounds() *Bounds {
 	return b
 }
 
+// Empty returns true if the collection is empty.
+func (gc *GeometryCollection) Empty() bool {
+	return len(gc.geoms) == 0
+}
+
 // FlatCoords panics.
 func (*GeometryCollection) FlatCoords() []float64 {
 	panic("FlatCoords() called on a GeometryCollection")
