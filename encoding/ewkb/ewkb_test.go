@@ -134,6 +134,24 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPolygon{g.(*geom.MultiPolygon)})
 			}
 		}
+	case *geom.GeometryCollection:
+		var gc GeometryCollection
+		if xdr != nil {
+			if err := gc.Scan(xdr); err != nil {
+				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(xdr), err)
+			}
+			if !reflect.DeepEqual(gc, GeometryCollection{g.(*geom.GeometryCollection)}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), gc, GeometryCollection{g.(*geom.GeometryCollection)})
+			}
+		}
+		if ndr != nil {
+			if err := gc.Scan(ndr); err != nil {
+				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(ndr), err)
+			}
+			if !reflect.DeepEqual(gc, GeometryCollection{g.(*geom.GeometryCollection)}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), gc, GeometryCollection{g.(*geom.GeometryCollection)})
+			}
+		}
 	}
 }
 
@@ -190,6 +208,14 @@ func Test(t *testing.T) {
 			g:   geom.NewPoint(geom.XYZM).SetSRID(4326).MustSetCoords(geom.Coord{1, 2, 3, 4}),
 			xdr: mustDecodeString("00e0000001000010e63ff0000000000000400000000000000040080000000000004010000000000000"),
 			ndr: mustDecodeString("01010000e0e6100000000000000000f03f000000000000004000000000000008400000000000001040"),
+		},
+		{
+			g: geom.NewGeometryCollection().SetSRID(4326).MustPush([]geom.T{
+				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{3, 4}, {5, 6}}),
+			}...),
+			ndr: mustDecodeString("0107000020E6100000020000000101000000000000000000F03F00000000000000400102000000020000000000000000000840000000000000104000000000000014400000000000001840"),
+			xdr: mustDecodeString("0020000007000010e60000000200000000013ff000000000000040000000000000000000000002000000024008000000000000401000000000000040140000000000004018000000000000"),
 		},
 	} {
 		test(t, tc.g, tc.xdr, tc.ndr)

@@ -157,6 +157,25 @@ func Read(r io.Reader) (geom.T, error) {
 			}
 		}
 		return mp, nil
+	case wkbcommon.GeometryCollectionID:
+		n, err := wkbcommon.ReadUInt32(r, byteOrder)
+		if err != nil {
+			return nil, err
+		}
+		if n > wkbcommon.MaxGeometryElements[1] {
+			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: n, Limit: wkbcommon.MaxGeometryElements[1]}
+		}
+		gc := geom.NewGeometryCollection().SetSRID(int(srid))
+		for i := uint32(0); i < n; i++ {
+			g, err := Read(r)
+			if err != nil {
+				return nil, err
+			}
+			if err = gc.Push(g); err != nil {
+				return nil, err
+			}
+		}
+		return gc, nil
 	default:
 		return nil, wkbcommon.ErrUnsupportedType(ewkbGeometryType)
 	}
@@ -198,6 +217,8 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		ewkbGeometryType = wkbcommon.MultiLineStringID
 	case *geom.MultiPolygon:
 		ewkbGeometryType = wkbcommon.MultiPolygonID
+	case *geom.GeometryCollection:
+		ewkbGeometryType = wkbcommon.GeometryCollectionID
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
@@ -261,6 +282,17 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		}
 		for i := 0; i < n; i++ {
 			if err := Write(w, byteOrder, g.Polygon(i)); err != nil {
+				return err
+			}
+		}
+		return nil
+	case *geom.GeometryCollection:
+		n := g.NumGeoms()
+		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
+			return err
+		}
+		for i := 0; i < n; i++ {
+			if err := Write(w, byteOrder, g.Geom(i)); err != nil {
 				return err
 			}
 		}
