@@ -1,9 +1,5 @@
 package geom
 
-import (
-	"fmt"
-)
-
 // A GeometryCollection is a collection of arbitary geometries with the same
 // SRID.
 type GeometryCollection struct {
@@ -74,6 +70,11 @@ func (gc *GeometryCollection) Bounds() *Bounds {
 	return b
 }
 
+// Empty returns true if the collection is empty.
+func (gc *GeometryCollection) Empty() bool {
+	return len(gc.geoms) == 0
+}
+
 // FlatCoords panics.
 func (*GeometryCollection) FlatCoords() []float64 {
 	panic("FlatCoords() called on a GeometryCollection")
@@ -102,41 +103,14 @@ func (gc *GeometryCollection) MustPush(gs ...T) *GeometryCollection {
 	return gc
 }
 
-// Push appends geometries. The SRIDs must match.
+// Push appends geometries.
 func (gc *GeometryCollection) Push(gs ...T) error {
-	for _, g := range gs {
-		if gc.srid == 0 {
-			gc.srid = g.SRID()
-		} else if g.SRID() != gc.srid {
-			return ErrSRIDMismatch{Got: g.SRID(), Want: gc.srid}
-		}
-		gc.geoms = append(gc.geoms, g)
-	}
+	gc.geoms = append(gc.geoms, gs...)
 	return nil
 }
 
 // SetSRID sets gc's SRID and the SRID of all its elements.
 func (gc *GeometryCollection) SetSRID(srid int) *GeometryCollection {
 	gc.srid = srid
-	for i, g := range gc.geoms {
-		switch g := g.(type) {
-		case *Point:
-			gc.geoms[i] = g.SetSRID(srid)
-		case *LineString:
-			gc.geoms[i] = g.SetSRID(srid)
-		case *Polygon:
-			gc.geoms[i] = g.SetSRID(srid)
-		case *MultiPoint:
-			gc.geoms[i] = g.SetSRID(srid)
-		case *MultiLineString:
-			gc.geoms[i] = g.SetSRID(srid)
-		case *MultiPolygon:
-			gc.geoms[i] = g.SetSRID(srid)
-		case *GeometryCollection:
-			gc.geoms[i] = g.SetSRID(srid)
-		default:
-			panic(fmt.Sprintf("unexpected type: %T", g))
-		}
-	}
 	return gc
 }

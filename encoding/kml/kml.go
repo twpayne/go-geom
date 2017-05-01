@@ -8,21 +8,23 @@ import (
 
 // Encode encodes an arbitrary geometry.
 func Encode(g geom.T) (kml.Element, error) {
-	switch g.(type) {
+	switch g := g.(type) {
 	case *geom.Point:
-		return EncodePoint(g.(*geom.Point)), nil
+		return EncodePoint(g), nil
 	case *geom.LineString:
-		return EncodeLineString(g.(*geom.LineString)), nil
+		return EncodeLineString(g), nil
 	case *geom.LinearRing:
-		return EncodeLinearRing(g.(*geom.LinearRing)), nil
+		return EncodeLinearRing(g), nil
 	case *geom.MultiLineString:
-		return EncodeMultiLineString(g.(*geom.MultiLineString)), nil
+		return EncodeMultiLineString(g), nil
 	case *geom.MultiPoint:
-		return EncodeMultiPoint(g.(*geom.MultiPoint)), nil
+		return EncodeMultiPoint(g), nil
 	case *geom.MultiPolygon:
-		return EncodeMultiPolygon(g.(*geom.MultiPolygon)), nil
+		return EncodeMultiPolygon(g), nil
 	case *geom.Polygon:
-		return EncodePolygon(g.(*geom.Polygon)), nil
+		return EncodePolygon(g), nil
+	case *geom.GeometryCollection:
+		return EncodeGeometryCollection(g)
 	default:
 		return nil, geom.ErrUnsupportedType{Value: g}
 	}
@@ -115,6 +117,19 @@ func EncodePolygon(p *geom.Polygon) kml.Element {
 		offset = end
 	}
 	return kml.Polygon(boundaries...)
+}
+
+// EncodeGeometryCollection encodes a GeometryCollection.
+func EncodeGeometryCollection(g *geom.GeometryCollection) (kml.Element, error) {
+	geometries := make([]kml.Element, g.NumGeoms())
+	for i, g := range g.Geoms() {
+		var err error
+		geometries[i], err = Encode(g)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return kml.MultiGeometry(geometries...), nil
 }
 
 func dim(l geom.Layout) int {

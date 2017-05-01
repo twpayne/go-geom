@@ -49,7 +49,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 	case *geom.LineString:
 		var ls ewkb.LineString
 		if xdr != "" {
-			if err := ls.Scan(xdr); err != nil {
+			if err := ls.Scan(decodeString(xdr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", ls, string(xdr), err)
 			}
 			if !reflect.DeepEqual(ls, ewkb.LineString{LineString: g.(*geom.LineString)}) {
@@ -57,7 +57,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 			}
 		}
 		if ndr != "" {
-			if err := ls.Scan(ndr); err != nil {
+			if err := ls.Scan(decodeString(ndr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", ls, string(ndr), err)
 			}
 			if !reflect.DeepEqual(ls, ewkb.LineString{LineString: g.(*geom.LineString)}) {
@@ -67,7 +67,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 	case *geom.Polygon:
 		var p ewkb.Polygon
 		if xdr != "" {
-			if err := p.Scan(xdr); err != nil {
+			if err := p.Scan(decodeString(xdr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(xdr), err)
 			}
 			if !reflect.DeepEqual(p, ewkb.Polygon{Polygon: g.(*geom.Polygon)}) {
@@ -75,7 +75,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 			}
 		}
 		if ndr != "" {
-			if err := p.Scan(ndr); err != nil {
+			if err := p.Scan(decodeString(ndr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(ndr), err)
 			}
 			if !reflect.DeepEqual(p, ewkb.Polygon{Polygon: g.(*geom.Polygon)}) {
@@ -85,7 +85,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 	case *geom.MultiPoint:
 		var mp ewkb.MultiPoint
 		if xdr != "" {
-			if err := mp.Scan(xdr); err != nil {
+			if err := mp.Scan(decodeString(xdr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPoint{MultiPoint: g.(*geom.MultiPoint)}) {
@@ -93,7 +93,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 			}
 		}
 		if ndr != "" {
-			if err := mp.Scan(ndr); err != nil {
+			if err := mp.Scan(decodeString(ndr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(ndr), err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPoint{MultiPoint: g.(*geom.MultiPoint)}) {
@@ -103,7 +103,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 	case *geom.MultiLineString:
 		var mls ewkb.MultiLineString
 		if xdr != "" {
-			if err := mls.Scan(xdr); err != nil {
+			if err := mls.Scan(decodeString(xdr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mls, string(xdr), err)
 			}
 			if !reflect.DeepEqual(mls, ewkb.MultiLineString{MultiLineString: g.(*geom.MultiLineString)}) {
@@ -111,7 +111,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 			}
 		}
 		if ndr != "" {
-			if err := mls.Scan(ndr); err != nil {
+			if err := mls.Scan(decodeString(ndr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mls, string(ndr), err)
 			}
 			if !reflect.DeepEqual(mls, ewkb.MultiLineString{MultiLineString: g.(*geom.MultiLineString)}) {
@@ -121,7 +121,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 	case *geom.MultiPolygon:
 		var mp ewkb.MultiPolygon
 		if xdr != "" {
-			if err := mp.Scan(xdr); err != nil {
+			if err := mp.Scan(decodeString(xdr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPolygon{MultiPolygon: g.(*geom.MultiPolygon)}) {
@@ -129,7 +129,7 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 			}
 		}
 		if ndr != "" {
-			if err := mp.Scan(ndr); err != nil {
+			if err := mp.Scan(decodeString(ndr)); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(ndr), err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPolygon{MultiPolygon: g.(*geom.MultiPolygon)}) {
@@ -192,6 +192,19 @@ func Test(t *testing.T) {
 			g:   geom.NewPoint(geom.XYZM).SetSRID(4326).MustSetCoords(geom.Coord{1, 2, 3, 4}),
 			xdr: "00e0000001000010e63ff0000000000000400000000000000040080000000000004010000000000000",
 			ndr: "01010000e0e6100000000000000000f03f000000000000004000000000000008400000000000001040",
+		},
+		{
+			g: geom.NewPolygon(geom.XY).SetSRID(4326).MustSetCoords([][]geom.Coord{
+				{
+					{-76.32498664201256, 40.047663287885534},
+					{-76.32495043219086, 40.047748950935976},
+					{-76.32479897120051, 40.04770947217201},
+					{-76.32483518102224, 40.04762473113094},
+					{-76.32498664201256, 40.047663287885534},
+				},
+			}),
+			ndr: "0103000020e610000001000000050000002cc5c594cc1453c01758a3d4190644402cc5e5fccb1453c01b583ba31c06444029c59f81c91453c017580f581b0644402bc57f19ca1453c016583391180644402cc5c594cc1453c01758a3d419064440",
+			xdr: "0020000003000010e60000000100000005c05314cc94c5c52c40440619d4a35817c05314cbfce5c52c4044061ca33b581bc05314c9819fc5294044061b580f5817c05314ca197fc52b4044061891335816c05314cc94c5c52c40440619d4a35817",
 		},
 	} {
 		test(t, tc.g, tc.xdr, tc.ndr)

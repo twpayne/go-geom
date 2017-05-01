@@ -193,6 +193,30 @@ func Test(t *testing.T) {
 				`</Polygon>` +
 				`</MultiGeometry>`,
 		},
+		{
+			g: geom.NewGeometryCollection().MustPush(
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{
+					{-122.4425587930444, 37.80666418607323},
+					{-122.4428379594768, 37.80663578323093},
+				}),
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{
+					{-122.4425509770566, 37.80662588061205},
+					{-122.4428340530617, 37.8065999493009},
+				}),
+			),
+			want: `<MultiGeometry>` +
+				`<LineString>` +
+				`<coordinates>` +
+				`-122.4425587930444,37.80666418607323 -122.4428379594768,37.80663578323093` +
+				`</coordinates>` +
+				`</LineString>` +
+				`<LineString>` +
+				`<coordinates>` +
+				`-122.4425509770566,37.80662588061205 -122.4428340530617,37.8065999493009` +
+				`</coordinates>` +
+				`</LineString>` +
+				`</MultiGeometry>`,
+		},
 	} {
 		b := &bytes.Buffer{}
 		e := xml.NewEncoder(b)

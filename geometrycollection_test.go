@@ -142,13 +142,11 @@ func TestGeometryCollectionPush(t *testing.T) {
 			geoms: []T{
 				NewPoint(XY).SetSRID(4326),
 			},
-			g:       NewPoint(XY).SetSRID(3857),
-			wantErr: ErrSRIDMismatch{Got: 3857, Want: 4326},
+			g: NewPoint(XY).SetSRID(3857),
 		},
 		{
-			srid:    4326,
-			g:       NewPoint(XY).SetSRID(3857),
-			wantErr: ErrSRIDMismatch{Got: 3857, Want: 4326},
+			srid: 4326,
+			g:    NewPoint(XY).SetSRID(3857),
 		},
 	} {
 		if gotErr := NewGeometryCollection().SetSRID(tc.srid).MustPush(tc.geoms...).Push(tc.g); gotErr != tc.wantErr {

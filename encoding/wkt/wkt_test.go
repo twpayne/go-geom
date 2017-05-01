@@ -87,6 +87,17 @@ func TestMarshal(t *testing.T) {
 			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord{{{{1, 2}, {3, 4}, {5, 6}}}, {{{7, 8}, {9, 10}, {11, 12}}}}),
 			s: "MULTIPOLYGON (((1 2, 3 4, 5 6)), ((7 8, 9 10, 11 12)))",
 		},
+		{
+			g: geom.NewGeometryCollection(),
+			s: "GEOMETRYCOLLECTION EMPTY",
+		},
+		{
+			g: geom.NewGeometryCollection().MustPush(
+				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{3, 4}, {5, 6}}),
+			),
+			s: "GEOMETRYCOLLECTION (POINT (1 2), LINESTRING (3 4, 5 6))",
+		},
 	} {
 		if got, err := Marshal(tc.g); err != nil || got != tc.s {
 			t.Errorf("Marshal(%#v) == %v, %v, want %v, nil", tc.g, got, err, tc.s)

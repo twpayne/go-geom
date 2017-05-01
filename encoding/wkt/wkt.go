@@ -9,6 +9,14 @@ import (
 
 // Marshal marshals an arbitrary geometry.
 func Marshal(g geom.T) (string, error) {
+	b := &bytes.Buffer{}
+	if err := write(b, g); err != nil {
+		return "", err
+	}
+	return b.String(), nil
+}
+
+func write(b *bytes.Buffer, g geom.T) error {
 	typeString := ""
 	switch g := g.(type) {
 	case *geom.Point:
@@ -23,11 +31,18 @@ func Marshal(g geom.T) (string, error) {
 		typeString = "MULTILINESTRING "
 	case *geom.MultiPolygon:
 		typeString = "MULTIPOLYGON "
+	case *geom.GeometryCollection:
+		typeString = "GEOMETRYCOLLECTION "
 	default:
-		return "", geom.ErrUnsupportedType{Value: g}
+		return geom.ErrUnsupportedType{Value: g}
 	}
 	layout := g.Layout()
 	switch layout {
+	case geom.NoLayout:
+		// Special case for empty GeometryCollections
+		if g, ok := g.(*geom.GeometryCollection); !ok || !g.Empty() {
+			return geom.ErrUnsupportedLayout(layout)
+		}
 	case geom.XY:
 	case geom.XYZ:
 		typeString += "Z "
@@ -36,57 +51,54 @@ func Marshal(g geom.T) (string, error) {
 	case geom.XYZM:
 		typeString += "ZM "
 	default:
-		return "", geom.ErrUnsupportedLayout(layout)
+		return geom.ErrUnsupportedLayout(layout)
 	}
-	b := &bytes.Buffer{}
 	if _, err := b.WriteString(typeString); err != nil {
-		return "", nil
+		return err
 	}
 	switch g := g.(type) {
 	case *geom.Point:
-		if err := writeFlatCoords0(b, g.FlatCoords(), layout.Stride()); err != nil {
-			return "", err
-		}
+		return writeFlatCoords0(b, g.FlatCoords(), layout.Stride())
 	case *geom.LineString:
-		if err := writeFlatCoords1(b, g.FlatCoords(), layout.Stride()); err != nil {
-			return "", err
-		}
+		return writeFlatCoords1(b, g.FlatCoords(), layout.Stride())
 	case *geom.Polygon:
-		if err := writeFlatCoords2(b, g.FlatCoords(), 0, g.Ends(), layout.Stride()); err != nil {
-			return "", err
-		}
+		return writeFlatCoords2(b, g.FlatCoords(), 0, g.Ends(), layout.Stride())
 	case *geom.MultiPoint:
 		if g.Empty() {
-			if _, err := b.WriteString("EMPTY"); err != nil {
-				return "", err
-			}
-		} else {
-			if err := writeFlatCoords1(b, g.FlatCoords(), layout.Stride()); err != nil {
-				return "", err
-			}
+			return writeEMPTY(b)
 		}
+		return writeFlatCoords1(b, g.FlatCoords(), layout.Stride())
 	case *geom.MultiLineString:
 		if g.Empty() {
-			if _, err := b.WriteString("EMPTY"); err != nil {
-				return "", err
-			}
-		} else {
-			if err := writeFlatCoords2(b, g.FlatCoords(), 0, g.Ends(), layout.Stride()); err != nil {
-				return "", err
-			}
+			return writeEMPTY(b)
 		}
+		return writeFlatCoords2(b, g.FlatCoords(), 0, g.Ends(), layout.Stride())
 	case *geom.MultiPolygon:
 		if g.Empty() {
-			if _, err := b.WriteString("EMPTY"); err != nil {
-				return "", err
+			return writeEMPTY(b)
+		}
+		return writeFlatCoords3(b, g.FlatCoords(), g.Endss(), layout.Stride())
+	case *geom.GeometryCollection:
+		if g.Empty() {
+			return writeEMPTY(b)
+		}
+		if _, err := b.WriteRune('('); err != nil {
+			return err
+		}
+		for i, g := range g.Geoms() {
+			if i != 0 {
+				if _, err := b.WriteString(", "); err != nil {
+					return err
+				}
 			}
-		} else {
-			if err := writeFlatCoords3(b, g.FlatCoords(), g.Endss(), layout.Stride()); err != nil {
-				return "", err
+			if err := write(b, g); err != nil {
+				return err
 			}
 		}
+		_, err := b.WriteRune(')')
+		return err
 	}
-	return b.String(), nil
+	return nil
 }
 
 func writeCoord(b *bytes.Buffer, coord []float64) error {
@@ -101,6 +113,11 @@ func writeCoord(b *bytes.Buffer, coord []float64) error {
 		}
 	}
 	return nil
+}
+
+func writeEMPTY(b *bytes.Buffer) error {
+	_, err := b.WriteString("EMPTY")
+	return err
 }
 
 func writeFlatCoords0(b *bytes.Buffer, flatCoords []float64, stride int) error {
