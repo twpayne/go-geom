@@ -54,6 +54,12 @@ type MultiPolygon struct {
 	*geom.MultiPolygon
 }
 
+// A GeometryCollection is a WKB-encoded GeometryCollection that implements the
+// sql.Scanner and driver.Valuer interfaces.
+type GeometryCollection struct {
+	*geom.GeometryCollection
+}
+
 // Scan scans from a []byte.
 func (p *Point) Scan(src interface{}) error {
 	b, ok := src.([]byte)
@@ -190,6 +196,29 @@ func (mp *MultiPolygon) Scan(src interface{}) error {
 // Value returns the WKB encoding of mp.
 func (mp *MultiPolygon) Value() (driver.Value, error) {
 	return value(mp.MultiPolygon)
+}
+
+// Scan scans from a []byte.
+func (gc *GeometryCollection) Scan(src interface{}) error {
+	b, ok := src.([]byte)
+	if !ok {
+		return ErrExpectedByteSlice{Value: src}
+	}
+	got, err := Unmarshal(b)
+	if err != nil {
+		return err
+	}
+	gc1, ok := got.(*geom.GeometryCollection)
+	if !ok {
+		return wkbcommon.ErrUnexpectedType{Got: gc1, Want: gc}
+	}
+	gc.GeometryCollection = gc1
+	return nil
+}
+
+// Value returns the WKB encoding of gc.
+func (gc *GeometryCollection) Value() (driver.Value, error) {
+	return value(gc.GeometryCollection)
 }
 
 func value(g geom.T) (driver.Value, error) {
