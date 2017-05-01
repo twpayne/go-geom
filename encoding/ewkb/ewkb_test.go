@@ -25,23 +25,23 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			t.Errorf("Marshal(%#v, NDR) == %s, %#v, want %#v, nil", g, hex.EncodeToString(got), err, hex.EncodeToString(ndr))
 		}
 	}
-	switch g.(type) {
+	switch g := g.(type) {
 	case *geom.Point:
 		var p Point
 		if xdr != nil {
 			if err := p.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(xdr), err)
 			}
-			if !reflect.DeepEqual(p, Point{g.(*geom.Point)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), p, Point{g.(*geom.Point)})
+			if !reflect.DeepEqual(p, Point{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), p, Point{g})
 			}
 		}
 		if ndr != nil {
 			if err := p.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(ndr), err)
 			}
-			if !reflect.DeepEqual(p, Point{g.(*geom.Point)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), p, Point{g.(*geom.Point)})
+			if !reflect.DeepEqual(p, Point{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), p, Point{g})
 			}
 		}
 	case *geom.LineString:
@@ -50,16 +50,16 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			if err := ls.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", ls, string(xdr), err)
 			}
-			if !reflect.DeepEqual(ls, LineString{g.(*geom.LineString)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), ls, LineString{g.(*geom.LineString)})
+			if !reflect.DeepEqual(ls, LineString{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), ls, LineString{g})
 			}
 		}
 		if ndr != nil {
 			if err := ls.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", ls, string(ndr), err)
 			}
-			if !reflect.DeepEqual(ls, LineString{g.(*geom.LineString)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), ls, LineString{g.(*geom.LineString)})
+			if !reflect.DeepEqual(ls, LineString{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), ls, LineString{g})
 			}
 		}
 	case *geom.Polygon:
@@ -68,16 +68,16 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			if err := p.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(xdr), err)
 			}
-			if !reflect.DeepEqual(p, Polygon{g.(*geom.Polygon)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), p, Polygon{g.(*geom.Polygon)})
+			if !reflect.DeepEqual(p, Polygon{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), p, Polygon{g})
 			}
 		}
 		if ndr != nil {
 			if err := p.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(ndr), err)
 			}
-			if !reflect.DeepEqual(p, Polygon{g.(*geom.Polygon)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), p, Polygon{g.(*geom.Polygon)})
+			if !reflect.DeepEqual(p, Polygon{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), p, Polygon{g})
 			}
 		}
 	case *geom.MultiPoint:
@@ -86,16 +86,16 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			if err := mp.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
 			}
-			if !reflect.DeepEqual(mp, MultiPoint{g.(*geom.MultiPoint)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, MultiPoint{g.(*geom.MultiPoint)})
+			if !reflect.DeepEqual(mp, MultiPoint{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, MultiPoint{g})
 			}
 		}
 		if ndr != nil {
 			if err := mp.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(ndr), err)
 			}
-			if !reflect.DeepEqual(mp, MultiPoint{g.(*geom.MultiPoint)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPoint{g.(*geom.MultiPoint)})
+			if !reflect.DeepEqual(mp, MultiPoint{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPoint{g})
 			}
 		}
 	case *geom.MultiLineString:
@@ -104,16 +104,16 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			if err := mls.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mls, string(xdr), err)
 			}
-			if !reflect.DeepEqual(mls, MultiLineString{g.(*geom.MultiLineString)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mls, MultiLineString{g.(*geom.MultiLineString)})
+			if !reflect.DeepEqual(mls, MultiLineString{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mls, MultiLineString{g})
 			}
 		}
 		if ndr != nil {
 			if err := mls.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mls, string(ndr), err)
 			}
-			if !reflect.DeepEqual(mls, MultiLineString{g.(*geom.MultiLineString)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mls, MultiLineString{g.(*geom.MultiLineString)})
+			if !reflect.DeepEqual(mls, MultiLineString{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mls, MultiLineString{g})
 			}
 		}
 	case *geom.MultiPolygon:
@@ -122,16 +122,16 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			if err := mp.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
 			}
-			if !reflect.DeepEqual(mp, MultiPolygon{g.(*geom.MultiPolygon)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, MultiPolygon{g.(*geom.MultiPolygon)})
+			if !reflect.DeepEqual(mp, MultiPolygon{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, MultiPolygon{g})
 			}
 		}
 		if ndr != nil {
 			if err := mp.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(ndr), err)
 			}
-			if !reflect.DeepEqual(mp, MultiPolygon{g.(*geom.MultiPolygon)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPolygon{g.(*geom.MultiPolygon)})
+			if !reflect.DeepEqual(mp, MultiPolygon{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPolygon{g})
 			}
 		}
 	case *geom.GeometryCollection:
@@ -140,16 +140,16 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 			if err := gc.Scan(xdr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(xdr), err)
 			}
-			if !reflect.DeepEqual(gc, GeometryCollection{g.(*geom.GeometryCollection)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), gc, GeometryCollection{g.(*geom.GeometryCollection)})
+			if !reflect.DeepEqual(gc, GeometryCollection{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), gc, GeometryCollection{g})
 			}
 		}
 		if ndr != nil {
 			if err := gc.Scan(ndr); err != nil {
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(ndr), err)
 			}
-			if !reflect.DeepEqual(gc, GeometryCollection{g.(*geom.GeometryCollection)}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), gc, GeometryCollection{g.(*geom.GeometryCollection)})
+			if !reflect.DeepEqual(gc, GeometryCollection{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), gc, GeometryCollection{g})
 			}
 		}
 	}
