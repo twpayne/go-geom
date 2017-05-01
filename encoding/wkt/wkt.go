@@ -31,11 +31,18 @@ func write(b *bytes.Buffer, g geom.T) error {
 		typeString = "MULTILINESTRING "
 	case *geom.MultiPolygon:
 		typeString = "MULTIPOLYGON "
+	case *geom.GeometryCollection:
+		typeString = "GEOMETRYCOLLECTION "
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
 	layout := g.Layout()
 	switch layout {
+	case geom.NoLayout:
+		// Special case for empty GeometryCollections
+		if g, ok := g.(*geom.GeometryCollection); !ok || !g.Empty() {
+			return geom.ErrUnsupportedLayout(layout)
+		}
 	case geom.XY:
 	case geom.XYZ:
 		typeString += "Z "
@@ -71,6 +78,25 @@ func write(b *bytes.Buffer, g geom.T) error {
 			return writeEMPTY(b)
 		}
 		return writeFlatCoords3(b, g.FlatCoords(), g.Endss(), layout.Stride())
+	case *geom.GeometryCollection:
+		if g.Empty() {
+			return writeEMPTY(b)
+		}
+		if _, err := b.WriteRune('('); err != nil {
+			return err
+		}
+		for i, g := range g.Geoms() {
+			if i != 0 {
+				if _, err := b.WriteString(", "); err != nil {
+					return err
+				}
+			}
+			if err := write(b, g); err != nil {
+				return err
+			}
+		}
+		_, err := b.WriteRune(')')
+		return err
 	}
 	return nil
 }
