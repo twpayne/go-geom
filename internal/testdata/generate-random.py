@@ -28,68 +28,64 @@ def goifyNestedFloat64Array(a):
         return '{' + ', '.join(goifyNestedFloat64Array(x) for x in a) + '}'
 
 
-class RandomPoint(shapely.geometry.Point):
-
-    def __init__(self, coord=None):
-        if coord is None:
-            coord = randomCoord()
-        shapely.geometry.Point.__init__(self, coord)
-
-    def goify(self):
-        return 'geom.NewPoint(geom.XY).MustSetCoords(geom.Coord%s)' % (goifyNestedFloat64Array([self.x, self.y]),)
-
-
-class RandomLineString(shapely.geometry.LineString):
-
-    def __init__(self, coords=None):
-        if coords is None:
-            coords = randomCoords(R.randint(2, 8))
-        shapely.geometry.LineString.__init__(self, coords)
-
-    def goify(self):
-        return 'geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord%s)' % (goifyNestedFloat64Array(self.coords),)
-
-
-class RandomPolygon(shapely.geometry.Polygon):
-
-    def __init__(self, rings=None):
-        if rings is None:
-            rings = [randomCoords(R.randint(3, 8))] + [randomCoords(R.randint(3, 8)) for i in xrange(R.randint(0, 4))]
-        shapely.geometry.Polygon.__init__(self, rings[0], rings[1:])
-
-    def goify(self):
-        coords = [self.exterior.coords] + [i.coords for i in self.interiors]
+def goifyGeometry(g):
+    if isinstance(g, shapely.geometry.Point):
+        return 'geom.NewPoint(geom.XY).MustSetCoords(geom.Coord%s)' % (goifyNestedFloat64Array([g.x, g.y]),)
+    if isinstance(g, shapely.geometry.LineString):
+        return 'geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord%s)' % (goifyNestedFloat64Array(g.coords),)
+    if isinstance(g, shapely.geometry.Polygon):
+        coords = [g.exterior.coords] + [i.coords for i in g.interiors]
         return 'geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
-
-
-class RandomMultiPoint(shapely.geometry.MultiPoint):
-
-    def __init__(self):
-        shapely.geometry.MultiPoint.__init__(self, [RandomPoint() for i in xrange(R.randint(1, 8))])
-
-    def goify(self):
-        coords = [point.coords[0] for point in self.geoms]
+    if isinstance(g, shapely.geometry.MultiPoint):
+        coords = [point.coords[0] for point in g.geoms]
         return 'geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
-
-
-class RandomMultiLineString(shapely.geometry.MultiLineString):
-
-    def __init__(self):
-        shapely.geometry.MultiLineString.__init__(self, [RandomLineString() for i in xrange(R.randint(1, 8))])
-
-    def goify(self):
-        coords = [linestring.coords for linestring in self.geoms]
+    if isinstance(g, shapely.geometry.MultiLineString):
+        coords = [linestring.coords for linestring in g.geoms]
         return 'geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
-
-
-class RandomMultiPolygon(shapely.geometry.MultiPolygon):
-
-    def __init__(self):
-        shapely.geometry.MultiPolygon.__init__(self, [RandomPolygon() for i in xrange(R.randint(1, 8))])
-
-    def goify(self):
-        coords = [[polygon.exterior.coords] + [i.coords for i in polygon.interiors] for polygon in self.geoms]
+    if isinstance(g, shapely.geometry.MultiPolygon):
+        coords = [[polygon.exterior.coords] + [i.coords for i in polygon.interiors] for polygon in g.geoms]
         return 'geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord%s)' % (goifyNestedFloat64Array(coords),)
+    if isinstance(g, shapely.geometry.GeometryCollection):
+        return 'geom.NewGeometryCollection().MustPush(' + ', '.join(goifyGeometry(g) for g in g.geoms) + ')'
+    raise 'Unknown type'
+
+
+def randomPoint(coord=None):
+    if coord is None:
+        coord = randomCoord()
+    return shapely.geometry.Point(coord)
+
+
+def randomLineString(coords=None):
+    if coords is None:
+        coords = randomCoords(R.randint(2, 8))
+    return shapely.geometry.LineString(coords)
+
+
+def randomPolygon(rings=None):
+    if rings is None:
+        rings = [randomCoords(R.randint(3, 8))] + [randomCoords(R.randint(3, 8)) for i in xrange(R.randint(0, 4))]
+    return shapely.geometry.Polygon(rings[0], rings[1:])
+
+
+def randomMultiPoint():
+    return shapely.geometry.MultiPoint([randomPoint() for i in xrange(R.randint(1, 8))])
+
+
+def randomMultiLineString():
+    return shapely.geometry.MultiLineString([randomLineString() for i in xrange(R.randint(1, 8))])
+
+
+def randomMultiPolygon():
+    return shapely.geometry.MultiPolygon([randomPolygon() for i in xrange(R.randint(1, 8))])
+
+
+def randomSimpleGeometry():
+    return R.choice([randomPoint, randomLineString, randomPolygon, randomMultiPoint, randomMultiLineString, randomMultiPolygon])()
+
+
+def randomGeometryCollection():
+    return shapely.geometry.GeometryCollection([randomSimpleGeometry() for i in xrange(R.randint(1, 8))])
 
 
 def main(argv):
@@ -110,18 +106,19 @@ def main(argv):
     print >>f, '\tWKB []byte'
     print >>f, '\tWKT string'
     print >>f, '}{'
-    for klass in (
-            RandomPoint,
-            RandomLineString,
-            RandomPolygon,
-            RandomMultiPoint,
-            RandomMultiLineString,
-            RandomMultiPolygon,
+    for constructor in (
+            randomPoint,
+            randomLineString,
+            randomPolygon,
+            randomMultiPoint,
+            randomMultiLineString,
+            randomMultiPolygon,
+            randomGeometryCollection,
             ):
         for i in xrange(8):
-            g = klass()
+            g = constructor()
             print >>f, '\t{'
-            print >>f, '\t\t%s,' % (g.goify(),)
+            print >>f, '\t\t%s,' % (goifyGeometry(g),)
             print >>f, '\t\t"%s",' % (g.wkb.encode('hex'),)
             print >>f, '\t\t[]byte("%s"),' % (''.join('\\x%02X' % ord(c) for c in g.wkb),)
             print >>f, '\t\t"%s",' % (g.wkt,)
