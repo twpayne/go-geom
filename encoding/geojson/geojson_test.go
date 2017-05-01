@@ -135,10 +135,10 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"MultiPolygon","coordinates":[[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]],[[-1,-2,-3],[-4,-5,-6],[-7,-8,-9],[-1,-2,-3]]]]}`,
 		},
 		{
-			g: geom.NewGeometryCollection().MustPush([]geom.T{
+			g: geom.NewGeometryCollection().MustPush(
 				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{100, 0}),
 				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{101, 0}, {102, 1}}),
-			}...),
+			),
 			s: `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100,0]},{"type":"LineString","coordinates":[[101,0],[102,1]]}]}`,
 		},
 	} {
