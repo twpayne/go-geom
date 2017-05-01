@@ -136,6 +136,22 @@ func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
 				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPolygon{g})
 			}
 		}
+	case *geom.GeometryCollection:
+		var gc GeometryCollection
+		if xdr != nil {
+			if err := gc.Scan(xdr); err != nil {
+				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(xdr), err)
+			}
+			if !reflect.DeepEqual(gc, GeometryCollection{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), gc, GeometryCollection{g})
+			}
+		}
+		if ndr != nil {
+			if err := gc.Scan(ndr); err != nil {
+				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(ndr), err)
+			}
+			if !reflect.DeepEqual(gc, GeometryCollection{g}) {
+				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), gc, GeometryCollection{g})
 			}
 		}
 	}
