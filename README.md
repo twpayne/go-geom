@@ -51,5 +51,6 @@ Package geom implements efficient geometry types for geospatial applications.
  * [github.com/twpayne/go-gpx](https://github.com/twpayne/go-gpx) GPX encoding and decoding
  * [github.com/twpayne/go-kml](https://github.com/twpayne/go-kml) KML encoding
  * [github.com/twpayne/go-polyline](https://github.com/twpayne/go-polyline) Google Maps Polyline encoding and decoding
+ * [github.com/twpayne/go-vali](https://github.com/twpayne/go-vali) IGC validation
 
 [License](LICENSE)
