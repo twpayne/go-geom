@@ -33,8 +33,8 @@ Package geom implements efficient geometry types for geospatial applications.
 ### Encoding and decoding
 
  * [GeoJSON](https://godoc.org/github.com/twpayne/go-geom/encoding/geojson)
- * [IGC](https://godoc.org/github.com/twpayne/go-geom/encoding/igc)
- * [KML](https://godoc.org/github.com/twpayne/go-geom/encoding/kml)
+ * [IGC](https://godoc.org/github.com/twpayne/go-geom/encoding/igc) (decoding only)
+ * [KML](https://godoc.org/github.com/twpayne/go-geom/encoding/kml) (encoding only)
  * [WKB](https://godoc.org/github.com/twpayne/go-geom/encoding/wkb)
  * [EWKB](https://godoc.org/github.com/twpayne/go-geom/encoding/ewkb)
  * [WKT](https://godoc.org/github.com/twpayne/go-geom/encoding/wkt) (encoding only)
@@ -51,5 +51,6 @@ Package geom implements efficient geometry types for geospatial applications.
  * [github.com/twpayne/go-gpx](https://github.com/twpayne/go-gpx) GPX encoding and decoding
  * [github.com/twpayne/go-kml](https://github.com/twpayne/go-kml) KML encoding
  * [github.com/twpayne/go-polyline](https://github.com/twpayne/go-polyline) Google Maps Polyline encoding and decoding
+ * [github.com/twpayne/go-vali](https://github.com/twpayne/go-vali) IGC validation
 
 [License](LICENSE)
