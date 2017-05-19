@@ -1,6 +1,6 @@
 package geom
 
-// A GeometryCollection is a collection of arbitary geometries with the same
+// A GeometryCollection is a collection of arbitrary geometries with the same
 // SRID.
 type GeometryCollection struct {
 	geoms []T

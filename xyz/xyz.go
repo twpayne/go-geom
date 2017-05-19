@@ -68,7 +68,7 @@ func DistancePointToLine(point, lineStart, lineEnd geom.Coord) float64 {
 	return math.Sqrt(dx*dx + dy*dy + dz*dz)
 }
 
-// Equals determins if the two coordinates have equal in 3d space
+// Equals determines if the two coordinates have equal in 3d space
 func Equals(point1, other geom.Coord) bool {
 	return (point1[0] == other[0]) && (point1[1] == other[1]) &&
 		((point1[2] == other[2]) ||
