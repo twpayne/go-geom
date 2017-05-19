@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/twpayne/go-geom.svg?branch=master)](https://travis-ci.org/twpayne/go-geom)
 [![GoDoc](https://godoc.org/github.com/twpayne/go-geom?status.svg)](https://godoc.org/github.com/twpayne/go-geom)
+[![Go Report Card](https://goreportcard.com/badge/github.com/twpayne/go-geom)](https://goreportcard.com/badge/github.com/twpayne/go-geom)
 
 Package geom implements efficient geometry types for geospatial applications.
 
