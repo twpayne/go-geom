@@ -64,6 +64,18 @@ func (g *geom0) Stride() int {
 	return g.stride
 }
 
+// TransformXY replaces the X and Y ordinates of every coordinate in g with
+// f(X, Y).
+func (g *geom0) TransformXY(f func(float64, float64) (float64, float64)) error {
+	if g.stride < 2 {
+		return ErrStrideMismatch{Got: g.stride, Want: 2}
+	}
+	for i := 0; i < len(g.flatCoords); i += g.stride {
+		g.flatCoords[i], g.flatCoords[i+1] = f(g.flatCoords[i], g.flatCoords[i+1])
+	}
+	return nil
+}
+
 func (g *geom0) verify() error {
 	if g.stride != g.layout.Stride() {
 		return errStrideLayoutMismatch

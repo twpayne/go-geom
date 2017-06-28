@@ -292,10 +292,43 @@ func TestSetCoord(t *testing.T) {
 			layout:   XY,
 		},
 	} {
-
 		tc.dest.Set(tc.src)
 		if !tc.dest.Equal(tc.layout, tc.expected) {
 			t.Errorf("Setting %v with %v did not result in %v", tc.dest, tc.src, tc.dest)
+		}
+	}
+}
+
+func TestTransformXY(t *testing.T) {
+	incXDecY := func(x, y float64) (float64, float64) {
+		return x + 1, y - 1
+	}
+	for _, tc := range []struct {
+		g    T
+		f    func(float64, float64) (float64, float64)
+		want T
+	}{
+		{
+			g:    NewPoint(XY).MustSetCoords(Coord{0, 0}),
+			f:    incXDecY,
+			want: NewPoint(XY).MustSetCoords(Coord{1, -1}),
+		},
+		{
+			g:    NewPoint(XYZ).MustSetCoords(Coord{0, 0, 0}),
+			f:    incXDecY,
+			want: NewPoint(XYZ).MustSetCoords(Coord{1, -1, 0}),
+		},
+		{
+			g:    NewLineString(XY).MustSetCoords([]Coord{{0, 0}, {1, 1}}),
+			f:    incXDecY,
+			want: NewLineString(XY).MustSetCoords([]Coord{{1, -1}, {2, 0}}),
+		},
+	} {
+		if err := tc.g.TransformXY(tc.f); err != nil {
+			t.Errorf("tc.%v.TransformXY(...) == %v, want <nil>", tc.g, err)
+		}
+		if !reflect.DeepEqual(tc.g, tc.want) {
+			t.Errorf("got %v, want %v", tc.g, tc.want)
 		}
 	}
 }
