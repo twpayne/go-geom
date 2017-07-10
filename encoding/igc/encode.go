@@ -11,6 +11,7 @@ import (
 
 // An Encoder is an IGC encoder.
 type Encoder struct {
+	a string
 	w io.Writer
 }
 
@@ -38,6 +39,11 @@ func NewEncoder(w io.Writer, options ...EncoderOption) *Encoder {
 
 // Encode encodes a LineString.
 func (enc *Encoder) Encode(ls *geom.LineString) error {
+	if enc.a != "" {
+		if _, err := fmt.Fprintf(enc.w, "A%s\n", enc.a); err != nil {
+			return err
+		}
+	}
 	var t0 time.Time
 	for i, n := 0, ls.NumCoords(); i < n; i++ {
 		coord := ls.Coord(i)
@@ -76,4 +82,10 @@ func (enc *Encoder) Encode(ls *geom.LineString) error {
 		}
 	}
 	return nil
+}
+
+func A(a string) EncoderOption {
+	return func(e *Encoder) {
+		e.a = a
+	}
 }
