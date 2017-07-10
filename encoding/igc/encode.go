@@ -14,6 +14,8 @@ type Encoder struct {
 	w io.Writer
 }
 
+type EncoderOption func(*Encoder)
+
 func clamp(x, min, max int) int {
 	switch {
 	case x < min:
@@ -26,8 +28,12 @@ func clamp(x, min, max int) int {
 }
 
 // NewEncoder returns a new Encoder that writes to w.
-func NewEncoder(w io.Writer) *Encoder {
-	return &Encoder{w}
+func NewEncoder(w io.Writer, options ...EncoderOption) *Encoder {
+	e := &Encoder{w: w}
+	for _, o := range options {
+		o(e)
+	}
+	return e
 }
 
 // Encode encodes a LineString.
