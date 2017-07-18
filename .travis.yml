@@ -12,4 +12,6 @@ install:
         - go get github.com/twpayne/go-kml
         - go get gopkg.in/DATA-DOG/go-sqlmock.v1
 
+# FIXME run PostGIS integration tests
+
 sudo: false
