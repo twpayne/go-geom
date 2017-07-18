@@ -13,7 +13,7 @@ import (
 )
 
 func TestPostGIS(t *testing.T) {
-	db, err := sql.Open("postgres", "postgres://localhost/go-geom-test?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://localhost/go-geom-test?binary_parameters=yes&sslmode=disable")
 	if err != nil {
 		t.Fatalf("sql.Open(...) == _, %v, want _, <nil>", err)
 	}

@@ -1,5 +1,9 @@
 // Package ewkb implements Extended Well Known Binary encoding and decoding.
 // See https://github.com/postgis/postgis/blob/2.1.0/doc/ZMSgeoms.txt.
+//
+// If you are encoding geometries in EWKB to send to PostgreSQL/PostGIS, then
+// you must specify binary_parameters=yes in the data source name that you pass
+// to sql.Open.
 package ewkb
 
 import (

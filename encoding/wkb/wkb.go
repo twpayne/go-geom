@@ -1,4 +1,8 @@
 // Package wkb implements Well Known Binary encoding and decoding.
+//
+// If you are encoding geometries in WKB to send to PostgreSQL/PostGIS, then
+// you must specify binary_parameters=yes in the data source name that you pass
+// to sql.Open.
 package wkb
 
 import (
