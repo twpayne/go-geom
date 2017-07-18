@@ -33,9 +33,14 @@ func TestPostGIS(t *testing.T) {
 		}
 	}
 
+	queryP := &ewkb.Polygon{
+		Polygon: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{
+			{4, 4}, {4, 0}, {8, 0}, {8, 4}, {4, 4},
+		}}),
+	}
 	var p ewkb.Polygon
-	if err := db.QueryRow("SELECT ST_AsEWKB(geom) FROM testgeoms;").Scan(&p); err != nil {
-		t.Errorf("db.QueryRow(...).Scan(...) == %v, want <nil>", err)
+	if err := db.QueryRow("SELECT ST_AsEWKB(geom) FROM testgeoms WHERE ST_Within(geom, $1);", queryP).Scan(&p); err != nil {
+		t.Fatalf("db.QueryRow(...).Scan(...) == %v, want <nil>", err)
 	}
 	if got, want := p.Coords(), [][]geom.Coord{{{5, 3}, {5, 0}, {7, 0}, {7, 3}, {5, 3}}}; !reflect.DeepEqual(got, want) {
 		t.Errorf("p.Coords() == %v, want %v", got, want)
