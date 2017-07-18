@@ -132,6 +132,7 @@ type T interface {
 	Endss() [][]int
 	SRID() int
 	TransformXY(func(float64, float64) (float64, float64)) error
+	TransformXYZ(func(float64, float64, float64) (float64, float64, float64)) error
 }
 
 // MIndex returns the index of the M dimension, or -1 if the l does not have an

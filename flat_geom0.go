@@ -76,6 +76,18 @@ func (g *geom0) TransformXY(f func(float64, float64) (float64, float64)) error {
 	return nil
 }
 
+// TransformXYZ replaces the X, Y, and Z ordinates of every coordinate in g
+// with f(X, Y, Z).
+func (g *geom0) TransformXYZ(f func(float64, float64, float64) (float64, float64, float64)) error {
+	if g.stride < 3 {
+		return ErrStrideMismatch{Got: g.stride, Want: 3}
+	}
+	for i := 0; i < len(g.flatCoords); i += g.stride {
+		g.flatCoords[i], g.flatCoords[i+1], g.flatCoords[i+2] = f(g.flatCoords[i], g.flatCoords[i+1], g.flatCoords[i+2])
+	}
+	return nil
+}
+
 func (g *geom0) verify() error {
 	if g.stride != g.layout.Stride() {
 		return errStrideLayoutMismatch
