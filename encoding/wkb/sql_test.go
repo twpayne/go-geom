@@ -1,19 +1,20 @@
-package wkb
+package wkb_test
 
 import (
 	"fmt"
 	"log"
 
-	geom "github.com/twpayne/go-geom"
-
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/wkb"
 )
 
 func Example_scan() {
 
 	type City struct {
 		Name     string
-		Location Point
+		Location wkb.Point
 	}
 
 	db, mock, err := sqlmock.New()
@@ -47,7 +48,7 @@ func Example_value() {
 
 	type City struct {
 		Name     string
-		Location Point
+		Location wkb.Point
 	}
 
 	db, mock, err := sqlmock.New()
@@ -62,7 +63,7 @@ func Example_value() {
 
 	c := City{
 		Name:     "London",
-		Location: Point{geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0.1275, 51.50722})},
+		Location: wkb.Point{geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0.1275, 51.50722})},
 	}
 
 	result, err := db.Exec(`INSERT INTO cities (name, location) VALUES (?, ?);`, c.Name, &c.Location)
