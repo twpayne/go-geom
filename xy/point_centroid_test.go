@@ -66,7 +66,7 @@ func checkPointsCentroidFunc(t *testing.T, i int, tc pointTestData) {
 
 }
 func checkPointCentroidFlatFunc(t *testing.T, i int, tc pointTestData) {
-	data := make([]float64, len(tc.points)*2, len(tc.points)*2)
+	data := make([]float64, len(tc.points)*2)
 
 	for i, p := range tc.points {
 		data[i*2] = p.X()
@@ -80,7 +80,7 @@ func checkPointCentroidFlatFunc(t *testing.T, i int, tc pointTestData) {
 
 }
 func checkPointCentroidMultiPoint(t *testing.T, i int, tc pointTestData) {
-	data := make([]float64, len(tc.points)*2, len(tc.points)*2)
+	data := make([]float64, len(tc.points)*2)
 
 	for i, p := range tc.points {
 		data[i*2] = p.X()
