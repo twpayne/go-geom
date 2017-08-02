@@ -59,7 +59,6 @@ func LineIntersectsLine(strategy Strategy, line1Start, line1End, line2Start, lin
 
 // An internal data structure for containing the data during calculations
 type lineIntersectorData struct {
-	indexComputed bool
 	// new Coordinate[2][2];
 	inputLines [2][2]geom.Coord
 
@@ -70,10 +69,9 @@ type lineIntersectorData struct {
 
 	// The indexes of the endpoints of the intersection lines, in order along
 	// the corresponding line
-	intLineIndex [2][2]int
-	isProper     bool
-	pa, pb       geom.Coord
-	strategy     Strategy
+	isProper bool
+	pa, pb   geom.Coord
+	strategy Strategy
 }
 
 /**

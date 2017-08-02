@@ -60,7 +60,7 @@ func (set *TreeSet) Insert(coord geom.Coord) bool {
 // ToFlatArray returns an array of floats containing all the coordinates in the TreeSet
 func (set *TreeSet) ToFlatArray() []float64 {
 	stride := set.layout.Stride()
-	array := make([]float64, set.size*stride, set.size*stride)
+	array := make([]float64, set.size*stride)
 
 	i := 0
 	set.walk(set.tree, func(v []float64) {

@@ -337,7 +337,6 @@ func doParse(r io.Reader) (*parser, Errors) {
 					if !(c == ' ' || ('A' <= c && c <= 'Z')) {
 						foundA = true
 						leadingNoise = true
-						line = line[i:]
 						break
 					}
 				}

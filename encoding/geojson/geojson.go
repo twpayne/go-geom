@@ -331,22 +331,6 @@ func unmarshalCoords3(data []byte) (geom.Layout, [][][]geom.Coord, error) {
 	return layout, coords, nil
 }
 
-func unmarshalGeometries(data []byte) ([]geom.T, error) {
-	var geoms []Geometry
-	if err := json.Unmarshal(data, &geoms); err != nil {
-		return nil, err
-	}
-	geomTs := make([]geom.T, len(geoms))
-	for i, g := range geoms {
-		var err error
-		geomTs[i], err = g.Decode()
-		if err != nil {
-			return nil, err
-		}
-	}
-	return geomTs, nil
-}
-
 // Unmarshal unmarshalls a []byte to an arbitrary geometry.
 func Unmarshal(data []byte, g *geom.T) error {
 	gg := &Geometry{}
