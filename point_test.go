@@ -213,6 +213,13 @@ func TestPointNumCoords(t *testing.T) {
 	}
 }
 
+func TestPointSetSRID(t *testing.T) {
+	p := NewPoint(XY).SetSRID(4326)
+	if got, want := p.SRID(), 4326; got != want {
+		t.Errorf("p.SRID() == %d, want %d", got, want)
+	}
+}
+
 func TestPointXYZM(t *testing.T) {
 	for _, tc := range []struct {
 		p          *Point
