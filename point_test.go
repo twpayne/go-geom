@@ -206,6 +206,13 @@ func TestPointEndss(t *testing.T) {
 	}
 }
 
+func TestPointNumCoords(t *testing.T) {
+	p := NewPoint(XY).MustSetCoords(Coord{1, 2})
+	if got, want := p.NumCoords(), 1; got != want {
+		t.Errorf("p.NumCoords() == %d, want %d", got, want)
+	}
+}
+
 func TestPointXYZM(t *testing.T) {
 	for _, tc := range []struct {
 		p          *Point
