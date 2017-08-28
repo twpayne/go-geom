@@ -171,6 +171,27 @@ func TestPointStrideMismatch(t *testing.T) {
 	}
 }
 
+func TestPointCloneAndSwap(t *testing.T) {
+	p1 := NewPoint(XY).MustSetCoords(Coord{1, 2})
+	p2 := NewPoint(XYZM).MustSetCoords(Coord{3, 4, 5, 6})
+	p1Clone := p1.Clone()
+	p2Clone := p2.Clone()
+	p1.Swap(p2)
+	if !reflect.DeepEqual(p1, p2Clone) {
+		t.Errorf("p1 == %v, want %v", p1, p2Clone)
+	}
+	if !reflect.DeepEqual(p2, p1Clone) {
+		t.Errorf("p2 == %v, want %v", p2, p1Clone)
+	}
+	p1.Swap(p2)
+	if !reflect.DeepEqual(p1, p1Clone) {
+		t.Errorf("p1 == %v, want %v", p1, p1Clone)
+	}
+	if !reflect.DeepEqual(p2, p2Clone) {
+		t.Errorf("p2 == %v, want %v", p2, p2Clone)
+	}
+}
+
 func TestPointXYZM(t *testing.T) {
 	for _, tc := range []struct {
 		p          *Point
