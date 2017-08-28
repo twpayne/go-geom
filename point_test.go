@@ -192,6 +192,13 @@ func TestPointCloneAndSwap(t *testing.T) {
 	}
 }
 
+func TestPointEnds(t *testing.T) {
+	p := NewPoint(XY).MustSetCoords(Coord{1, 2})
+	if got := p.Ends(); got != nil {
+		t.Errorf("p.Ends() == %v, want <nil>", got)
+	}
+}
+
 func TestPointXYZM(t *testing.T) {
 	for _, tc := range []struct {
 		p          *Point
