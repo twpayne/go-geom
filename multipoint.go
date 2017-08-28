@@ -82,5 +82,5 @@ func (mp *MultiPoint) Push(p *Point) error {
 
 // Swap swaps the values of mp and mp2.
 func (mp *MultiPoint) Swap(mp2 *MultiPoint) {
-	mp.geom1.swap(&mp2.geom1)
+	*mp, *mp2 = *mp2, *mp
 }

@@ -151,7 +151,34 @@ func TestVerify(t *testing.T) {
 			&geom3{},
 			nil,
 		},
-		// FIXME add more geom3 test cases
+		{
+			&geom3{geom1{geom0{XY, 3, Coord{}, 0}}, [][]int{}},
+			errStrideLayoutMismatch,
+		},
+		{
+			&geom3{geom1{geom0{NoLayout, 0, Coord{0}, 0}}, [][]int{}},
+			errNonEmptyFlatCoords,
+		},
+		{
+			&geom3{geom1{geom0{NoLayout, 0, Coord{}, 0}}, [][]int{{0}}},
+			errNonEmptyEndss,
+		},
+		{
+			&geom3{geom1{geom0{XY, 2, Coord{0}, 0}}, [][]int{}},
+			errLengthStrideMismatch,
+		},
+		{
+			&geom3{geom1{geom0{XY, 2, Coord{0, 0}, 0}}, [][]int{{1}}},
+			errMisalignedEnd,
+		},
+		{
+			&geom3{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{4, 2}}},
+			errOutOfOrderEnd,
+		},
+		{
+			&geom3{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{2}}},
+			errIncorrectEnd,
+		},
 	} {
 		if got := tc.v.verify(); got != tc.want {
 			t.Errorf("%#v.verify() == %v, want %v", tc.v, got, tc.want)

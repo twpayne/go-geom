@@ -63,7 +63,7 @@ func (p *Point) SetSRID(srid int) *Point {
 
 // Swap swaps the values of p and p2.
 func (p *Point) Swap(p2 *Point) {
-	p.geom0.swap(&p2.geom0)
+	*p, *p2 = *p2, *p
 }
 
 // X returns p's X-coordinate.

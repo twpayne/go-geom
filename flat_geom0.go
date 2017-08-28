@@ -47,13 +47,6 @@ func (g *geom0) SRID() int {
 	return g.srid
 }
 
-func (g *geom0) swap(g2 *geom0) {
-	g.stride, g2.stride = g2.stride, g.stride
-	g.layout, g2.layout = g2.layout, g.layout
-	g.flatCoords, g2.flatCoords = g2.flatCoords, g.flatCoords
-	g.srid, g2.srid = g2.srid, g.srid
-}
-
 func (g *geom0) setCoords(coords0 []float64) error {
 	var err error
 	g.flatCoords, err = deflate0(nil, coords0, g.stride)

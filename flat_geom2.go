@@ -19,13 +19,6 @@ func (g *geom2) setCoords(coords2 [][]Coord) error {
 	return err
 }
 
-func (g *geom2) swap(g2 *geom2) {
-	g.stride, g2.stride = g2.stride, g.stride
-	g.layout, g2.layout = g2.layout, g.layout
-	g.flatCoords, g2.flatCoords = g2.flatCoords, g.flatCoords
-	g.ends, g2.ends = g2.ends, g.ends
-}
-
 func (g *geom2) verify() error {
 	if g.stride != g.layout.Stride() {
 		return errStrideLayoutMismatch

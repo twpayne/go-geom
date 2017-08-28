@@ -90,5 +90,5 @@ func (mls *MultiLineString) SetSRID(srid int) *MultiLineString {
 
 // Swap swaps the values of mls and mls2.
 func (mls *MultiLineString) Swap(mls2 *MultiLineString) {
-	mls.geom2.swap(&mls2.geom2)
+	*mls, *mls2 = *mls2, *mls
 }

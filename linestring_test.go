@@ -123,6 +123,17 @@ func TestLineStringInterpolate(t *testing.T) {
 	}
 }
 
+func TestLineStringReserve(t *testing.T) {
+	ls := NewLineString(XYZM)
+	if got, want := cap(ls.flatCoords), 0; got != want {
+		t.Errorf("cap(ls.flatCoords) == %d, want %d", got, want)
+	}
+	ls.Reserve(2)
+	if got, want := cap(ls.flatCoords), 8; got != want {
+		t.Errorf("cap(ls.flatCoords) == %d, want %d", got, want)
+	}
+}
+
 func TestLineStringStrideMismatch(t *testing.T) {
 	for _, c := range []struct {
 		layout Layout
