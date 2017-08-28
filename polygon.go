@@ -92,5 +92,5 @@ func (p *Polygon) SetSRID(srid int) *Polygon {
 
 // Swap swaps the values of p and p2.
 func (p *Polygon) Swap(p2 *Polygon) {
-	p.geom2.swap(&p2.geom2)
+	*p, *p2 = *p2, *p
 }

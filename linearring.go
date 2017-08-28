@@ -63,5 +63,5 @@ func (lr *LinearRing) SetSRID(srid int) *LinearRing {
 
 // Swap swaps the values of lr and lr2.
 func (lr *LinearRing) Swap(lr2 *LinearRing) {
-	lr.geom1.swap(&lr2.geom1)
+	*lr, *lr2 = *lr2, *lr
 }

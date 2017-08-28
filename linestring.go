@@ -102,5 +102,5 @@ func (ls *LineString) SubLineString(start, stop int) *LineString {
 
 // Swap swaps the values of ls and ls2.
 func (ls *LineString) Swap(ls2 *LineString) {
-	ls.geom1.swap(&ls2.geom1)
+	*ls, *ls2 = *ls2, *ls
 }

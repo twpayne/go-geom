@@ -111,5 +111,5 @@ func (mp *MultiPolygon) SetSRID(srid int) *MultiPolygon {
 
 // Swap swaps the values of mp and mp2.
 func (mp *MultiPolygon) Swap(mp2 *MultiPolygon) {
-	mp.geom3.swap(&mp2.geom3)
+	*mp, *mp2 = *mp2, *mp
 }
