@@ -97,6 +97,7 @@ def main(argv):
     print >>f
     print >>f, 'import ('
     print >>f, '\t"github.com/twpayne/go-geom"'
+    print >>f, '\t"github.com/twpayne/go-geom/internal/geomtest"'
     print >>f, ')'
     print >>f
     print >>f, '// Random is a collection of randomly-generated test data.'
@@ -120,7 +121,7 @@ def main(argv):
             print >>f, '\t{'
             print >>f, '\t\t%s,' % (goifyGeometry(g),)
             print >>f, '\t\t"%s",' % (g.wkb.encode('hex'),)
-            print >>f, '\t\t[]byte("%s"),' % (''.join('\\x%02X' % ord(c) for c in g.wkb),)
+            print >>f, '\t\tgeomtest.MustHexDecode("%s"),' % (''.join('%02X' % ord(c) for c in g.wkb),)
             print >>f, '\t\t"%s",' % (g.wkt,)
             print >>f, '\t},'
     print >>f, '}'
