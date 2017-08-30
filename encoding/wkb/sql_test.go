@@ -8,6 +8,7 @@ import (
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkb"
+	"github.com/twpayne/go-geom/internal/geomtest"
 )
 
 func Example_scan() {
@@ -27,7 +28,7 @@ func Example_scan() {
 		WithArgs("London").
 		WillReturnRows(
 			sqlmock.NewRows([]string{"name", "location"}).
-				AddRow("London", []byte("\x01\x01\x00\x00\x00\x52\xB8\x1E\x85\xEB\x51\xC0\x3F\x45\xF0\xBF\x95\xEC\xC0\x49\x40")),
+				AddRow("London", geomtest.MustHexDecode("010100000052B81E85EB51C03F45F0BF95ECC04940")),
 		)
 
 	var c City
@@ -58,7 +59,7 @@ func Example_value() {
 	defer db.Close()
 
 	mock.ExpectExec(`INSERT INTO cities \(name, location\) VALUES \(\?, \?\);`).
-		WithArgs("London", []byte("\x01\x01\x00\x00\x00\x52\xB8\x1E\x85\xEB\x51\xC0\x3F\x45\xF0\xBF\x95\xEC\xC0\x49\x40")).
+		WithArgs("London", geomtest.MustHexDecode("010100000052B81E85EB51C03F45F0BF95ECC04940")).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	c := City{
