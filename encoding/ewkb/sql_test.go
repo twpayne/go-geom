@@ -3,11 +3,11 @@ package ewkb
 import (
 	"database/sql"
 	"database/sql/driver"
-	"encoding/hex"
 	"reflect"
 	"testing"
 
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/internal/geomtest"
 )
 
 var (
@@ -26,14 +26,6 @@ var (
 	}
 )
 
-func mustHexDecode(s string) []byte {
-	data, err := hex.DecodeString(s)
-	if err != nil {
-		panic(err)
-	}
-	return data
-}
-
 func TestPointScanAndValue(t *testing.T) {
 	for _, tc := range []struct {
 		value interface{}
@@ -46,7 +38,7 @@ func TestPointScanAndValue(t *testing.T) {
 			valid: false,
 		},
 		{
-			value: mustHexDecode("0101000000000000000000f03f0000000000000040"),
+			value: geomtest.MustHexDecode("0101000000000000000000f03f0000000000000040"),
 			point: Point{Point: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2})},
 			valid: true,
 		},
