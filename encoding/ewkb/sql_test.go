@@ -1,81 +1,69 @@
-package ewkb_test
+package ewkb
 
 import (
-	"fmt"
-	"log"
-
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"database/sql"
+	"database/sql/driver"
+	"encoding/hex"
+	"reflect"
+	"testing"
 
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/encoding/ewkb"
 )
 
-func Example_scan() {
-
-	type City struct {
-		Name     string
-		Location ewkb.Point
+var (
+	_ = []interface {
+		sql.Scanner
+		Value() (driver.Value, error)
+		Valid() bool
+	}{
+		&Point{},
+		&LineString{},
+		&Polygon{},
+		&MultiPoint{},
+		&MultiLineString{},
+		&MultiPolygon{},
+		&GeometryCollection{},
 	}
+)
 
-	db, mock, err := sqlmock.New()
+func mustHexDecode(s string) []byte {
+	data, err := hex.DecodeString(s)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	defer db.Close()
-
-	mock.ExpectQuery(`SELECT name, ST_AsEWKB\(location\) FROM cities WHERE name = \?;`).
-		WithArgs("London").
-		WillReturnRows(
-			sqlmock.NewRows([]string{"name", "location"}).
-				AddRow("London", []byte("\x01\x01\x00\x00\x20\xe6\x10\x00\x00\x52\xb8\x1e\x85\xeb\x51\xc0\x3f\x45\xf0\xbf\x95\xec\xc0\x49\x40")),
-		)
-
-	var c City
-	if err := db.QueryRow(`SELECT name, ST_AsEWKB(location) FROM cities WHERE name = ?;`, "London").Scan(&c.Name, &c.Location); err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("Longitude: %v\n", c.Location.X())
-	fmt.Printf("Latitude: %v\n", c.Location.Y())
-	fmt.Printf("SRID: %v\n", c.Location.SRID())
-
-	// Output:
-	// Longitude: 0.1275
-	// Latitude: 51.50722
-	// SRID: 4326
-
+	return data
 }
 
-func Example_value() {
-
-	type City struct {
-		Name     string
-		Location ewkb.Point
+func TestPointScanAndValue(t *testing.T) {
+	for _, tc := range []struct {
+		value interface{}
+		point Point
+		valid bool
+	}{
+		{
+			value: nil,
+			point: Point{Point: nil},
+			valid: false,
+		},
+		{
+			value: mustHexDecode("0101000000000000000000f03f0000000000000040"),
+			point: Point{Point: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2})},
+			valid: true,
+		},
+	} {
+		var gotPoint Point
+		if gotErr := gotPoint.Scan(tc.value); gotErr != nil {
+			t.Errorf("gotPoint.Scan(%v) == %v, want <nil>", tc.value, gotErr)
+		}
+		if !reflect.DeepEqual(gotPoint, tc.point) {
+			t.Errorf("gotPoint.Scan(%v); gotPoint == %v, want == %v", value, gotPoint, tc.point)
+		}
+		if gotPointValid := gotPoint.Valid(); gotPointValid != tc.valid {
+			t.Errorf("gotPoint.Scan(%v); gotPoint.Valid() == %t, want %t", value, gotPointValid, tc.valid)
+		}
+		gotValue, gotErr := tc.point.Value()
+		if gotErr != nil || !reflect.DeepEqual(gotValue, tc.value) {
+			t.Errorf("%v.Value() == %v, %v, want %v, <nil>", tc.point, gotValue, gotErr, tc.value)
+		}
 	}
-
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	mock.ExpectExec(`INSERT INTO cities \(name, location\) VALUES \(\?, \?\);`).
-		WithArgs("London", []byte("\x01\x01\x00\x00\x20\xe6\x10\x00\x00\x52\xb8\x1e\x85\xeb\x51\xc0\x3f\x45\xf0\xbf\x95\xec\xc0\x49\x40")).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-
-	c := City{
-		Name:     "London",
-		Location: ewkb.Point{geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0.1275, 51.50722}).SetSRID(4326)},
-	}
-
-	result, err := db.Exec(`INSERT INTO cities (name, location) VALUES (?, ?);`, c.Name, &c.Location)
-	if err != nil {
-		log.Fatal(err)
-	}
-	rowsAffected, _ := result.RowsAffected()
-	fmt.Printf("%d rows affected", rowsAffected)
-
-	// Output:
-	// 1 rows affected
-
 }
