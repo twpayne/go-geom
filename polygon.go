@@ -29,11 +29,7 @@ func (p *Polygon) Area() float64 {
 
 // Clone returns a deep copy.
 func (p *Polygon) Clone() *Polygon {
-	flatCoords := make([]float64, len(p.flatCoords))
-	copy(flatCoords, p.flatCoords)
-	ends := make([]int, len(p.ends))
-	copy(ends, p.ends)
-	return NewPolygonFlat(p.layout, flatCoords, ends)
+	return deriveClonePolygon(p)
 }
 
 // Empty returns false.

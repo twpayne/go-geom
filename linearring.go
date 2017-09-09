@@ -26,9 +26,7 @@ func (lr *LinearRing) Area() float64 {
 
 // Clone returns a deep copy.
 func (lr *LinearRing) Clone() *LinearRing {
-	flatCoords := make([]float64, len(lr.flatCoords))
-	copy(flatCoords, lr.flatCoords)
-	return NewLinearRingFlat(lr.layout, flatCoords)
+	return deriveCloneLinearRing(lr)
 }
 
 // Empty returns false.

@@ -26,9 +26,7 @@ func (mp *MultiPoint) Area() float64 {
 
 // Clone returns a deep copy.
 func (mp *MultiPoint) Clone() *MultiPoint {
-	flatCoords := make([]float64, len(mp.flatCoords))
-	copy(flatCoords, mp.flatCoords)
-	return NewMultiPointFlat(mp.layout, flatCoords)
+	return deriveCloneMultiPoint(mp)
 }
 
 // Empty returns true if the collection is empty.
