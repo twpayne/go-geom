@@ -48,10 +48,10 @@ func TestPointScanAndValue(t *testing.T) {
 			t.Errorf("gotPoint.Scan(%v) == %v, want <nil>", tc.value, gotErr)
 		}
 		if !reflect.DeepEqual(gotPoint, tc.point) {
-			t.Errorf("gotPoint.Scan(%v); gotPoint == %v, want == %v", value, gotPoint, tc.point)
+			t.Errorf("gotPoint.Scan(%v); gotPoint == %v, want == %v", tc.value, gotPoint, tc.point)
 		}
 		if gotPointValid := gotPoint.Valid(); gotPointValid != tc.valid {
-			t.Errorf("gotPoint.Scan(%v); gotPoint.Valid() == %t, want %t", value, gotPointValid, tc.valid)
+			t.Errorf("gotPoint.Scan(%v); gotPoint.Valid() == %t, want %t", tc.value, gotPointValid, tc.valid)
 		}
 		gotValue, gotErr := tc.point.Value()
 		if gotErr != nil || !reflect.DeepEqual(gotValue, tc.value) {
