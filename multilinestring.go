@@ -27,11 +27,7 @@ func (mls *MultiLineString) Area() float64 {
 
 // Clone returns a deep copy.
 func (mls *MultiLineString) Clone() *MultiLineString {
-	flatCoords := make([]float64, len(mls.flatCoords))
-	copy(flatCoords, mls.flatCoords)
-	ends := make([]int, len(mls.ends))
-	copy(ends, mls.ends)
-	return NewMultiLineStringFlat(mls.layout, flatCoords, ends)
+	return deriveCloneMultiLineString(mls)
 }
 
 // Empty returns true if the collection is empty.

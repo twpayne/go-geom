@@ -28,9 +28,7 @@ func (ls *LineString) Area() float64 {
 
 // Clone returns a copy of ls that does not alias ls.
 func (ls *LineString) Clone() *LineString {
-	flatCoords := make([]float64, len(ls.flatCoords))
-	copy(flatCoords, ls.flatCoords)
-	return NewLineStringFlat(ls.layout, flatCoords)
+	return deriveCloneLineString(ls)
 }
 
 // Empty returns false.

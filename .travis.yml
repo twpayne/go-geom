@@ -2,6 +2,7 @@ language: go
 
 go:
         - 1.x
+        - 1.9.x
         - 1.8.x
         - 1.7.x
         - 1.6.x
@@ -11,6 +12,8 @@ install:
         - go get github.com/d4l3k/messagediff
         - go get github.com/twpayne/go-kml
         - go get gopkg.in/DATA-DOG/go-sqlmock.v1
+
+script: ./scripts/run-tests.sh
 
 # FIXME run PostGIS integration tests
 

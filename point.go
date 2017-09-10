@@ -26,9 +26,7 @@ func (p *Point) Area() float64 {
 
 // Clone returns a copy of p that does not alias p.
 func (p *Point) Clone() *Point {
-	flatCoords := make([]float64, len(p.flatCoords))
-	copy(flatCoords, p.flatCoords)
-	return NewPointFlat(p.layout, flatCoords)
+	return deriveClonePoint(p)
 }
 
 // Empty returns false.

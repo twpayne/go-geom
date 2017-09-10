@@ -27,14 +27,7 @@ func (mp *MultiPolygon) Area() float64 {
 
 // Clone returns a deep copy.
 func (mp *MultiPolygon) Clone() *MultiPolygon {
-	flatCoords := make([]float64, len(mp.flatCoords))
-	copy(flatCoords, mp.flatCoords)
-	endss := make([][]int, len(mp.endss))
-	for i, ends := range mp.endss {
-		endss[i] = make([]int, len(ends))
-		copy(endss[i], ends)
-	}
-	return NewMultiPolygonFlat(mp.layout, flatCoords, endss)
+	return deriveCloneMultiPolygon(mp)
 }
 
 // Empty returns true if the collection is empty.
