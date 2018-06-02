@@ -15,6 +15,7 @@ type Encoder struct {
 	w io.Writer
 }
 
+// An EncoderOption sets an option on an Encoder.
 type EncoderOption func(*Encoder)
 
 func clamp(x, min, max int) int {
@@ -84,6 +85,7 @@ func (enc *Encoder) Encode(ls *geom.LineString) error {
 	return nil
 }
 
+// A sets the A-record text.
 func A(a string) EncoderOption {
 	return func(e *Encoder) {
 		e.a = a

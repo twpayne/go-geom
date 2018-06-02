@@ -34,7 +34,7 @@ Package geom implements efficient geometry types for geospatial applications.
 ### Encoding and decoding
 
  * [GeoJSON](https://godoc.org/github.com/twpayne/go-geom/encoding/geojson)
- * [IGC](https://godoc.org/github.com/twpayne/go-geom/encoding/igc) (decoding only)
+ * [IGC](https://godoc.org/github.com/twpayne/go-geom/encoding/igc)
  * [KML](https://godoc.org/github.com/twpayne/go-geom/encoding/kml) (encoding only)
  * [WKB](https://godoc.org/github.com/twpayne/go-geom/encoding/wkb)
  * [EWKB](https://godoc.org/github.com/twpayne/go-geom/encoding/ewkb)
