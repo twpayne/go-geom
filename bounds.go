@@ -41,6 +41,9 @@ func (b *Bounds) Extend(g T) *Bounds {
 
 // IsEmpty returns true if b is empty.
 func (b *Bounds) IsEmpty() bool {
+	if b.layout == NoLayout {
+		return true
+	}
 	for i, stride := 0, b.layout.Stride(); i < stride; i++ {
 		if b.max[i] < b.min[i] {
 			return true
