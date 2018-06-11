@@ -77,6 +77,23 @@ func (b *Bounds) Overlaps(layout Layout, b2 *Bounds) bool {
 	return true
 }
 
+// Polygon returns b as a two-dimensional Polygon.
+func (b *Bounds) Polygon() *Polygon {
+	if b.IsEmpty() {
+		return NewPolygonFlat(XY, nil, nil)
+	}
+	x1, y1 := b.min[0], b.min[1]
+	x2, y2 := b.max[0], b.max[1]
+	flatCoords := []float64{
+		x1, y1,
+		x2, y1,
+		x2, y2,
+		x1, y2,
+		x1, y1,
+	}
+	return NewPolygonFlat(XY, flatCoords, []int{len(flatCoords)})
+}
+
 // Set sets the minimum and maximum values. args must be an even number of
 // values: the first half are the minimum values for each dimension and the
 // second half are the maximum values for each dimension. If necessary, the
