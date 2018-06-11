@@ -76,7 +76,9 @@ func (b *Bounds) Overlaps(layout Layout, b2 *Bounds) bool {
 
 // Set sets the minimum and maximum values. args must be an even number of
 // values: the first half are the minimum values for each dimension and the
-// second half are the maximum values for each dimension.
+// second half are the maximum values for each dimension. If necessary, the
+// layout of b will be extended to cover all the supplied dimensions implied by
+// args.
 func (b *Bounds) Set(args ...float64) *Bounds {
 	if len(args)&1 != 0 {
 		panic("geom: even number of arguments required")
