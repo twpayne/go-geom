@@ -193,6 +193,46 @@ func TestBoundsOverlapsPoint(t *testing.T) {
 	}
 }
 
+func TestBoundsPolygon(t *testing.T) {
+	for _, tc := range []struct {
+		b    *Bounds
+		want *Polygon
+	}{
+		{
+			b:    NewBounds(NoLayout),
+			want: NewPolygon(XY),
+		},
+		{
+			b:    NewBounds(XY).Set(0, 0, 1, 1),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+		},
+		{
+			b:    NewBounds(XYZ).Set(0, 0, 0, 1, 1, 1),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+		},
+		{
+			b:    NewBounds(XYM).Set(0, 0, 0, 1, 1, 1),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+		},
+		{
+			b:    NewBounds(XYZM).Set(0, 0, 0, 0, 1, 1, 1, 1),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+		},
+		{
+			b:    NewBounds(XY).Set(1, 2, 3, 4),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 2}, {3, 4}, {1, 4}, {1, 2}}}),
+		},
+		{
+			b:    NewBounds(XYZ).Set(1, 2, 3, 4, 5, 6),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {4, 2}, {4, 5}, {1, 5}, {1, 2}}}),
+		},
+	} {
+		if got := tc.b.Polygon(); !reflect.DeepEqual(tc.want, got) {
+			t.Errorf("%v.Polygon() == %v, want %v", tc.b, got, tc.want)
+		}
+	}
+}
+
 func TestBoundsSet(t *testing.T) {
 	bounds := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
 	bounds.Set(0, 0, 20, 20)
