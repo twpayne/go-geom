@@ -204,27 +204,27 @@ func TestBoundsPolygon(t *testing.T) {
 		},
 		{
 			b:    NewBounds(XY).Set(0, 0, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
 			b:    NewBounds(XYZ).Set(0, 0, 0, 1, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
 			b:    NewBounds(XYM).Set(0, 0, 0, 1, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
 			b:    NewBounds(XYZM).Set(0, 0, 0, 0, 1, 1, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
 			b:    NewBounds(XY).Set(1, 2, 3, 4),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 2}, {3, 4}, {1, 4}, {1, 2}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {1, 4}, {3, 4}, {3, 2}, {1, 2}}}),
 		},
 		{
 			b:    NewBounds(XYZ).Set(1, 2, 3, 4, 5, 6),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {4, 2}, {4, 5}, {1, 5}, {1, 2}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {1, 5}, {4, 5}, {4, 2}, {1, 2}}}),
 		},
 	} {
 		if got := tc.b.Polygon(); !reflect.DeepEqual(tc.want, got) {

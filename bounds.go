@@ -86,9 +86,9 @@ func (b *Bounds) Polygon() *Polygon {
 	x2, y2 := b.max[0], b.max[1]
 	flatCoords := []float64{
 		x1, y1,
-		x2, y1,
-		x2, y2,
 		x1, y2,
+		x2, y2,
+		x2, y1,
 		x1, y1,
 	}
 	return NewPolygonFlat(XY, flatCoords, []int{len(flatCoords)})
