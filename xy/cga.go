@@ -120,7 +120,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// (1) is handled by checking if next is left of prev ==> CCW (2) will never
 	// happen if the ring is valid, so don't check for it (Might want to assert
 	// this)
-	isCCW := false
+	var isCCW bool
 	if disc == 0 {
 		// poly is CCW if prev x is right of next x
 		isCCW = (ring[iPrev] > ring[iNext])
