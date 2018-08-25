@@ -64,7 +64,7 @@ func Example_value() {
 
 	c := City{
 		Name:     "London",
-		Location: wkb.Point{geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0.1275, 51.50722})},
+		Location: wkb.Point{Point: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{0.1275, 51.50722})},
 	}
 
 	result, err := db.Exec(`INSERT INTO cities (name, location) VALUES (?, ?);`, c.Name, &c.Location)
