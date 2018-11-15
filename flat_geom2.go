@@ -5,10 +5,12 @@ type geom2 struct {
 	ends []int
 }
 
+// Coords returns all of g's coordinates.
 func (g *geom2) Coords() [][]Coord {
 	return inflate2(g.flatCoords, 0, g.ends, g.stride)
 }
 
+// Ends returns the end indexes of all sub-structures in g.
 func (g *geom2) Ends() []int {
 	return g.ends
 }

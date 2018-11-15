@@ -12,69 +12,69 @@ func NewMultiPolygon(layout Layout) *MultiPolygon {
 
 // NewMultiPolygonFlat returns a new MultiPolygon with the given flat coordinates.
 func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *MultiPolygon {
-	mp := new(MultiPolygon)
-	mp.layout = layout
-	mp.stride = layout.Stride()
-	mp.flatCoords = flatCoords
-	mp.endss = endss
-	return mp
+	g := new(MultiPolygon)
+	g.layout = layout
+	g.stride = layout.Stride()
+	g.flatCoords = flatCoords
+	g.endss = endss
+	return g
 }
 
 // Area returns the sum of the area of the individual Polygons.
-func (mp *MultiPolygon) Area() float64 {
-	return doubleArea3(mp.flatCoords, 0, mp.endss, mp.stride) / 2
+func (g *MultiPolygon) Area() float64 {
+	return doubleArea3(g.flatCoords, 0, g.endss, g.stride) / 2
 }
 
 // Clone returns a deep copy.
-func (mp *MultiPolygon) Clone() *MultiPolygon {
-	return deriveCloneMultiPolygon(mp)
+func (g *MultiPolygon) Clone() *MultiPolygon {
+	return deriveCloneMultiPolygon(g)
 }
 
 // Empty returns true if the collection is empty.
-func (mp *MultiPolygon) Empty() bool {
-	return mp.NumPolygons() == 0
+func (g *MultiPolygon) Empty() bool {
+	return g.NumPolygons() == 0
 }
 
 // Length returns the sum of the perimeters of the Polygons.
-func (mp *MultiPolygon) Length() float64 {
-	return length3(mp.flatCoords, 0, mp.endss, mp.stride)
+func (g *MultiPolygon) Length() float64 {
+	return length3(g.flatCoords, 0, g.endss, g.stride)
 }
 
 // MustSetCoords sets the coordinates and panics on any error.
-func (mp *MultiPolygon) MustSetCoords(coords [][][]Coord) *MultiPolygon {
-	Must(mp.SetCoords(coords))
-	return mp
+func (g *MultiPolygon) MustSetCoords(coords [][][]Coord) *MultiPolygon {
+	Must(g.SetCoords(coords))
+	return g
 }
 
 // NumPolygons returns the number of Polygons.
-func (mp *MultiPolygon) NumPolygons() int {
-	return len(mp.endss)
+func (g *MultiPolygon) NumPolygons() int {
+	return len(g.endss)
 }
 
 // Polygon returns the ith Polygon.
-func (mp *MultiPolygon) Polygon(i int) *Polygon {
+func (g *MultiPolygon) Polygon(i int) *Polygon {
 	offset := 0
 	if i > 0 {
-		ends := mp.endss[i-1]
+		ends := g.endss[i-1]
 		offset = ends[len(ends)-1]
 	}
-	ends := make([]int, len(mp.endss[i]))
+	ends := make([]int, len(g.endss[i]))
 	if offset == 0 {
-		copy(ends, mp.endss[i])
+		copy(ends, g.endss[i])
 	} else {
-		for j, end := range mp.endss[i] {
+		for j, end := range g.endss[i] {
 			ends[j] = end - offset
 		}
 	}
-	return NewPolygonFlat(mp.layout, mp.flatCoords[offset:mp.endss[i][len(mp.endss[i])-1]], ends)
+	return NewPolygonFlat(g.layout, g.flatCoords[offset:g.endss[i][len(g.endss[i])-1]], ends)
 }
 
 // Push appends a Polygon.
-func (mp *MultiPolygon) Push(p *Polygon) error {
-	if p.layout != mp.layout {
-		return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
+func (g *MultiPolygon) Push(p *Polygon) error {
+	if p.layout != g.layout {
+		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
 	}
-	offset := len(mp.flatCoords)
+	offset := len(g.flatCoords)
 	ends := make([]int, len(p.ends))
 	if offset == 0 {
 		copy(ends, p.ends)
@@ -83,26 +83,26 @@ func (mp *MultiPolygon) Push(p *Polygon) error {
 			ends[i] = end + offset
 		}
 	}
-	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
-	mp.endss = append(mp.endss, ends)
+	g.flatCoords = append(g.flatCoords, p.flatCoords...)
+	g.endss = append(g.endss, ends)
 	return nil
 }
 
 // SetCoords sets the coordinates.
-func (mp *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
-	if err := mp.setCoords(coords); err != nil {
+func (g *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
+	if err := g.setCoords(coords); err != nil {
 		return nil, err
 	}
-	return mp, nil
+	return g, nil
 }
 
-// SetSRID sets the SRID of mp.
-func (mp *MultiPolygon) SetSRID(srid int) *MultiPolygon {
-	mp.srid = srid
-	return mp
+// SetSRID sets the SRID of g.
+func (g *MultiPolygon) SetSRID(srid int) *MultiPolygon {
+	g.srid = srid
+	return g
 }
 
-// Swap swaps the values of mp and mp2.
-func (mp *MultiPolygon) Swap(mp2 *MultiPolygon) {
-	*mp, *mp2 = *mp2, *mp
+// Swap swaps the values of g and g2.
+func (g *MultiPolygon) Swap(g2 *MultiPolygon) {
+	*g, *g2 = *g2, *g
 }

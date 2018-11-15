@@ -12,73 +12,73 @@ func NewMultiPoint(layout Layout) *MultiPoint {
 
 // NewMultiPointFlat returns a new MultiPoint with the given flat coordinates.
 func NewMultiPointFlat(layout Layout, flatCoords []float64) *MultiPoint {
-	mp := new(MultiPoint)
-	mp.layout = layout
-	mp.stride = layout.Stride()
-	mp.flatCoords = flatCoords
-	return mp
+	g := new(MultiPoint)
+	g.layout = layout
+	g.stride = layout.Stride()
+	g.flatCoords = flatCoords
+	return g
 }
 
-// Area returns zero.
-func (mp *MultiPoint) Area() float64 {
+// Area returns the area of g, i.e. zero.
+func (g *MultiPoint) Area() float64 {
 	return 0
 }
 
 // Clone returns a deep copy.
-func (mp *MultiPoint) Clone() *MultiPoint {
-	return deriveCloneMultiPoint(mp)
+func (g *MultiPoint) Clone() *MultiPoint {
+	return deriveCloneMultiPoint(g)
 }
 
 // Empty returns true if the collection is empty.
-func (mp *MultiPoint) Empty() bool {
-	return mp.NumPoints() == 0
+func (g *MultiPoint) Empty() bool {
+	return g.NumPoints() == 0
 }
 
 // Length returns zero.
-func (mp *MultiPoint) Length() float64 {
+func (g *MultiPoint) Length() float64 {
 	return 0
 }
 
 // MustSetCoords sets the coordinates and panics on any error.
-func (mp *MultiPoint) MustSetCoords(coords []Coord) *MultiPoint {
-	Must(mp.SetCoords(coords))
-	return mp
+func (g *MultiPoint) MustSetCoords(coords []Coord) *MultiPoint {
+	Must(g.SetCoords(coords))
+	return g
 }
 
 // SetCoords sets the coordinates.
-func (mp *MultiPoint) SetCoords(coords []Coord) (*MultiPoint, error) {
-	if err := mp.setCoords(coords); err != nil {
+func (g *MultiPoint) SetCoords(coords []Coord) (*MultiPoint, error) {
+	if err := g.setCoords(coords); err != nil {
 		return nil, err
 	}
-	return mp, nil
+	return g, nil
 }
 
-// SetSRID sets the SRID of mp.
-func (mp *MultiPoint) SetSRID(srid int) *MultiPoint {
-	mp.srid = srid
-	return mp
+// SetSRID sets the SRID of g.
+func (g *MultiPoint) SetSRID(srid int) *MultiPoint {
+	g.srid = srid
+	return g
 }
 
 // NumPoints returns the number of Points.
-func (mp *MultiPoint) NumPoints() int {
-	return mp.NumCoords()
+func (g *MultiPoint) NumPoints() int {
+	return g.NumCoords()
 }
 
 // Point returns the ith Point.
-func (mp *MultiPoint) Point(i int) *Point {
-	return NewPointFlat(mp.layout, mp.Coord(i))
+func (g *MultiPoint) Point(i int) *Point {
+	return NewPointFlat(g.layout, g.Coord(i))
 }
 
 // Push appends a point.
-func (mp *MultiPoint) Push(p *Point) error {
-	if p.layout != mp.layout {
-		return ErrLayoutMismatch{Got: p.layout, Want: mp.layout}
+func (g *MultiPoint) Push(p *Point) error {
+	if p.layout != g.layout {
+		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
 	}
-	mp.flatCoords = append(mp.flatCoords, p.flatCoords...)
+	g.flatCoords = append(g.flatCoords, p.flatCoords...)
 	return nil
 }
 
-// Swap swaps the values of mp and mp2.
-func (mp *MultiPoint) Swap(mp2 *MultiPoint) {
-	*mp, *mp2 = *mp2, *mp
+// Swap swaps the values of g and g2.
+func (g *MultiPoint) Swap(g2 *MultiPoint) {
+	*g, *g2 = *g2, *g
 }

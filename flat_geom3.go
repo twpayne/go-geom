@@ -5,10 +5,12 @@ type geom3 struct {
 	endss [][]int
 }
 
+// Coords returns all the coordinates in g.
 func (g *geom3) Coords() [][][]Coord {
 	return inflate3(g.flatCoords, 0, g.endss, g.stride)
 }
 
+// Endss returns a list of all the sub-sub-structures in g.
 func (g *geom3) Endss() [][]int {
 	return g.endss
 }

@@ -12,54 +12,54 @@ func NewLinearRing(layout Layout) *LinearRing {
 
 // NewLinearRingFlat returns a new LinearRing with the given flat coordinates.
 func NewLinearRingFlat(layout Layout, flatCoords []float64) *LinearRing {
-	lr := new(LinearRing)
-	lr.layout = layout
-	lr.stride = layout.Stride()
-	lr.flatCoords = flatCoords
-	return lr
+	g := new(LinearRing)
+	g.layout = layout
+	g.stride = layout.Stride()
+	g.flatCoords = flatCoords
+	return g
 }
 
 // Area returns the the area.
-func (lr *LinearRing) Area() float64 {
-	return doubleArea1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride) / 2
+func (g *LinearRing) Area() float64 {
+	return doubleArea1(g.flatCoords, 0, len(g.flatCoords), g.stride) / 2
 }
 
 // Clone returns a deep copy.
-func (lr *LinearRing) Clone() *LinearRing {
-	return deriveCloneLinearRing(lr)
+func (g *LinearRing) Clone() *LinearRing {
+	return deriveCloneLinearRing(g)
 }
 
 // Empty returns false.
-func (lr *LinearRing) Empty() bool {
+func (g *LinearRing) Empty() bool {
 	return false
 }
 
 // Length returns the length of the perimeter.
-func (lr *LinearRing) Length() float64 {
-	return length1(lr.flatCoords, 0, len(lr.flatCoords), lr.stride)
+func (g *LinearRing) Length() float64 {
+	return length1(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
 // MustSetCoords sets the coordinates and panics if there is any error.
-func (lr *LinearRing) MustSetCoords(coords []Coord) *LinearRing {
-	Must(lr.SetCoords(coords))
-	return lr
+func (g *LinearRing) MustSetCoords(coords []Coord) *LinearRing {
+	Must(g.SetCoords(coords))
+	return g
 }
 
 // SetCoords sets the coordinates.
-func (lr *LinearRing) SetCoords(coords []Coord) (*LinearRing, error) {
-	if err := lr.setCoords(coords); err != nil {
+func (g *LinearRing) SetCoords(coords []Coord) (*LinearRing, error) {
+	if err := g.setCoords(coords); err != nil {
 		return nil, err
 	}
-	return lr, nil
+	return g, nil
 }
 
-// SetSRID sets the SRID of lr.
-func (lr *LinearRing) SetSRID(srid int) *LinearRing {
-	lr.srid = srid
-	return lr
+// SetSRID sets the SRID of g.
+func (g *LinearRing) SetSRID(srid int) *LinearRing {
+	g.srid = srid
+	return g
 }
 
-// Swap swaps the values of lr and lr2.
-func (lr *LinearRing) Swap(lr2 *LinearRing) {
-	*lr, *lr2 = *lr2, *lr
+// Swap swaps the values of g and g2.
+func (g *LinearRing) Swap(g2 *LinearRing) {
+	*g, *g2 = *g2, *g
 }

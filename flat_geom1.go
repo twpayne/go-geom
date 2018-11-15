@@ -4,14 +4,17 @@ type geom1 struct {
 	geom0
 }
 
+// Coord returns the ith coord of g.
 func (g *geom1) Coord(i int) Coord {
 	return g.flatCoords[i*g.stride : (i+1)*g.stride]
 }
 
+// Coords unpacks and returns all of g's coordinates.
 func (g *geom1) Coords() []Coord {
 	return inflate1(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
+// NumCoords returns the number of coordinates in g.
 func (g *geom1) NumCoords() int {
 	return len(g.flatCoords) / g.stride
 }
