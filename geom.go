@@ -77,14 +77,12 @@ func (c Coord) Clone() Coord {
 	return deriveCloneCoord(c)
 }
 
-// X returns the x coordinate of the coordinate. X is assumed to be the first
-// ordinate.
+// X returns the x coordinate of c. X is assumed to be the first ordinate.
 func (c Coord) X() float64 {
 	return c[0]
 }
 
-// Y returns the x coordinate of the coordinate. Y is assumed to be the second
-// ordinate.
+// Y returns the y coordinate of c. Y is assumed to be the second ordinate.
 func (c Coord) Y() float64 {
 	return c[1]
 }
