@@ -75,17 +75,17 @@ func (g *GeometryCollection) Empty() bool {
 }
 
 // FlatCoords panics.
-func (*GeometryCollection) FlatCoords() []float64 {
+func (g *GeometryCollection) FlatCoords() []float64 {
 	panic("FlatCoords() called on a GeometryCollection")
 }
 
 // Ends panics.
-func (*GeometryCollection) Ends() []int {
+func (g *GeometryCollection) Ends() []int {
 	panic("Ends() called on a GeometryCollection")
 }
 
 // Endss panics.
-func (*GeometryCollection) Endss() [][]int {
+func (g *GeometryCollection) Endss() [][]int {
 	panic("Endss() called on a GeometryCollection")
 }
 
