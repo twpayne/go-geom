@@ -12,82 +12,82 @@ func NewPoint(l Layout) *Point {
 
 // NewPointFlat allocates a new Point with layout l and flat coordinates flatCoords.
 func NewPointFlat(l Layout, flatCoords []float64) *Point {
-	p := new(Point)
-	p.layout = l
-	p.stride = l.Stride()
-	p.flatCoords = flatCoords
-	return p
+	g := new(Point)
+	g.layout = l
+	g.stride = l.Stride()
+	g.flatCoords = flatCoords
+	return g
 }
 
-// Area returns p's area, i.e. zero.
-func (p *Point) Area() float64 {
+// Area returns g's area, i.e. zero.
+func (g *Point) Area() float64 {
 	return 0
 }
 
-// Clone returns a copy of p that does not alias p.
-func (p *Point) Clone() *Point {
-	return deriveClonePoint(p)
+// Clone returns a copy of g that does not alias g.
+func (g *Point) Clone() *Point {
+	return deriveClonePoint(g)
 }
 
 // Empty returns false.
-func (p *Point) Empty() bool {
+func (g *Point) Empty() bool {
 	return false
 }
 
-// Length returns the length of p, i.e. zero.
-func (p *Point) Length() float64 {
+// Length returns the length of g, i.e. zero.
+func (g *Point) Length() float64 {
 	return 0
 }
 
 // MustSetCoords is like SetCoords but panics on any error.
-func (p *Point) MustSetCoords(coords Coord) *Point {
-	Must(p.SetCoords(coords))
-	return p
+func (g *Point) MustSetCoords(coords Coord) *Point {
+	Must(g.SetCoords(coords))
+	return g
 }
 
-// SetCoords sets the coordinates of p.
-func (p *Point) SetCoords(coords Coord) (*Point, error) {
-	if err := p.setCoords(coords); err != nil {
+// SetCoords sets the coordinates of g.
+func (g *Point) SetCoords(coords Coord) (*Point, error) {
+	if err := g.setCoords(coords); err != nil {
 		return nil, err
 	}
-	return p, nil
+	return g, nil
 }
 
-// SetSRID sets the SRID of p.
-func (p *Point) SetSRID(srid int) *Point {
-	p.srid = srid
-	return p
+// SetSRID sets the SRID of g.
+func (g *Point) SetSRID(srid int) *Point {
+	g.srid = srid
+	return g
 }
 
-// Swap swaps the values of p and p2.
-func (p *Point) Swap(p2 *Point) {
-	*p, *p2 = *p2, *p
+// Swap swaps the values of g and g2.
+func (g *Point) Swap(g2 *Point) {
+	*g, *g2 = *g2, *g
 }
 
-// X returns p's X-coordinate.
-func (p *Point) X() float64 {
-	return p.flatCoords[0]
+// X returns g's X-coordinate.
+func (g *Point) X() float64 {
+	return g.flatCoords[0]
 }
 
-// Y returns p's Y-coordinate.
-func (p *Point) Y() float64 {
-	return p.flatCoords[1]
+// Y returns g's Y-coordinate.
+func (g *Point) Y() float64 {
+	return g.flatCoords[1]
 }
 
-// Z returns p's Z-coordinate, or zero if p has no Z-coordinate.
-func (p *Point) Z() float64 {
-	zIndex := p.layout.ZIndex()
+// Z returns g's Z-coordinate, or zero if g has no Z-coordinate.
+func (g *Point) Z() float64 {
+	zIndex := g.layout.ZIndex()
 	if zIndex == -1 {
 		return 0
 	}
-	return p.flatCoords[zIndex]
+	return g.flatCoords[zIndex]
 }
 
-// M returns p's M-coordinate, or zero if p has no M-coordinate.
-func (p *Point) M() float64 {
-	mIndex := p.layout.MIndex()
+// M returns g's M-coordinate, or zero if g has no M-coordinate.
+func (g *Point) M() float64 {
+	mIndex := g.layout.MIndex()
 	if mIndex == -1 {
 		return 0
 	}
-	return p.flatCoords[mIndex]
+	return g.flatCoords[mIndex]
 }
