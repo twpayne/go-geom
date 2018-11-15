@@ -21,7 +21,7 @@ func NewLineStringFlat(layout Layout, flatCoords []float64) *LineString {
 	return ls
 }
 
-// Area returns the length of ls, i.e. zero.
+// Area returns the area of ls, i.e. zero.
 func (ls *LineString) Area() float64 {
 	return 0
 }
