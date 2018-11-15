@@ -14,79 +14,79 @@ func NewPolygon(layout Layout) *Polygon {
 
 // NewPolygonFlat returns a new Polygon with the given flat coordinates.
 func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
-	p := new(Polygon)
-	p.layout = layout
-	p.stride = layout.Stride()
-	p.flatCoords = flatCoords
-	p.ends = ends
-	return p
+	g := new(Polygon)
+	g.layout = layout
+	g.stride = layout.Stride()
+	g.flatCoords = flatCoords
+	g.ends = ends
+	return g
 }
 
 // Area returns the area.
-func (p *Polygon) Area() float64 {
-	return doubleArea2(p.flatCoords, 0, p.ends, p.stride) / 2
+func (g *Polygon) Area() float64 {
+	return doubleArea2(g.flatCoords, 0, g.ends, g.stride) / 2
 }
 
 // Clone returns a deep copy.
-func (p *Polygon) Clone() *Polygon {
-	return deriveClonePolygon(p)
+func (g *Polygon) Clone() *Polygon {
+	return deriveClonePolygon(g)
 }
 
 // Empty returns false.
-func (p *Polygon) Empty() bool {
+func (g *Polygon) Empty() bool {
 	return false
 }
 
 // Length returns the perimter.
-func (p *Polygon) Length() float64 {
-	return length2(p.flatCoords, 0, p.ends, p.stride)
+func (g *Polygon) Length() float64 {
+	return length2(g.flatCoords, 0, g.ends, g.stride)
 }
 
 // LinearRing returns the ith LinearRing.
-func (p *Polygon) LinearRing(i int) *LinearRing {
+func (g *Polygon) LinearRing(i int) *LinearRing {
 	offset := 0
 	if i > 0 {
-		offset = p.ends[i-1]
+		offset = g.ends[i-1]
 	}
-	return NewLinearRingFlat(p.layout, p.flatCoords[offset:p.ends[i]])
+	return NewLinearRingFlat(g.layout, g.flatCoords[offset:g.ends[i]])
 }
 
 // MustSetCoords sets the coordinates and panics on any error.
-func (p *Polygon) MustSetCoords(coords [][]Coord) *Polygon {
-	Must(p.SetCoords(coords))
-	return p
+func (g *Polygon) MustSetCoords(coords [][]Coord) *Polygon {
+	Must(g.SetCoords(coords))
+	return g
 }
 
 // NumLinearRings returns the number of LinearRings.
-func (p *Polygon) NumLinearRings() int {
-	return len(p.ends)
+func (g *Polygon) NumLinearRings() int {
+	return len(g.ends)
 }
 
 // Push appends a LinearRing.
-func (p *Polygon) Push(lr *LinearRing) error {
-	if lr.layout != p.layout {
-		return ErrLayoutMismatch{Got: lr.layout, Want: p.layout}
+func (g *Polygon) Push(lr *LinearRing) error {
+	if lr.layout != g.layout {
+		return ErrLayoutMismatch{Got: lr.layout, Want: g.layout}
 	}
-	p.flatCoords = append(p.flatCoords, lr.flatCoords...)
-	p.ends = append(p.ends, len(p.flatCoords))
+	g.flatCoords = append(g.flatCoords, lr.flatCoords...)
+	g.ends = append(g.ends, len(g.flatCoords))
 	return nil
 }
 
 // SetCoords sets the coordinates.
-func (p *Polygon) SetCoords(coords [][]Coord) (*Polygon, error) {
-	if err := p.setCoords(coords); err != nil {
+func (g *Polygon) SetCoords(coords [][]Coord) (*Polygon, error) {
+	if err := g.setCoords(coords); err != nil {
 		return nil, err
 	}
-	return p, nil
+	return g, nil
 }
 
-// SetSRID sets the SRID of p.
-func (p *Polygon) SetSRID(srid int) *Polygon {
-	p.srid = srid
-	return p
+// SetSRID sets the SRID of g.
+func (g *Polygon) SetSRID(srid int) *Polygon {
+	g.srid = srid
+	return g
 }
 
-// Swap swaps the values of p and p2.
-func (p *Polygon) Swap(p2 *Polygon) {
-	*p, *p2 = *p2, *p
+// Swap swaps the values of g and g2.
+func (g *Polygon) Swap(g2 *Polygon) {
+	*g, *g2 = *g2, *g
 }
