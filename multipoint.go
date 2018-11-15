@@ -19,7 +19,7 @@ func NewMultiPointFlat(layout Layout, flatCoords []float64) *MultiPoint {
 	return mp
 }
 
-// Area returns zero.
+// Area returns the area of mp, i.e. zero.
 func (mp *MultiPoint) Area() float64 {
 	return 0
 }

@@ -20,7 +20,7 @@ func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *Mu
 	return mls
 }
 
-// Area returns 0.
+// Area returns the area of mls, i.e. 0.
 func (mls *MultiLineString) Area() float64 {
 	return 0
 }
