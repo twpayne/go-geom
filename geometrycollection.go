@@ -7,8 +7,7 @@ type GeometryCollection struct {
 	srid  int
 }
 
-// NewGeometryCollection returns a new GeometryCollection with the specified
-// geometries.
+// NewGeometryCollection returns a new empty GeometryCollection.
 func NewGeometryCollection() *GeometryCollection {
 	return &GeometryCollection{}
 }
