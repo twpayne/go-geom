@@ -64,20 +64,25 @@ func (e ErrUnexpectedType) Error() string {
 // at different levels. Its primary purpose is to prevent corrupt inputs from
 // causing excessive memory allocations (which could be used as a denial of
 // service attack).
+//
+// This is a variable, so you can override it in your application code by
+// importing the `github.com/twpayne/go-geom/encoding/wkbcommon` module and
+// setting the value of `wkbcommon.MaxGeometryElements`.
+//
 // FIXME This should be Codec-specific, not global
 // FIXME Consider overall per-geometry limit rather than per-level limit
-var MaxGeometryElements = [4]uint32{
-	0,
-	1 << 20, // No LineString, LinearRing, or MultiPoint should contain more than 1048576 coordinates
-	1 << 15, // No MultiLineString or Polygon should contain more than 32768 LineStrings or LinearRings
-	1 << 10, // No MultiPolygon should contain more than 1024 Polygons
+var MaxGeometryElements = [4]int{
+	0,  // Unused
+	-1, // LineString, LinearRing, and MultiPoint
+	-1, // MultiLineString and Polygon
+	-1, // MultiPolygon
 }
 
 // An ErrGeometryTooLarge is returned when the geometry is too large.
 type ErrGeometryTooLarge struct {
 	Level int
-	N     uint32
-	Limit uint32
+	N     int
+	Limit int
 }
 
 func (e ErrGeometryTooLarge) Error() string {
@@ -113,8 +118,8 @@ func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	if err != nil {
 		return nil, err
 	}
-	if n > MaxGeometryElements[1] {
-		return nil, ErrGeometryTooLarge{Level: 1, N: n, Limit: MaxGeometryElements[1]}
+	if limit := MaxGeometryElements[1]; limit >= 0 && int(n) > limit {
+		return nil, ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 	}
 	flatCoords := make([]float64, int(n)*stride)
 	if err := ReadFloatArray(r, byteOrder, flatCoords); err != nil {
@@ -129,8 +134,8 @@ func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	if err != nil {
 		return nil, nil, err
 	}
-	if n > MaxGeometryElements[2] {
-		return nil, nil, ErrGeometryTooLarge{Level: 2, N: n, Limit: MaxGeometryElements[2]}
+	if limit := MaxGeometryElements[2]; limit >= 0 && int(n) > limit {
+		return nil, nil, ErrGeometryTooLarge{Level: 2, N: int(n), Limit: limit}
 	}
 	var flatCoordss []float64
 	var ends []int
