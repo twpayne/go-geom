@@ -113,7 +113,7 @@ func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	if err != nil {
 		return nil, err
 	}
-	if n > MaxGeometryElements[1] {
+	if max := MaxGeometryElements[1]; max >= 0 && n > max {
 		return nil, ErrGeometryTooLarge{Level: 1, N: n, Limit: MaxGeometryElements[1]}
 	}
 	flatCoords := make([]float64, int(n)*stride)
@@ -129,7 +129,7 @@ func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	if err != nil {
 		return nil, nil, err
 	}
-	if n > MaxGeometryElements[2] {
+	if max := MaxGeometryElements[2]; max >= 0 && n > max {
 		return nil, nil, ErrGeometryTooLarge{Level: 2, N: n, Limit: MaxGeometryElements[2]}
 	}
 	var flatCoordss []float64

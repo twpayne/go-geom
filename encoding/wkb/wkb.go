@@ -89,7 +89,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if n > wkbcommon.MaxGeometryElements[1] {
+		if max := wkbcommon.MaxGeometryElements[1]; max >= 0 && n > max {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: n, Limit: wkbcommon.MaxGeometryElements[1]}
 		}
 		mp := geom.NewMultiPoint(layout)
@@ -112,7 +112,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if n > wkbcommon.MaxGeometryElements[2] {
+		if max := wkbcommon.MaxGeometryElements[2]; max >= 0 && n > max {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: n, Limit: wkbcommon.MaxGeometryElements[2]}
 		}
 		mls := geom.NewMultiLineString(layout)
@@ -135,7 +135,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if n > wkbcommon.MaxGeometryElements[3] {
+		if max := wkbcommon.MaxGeometryElements[3]; max >= 0 && n > max {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: n, Limit: wkbcommon.MaxGeometryElements[3]}
 		}
 		mp := geom.NewMultiPolygon(layout)
