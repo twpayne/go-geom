@@ -18,6 +18,7 @@ Package geom implements efficient geometry types for geospatial applications.
  * [2D](https://godoc.org/github.com/twpayne/go-geom/xy) and
    [3D](https://godoc.org/github.com/twpayne/go-geom/xyz) topology functions.
  * Efficient, cache-friendly [internal representation](INTERNALS.md).
+ * Optional protection against malicious or malformed inputs.
 
 ## Detailed features
 
@@ -46,6 +47,18 @@ Package geom implements efficient geometry types for geospatial applications.
 
  * [XY](https://godoc.org/github.com/twpayne/go-geom/xy) 2D geometry functions
  * [XYZ](https://godoc.org/github.com/twpayne/go-geom/xyz) 3D geometry functions
+
+## Protection against malicious or malformed inputs
+
+The WKB and EWKB formats encode geometry sizes, and memory is allocated for
+those geometries. If the input is malicious or malformed, the memory allocation
+can be very large, leading to a memory starvation denial-of-service attack
+against the server. For example, a client might send a `MultiPoint` with header
+indicating that it contains 2^32-1 points. This will result in the server
+reading that geometry to allocate 2 * sizeof(float64) * (2^32-1) = 64GB of
+memory to store those points. By default, malicious or malformed input
+protection is disabled, but can be enabled by setting positive values for
+`wkbcommon.MaxGeometryElements`.
 
 ## Related libraries
 
