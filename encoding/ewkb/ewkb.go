@@ -97,8 +97,8 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if max := wkbcommon.MaxGeometryElements[1]; max >= 0 && n > max {
-			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: n, Limit: wkbcommon.MaxGeometryElements[1]}
+		if max := wkbcommon.MaxGeometryElements[1]; max >= 0 && int(n) > max {
+			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: wkbcommon.MaxGeometryElements[1]}
 		}
 		mp := geom.NewMultiPoint(layout).SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
@@ -120,8 +120,8 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if max := wkbcommon.MaxGeometryElements[2]; max >= 0 && n > max {
-			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: n, Limit: wkbcommon.MaxGeometryElements[2]}
+		if max := wkbcommon.MaxGeometryElements[2]; max >= 0 && int(n) > max {
+			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: int(n), Limit: wkbcommon.MaxGeometryElements[2]}
 		}
 		mls := geom.NewMultiLineString(layout).SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
@@ -143,8 +143,8 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if max := wkbcommon.MaxGeometryElements[3]; max >= 0 && n > max {
-			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: n, Limit: wkbcommon.MaxGeometryElements[3]}
+		if max := wkbcommon.MaxGeometryElements[3]; max >= 0 && int(n) > max {
+			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: int(n), Limit: wkbcommon.MaxGeometryElements[3]}
 		}
 		mp := geom.NewMultiPolygon(layout).SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
@@ -166,8 +166,8 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if max := wkbcommon.MaxGeometryElements[1]; max >= 0 && n > max {
-			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: n, Limit: wkbcommon.MaxGeometryElements[1]}
+		if max := wkbcommon.MaxGeometryElements[1]; max >= 0 && int(n) > max {
+			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: wkbcommon.MaxGeometryElements[1]}
 		}
 		gc := geom.NewGeometryCollection().SetSRID(int(srid))
 		for i := uint32(0); i < n; i++ {
