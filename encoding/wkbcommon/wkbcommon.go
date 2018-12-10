@@ -64,6 +64,11 @@ func (e ErrUnexpectedType) Error() string {
 // at different levels. Its primary purpose is to prevent corrupt inputs from
 // causing excessive memory allocations (which could be used as a denial of
 // service attack).
+//
+// This is a variable, so you can override it in your application code by
+// importing the `github.com/twpayne/go-geom/encoding/wkbcommon` module and
+// setting the value of `wkbcommon.MaxGeometryElements`.
+//
 // FIXME This should be Codec-specific, not global
 // FIXME Consider overall per-geometry limit rather than per-level limit
 var MaxGeometryElements = [4]int{
