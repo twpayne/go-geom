@@ -285,6 +285,13 @@ func BenchmarkMarshal(b *testing.B) {
 }
 
 func TestCrashes(t *testing.T) {
+	// FIXME this test modifies a global variable. It will be racy if tests are
+	// run in parallel.
+	savedMaxGeometryElements := wkbcommon.MaxGeometryElements
+	defer func() {
+		wkbcommon.MaxGeometryElements = savedMaxGeometryElements
+	}()
+	wkbcommon.MaxGeometryElements[1] = 1 << 20
 	for _, tc := range []struct {
 		s    string
 		want error
