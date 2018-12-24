@@ -2,9 +2,9 @@ package igc
 
 import (
 	"bytes"
-	"reflect"
 	"testing"
 
+	"github.com/d4l3k/messagediff"
 	"github.com/twpayne/go-geom"
 )
 
@@ -18,6 +18,9 @@ func TestDecode(t *testing.T) {
 				"HFDTE151115\r\n" +
 				"B1316284654230N00839078EA0147801630\r\n",
 			t: &T{
+				Headers: []Header{
+					{Source: "F", Key: "DTE", KeyExtra: "", Value: "151115"},
+				},
 				LineString: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
 					{8.6513, 46.90383333333333, 1630, 1447593388, 1478},
 				}),
@@ -29,6 +32,9 @@ func TestDecode(t *testing.T) {
 				"I033638FXA3940SIU4141TDS\r\n" +
 				"B1053525151892N00203986WA0017900275000108\r\n",
 			t: &T{
+				Headers: []Header{
+					{Source: "F", Key: "DTE", KeyExtra: "", Value: "020613"},
+				},
 				LineString: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
 					{-2.0664333333333333, 51.864866666666664, 275, 1370170432.8, 179},
 				}),
@@ -40,14 +46,32 @@ func TestDecode(t *testing.T) {
 				"I033637LAD3839LOD4040TDS\r\n" +
 				"B1146174031985N00726775WA010040114912340",
 			t: &T{
+				Headers: []Header{
+					{Source: "F", Key: "DTE", KeyExtra: "", Value: "100810"},
+				},
 				LineString: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
 					{-7.446255666666667, 40.53308533333333, 1149, 1281440777, 1004},
 				}),
 			},
 		},
+		{
+			s: "AXGD Flymaster LiveSD  SN03142  SW1.07b\r\n" +
+				"HFDTEDATE:220418,01\r\n" +
+				"B1316284654230N00839078EA0147801630\r\n",
+			t: &T{
+				Headers: []Header{
+					{Source: "F", Key: "DTE", KeyExtra: "DATE", Value: "220418,01"},
+				},
+				LineString: geom.NewLineString(geom.Layout(5)).MustSetCoords([]geom.Coord{
+					{8.6513, 46.90383333333333, 1630, 1524402988, 1478},
+				}),
+			},
+		},
 	} {
-		if got, err := Read(bytes.NewBufferString(tc.s)); err != nil || !reflect.DeepEqual(tc.t, got) {
-			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v", tc.s, got, err, tc.t)
+		got, err := Read(bytes.NewBufferString(tc.s))
+		diff, equal := messagediff.PrettyDiff(tc.t, got)
+		if err != nil || !equal {
+			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v\n%s", tc.s, got, err, tc.t, diff)
 		}
 	}
 }
@@ -71,6 +95,8 @@ func TestDecodeHeaders(t *testing.T) {
 				"HFFTYFRTYPE:FLYTEC,5020\r\n",
 			t: &T{
 				Headers: []Header{
+					{Source: "F", Key: "DTE", KeyExtra: "", Value: "210407"},
+					{Source: "F", Key: "FXA", KeyExtra: "", Value: "100"},
 					{Source: "F", Key: "PLT", KeyExtra: "PILOT", Value: "Tom Payne"},
 					{Source: "F", Key: "GTY", KeyExtra: "GLIDERTYPE", Value: "Gradient Aspen"},
 					{Source: "F", Key: "GID", KeyExtra: "GLIDERID", Value: "G12242505057"},
@@ -83,8 +109,10 @@ func TestDecodeHeaders(t *testing.T) {
 			},
 		},
 	} {
-		if got, err := Read(bytes.NewBufferString(tc.s)); err != nil || !reflect.DeepEqual(tc.t.Headers, got.Headers) {
-			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v", tc.s, got, err, tc.t)
+		got, err := Read(bytes.NewBufferString(tc.s))
+		diff, equal := messagediff.PrettyDiff(got.Headers, tc.t.Headers)
+		if err != nil || !equal {
+			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v\n%s", tc.s, got, err, tc.t, diff)
 		}
 	}
 }

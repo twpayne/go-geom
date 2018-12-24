@@ -31,7 +31,7 @@ var (
 	// ErrOutOfRange is returned when a value is out of range.
 	ErrOutOfRange = errors.New("out of range")
 
-	hRegexp = regexp.MustCompile(`H([FP])([A-Z]{3})(.*?):(.*?)\s*\z`)
+	hRegexp = regexp.MustCompile(`H([FP])([A-Z]{3})(.*?:)?(.*?)\s*\z`)
 )
 
 // An Errors is a map of errors encountered at each line.
@@ -214,45 +214,44 @@ func (p *parser) parseB(line string) error {
 
 // parseB parses an H record from line and updates the state of p.
 func (p *parser) parseH(line string) error {
-	if m := hRegexp.FindStringSubmatch(line); m != nil {
-		p.headers = append(p.headers, Header{
-			Source:   m[1],
-			Key:      m[2],
-			KeyExtra: m[3],
-			Value:    m[4],
-		})
-	}
-	switch {
-	case strings.HasPrefix(line, "HFDTE"):
-		return p.parseHFDTE(line)
-	default:
-		return nil
-	}
-}
-
-// parseB parses an HFDTE record from line and updates the state of p.
-func (p *parser) parseHFDTE(line string) error {
-	var err error
-	var day, month, year int
-	if len(line) != 11 {
+	m := hRegexp.FindStringSubmatch(line)
+	if m == nil {
 		return ErrInvalidHRecord
 	}
-	if day, err = parseDecInRange(line, 5, 7, 1, 31+1); err != nil {
-		return err
+	keyExtra := m[3]
+	if len(keyExtra) > 1 {
+		keyExtra = keyExtra[:len(keyExtra)-1]
 	}
-	if month, err = parseDecInRange(line, 7, 9, 1, 12+1); err != nil {
-		return err
+	header := Header{
+		Source:   m[1],
+		Key:      m[2],
+		KeyExtra: keyExtra,
+		Value:    m[4],
 	}
-	if year, err = parseDec(line, 9, 11); err != nil {
-		return err
-	}
-	// FIXME check for invalid dates
-	p.day = day
-	p.month = month
-	if year < 70 {
-		p.year = 2000 + year
-	} else {
-		p.year = 1970 + year
+	p.headers = append(p.headers, header)
+	if header.Key == "DTE" {
+		if len(header.Value) < 6 {
+			return ErrInvalidHRecord
+		}
+		day, err := parseDecInRange(header.Value, 0, 2, 1, 31+1)
+		if err != nil {
+			return err
+		}
+		month, err := parseDecInRange(header.Value, 2, 4, 1, 12+1)
+		if err != nil {
+			return err
+		}
+		year, err := parseDec(header.Value, 4, 6)
+		if err != nil {
+			return err
+		}
+		p.day = day
+		p.month = month
+		if year < 70 {
+			p.year = 2000 + year
+		} else {
+			p.year = 1970 + year
+		}
 	}
 	return nil
 }
