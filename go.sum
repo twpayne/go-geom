@@ -1,3 +1,5 @@
+github.com/d4l3k/messagediff v1.2.1 h1:ZcAIMYsUg0EAp9X+tt8/enBE/Q8Yd5kzPynLyKptt9U=
+github.com/d4l3k/messagediff v1.2.1/go.mod h1:Oozbb1TVXFac9FtSIxHBMnBCq2qeH/2KkEQxENCrlLo=
 github.com/twpayne/go-kml v1.0.0 h1:XMyRRufIWOYaPGW1UzTnqJO42oY7wngXyO7kW/vzXjI=
 github.com/twpayne/go-kml v1.0.0/go.mod h1:LlvLIQSfMqYk2O7Nx8vYAbSLv4K9rjMvLlEdUKWdjq0=
 github.com/twpayne/go-polyline v1.0.0/go.mod h1:ICh24bcLYBX8CknfvNPKqoTbe+eg+MX1NPyJmSBo7pU=
