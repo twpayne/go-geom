@@ -335,13 +335,25 @@ func doParse(r io.Reader) (*parser, Errors) {
 }
 
 // Read reads a igc.T from r, which should contain IGC records.
+//
+// IGC files in the wild are often corrupt, the IGC specification has been
+// incomplete, and has evolved over time. The parser is consequently very
+// tolerant of what it accepts and ignores several common errors. Consequently,
+// the returned T might still contain headers and coordinates, even if the
+// returned error is non-nil.
 func Read(r io.Reader) (*T, error) {
 	p, errors := doParse(r)
-	if len(errors) != 0 {
-		return nil, errors
+	var err error = errors
+	if len(errors) == 0 {
+		err = nil
 	}
 	return &T{
 		Headers:    p.headers,
 		LineString: geom.NewLineStringFlat(geom.Layout(5), p.coords),
-	}, nil
+	}, err
+}
+
+// HasCoords returns true if t has at least one coordinate.
+func (t *T) HasCoords() bool {
+	return !t.LineString.Empty()
 }
