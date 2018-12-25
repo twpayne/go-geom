@@ -311,7 +311,7 @@ func doParse(r io.Reader) (*parser, Errors) {
 	foundA := false
 	leadingNoise := false
 	for lineno := 1; s.Scan(); lineno++ {
-		line := s.Text()
+		line := strings.TrimSuffix(s.Text(), "\r")
 		if len(line) == 0 {
 			// errors[lineno] = ErrEmptyLine
 		} else if foundA {
