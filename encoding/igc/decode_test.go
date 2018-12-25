@@ -111,6 +111,41 @@ func TestDecodeHeaders(t *testing.T) {
 				},
 			},
 		},
+		{
+			s: "AXTR7F094645CA98\r\n" +
+				"HFDTE220418\r\n" +
+				"HFFXA100\r\n" +
+				"HFPLTPILOTINCHARGE:\r\n" +
+				"HFCM2CREW2:\r\n" +
+				"HFGTYGLIDERTYPE:\r\n" +
+				"HFGIDGLIDERID:\r\n" +
+				"HFDTM100GPSDATUM:WGS84\r\n" +
+				"HFRFWFIRMWAREREVISION:XC_Tracer_II_R01.1\r\n" +
+				"HFRHWHARDWAREVERSION:1.0\r\n" +
+				"HFFTYFRTYPE:XC_Tracer_II\r\n" +
+				"HFGPSRECV:u-Blox,MAX-8Q,22,9999\r\n" +
+				"HFPRSPRESSALTSENSOR:Measurement Specialities,MS5637,9999\r\n" +
+				"HFALG:ELL\r\n" +
+				"HFALP:ISA\r\n",
+			t: &T{
+				Headers: []Header{
+					{Source: "F", Key: "DTE", KeyExtra: "", Value: "220418"},
+					{Source: "F", Key: "FXA", KeyExtra: "", Value: "100"},
+					{Source: "F", Key: "PLT", KeyExtra: "PILOTINCHARGE", Value: ""},
+					{Source: "F", Key: "CM2", KeyExtra: "CREW2", Value: ""},
+					{Source: "F", Key: "GTY", KeyExtra: "GLIDERTYPE", Value: ""},
+					{Source: "F", Key: "GID", KeyExtra: "GLIDERID", Value: ""},
+					{Source: "F", Key: "DTM", KeyExtra: "100GPSDATUM", Value: "WGS84"},
+					{Source: "F", Key: "RFW", KeyExtra: "FIRMWAREREVISION", Value: "XC_Tracer_II_R01.1"},
+					{Source: "F", Key: "RHW", KeyExtra: "HARDWAREVERSION", Value: "1.0"},
+					{Source: "F", Key: "FTY", KeyExtra: "FRTYPE", Value: "XC_Tracer_II"},
+					{Source: "F", Key: "GPS", KeyExtra: "RECV", Value: "u-Blox,MAX-8Q,22,9999"},
+					{Source: "F", Key: "PRS", KeyExtra: "PRESSALTSENSOR", Value: "Measurement Specialities,MS5637,9999"},
+					{Source: "F", Key: "ALG", KeyExtra: "", Value: "ELL"},
+					{Source: "F", Key: "ALP", KeyExtra: "", Value: "ISA"},
+				},
+			},
+		},
 	} {
 		got, err := Read(bytes.NewBufferString(tc.s))
 		diff, equal := "", true
