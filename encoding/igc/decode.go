@@ -301,7 +301,6 @@ func doParse(r io.Reader) (*parser, Errors) {
 	for lineno := 1; s.Scan(); lineno++ {
 		line := strings.TrimSuffix(s.Text(), "\r")
 		if len(line) == 0 {
-			// errors[lineno] = ErrEmptyLine
 		} else if foundA {
 			if err := p.parseLine(line); err != nil {
 				errors = append(errors, fmt.Errorf("line %d: %q: %v", lineno, line, err))
