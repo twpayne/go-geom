@@ -69,7 +69,10 @@ func TestDecode(t *testing.T) {
 		},
 	} {
 		got, err := Read(bytes.NewBufferString(tc.s))
-		diff, equal := messagediff.PrettyDiff(tc.t, got)
+		diff, equal := "", true
+		if err == nil {
+			diff, equal = messagediff.PrettyDiff(tc.t, got)
+		}
 		if err != nil || !equal {
 			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v\n%s", tc.s, got, err, tc.t, diff)
 		}
@@ -110,7 +113,10 @@ func TestDecodeHeaders(t *testing.T) {
 		},
 	} {
 		got, err := Read(bytes.NewBufferString(tc.s))
-		diff, equal := messagediff.PrettyDiff(got.Headers, tc.t.Headers)
+		diff, equal := "", true
+		if err == nil {
+			diff, equal = messagediff.PrettyDiff(tc.t.Headers, got.Headers)
+		}
 		if err != nil || !equal {
 			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v\n%s", tc.s, got, err, tc.t, diff)
 		}
