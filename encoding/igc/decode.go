@@ -218,14 +218,10 @@ func (p *parser) parseH(line string) error {
 	if m == nil {
 		return ErrInvalidHRecord
 	}
-	keyExtra := m[3]
-	if len(keyExtra) > 1 {
-		keyExtra = keyExtra[:len(keyExtra)-1]
-	}
 	header := Header{
 		Source:   m[1],
 		Key:      m[2],
-		KeyExtra: keyExtra,
+		KeyExtra: strings.TrimSuffix(m[3], ":"),
 		Value:    m[4],
 	}
 	p.headers = append(p.headers, header)
