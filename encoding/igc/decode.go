@@ -31,7 +31,7 @@ var (
 	// ErrOutOfRange is returned when a value is out of range.
 	ErrOutOfRange = errors.New("out of range")
 
-	hRegexp = regexp.MustCompile(`H([FP])([A-Z0-9]{3})(.*?:)?(.*?)\s*\z`)
+	hRegexp = regexp.MustCompile(`H(.)([A-Z0-9]{3})(.*?:)?(.*?)\s*\z`)
 )
 
 // An Errors is a map of errors encountered at each line.
