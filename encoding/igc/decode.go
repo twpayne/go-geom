@@ -14,28 +14,16 @@ import (
 )
 
 var (
-	// ErrInvalidCharacter is returned when an invalid character is encountered.
-	ErrInvalidCharacter = errors.New("invalid character")
-	// ErrInvalidCharactersBeforeARecord is returned when invalid characters are encountered before the A record.
-	ErrInvalidCharactersBeforeARecord = errors.New("invalid characters before A record")
-	// ErrInvalidBRecord is returned when an invalid B record is encountered.
-	ErrInvalidBRecord = errors.New("invalid B record")
-	// ErrInvalidHRecord is returned when an invalid H record is encountered.
-	ErrInvalidHRecord = errors.New("invalid H record")
-	// ErrInvalidIRecord is returned when an invalid I record is encountered.
-	ErrInvalidIRecord = errors.New("invalid I record")
-	// ErrEmptyLine is returned when an empty line is encountered.
-	ErrEmptyLine = errors.New("empty line")
-	// ErrMissingARecord is returned when no A record is found.
-	ErrMissingARecord = errors.New("missing A record")
-	// ErrOutOfRange is returned when a value is out of range.
-	ErrOutOfRange = errors.New("out of range")
+	// errInvalidCharactersBeforeARecord is returned when invalid characters are encountered before the A record.
+	errInvalidCharactersBeforeARecord = errors.New("invalid characters before A record")
+	// errMissingARecord is returned when no A record is found.
+	errMissingARecord = errors.New("missing A record")
 
-	hRegexp = regexp.MustCompile(`H([FP])([A-Z]{3})(.*?:)?(.*?)\s*\z`)
+	hRegexp = regexp.MustCompile(`H(.)([A-Z0-9]{3})(.*?:)?(.*?)\s*\z`)
 )
 
-// An Errors is a map of errors encountered at each line.
-type Errors map[int]error
+// An Errors is a slice of errors encountered.
+type Errors []error
 
 // A Header is an IGC header.
 type Header struct {
@@ -53,8 +41,8 @@ type T struct {
 
 func (es Errors) Error() string {
 	var ss []string
-	for lineno, e := range es {
-		ss = append(ss, fmt.Sprintf("%d: %s", lineno, e.Error()))
+	for _, e := range es {
+		ss = append(ss, e.Error())
 	}
 	return strings.Join(ss, "\n")
 }
@@ -71,7 +59,7 @@ func parseDec(s string, start, stop int) (int, error) {
 		if c := s[i]; '0' <= c && c <= '9' {
 			result = 10*result + int(c) - '0'
 		} else {
-			return 0, ErrInvalidCharacter
+			return 0, fmt.Errorf("invalid character: %q", c)
 		}
 	}
 	if neg {
@@ -86,7 +74,7 @@ func parseDecInRange(s string, start, stop, min, max int) (int, error) {
 	if result, err := parseDec(s, start, stop); err != nil {
 		return result, err
 	} else if result < min || max <= result {
-		return result, ErrOutOfRange
+		return result, fmt.Errorf("value out of range: %d, want %d-%d", result, min, max)
 	} else {
 		return result, nil
 	}
@@ -113,8 +101,8 @@ func newParser() *parser {
 // parseB parses a B record from line and updates the state of p.
 func (p *parser) parseB(line string) error {
 
-	if len(line) != p.bRecordLen {
-		return ErrInvalidBRecord
+	if len(line) < p.bRecordLen {
+		return fmt.Errorf("B record too short: %d, want >=%d", len(line), p.bRecordLen)
 	}
 
 	var err error
@@ -170,7 +158,7 @@ func (p *parser) parseB(line string) error {
 	case 'S':
 		lat = -lat
 	default:
-		return ErrInvalidCharacter
+		return fmt.Errorf("invalid character: %q", c)
 	}
 
 	var lngDeg, lngMilliMin int
@@ -194,7 +182,7 @@ func (p *parser) parseB(line string) error {
 	case 'W':
 		lng = -lng
 	default:
-		return ErrInvalidCharacter
+		return fmt.Errorf("invalid character: %q", c)
 	}
 
 	var pressureAlt, ellipsoidAlt int
@@ -216,22 +204,18 @@ func (p *parser) parseB(line string) error {
 func (p *parser) parseH(line string) error {
 	m := hRegexp.FindStringSubmatch(line)
 	if m == nil {
-		return ErrInvalidHRecord
-	}
-	keyExtra := m[3]
-	if len(keyExtra) > 1 {
-		keyExtra = keyExtra[:len(keyExtra)-1]
+		return fmt.Errorf("invalid H record")
 	}
 	header := Header{
 		Source:   m[1],
 		Key:      m[2],
-		KeyExtra: keyExtra,
+		KeyExtra: strings.TrimSuffix(m[3], ":"),
 		Value:    m[4],
 	}
 	p.headers = append(p.headers, header)
 	if header.Key == "DTE" {
 		if len(header.Value) < 6 {
-			return ErrInvalidHRecord
+			return fmt.Errorf("H DTE value too short: %d, want >=6", len(header.Value))
 		}
 		day, err := parseDecInRange(header.Value, 0, 2, 1, 31+1)
 		if err != nil {
@@ -261,13 +245,13 @@ func (p *parser) parseI(line string) error {
 	var err error
 	var n int
 	if len(line) < 3 {
-		return ErrInvalidIRecord
+		return fmt.Errorf("I record too short: %d, want >=3", len(line))
 	}
 	if n, err = parseDec(line, 1, 3); err != nil {
 		return err
 	}
 	if len(line) < 7*n+3 {
-		return ErrInvalidIRecord
+		return fmt.Errorf("invalid I record length: %d, want %d", len(line), 7*n+3)
 	}
 	for i := 0; i < n; i++ {
 		var start, stop int
@@ -278,7 +262,7 @@ func (p *parser) parseI(line string) error {
 			return err
 		}
 		if start != p.bRecordLen+1 || stop < start {
-			return ErrInvalidIRecord
+			return fmt.Errorf("I record index out-of-range: %d-%d", start, stop-1)
 		}
 		p.bRecordLen = stop
 		switch line[7*i+7 : 7*i+10] {
@@ -309,18 +293,17 @@ func (p *parser) parseLine(line string) error {
 
 // doParse reads r, parsers all the records it finds, updating the state of p.
 func doParse(r io.Reader) (*parser, Errors) {
-	errors := make(Errors)
+	var errors Errors
 	p := newParser()
 	s := bufio.NewScanner(r)
 	foundA := false
 	leadingNoise := false
 	for lineno := 1; s.Scan(); lineno++ {
-		line := s.Text()
+		line := strings.TrimSuffix(s.Text(), "\r")
 		if len(line) == 0 {
-			// errors[lineno] = ErrEmptyLine
 		} else if foundA {
 			if err := p.parseLine(line); err != nil {
-				errors[lineno] = err
+				errors = append(errors, fmt.Errorf("line %d: %q: %v", lineno, line, err))
 			}
 		} else {
 			if c := line[0]; c == 'A' {
@@ -331,11 +314,12 @@ func doParse(r io.Reader) (*parser, Errors) {
 				continue
 			} else if i := strings.IndexRune(line, 'A'); i != -1 {
 				// Strip any leading noise.
-				// The noise must include at least one unprintable character (like XOFF or a fragment of a Unicode BOM).
-				for _, c := range line[:i] {
+				// Leading Unicode byte order marks and XOFF characters are silently ignored.
+				// The noise must include at least one unprintable character.
+				for j, c := range line[:i] {
 					if !(c == ' ' || ('A' <= c && c <= 'Z')) {
 						foundA = true
-						leadingNoise = true
+						leadingNoise = j != 0 || (c != '\x13' && c != '\ufeff')
 						break
 					}
 				}
@@ -343,21 +327,33 @@ func doParse(r io.Reader) (*parser, Errors) {
 		}
 	}
 	if !foundA {
-		errors[1] = ErrMissingARecord
+		errors = append(Errors{errMissingARecord}, errors...)
 	} else if leadingNoise {
-		errors[1] = ErrInvalidCharactersBeforeARecord
+		errors = append(Errors{errInvalidCharactersBeforeARecord}, errors...)
 	}
 	return p, errors
 }
 
 // Read reads a igc.T from r, which should contain IGC records.
+//
+// IGC files in the wild are often corrupt, the IGC specification has been
+// incomplete, and has evolved over time. The parser is consequently very
+// tolerant of what it accepts and ignores several common errors. Consequently,
+// the returned T might still contain headers and coordinates, even if the
+// returned error is non-nil.
 func Read(r io.Reader) (*T, error) {
 	p, errors := doParse(r)
-	if len(errors) != 0 {
-		return nil, errors
+	var err error = errors
+	if len(errors) == 0 {
+		err = nil
 	}
 	return &T{
 		Headers:    p.headers,
 		LineString: geom.NewLineStringFlat(geom.Layout(5), p.coords),
-	}, nil
+	}, err
+}
+
+// HasCoords returns true if t has at least one coordinate.
+func (t *T) HasCoords() bool {
+	return !t.LineString.Empty()
 }
