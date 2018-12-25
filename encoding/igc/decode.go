@@ -315,11 +315,12 @@ func doParse(r io.Reader) (*parser, Errors) {
 				continue
 			} else if i := strings.IndexRune(line, 'A'); i != -1 {
 				// Strip any leading noise.
-				// The noise must include at least one unprintable character (like XOFF or a fragment of a Unicode BOM).
-				for _, c := range line[:i] {
+				// Leading Unicode byte order marks and XOFF characters are silently ignored.
+				// The noise must include at least one unprintable character.
+				for j, c := range line[:i] {
 					if !(c == ' ' || ('A' <= c && c <= 'Z')) {
 						foundA = true
-						leadingNoise = true
+						leadingNoise = j != 0 || (c != '\x13' && c != '\ufeff')
 						break
 					}
 				}
