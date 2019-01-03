@@ -22,7 +22,7 @@ Package geom implements efficient geometry types for geospatial applications.
 
 ## Examples
 
- * [PostGIS, EWKB, and GeoJSON](https://github.com/twpayne/go-geom/examples/postgis).
+ * [PostGIS, EWKB, and GeoJSON](https://github.com/twpayne/go-geom/tree/master/examples/postgis).
 
 ## Detailed features
 
