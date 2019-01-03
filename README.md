@@ -20,6 +20,10 @@ Package geom implements efficient geometry types for geospatial applications.
  * Efficient, cache-friendly [internal representation](INTERNALS.md).
  * Optional protection against malicious or malformed inputs.
 
+## Examples
+
+ * [PostGIS, EWKB, and GeoJSON](https://github.com/twpayne/go-geom/examples/postgis).
+
 ## Detailed features
 
 ### Geometry types
