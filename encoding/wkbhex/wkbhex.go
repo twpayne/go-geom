@@ -10,6 +10,13 @@ import (
 	"github.com/twpayne/go-geom/encoding/wkb"
 )
 
+var (
+	// XDR is big endian.
+	XDR = wkb.XDR
+	// NDR is little endian.
+	NDR = wkb.NDR
+)
+
 // Encode encodes an arbitrary geometry to a string.
 func Encode(g geom.T, byteOrder binary.ByteOrder) (string, error) {
 	wkb, err := wkb.Marshal(g, byteOrder)
