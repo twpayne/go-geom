@@ -337,67 +337,9 @@ func Unmarshal(data []byte, g *geom.T) error {
 	if err := json.Unmarshal(data, gg); err != nil {
 		return err
 	}
-	switch gg.Type {
-	case "Point":
-		layout, coords, err := unmarshalCoords0(*gg.Coordinates)
-		if err != nil {
-			return err
-		}
-		*g = geom.NewPoint(layout).MustSetCoords(coords)
-		return nil
-	case "LineString":
-		layout, coords, err := unmarshalCoords1(*gg.Coordinates)
-		if err != nil {
-			return err
-		}
-		*g = geom.NewLineString(layout).MustSetCoords(coords)
-		return nil
-	case "Polygon":
-		layout, coords, err := unmarshalCoords2(*gg.Coordinates)
-		if err != nil {
-			return err
-		}
-		*g = geom.NewPolygon(layout).MustSetCoords(coords)
-		return nil
-	case "MultiPoint":
-		layout, coords, err := unmarshalCoords1(*gg.Coordinates)
-		if err != nil {
-			return err
-		}
-		*g = geom.NewMultiPoint(layout).MustSetCoords(coords)
-		return nil
-	case "MultiLineString":
-		layout, coords, err := unmarshalCoords2(*gg.Coordinates)
-		if err != nil {
-			return err
-		}
-		*g = geom.NewMultiLineString(layout).MustSetCoords(coords)
-		return nil
-	case "MultiPolygon":
-		layout, coords, err := unmarshalCoords3(*gg.Coordinates)
-		if err != nil {
-			return err
-		}
-		*g = geom.NewMultiPolygon(layout).MustSetCoords(coords)
-		return nil
-	case "GeometryCollection":
-		geoms := make([]geom.T, len(gg.Geometries))
-		for i, subGeometry := range gg.Geometries {
-			var err error
-			geoms[i], err = subGeometry.Decode()
-			if err != nil {
-				return err
-			}
-		}
-		gc := geom.NewGeometryCollection()
-		if err := gc.Push(geoms...); err != nil {
-			return err
-		}
-		*g = gc
-		return nil
-	default:
-		return ErrUnsupportedType(gg.Type)
-	}
+	var err error
+	*g, err = gg.Decode()
+	return err
 }
 
 // MarshalJSON implements json.Marshaler.MarshalJSON.
