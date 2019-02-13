@@ -440,3 +440,16 @@ func (fc *FeatureCollection) MarshalJSON() ([]byte, error) {
 		Features: fc.Features,
 	})
 }
+
+// UnmarshalJSON implements json.Unmarshaler.UnmarshalJSON
+func (fc *FeatureCollection) UnmarshalJSON(data []byte) error {
+	var gfc geojsonFeatureCollection
+	if err := json.Unmarshal(data, &gfc); err != nil {
+		return err
+	}
+	if gfc.Type != "FeatureCollection" {
+		return ErrUnsupportedType(gfc.Type)
+	}
+	fc.Features = gfc.Features
+	return nil
+}
