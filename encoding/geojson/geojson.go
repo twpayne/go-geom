@@ -41,10 +41,10 @@ type Feature struct {
 }
 
 type geojsonFeature struct {
-	Type       string                 `json:"type,omitempty"`
+	Type       string                 `json:"type"`
 	ID         string                 `json:"id,omitempty"`
-	Geometry   *Geometry              `json:"geometry,omitempty"`
-	Properties map[string]interface{} `json:"properties,omitempty"`
+	Geometry   *Geometry              `json:"geometry"`
+	Properties map[string]interface{} `json:"properties"`
 }
 
 // A FeatureCollection is a GeoJSON FeatureCollection.
@@ -53,8 +53,8 @@ type FeatureCollection struct {
 }
 
 type geojsonFeatureCollection struct {
-	Type     string     `json:"type,omitempty"`
-	Features []*Feature `json:"features,omitempty"`
+	Type     string     `json:"type"`
+	Features []*Feature `json:"features"`
 }
 
 func guessLayout0(coords0 []float64) (geom.Layout, error) {
@@ -377,10 +377,14 @@ func (f *Feature) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON implements json.Marshaler.MarshalJSON.
 func (fc *FeatureCollection) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&geojsonFeatureCollection{
+	gfc := &geojsonFeatureCollection{
 		Type:     "FeatureCollection",
 		Features: fc.Features,
-	})
+	}
+	if gfc.Features == nil {
+		gfc.Features = []*Feature{}
+	}
+	return json.Marshal(gfc)
 }
 
 // UnmarshalJSON implements json.Unmarshaler.UnmarshalJSON
