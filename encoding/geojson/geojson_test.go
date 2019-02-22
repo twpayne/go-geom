@@ -193,14 +193,14 @@ func TestFeature(t *testing.T) {
 				ID:       "0",
 				Geometry: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 			},
-			s: `{"type":"Feature","id":"0","geometry":{"type":"Point","coordinates":[1,2]}}`,
+			s: `{"type":"Feature","id":"0","geometry":{"type":"Point","coordinates":[1,2]},"properties":null}`,
 		},
 		{
 			f: &Feature{
 				ID:       "f",
 				Geometry: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 			},
-			s: `{"type":"Feature","id":"f","geometry":{"type":"Point","coordinates":[1,2]}}`,
+			s: `{"type":"Feature","id":"f","geometry":{"type":"Point","coordinates":[1,2]},"properties":null}`,
 		},
 	} {
 		if got, err := json.Marshal(tc.f); err != nil || string(got) != tc.s {
