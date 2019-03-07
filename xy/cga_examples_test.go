@@ -19,6 +19,20 @@ func ExampleOrientationIndex() {
 	// Output: CounterClockwise
 }
 
+func ExampleIsPointInRing() {
+	ring := geom.NewLinearRingFlat(geom.XY, []float64{10, 10, 20, 10, 30, 30, 10, 30, 10, 10})
+	inRing := xy.IsPointInRing(ring.Layout(), geom.Coord{1, 1}, ring.FlatCoords())
+	fmt.Println(inRing)
+	// Output: false
+}
+
+func ExampleLocatePointInRing() {
+	ring := geom.NewLinearRingFlat(geom.XY, []float64{10, 10, 20, 10, 30, 30, 10, 30, 10, 10})
+	pointInRing := xy.LocatePointInRing(ring.Layout(), geom.Coord{15, 15}, ring.FlatCoords())
+	fmt.Println(pointInRing)
+	// Output: Interior
+}
+
 func ExampleIsOnLine() {
 	line := geom.NewLineString(geom.XY)
 	line.MustSetCoords([]geom.Coord{
