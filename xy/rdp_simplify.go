@@ -68,7 +68,6 @@ func dpWorker(ls []float64, threshold float64, mask []byte, stride int) int {
 		start := stack[l-2]
 		end := stack[l-1]
 
-		// modify the line in place
 		maxDist := 0.0
 		maxIndex := 0
 		a := ls[start*stride : start*stride+stride]
