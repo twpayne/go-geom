@@ -1,12 +1,51 @@
 package xy
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/internal"
 )
+
+func TestConvexHull(t *testing.T) {
+	for i, tc := range []struct {
+		polygon  geom.T
+		expected geom.T
+	}{
+		{
+			polygon:  geom.NewPointFlat(geom.XYM, []float64{1, 1, 2}),
+			expected: geom.NewPointFlat(geom.XYM, []float64{1, 1, 2}),
+		},
+		{
+			polygon:  geom.NewLineStringFlat(geom.XY, []float64{1, 1, 3, 3, 4, 4}),
+			expected: geom.NewLineStringFlat(geom.XY, []float64{1, 1, 4, 4}),
+		},
+		{
+			polygon:  geom.NewLineStringFlat(geom.XY, []float64{1, 1, 3, 3, 4, 4, 2, 5}),
+			expected: geom.NewPolygonFlat(geom.XY, []float64{1, 1, 2, 5, 4, 4, 1, 1}, []int{8}),
+		},
+		{
+			polygon: internal.RING,
+			expected: geom.NewPolygonFlat(geom.XY, []float64{
+				-71.103396240451, 42.3138632439557, -71.1041521907712, 42.3141153348029, -71.1042515013869, 42.3151287620809,
+				-71.1040194562988, 42.3151832057859, -71.1031627617667, 42.3152960829043, -17.1035447555574, 42.3152608696313,
+				-17.1032580383161, 42.3152269126061, -17.1041072845732, 42.3143851580048, -71.103396240451, 42.3138632439557}, []int{18}),
+		},
+	} {
+
+		convexHull := ConvexHull(tc.polygon)
+		if !reflect.DeepEqual(convexHull, tc.expected) {
+			t.Errorf("Test %v (geom) failed, expected:\n\t%v\nbut was:\n\t%v", i+1, tc.expected, convexHull)
+		}
+
+		convexHull = ConvexHullFlat(tc.polygon.Layout(), tc.polygon.FlatCoords())
+		if !reflect.DeepEqual(convexHull, tc.expected) {
+			t.Errorf("Test %v (flat) failed, expected:\n\t%v\nbut was:\n\t%v", i+1, tc.expected, convexHull)
+		}
+	}
+}
 
 func TestPresort(t *testing.T) {
 
@@ -58,6 +97,35 @@ func TestPresort(t *testing.T) {
 	}
 	if !reflect.DeepEqual(coords, expected) {
 		t.Errorf("Expected preSorted ring to be\n\t%v\nbut was\n\t%v", expected, coords)
+	}
+}
+
+func TestReduce(t *testing.T) {
+	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
+
+	reduced := calc.reduce(internal.RING.FlatCoords())
+
+	expected := []float64{
+		-71.1042515013869, 42.3151287620809,
+		-71.1041521907712, 42.3141153348029,
+		-71.1040194562988, 42.3151832057859,
+		-71.103396240451, 42.3138632439557,
+		-71.1031627617667, 42.3152960829043,
+		-17.1041598612795, 42.314808571739,
+		-17.1041375307579, 42.3147318674446,
+		-17.1041173835118, 42.3150739481917,
+		-17.1041166403905, 42.3146168544148,
+		-17.1041072845732, 42.3143851580048,
+		-17.1041065602059, 42.3145009876017,
+		-17.1040438678912, 42.3151191367447,
+		-17.1038734225584, 42.3151140942995,
+		-17.1038315271889, 42.315094347535,
+		-17.1035447555574, 42.3152608696313,
+		-17.1032580383161, 42.3152269126061,
+	}
+
+	if !reflect.DeepEqual(reduced, expected) {
+		fmt.Printf("Expected \n\t %v \nbut was\n\t %v", expected, reduced)
 	}
 }
 

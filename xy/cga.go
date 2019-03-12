@@ -10,6 +10,8 @@ import (
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/internal/lineintersector"
+	"github.com/twpayne/go-geom/xy/internal/raycrossing"
+	"github.com/twpayne/go-geom/xy/location"
 	"github.com/twpayne/go-geom/xy/orientation"
 )
 
@@ -21,6 +23,36 @@ import (
 // point - the point to compute the direction to
 func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Type {
 	return bigxy.OrientationIndex(vectorOrigin, vectorEnd, point)
+}
+
+// IsPointInRing tests whether a point lies inside or on a ring. The ring may be oriented in
+// either direction. A point lying exactly on the ring boundary is considered
+// to be inside the ring.
+//
+// This method does <i>not</i> first check the point against the envelope of
+// the ring.
+//
+// p - point to check for ring inclusion
+// ring - an array of coordinates representing the ring (which must have
+//        first point identical to last point)
+// Returns true if p is inside ring
+//
+func IsPointInRing(layout geom.Layout, p geom.Coord, ring []float64) bool {
+	return LocatePointInRing(layout, p, ring) != location.Exterior
+}
+
+// LocatePointInRing determines whether a point lies in the interior, on the boundary, or in the
+// exterior of a ring. The ring may be oriented in either direction.
+//
+// This method does <i>not</i> first check the point against the envelope of
+// the ring.
+//
+// p - point to check for ring inclusion
+// ring - an array of coordinates representing the ring (which must have
+//        first point identical to last point)
+// Returns the Location of p relative to the ring
+func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Type {
+	return raycrossing.LocatePointInRing(layout, p, ring)
 }
 
 // IsOnLine tests whether a point lies on the line segments defined by a list of
