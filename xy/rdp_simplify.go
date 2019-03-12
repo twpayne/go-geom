@@ -1,11 +1,5 @@
 package xy
 
-import (
-	"math"
-)
-
-const stride = 2
-
 // Adopted from https://github.com/paulmach/orb/blob/master/simplify/douglas_peucker.go
 // Original licence:
 //
@@ -25,16 +19,16 @@ const stride = 2
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 // IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// SimplifyIndexes uses the Douglas-Peucker simplify method to simplify a 2D
-// flatCoords.
+// SimplifyFlatCoords uses the Douglas-Peucker algorithm to simplify a 2D
+// flatCoords. It returns the indexes of the points. Note that the indexes are
+// based on points, So acesss to x, y pair should be:
+//
+//  x := flatCoords[i*stride]
+//  y := flatCoords[i*stride+1]
 //
 // Threshold is the distance between a point and the selected start
 // and end line segment. It returns the indexes of the points.
-//
-// Note that the indexes are based on points, So acesss to x, y pair should be:
-//  x:=flatCoords[i*stride]
-//  y:=flatCoords[i*stride+1]
-func SimplifyIndexes(flatCoords []float64, threshold float64) []int {
+func SimplifyFlatCoords(flatCoords []float64, threshold float64, stride int) []int {
 	size := len(flatCoords) / stride
 	if size < 3 {
 		ret := make([]int, size)
@@ -48,7 +42,7 @@ func SimplifyIndexes(flatCoords []float64, threshold float64) []int {
 	mask[0] = 1
 	mask[len(mask)-1] = 1
 
-	found := dpWorker(flatCoords, threshold, mask)
+	found := dpWorker(flatCoords, threshold, mask, stride)
 	indexMap := make([]int, 0, found)
 
 	for i, v := range mask {
@@ -63,7 +57,7 @@ func SimplifyIndexes(flatCoords []float64, threshold float64) []int {
 // dpWorker does the recursive threshold checks.
 // Using a stack array with a stackLength variable resulted in
 // 4x speed improvement over calling the function recursively.
-func dpWorker(ls []float64, threshold float64, mask []byte) int {
+func dpWorker(ls []float64, threshold float64, mask []byte, stride int) int {
 	found := 2
 
 	var stack []int
@@ -127,14 +121,4 @@ func distanceFromSegmentSquared(a, b, point []float64) float64 {
 	dy = point[1] - y
 
 	return dx*dx + dy*dy
-}
-
-const (
-	earthRadius = 6371000
-)
-
-// MeterToAngleThreshold is a helper function to convert meter to lat lon delta threshold
-func MeterToAngleThreshold(meter float64) float64 {
-	a := math.Atan(meter / earthRadius)
-	return a * 180 / math.Pi
 }
