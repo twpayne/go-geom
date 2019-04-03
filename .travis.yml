@@ -1,19 +1,24 @@
 language: go
 
 go:
-        - 1.x
-        - 1.11.x
-        - 1.10.x
-        - 1.9.x
-        - 1.8.x
+  - 1.12.x
+
+env:
+  - GO111MODULE=on
 
 install:
-        - go get github.com/d4l3k/messagediff
-        - go get github.com/lib/pq
-        - go get github.com/twpayne/go-kml
-        - go get github.com/DATA-DOG/go-sqlmock
+  - go mod download
+  - go get github.com/awalterschulze/goderive
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/lint/golint
 
-script: ./scripts/run-tests.sh
+script:
+  - go test -covermode=count -coverprofile=coverage.out ./...
+  - test -z "$(go fmt ./...)"
+  - go generate ./...
+  - go vet ./...
+  - golint ./...
+  - if [ -n "$COVERALLS_TOKEN" ]; then goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN; fi
 
 # FIXME run PostGIS integration tests
 

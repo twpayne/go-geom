@@ -25,8 +25,9 @@ var (
 	write    = flag.Bool("write", false, "write waypoints to stdout in GeoJSON format")
 )
 
+// A Waypoint is a location with an identifier and a name.
 type Waypoint struct {
-	Id       int             `json:"id"`
+	ID       int             `json:"id"`
 	Name     string          `json:"name"`
 	Geometry json.RawMessage `json:"geometry"`
 }
@@ -41,7 +42,7 @@ func createDB(db *sql.DB) error {
 			name TEXT NOT NULL,
 			geom geometry(POINT, 4326) NOT NULL
 		);
-		`)
+	`)
 	return err
 }
 
@@ -94,7 +95,7 @@ func readGeoJSON(db *sql.DB, r io.Reader) error {
 	}
 	_, err := db.Exec(`
 		INSERT INTO waypoints(name, geom) VALUES ($1, $2);
-	`, waypoint.Name, &ewkb.Point{point.SetSRID(4326)})
+	`, waypoint.Name, &ewkb.Point{Point: point.SetSRID(4326)})
 	return err
 }
 
@@ -120,7 +121,7 @@ func writeGeoJSON(db *sql.DB, w io.Writer) error {
 			return err
 		}
 		if err := json.NewEncoder(w).Encode(&Waypoint{
-			Id:       id,
+			ID:       id,
 			Name:     name,
 			Geometry: geometry,
 		}); err != nil {
