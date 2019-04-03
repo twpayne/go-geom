@@ -42,7 +42,7 @@ func createDB(db *sql.DB) error {
 			name TEXT NOT NULL,
 			geom geometry(POINT, 4326) NOT NULL
 		);
-		`)
+	`)
 	return err
 }
 
