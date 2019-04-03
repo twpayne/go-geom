@@ -1,17 +1,17 @@
 language: go
 
 go:
-        - 1.x
-        - 1.11.x
-        - 1.10.x
-        - 1.9.x
-        - 1.8.x
+  - 1.x
+  - 1.11.x
+  - 1.10.x
+  - 1.9.x
+  - 1.8.x
 
 install:
-        - go get github.com/d4l3k/messagediff
-        - go get github.com/lib/pq
-        - go get github.com/twpayne/go-kml
-        - go get github.com/DATA-DOG/go-sqlmock
+  - go get github.com/d4l3k/messagediff
+  - go get github.com/lib/pq
+  - go get github.com/twpayne/go-kml
+  - go get gopkg.in/DATA-DOG/go-sqlmock.v1
 
 script: ./scripts/run-tests.sh
 
