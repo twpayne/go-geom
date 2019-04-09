@@ -20,6 +20,7 @@ script:
   - golint ./...
   - if [ -n "$COVERALLS_TOKEN" ]; then goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN; fi
 
-# FIXME run PostGIS integration tests
+services:
+  - docker
 
 sudo: false
