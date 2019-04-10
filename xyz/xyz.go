@@ -6,7 +6,7 @@ package xyz
 import (
 	"math"
 
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 )
 
@@ -120,13 +120,14 @@ func DistanceLineToLine(line1Start, line1End, line2Start, line2End geom.Coord) f
 		s = (b*e - c*d) / denom
 		t = (a*e - b*d) / denom
 	}
-	if s < 0 {
+	switch {
+	case s < 0:
 		return DistancePointToLine(line1Start, line2Start, line2End)
-	} else if s > 1 {
+	case s > 1:
 		return DistancePointToLine(line1End, line2Start, line2End)
-	} else if t < 0 {
+	case t < 0:
 		return DistancePointToLine(line2Start, line1Start, line1End)
-	} else if t > 1 {
+	case t > 1:
 		return DistancePointToLine(line2End, line1Start, line1End)
 	}
 	/**

@@ -1,7 +1,7 @@
 package lineintersector
 
 import (
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/internal/centralendpoint"
@@ -100,18 +100,19 @@ func (intersector RobustLineIntersector) computeLineOnLineIntersection(data *lin
 		 * which used to produce the INCORRECT result: (20.31970698357233, 46.76654261437082, NaN)
 		 *
 		 */
-		if internal.Equal(line1Start, 0, line2Start, 0) || internal.Equal(line1Start, 0, line2End, 0) {
+		switch {
+		case internal.Equal(line1Start, 0, line2Start, 0) || internal.Equal(line1Start, 0, line2End, 0):
 			copy(data.intersectionPoints[0], line1Start)
-		} else if internal.Equal(line1End, 0, line2Start, 0) || internal.Equal(line1End, 0, line2End, 0) {
+		case internal.Equal(line1End, 0, line2Start, 0) || internal.Equal(line1End, 0, line2End, 0):
 			copy(data.intersectionPoints[0], line1End)
-		} else if line2StartToLine1Orientation == orientation.Collinear {
+		case line2StartToLine1Orientation == orientation.Collinear:
 			// Now check to see if any endpoint lies on the interior of the other segment.
 			copy(data.intersectionPoints[0], line2Start)
-		} else if line2EndToLine1Orientation == orientation.Collinear {
+		case line2EndToLine1Orientation == orientation.Collinear:
 			copy(data.intersectionPoints[0], line2End)
-		} else if line1StartToLine2Orientation == orientation.Collinear {
+		case line1StartToLine2Orientation == orientation.Collinear:
 			copy(data.intersectionPoints[0], line1Start)
-		} else if line1EndToLine2Orientation == orientation.Collinear {
+		case line1EndToLine2Orientation == orientation.Collinear:
 			copy(data.intersectionPoints[0], line1End)
 		}
 	} else {

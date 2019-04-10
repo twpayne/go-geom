@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/internal/lineintersector"
@@ -114,7 +114,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// find distinct point before highest point
 	iPrev := hiIndex
 	for {
-		iPrev = iPrev - stride
+		iPrev -= stride
 		if iPrev < 0 {
 			iPrev = nOrds
 		}

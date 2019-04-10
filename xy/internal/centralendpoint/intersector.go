@@ -3,7 +3,7 @@ package centralendpoint
 import (
 	"math"
 
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/internal"
 )
 
@@ -45,8 +45,8 @@ func average(pts [4]geom.Coord) geom.Coord {
 		avg[1] += pts[i][1]
 	}
 	if n > 0 {
-		avg[0] = avg[0] / n
-		avg[1] = avg[1] / n
+		avg[0] /= n
+		avg[1] /= n
 	}
 	return avg
 }
