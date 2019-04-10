@@ -100,7 +100,6 @@ func newParser() *parser {
 
 // parseB parses a B record from line and updates the state of p.
 func (p *parser) parseB(line string) error {
-
 	if len(line) < p.bRecordLen {
 		return fmt.Errorf("B record too short: %d, want >=%d", len(line), p.bRecordLen)
 	}
@@ -197,7 +196,6 @@ func (p *parser) parseB(line string) error {
 	p.lastDate = date
 
 	return nil
-
 }
 
 // parseB parses an H record from line and updates the state of p.

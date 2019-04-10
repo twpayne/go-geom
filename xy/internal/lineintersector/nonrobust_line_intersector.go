@@ -11,7 +11,6 @@ type NonRobustLineIntersector struct {
 }
 
 func (li NonRobustLineIntersector) computePointOnLineIntersection(data *lineIntersectorData, p, lineStart, lineEnd geom.Coord) {
-
 	/*
 	 *  Coefficients of line eqns.
 	 */
@@ -71,7 +70,7 @@ func (li NonRobustLineIntersector) computeLineOnLineIntersection(data *lineInter
 	/*
 	 *  'Sign' values
 	 */
-	//double denom, offset, num;     /* Intermediate values */
+	// double denom, offset, num;     /* Intermediate values */
 
 	data.isProper = false
 

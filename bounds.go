@@ -1,8 +1,6 @@
 package geom
 
-import (
-	"math"
-)
+import "math"
 
 // A Bounds represents a multi-dimensional bounding box.
 type Bounds struct {

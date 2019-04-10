@@ -1,8 +1,6 @@
 package internal
 
-import (
-	"github.com/twpayne/go-geom"
-)
+import "github.com/twpayne/go-geom"
 
 // CoordStack is a simple stack for pushing coordinates (in []float64 form) onto the stack and getting
 // the coordinates back in the normal stack order

@@ -90,6 +90,7 @@ func TestVectorLength(t *testing.T) {
 		}
 	}
 }
+
 func TestVectorNormalize(t *testing.T) {
 	for i, tc := range []struct {
 		v1     geom.Coord

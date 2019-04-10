@@ -30,7 +30,6 @@ func TestTree(t *testing.T) {
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf("Incorrect ordering and sorting of data. Expected \n\t%v \nwas \n\t%v", expected, actual)
 	}
-
 }
 
 type testCompare struct{}
@@ -38,6 +37,7 @@ type testCompare struct{}
 func (c testCompare) IsEquals(x, y geom.Coord) bool {
 	return x[0] == y[0] && x[1] == y[1]
 }
+
 func (c testCompare) IsLess(x, y geom.Coord) bool {
 	return sorting.IsLess2D(x, y)
 }

@@ -158,6 +158,7 @@ func orientationBasedOnSign(x float64) orientation.Type {
 	}
 	return orientation.Collinear
 }
+
 func orientationBasedOnSignForBig(x big.Float) orientation.Type {
 	if x.IsInf() {
 		return orientation.Collinear

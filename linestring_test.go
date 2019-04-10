@@ -88,7 +88,6 @@ func TestLineString(t *testing.T) {
 			},
 		},
 	} {
-
 		testLineStringEquals(t, c.ls, c.tls)
 	}
 }
@@ -119,7 +118,6 @@ func TestLineStringInterpolate(t *testing.T) {
 		if i, f := ls.Interpolate(c.val, c.dim); i != c.i || f != c.f {
 			t.Errorf("ls.Interpolate(%v, %v) == %v, %v, want %v, %v", c.val, c.dim, i, f, c.i, c.f)
 		}
-
 	}
 }
 

@@ -12,7 +12,6 @@ import (
 )
 
 func Example_scan() {
-
 	type City struct {
 		Name     string
 		Location ewkb.Point
@@ -44,11 +43,9 @@ func Example_scan() {
 	// Longitude: 0.1275
 	// Latitude: 51.50722
 	// SRID: 4326
-
 }
 
 func Example_value() {
-
 	type City struct {
 		Name     string
 		Location ewkb.Point
@@ -78,5 +75,4 @@ func Example_value() {
 
 	// Output:
 	// 1 rows affected
-
 }

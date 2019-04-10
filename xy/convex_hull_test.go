@@ -31,7 +31,8 @@ func TestConvexHull(t *testing.T) {
 			expected: geom.NewPolygonFlat(geom.XY, []float64{
 				-71.103396240451, 42.3138632439557, -71.1041521907712, 42.3141153348029, -71.1042515013869, 42.3151287620809,
 				-71.1040194562988, 42.3151832057859, -71.1031627617667, 42.3152960829043, -17.1035447555574, 42.3152608696313,
-				-17.1032580383161, 42.3152269126061, -17.1041072845732, 42.3143851580048, -71.103396240451, 42.3138632439557}, []int{18}),
+				-17.1032580383161, 42.3152269126061, -17.1041072845732, 42.3143851580048, -71.103396240451, 42.3138632439557,
+			}, []int{18}),
 		},
 	} {
 
@@ -48,7 +49,6 @@ func TestConvexHull(t *testing.T) {
 }
 
 func TestPresort(t *testing.T) {
-
 	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
 	coords := append([]float64{}, internal.RING.FlatCoords()...)
 	calc.preSort(coords)
@@ -154,7 +154,8 @@ func TestOctRing(t *testing.T) {
 		10.0, 1.0, 10.0,
 		10.0, 1.0, 10.0,
 		6.0, -1.0, 10.0,
-		1.0, 0.0, 10.0}
+		1.0, 0.0, 10.0,
+	}
 	if !reflect.DeepEqual(expected, result) {
 		t.Errorf("Incorrect ordering and sorting of octPts. Expected \n\t%v \nwas \n\t%v", expected, result)
 	}
@@ -172,8 +173,8 @@ func TestOctRing(t *testing.T) {
 	if !reflect.DeepEqual(expected, result) {
 		t.Errorf("Incorrect ordering and sorting of OctRing. Expected \n\t%v \nwas \n\t%v", expected, result)
 	}
-
 }
+
 func TestGrahamScan(t *testing.T) {
 	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
 	coords := append([]float64{}, internal.RING.FlatCoords()...)

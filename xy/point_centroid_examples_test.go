@@ -23,7 +23,8 @@ func ExampleMultiPointCentroid() {
 		0, 0,
 		2, 0,
 		2, 2,
-		0, 2})
+		0, 2,
+	})
 	centroid := xy.MultiPointCentroid(multiPoint)
 
 	fmt.Println(centroid)
@@ -48,5 +49,5 @@ func ExampleNewPointCentroidCalculator() {
 	}
 
 	fmt.Println(calculator.GetCentroid())
-	//Output: [1 1]
+	// Output: [1 1]
 }

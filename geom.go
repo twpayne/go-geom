@@ -96,7 +96,6 @@ func (c Coord) Set(other Coord) {
 // It is assumed that this coord and other coord both have the same (provided)
 // layout.
 func (c Coord) Equal(layout Layout, other Coord) bool {
-
 	numOrds := len(c)
 
 	if layout.Stride() < numOrds {

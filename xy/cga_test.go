@@ -83,7 +83,6 @@ func TestIsRingCounterClockwiseNotEnoughPoints(t *testing.T) {
 		if err := recover(); err == nil {
 			t.Errorf("Expected a panic because there are not enough points")
 		}
-
 	}()
 	xy.IsRingCounterClockwise(geom.XY, []float64{0, 0, 1, 0, 1, 1})
 }
@@ -144,7 +143,6 @@ func TestIsRingCounterClockwise(t *testing.T) {
 }
 
 func make3DCopy(coords []float64) []float64 {
-
 	len := len(coords)
 	copied := make([]float64, len+(len/2))
 
@@ -158,6 +156,7 @@ func make3DCopy(coords []float64) []float64 {
 
 	return copied
 }
+
 func TestDistanceFromPointToLine(t *testing.T) {
 	for i, tc := range []struct {
 		p                  geom.Coord

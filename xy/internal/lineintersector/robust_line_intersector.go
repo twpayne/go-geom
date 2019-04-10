@@ -199,7 +199,7 @@ func intersection(data *lineIntersectorData, line1Start, line1End, line2Start, l
 	}
 
 	// TODO Enable if we add a precision model
-	//if precisionModel != null {
+	// if precisionModel != null {
 	//	precisionModel.makePrecise(intPt);
 	//}
 

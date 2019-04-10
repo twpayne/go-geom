@@ -7,7 +7,6 @@ import (
 )
 
 func TestEqual2D(t *testing.T) {
-
 	data := []float64{0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 2, 2}
 
 	for i, tc := range []struct {
