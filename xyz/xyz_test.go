@@ -47,7 +47,6 @@ func TestDistance(t *testing.T) {
 }
 
 func TestDistanceLineToLine(t *testing.T) {
-
 	for i, tc := range []struct {
 		line1Start, line1End, line2Start, line2End geom.Coord
 		result                                     float64
@@ -68,7 +67,7 @@ func TestDistanceLineToLine(t *testing.T) {
 		},
 		{
 			line1Start: geom.Coord{0.14324831422763928, 0.1976764146480534, 0.6232929645076098},
-			line1End:   geom.Coord{0.44953958873649036, 3.5239563737987645E-4, 0.7712169838831762},
+			line1End:   geom.Coord{0.44953958873649036, 3.5239563737987645e-4, 0.7712169838831762},
 			line2Start: geom.Coord{0.7545925980004722, 0.2637482401207386, 0.2724556780759071},
 			line2End:   geom.Coord{0.25710142520446666, 0.8181769277392215, 0.6125714339070055},
 			result:     0.5272955676770279,
@@ -97,7 +96,6 @@ func TestDistanceLineToLine(t *testing.T) {
 }
 
 func TestDistancePointToLine(t *testing.T) {
-
 	for i, tc := range []struct {
 		p1, p2, p3 geom.Coord
 		result     float64

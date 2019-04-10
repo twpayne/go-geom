@@ -30,7 +30,6 @@ const (
 
 // Read reads an arbitrary geometry from r.
 func Read(r io.Reader) (geom.T, error) {
-
 	ewkbByteOrder, err := wkbcommon.ReadByte(r)
 	if err != nil {
 		return nil, err
@@ -183,7 +182,6 @@ func Read(r io.Reader) (geom.T, error) {
 	default:
 		return nil, wkbcommon.ErrUnsupportedType(ewkbGeometryType)
 	}
-
 }
 
 // Unmarshal unmrshals an arbitrary geometry from a []byte.
@@ -193,7 +191,6 @@ func Unmarshal(data []byte) (geom.T, error) {
 
 // Write writes an arbitrary geometry to w.
 func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
-
 	var ewkbByteOrder byte
 	switch byteOrder {
 	case XDR:
@@ -304,7 +301,6 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
-
 }
 
 // Marshal marshals an arbitrary geometry to a []byte.

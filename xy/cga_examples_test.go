@@ -8,7 +8,6 @@ import (
 )
 
 func ExampleOrientationIndex() {
-
 	vectorOrigin := geom.Coord{10.0, 10.0}
 	vectorEnd := geom.Coord{20.0, 20.0}
 	target := geom.Coord{10.0, 20.0}

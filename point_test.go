@@ -35,7 +35,6 @@ func testPointEquals(t *testing.T, p *Point, tp *testPoint) {
 }
 
 func TestPoint(t *testing.T) {
-
 	for _, c := range []struct {
 		p  *Point
 		tp *testPoint

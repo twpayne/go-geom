@@ -21,14 +21,12 @@ import (
 //
 // In this case, the centroid of the line segments in the polygon will be returned.
 func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centroid geom.Coord) {
-
 	calc := NewAreaCentroidCalculator(polygon.Layout())
 	calc.AddPolygon(polygon)
 	for _, p := range extraPolys {
 		calc.AddPolygon(p)
 	}
 	return calc.GetCentroid()
-
 }
 
 // MultiPolygonCentroid computes the centroid of an area geometry. (MultiPolygon)
@@ -45,13 +43,11 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 //
 // In this case, the centroid of the line segments in the polygon will be returned.
 func MultiPolygonCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
-
 	calc := NewAreaCentroidCalculator(polygon.Layout())
 	for i := 0; i < polygon.NumPolygons(); i++ {
 		calc.AddPolygon(polygon.Polygon(i))
 	}
 	return calc.GetCentroid()
-
 }
 
 // AreaCentroidCalculator is the data structure that contains the centroid calculation
@@ -104,7 +100,6 @@ func (calc *AreaCentroidCalculator) GetCentroid() geom.Coord {
 
 // AddPolygon adds a polygon to the calculation.
 func (calc *AreaCentroidCalculator) AddPolygon(polygon *geom.Polygon) {
-
 	calc.setBasePoint(polygon.Coord(0))
 
 	calc.addShell(polygon.LinearRing(0).FlatCoords())
@@ -135,6 +130,7 @@ func (calc *AreaCentroidCalculator) addShell(pts []float64) {
 	}
 	calc.addLinearSegments(pts)
 }
+
 func (calc *AreaCentroidCalculator) addHole(pts []float64) {
 	stride := calc.stride
 

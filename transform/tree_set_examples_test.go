@@ -13,6 +13,7 @@ type treeSetExampleCompare struct{}
 func (c treeSetExampleCompare) IsEquals(x, y geom.Coord) bool {
 	return x[0] == y[0] && x[1] == y[1]
 }
+
 func (c treeSetExampleCompare) IsLess(x, y geom.Coord) bool {
 	return sorting.IsLess2D(x, y)
 }

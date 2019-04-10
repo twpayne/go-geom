@@ -40,7 +40,8 @@ func ConvexHullFlat(layout geom.Layout, coords []float64) geom.T {
 	calc := convexHullCalculator{
 		inputPts: coords,
 		layout:   layout,
-		stride:   layout.Stride()}
+		stride:   layout.Stride(),
+	}
 	return calc.getConvexHull()
 }
 
@@ -72,7 +73,6 @@ func (calc convexHullCalculator) getConvexHull() geom.T {
 }
 
 func (calc *convexHullCalculator) lineOrPolygon(coordinates []float64) geom.T {
-
 	cleanCoords := calc.cleanRing(coordinates)
 	if len(cleanCoords) == 3*calc.stride {
 		return geom.NewLineStringFlat(calc.layout, cleanCoords[0:len(cleanCoords)-calc.stride])
@@ -81,7 +81,6 @@ func (calc *convexHullCalculator) lineOrPolygon(coordinates []float64) geom.T {
 }
 
 func (calc *convexHullCalculator) cleanRing(original []float64) []float64 {
-
 	cleanedRing := []float64{}
 	var previousDistinctCoordinate []float64
 	for i := 0; i < len(original)-calc.stride; i += calc.stride {
@@ -121,6 +120,7 @@ func (calc *convexHullCalculator) isBetween(c1, c2, c3 []float64) bool {
 	}
 	return false
 }
+
 func (calc *convexHullCalculator) grahamScan(coordData []float64) []float64 {
 	coordStack := internal.NewCoordStack(calc.layout)
 	coordStack.Push(coordData, 0)
@@ -137,10 +137,9 @@ func (calc *convexHullCalculator) grahamScan(coordData []float64) []float64 {
 	}
 	coordStack.Push(coordData, 0)
 	return coordStack.Data
-
 }
-func (calc *convexHullCalculator) preSort(pts []float64) {
 
+func (calc *convexHullCalculator) preSort(pts []float64) {
 	// find the lowest point in the set. If two or more points have
 	// the same minimum y coordinate choose the one with the minimu x.
 	// This focal point is put in array location pts[0].
@@ -154,7 +153,6 @@ func (calc *convexHullCalculator) preSort(pts []float64) {
 
 	// sort the points radially around the focal point.
 	sort.Sort(NewRadialSorting(calc.layout, pts, geom.Coord{pts[0], pts[1]}))
-
 }
 
 // Uses a heuristic to reduce the number of points scanned
@@ -302,7 +300,6 @@ func (calc *convexHullCalculator) computeOctPts(inputPts []float64) []float64 {
 		}
 	}
 	return pts
-
 }
 
 type comparator struct{}
@@ -310,6 +307,7 @@ type comparator struct{}
 func (c comparator) IsEquals(x, y geom.Coord) bool {
 	return internal.Equal(x, 0, y, 0)
 }
+
 func (c comparator) IsLess(x, y geom.Coord) bool {
 	return sorting.IsLess2D(x, y)
 }

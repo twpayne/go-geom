@@ -64,7 +64,6 @@ func TestMultiPolygon(t *testing.T) {
 			},
 		},
 	} {
-
 		testMultiPolygonEquals(t, c.mp, c.tmp)
 	}
 }

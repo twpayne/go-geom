@@ -10,21 +10,19 @@ import (
 	"github.com/twpayne/go-geom/internal/geomtest"
 )
 
-var (
-	_ = []interface {
-		sql.Scanner
-		Value() (driver.Value, error)
-		Valid() bool
-	}{
-		&Point{},
-		&LineString{},
-		&Polygon{},
-		&MultiPoint{},
-		&MultiLineString{},
-		&MultiPolygon{},
-		&GeometryCollection{},
-	}
-)
+var _ = []interface {
+	sql.Scanner
+	Value() (driver.Value, error)
+	Valid() bool
+}{
+	&Point{},
+	&LineString{},
+	&Polygon{},
+	&MultiPoint{},
+	&MultiLineString{},
+	&MultiPolygon{},
+	&GeometryCollection{},
+}
 
 func TestPointScanAndValue(t *testing.T) {
 	for _, tc := range []struct {

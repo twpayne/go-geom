@@ -94,5 +94,4 @@ func TestAreaGetCentroid(t *testing.T) {
 			t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)
 		}
 	}
-
 }

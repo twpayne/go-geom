@@ -31,7 +31,6 @@ func ExampleDistancePointToLine() {
 }
 
 func ExampleDistanceLineToLine() {
-
 	line1Start := geom.Coord{10, 0, 10}
 	line1End := geom.Coord{10, 0, -10}
 	line2Start := geom.Coord{0, 0, 10}

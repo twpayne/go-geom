@@ -20,7 +20,8 @@ func GetIntersection(line1End1, line1End2, line2End1, line2End2 geom.Coord) geom
 		line1End1: line1End1,
 		line1End2: line1End2,
 		line2End1: line2End1,
-		line2End2: line2End2}
+		line2End2: line2End2,
+	}
 	intersector.compute()
 	return intersector.intersectionPoint
 }

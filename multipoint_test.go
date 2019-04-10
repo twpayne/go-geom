@@ -88,7 +88,6 @@ func TestMultiPoint(t *testing.T) {
 			},
 		},
 	} {
-
 		testMultiPointEquals(t, c.mp, c.tmp)
 	}
 }

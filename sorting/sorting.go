@@ -1,8 +1,6 @@
 package sorting
 
-import (
-	"github.com/twpayne/go-geom"
-)
+import "github.com/twpayne/go-geom"
 
 // FlatCoord is a sort.Interface implementation that will result in sorting the wrapped coords based on the
 // the comparator function
@@ -55,11 +53,13 @@ func NewFlatCoordSorting(layout geom.Layout, coordData []float64, comparator IsL
 func (s FlatCoord) Len() int {
 	return len(s.coords) / s.stride
 }
+
 func (s FlatCoord) Swap(i, j int) {
 	for k := 0; k < s.stride; k++ {
 		s.coords[i*s.stride+k], s.coords[j*s.stride+k] = s.coords[j*s.stride+k], s.coords[i*s.stride+k]
 	}
 }
+
 func (s FlatCoord) Less(i, j int) bool {
 	is, js := i*s.stride, j*s.stride
 	return s.isLess(s.coords[is:is+s.stride], s.coords[js:js+s.stride])

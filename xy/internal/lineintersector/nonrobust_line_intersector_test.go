@@ -1,8 +1,6 @@
 package lineintersector
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestNonRobustLineIntersectionPointOnLine(t *testing.T) {
 	exectuteLineIntersectionPointOnLineTest(t, NonRobustLineIntersector{})

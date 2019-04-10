@@ -19,7 +19,6 @@ func IsPointWithinLineBounds(p, lineEndpoint1, lineEndpoint2 geom.Coord) bool {
 // DoLinesOverlap calculates if the bounding boxes of the two lines (line1End1, line1End2) and
 // (line2End1, line2End2) overlap
 func DoLinesOverlap(line1End1, line1End2, line2End1, line2End2 geom.Coord) bool {
-
 	min1x := math.Min(line1End1[0], line1End2[0])
 	max1x := math.Max(line1End1[0], line1End2[0])
 	min1y := math.Min(line1End1[1], line1End2[1])

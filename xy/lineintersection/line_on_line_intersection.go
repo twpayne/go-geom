@@ -32,7 +32,8 @@ type Result struct {
 func NewResult(intersectionType Type, intersection []geom.Coord) Result {
 	return Result{
 		intersectionType: intersectionType,
-		intersection:     intersection}
+		intersection:     intersection,
+	}
 }
 
 // HasIntersection returns true if the lines have an intersection

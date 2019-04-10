@@ -73,7 +73,6 @@ func TestPolygon(t *testing.T) {
 			},
 		},
 	} {
-
 		testPolygonEquals(t, c.p, c.tp)
 	}
 }

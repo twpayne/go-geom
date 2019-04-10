@@ -67,7 +67,6 @@ func TestOrientationIndex(t *testing.T) {
 }
 
 func TestIntersection(t *testing.T) {
-
 	for i, tc := range []struct {
 		desc                                       string
 		line1Start, line1End, line2Start, line2End geom.Coord

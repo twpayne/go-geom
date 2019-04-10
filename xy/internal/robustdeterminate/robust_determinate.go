@@ -20,9 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package robustdeterminate
 
-import (
-	"math"
-)
+import "math"
 
 // Sign enumerates the different possible signs
 type Sign int
@@ -89,7 +87,6 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 	if 0.0 < y1 {
 		if 0.0 < y2 {
 			if y1 <= y2 {
-
 			} else {
 				sign = Negative
 				swap = x1
@@ -264,5 +261,4 @@ func SignOfDet2x2(x1, y1, x2, y2 float64) Sign {
 			return -sign
 		}
 	}
-
 }

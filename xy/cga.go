@@ -61,7 +61,6 @@ func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) locatio
 // Returns true if the point is a vertex of the line or lies in the interior
 //         of a line segment in the linestring
 func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []float64) bool {
-
 	stride := layout.Stride()
 	if len(lineSegmentCoordinates) < (2 * stride) {
 		panic(fmt.Sprintf("At least two coordinates are required in the lineSegmentsCoordinates array in 'algorithms.IsOnLine', was: %v", lineSegmentCoordinates))
