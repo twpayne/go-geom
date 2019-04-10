@@ -9,7 +9,7 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/orientation"
 )
 
@@ -126,18 +126,18 @@ func orientationIndexFilter(vectorOrigin, vectorEnd, point geom.Coord) orientati
 	detright := (vectorOrigin[1] - point[1]) * (vectorEnd[0] - point[0])
 	det := detleft - detright
 
-	if detleft > 0.0 {
+	switch {
+	case detleft > 0.0:
 		if detright <= 0.0 {
 			return orientationBasedOnSign(det)
 		}
-
 		detsum = detleft + detright
-	} else if detleft < 0.0 {
+	case detleft < 0.0:
 		if detright >= 0.0 {
 			return orientationBasedOnSign(det)
 		}
 		detsum = -detleft - detright
-	} else {
+	default:
 		return orientationBasedOnSign(det)
 	}
 

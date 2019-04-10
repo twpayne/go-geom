@@ -1,7 +1,7 @@
 package lineintersector
 
 import (
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy/internal"
 	"github.com/twpayne/go-geom/xy/lineintersection"
 )
@@ -163,15 +163,16 @@ func (li NonRobustLineIntersector) computeCollinearIntersection(data *lineInters
 		q4 = line2Start
 		t4 = r3
 	}
-	if t3 > r2 || t4 < r1 {
+	switch {
+	case t3 > r2 || t4 < r1:
 		data.intersectionType = lineintersection.NoIntersection
-	} else if &q4 == &line1Start {
+	case &q4 == &line1Start:
 		copy(data.pa, line1Start)
 		data.intersectionType = lineintersection.PointIntersection
-	} else if &q3 == &line1End {
+	case &q3 == &line1End:
 		copy(data.pa, line1End)
 		data.intersectionType = lineintersection.PointIntersection
-	} else {
+	default:
 		// intersection MUST be a segment - compute endpoints
 		copy(data.pa, line1Start)
 		if t3 > r1 {
