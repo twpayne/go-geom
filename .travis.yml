@@ -8,16 +8,16 @@ env:
 
 install:
   - go mod download
-  - go get github.com/awalterschulze/goderive
-  - go get github.com/mattn/goveralls
-  - go get golang.org/x/lint/golint
+  - GO111MODULE=off go get github.com/awalterschulze/goderive
+  - GO111MODULE=off go get github.com/golangci/golangci-lint/cmd/golangci-lint
+  - GO111MODULE=off go get github.com/mattn/goveralls
 
 script:
   - go test -covermode=count -coverprofile=coverage.out ./...
   - test -z "$(go fmt ./...)"
   - go generate ./...
   - go vet ./...
-  - golint ./...
+  - golangci-lint run
   - if [ -n "$COVERALLS_TOKEN" ]; then goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN; fi
 
 services:
