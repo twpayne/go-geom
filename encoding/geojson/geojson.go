@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/twpayne/go-geom"
+	geom "github.com/twpayne/go-geom"
 )
 
 // DefaultLayout is the default layout for empty geometries.
@@ -281,54 +281,6 @@ func Marshal(g geom.T) ([]byte, error) {
 		return nil, err
 	}
 	return json.Marshal(geojson)
-}
-
-func unmarshalCoords0(data []byte) (geom.Layout, geom.Coord, error) {
-	var coords geom.Coord
-	if err := json.Unmarshal(data, &coords); err != nil {
-		return geom.NoLayout, nil, err
-	}
-	layout, err := guessLayout0(coords)
-	if err != nil {
-		return geom.NoLayout, nil, err
-	}
-	return layout, coords, nil
-}
-
-func unmarshalCoords1(data []byte) (geom.Layout, []geom.Coord, error) {
-	var coords []geom.Coord
-	if err := json.Unmarshal(data, &coords); err != nil {
-		return geom.NoLayout, nil, err
-	}
-	layout, err := guessLayout1(coords)
-	if err != nil {
-		return geom.NoLayout, nil, err
-	}
-	return layout, coords, nil
-}
-
-func unmarshalCoords2(data []byte) (geom.Layout, [][]geom.Coord, error) {
-	var coords [][]geom.Coord
-	if err := json.Unmarshal(data, &coords); err != nil {
-		return geom.NoLayout, nil, err
-	}
-	layout, err := guessLayout2(coords)
-	if err != nil {
-		return geom.NoLayout, nil, err
-	}
-	return layout, coords, nil
-}
-
-func unmarshalCoords3(data []byte) (geom.Layout, [][][]geom.Coord, error) {
-	var coords [][][]geom.Coord
-	if err := json.Unmarshal(data, &coords); err != nil {
-		return geom.NoLayout, nil, err
-	}
-	layout, err := guessLayout3(coords)
-	if err != nil {
-		return geom.NoLayout, nil, err
-	}
-	return layout, coords, nil
 }
 
 // Unmarshal unmarshalls a []byte to an arbitrary geometry.
