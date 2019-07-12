@@ -145,33 +145,33 @@ func computeCollinearIntersection(data *lineIntersectorData, line1Start, line1En
 		data.intersectionPoints[0] = line2Start
 		data.intersectionPoints[1] = line1Start
 
-		return isPointOrCollinearIntersection(data, line2Start, line1Start, line2EndWithinLine1Bounds, line1EndWithinLine2Bounds)
+		return isPointOrCollinearIntersection(line2Start, line1Start, line2EndWithinLine1Bounds, line1EndWithinLine2Bounds)
 	}
 	if line2StartWithinLine1Bounds && line1EndWithinLine2Bounds {
 		data.intersectionPoints[0] = line2Start
 		data.intersectionPoints[1] = line1End
 
-		return isPointOrCollinearIntersection(data, line2Start, line1End, line2EndWithinLine1Bounds, line1StartWithinLine2Bounds)
+		return isPointOrCollinearIntersection(line2Start, line1End, line2EndWithinLine1Bounds, line1StartWithinLine2Bounds)
 	}
 
 	if line2EndWithinLine1Bounds && line1StartWithinLine2Bounds {
 		data.intersectionPoints[0] = line2End
 		data.intersectionPoints[1] = line1Start
 
-		return isPointOrCollinearIntersection(data, line2End, line1Start, line2StartWithinLine1Bounds, line1EndWithinLine2Bounds)
+		return isPointOrCollinearIntersection(line2End, line1Start, line2StartWithinLine1Bounds, line1EndWithinLine2Bounds)
 	}
 
 	if line2EndWithinLine1Bounds && line1EndWithinLine2Bounds {
 		data.intersectionPoints[0] = line2End
 		data.intersectionPoints[1] = line1End
 
-		return isPointOrCollinearIntersection(data, line2End, line1End, line2StartWithinLine1Bounds, line1StartWithinLine2Bounds)
+		return isPointOrCollinearIntersection(line2End, line1End, line2StartWithinLine1Bounds, line1StartWithinLine2Bounds)
 	}
 
 	return lineintersection.NoIntersection
 }
 
-func isPointOrCollinearIntersection(data *lineIntersectorData, lineStart, lineEnd geom.Coord, intersection1, intersection2 bool) lineintersection.Type {
+func isPointOrCollinearIntersection(lineStart, lineEnd geom.Coord, intersection1, intersection2 bool) lineintersection.Type {
 	if internal.Equal(lineStart, 0, lineEnd, 0) && !intersection1 && !intersection2 {
 		return lineintersection.PointIntersection
 	}
