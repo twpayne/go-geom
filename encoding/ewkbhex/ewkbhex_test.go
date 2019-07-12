@@ -94,7 +94,6 @@ func test(t *testing.T, g geom.T, xdr string, ndr string) {
 		}
 		if ndr != "" {
 			if err := mp.Scan(decodeString(ndr)); err != nil {
-
 				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, ndr, err)
 			}
 			if !reflect.DeepEqual(mp, ewkb.MultiPoint{MultiPoint: g}) {
