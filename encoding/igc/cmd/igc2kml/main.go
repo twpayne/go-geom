@@ -13,13 +13,14 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	var gxCoords []kml.Element
-	for _, coord := range i.LineString.Coords() {
-		gxCoords = append(gxCoords, kml.GxCoord(kml.Coordinate{
+	coords := i.LineString.Coords()
+	gxCoords := make([]kml.Element, len(coords))
+	for i, coord := range i.LineString.Coords() {
+		gxCoords[i] = kml.GxCoord(kml.Coordinate{
 			Lon: coord[0],
 			Lat: coord[1],
 			Alt: coord[2],
-		}))
+		})
 	}
 	return kml.GxKML(
 		kml.Placemark(

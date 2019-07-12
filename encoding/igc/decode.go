@@ -40,9 +40,9 @@ type T struct {
 }
 
 func (es Errors) Error() string {
-	var ss []string
-	for _, e := range es {
-		ss = append(ss, e.Error())
+	ss := make([]string, len(es))
+	for i, e := range es {
+		ss[i] = e.Error()
 	}
 	return strings.Join(ss, "\n")
 }
