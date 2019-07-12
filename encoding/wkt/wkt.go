@@ -115,6 +115,7 @@ func writeCoord(b *bytes.Buffer, coord []float64) error {
 	return nil
 }
 
+//nolint:interfacer
 func writeEMPTY(b *bytes.Buffer) error {
 	_, err := b.WriteString("EMPTY")
 	return err

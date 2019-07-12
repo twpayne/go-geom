@@ -19,6 +19,7 @@ func parseIGC(filename string) (*igc.T, error) {
 	return igc.Read(f)
 }
 
+//nolint:unparam
 func run() error {
 	flag.Parse()
 	for _, arg := range flag.Args() {
