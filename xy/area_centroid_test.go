@@ -72,8 +72,8 @@ func TestAreaGetCentroid(t *testing.T) {
 			t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)
 		}
 
-		var coords = []float64{}
-		var endss = [][]int{}
+		coords := []float64{}
+		endss := [][]int{}
 		lastEnd := 0
 		for _, p := range tc.polygons {
 			coords = append(coords, p.FlatCoords()...)

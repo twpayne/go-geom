@@ -40,9 +40,9 @@ type T struct {
 }
 
 func (es Errors) Error() string {
-	var ss []string
-	for _, e := range es {
-		ss = append(ss, e.Error())
+	ss := make([]string, len(es))
+	for i, e := range es {
+		ss[i] = e.Error()
 	}
 	return strings.Join(ss, "\n")
 }
@@ -102,6 +102,7 @@ func newParser() *parser {
 // parseB parses a B record from line and updates the state of p.
 func (p *parser) parseB(line string) error {
 	if len(line) < p.bRecordLen {
+		//nolint:stylecheck
 		return fmt.Errorf("B record too short: %d, want >=%d", len(line), p.bRecordLen)
 	}
 
@@ -214,6 +215,7 @@ func (p *parser) parseH(line string) error {
 	p.headers = append(p.headers, header)
 	if header.Key == "DTE" {
 		if len(header.Value) < 6 {
+			//nolint:stylecheck
 			return fmt.Errorf("H DTE value too short: %d, want >=6", len(header.Value))
 		}
 		day, err := parseDecInRange(header.Value, 0, 2, 1, 31+1)
@@ -244,6 +246,7 @@ func (p *parser) parseI(line string) error {
 	var err error
 	var n int
 	if len(line) < 3 {
+		//nolint:stylecheck
 		return fmt.Errorf("I record too short: %d, want >=3", len(line))
 	}
 	if n, err = parseDec(line, 1, 3); err != nil {
@@ -261,6 +264,7 @@ func (p *parser) parseI(line string) error {
 			return err
 		}
 		if start != p.bRecordLen+1 || stop < start {
+			//nolint:stylecheck
 			return fmt.Errorf("I record index out-of-range: %d-%d", start, stop-1)
 		}
 		p.bRecordLen = stop

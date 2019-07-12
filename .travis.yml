@@ -1,23 +1,19 @@
 language: go
 
 go:
-  - 1.12.x
+  - 1.x
 
 env:
   - GO111MODULE=on
 
 install:
-  - go mod download
-  - GO111MODULE=off go get github.com/awalterschulze/goderive
-  - GO111MODULE=off go get github.com/golangci/golangci-lint/cmd/golangci-lint
-  - GO111MODULE=off go get github.com/mattn/goveralls
+  - make install-tools
 
 script:
-  - go test -covermode=count -coverprofile=coverage.out ./...
-  - test -z "$(go fmt ./...)"
-  - go generate ./...
-  - go vet ./...
-  - golangci-lint run
+  - make coverage.out
+  - make lint
+  - make format
+  - git diff --exit-code
   - if [ -n "$COVERALLS_TOKEN" ]; then goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN; fi
 
 services:

@@ -30,7 +30,7 @@ const (
 
 // Read reads an arbitrary geometry from r.
 func Read(r io.Reader) (geom.T, error) {
-	var wkbByteOrder, err = wkbcommon.ReadByte(r)
+	wkbByteOrder, err := wkbcommon.ReadByte(r)
 	if err != nil {
 		return nil, err
 	}

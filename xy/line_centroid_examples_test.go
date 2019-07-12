@@ -28,7 +28,6 @@ func ExampleMultiLineCentroid() {
 	centroid := xy.MultiLineCentroid(line)
 	fmt.Println(centroid)
 	// Output: [6.5 6.5]
-
 }
 
 func ExampleNewLineCentroidCalculator() {
@@ -38,7 +37,6 @@ func ExampleNewLineCentroidCalculator() {
 	centroid := calculator.GetCentroid()
 	fmt.Println(centroid)
 	// Output: [6.5 6.5]
-
 }
 
 func ExampleLineCentroidCalculator_AddPolygon() {
@@ -47,5 +45,4 @@ func ExampleLineCentroidCalculator_AddPolygon() {
 	centroid := calculator.GetCentroid()
 	fmt.Println(centroid)
 	// Output: [1.5 1.5]
-
 }
