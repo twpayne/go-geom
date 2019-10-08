@@ -2,6 +2,8 @@ linters:
   enable-all: true
   disable:
     - dupl
+    - funlen
     - gochecknoglobals
+    - godox
     - gocyclo
     - lll
