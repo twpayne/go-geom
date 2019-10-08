@@ -35,7 +35,6 @@ func TestConvexHull(t *testing.T) {
 			}, []int{18}),
 		},
 	} {
-
 		convexHull := ConvexHull(tc.polygon)
 		if !reflect.DeepEqual(convexHull, tc.expected) {
 			t.Errorf("Test %v (geom) failed, expected:\n\t%v\nbut was:\n\t%v", i+1, tc.expected, convexHull)

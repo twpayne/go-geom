@@ -530,7 +530,6 @@ func TestSetCoord(t *testing.T) {
 			layout:   XY,
 		},
 	} {
-
 		tc.dest.Set(tc.src)
 		if !tc.dest.Equal(tc.layout, tc.expected) {
 			t.Errorf("Setting %v with %v did not result in %v", tc.dest, tc.src, tc.dest)

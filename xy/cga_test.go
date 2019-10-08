@@ -138,7 +138,6 @@ func TestIsRingCounterClockwise(t *testing.T) {
 		if tc.ccw != xy.IsRingCounterClockwise(geom.XYZ, copied) {
 			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.ccw, !tc.ccw)
 		}
-
 	}
 }
 

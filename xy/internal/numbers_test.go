@@ -58,7 +58,6 @@ func TestIsSameSignAndNonZero(t *testing.T) {
 		if actual != tc.expected {
 			t.Errorf("Test %d failed.", i+1)
 		}
-
 	}
 }
 
@@ -85,6 +84,5 @@ func TestMin(t *testing.T) {
 		if actual != tc.expected {
 			t.Errorf("Test %d failed.", i+1)
 		}
-
 	}
 }
