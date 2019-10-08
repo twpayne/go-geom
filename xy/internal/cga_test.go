@@ -98,7 +98,6 @@ func TestDoLinesOverlap(t *testing.T) {
 		if actual != tc.overlap {
 			t.Errorf("Test %d failed.", i+1)
 		}
-
 	}
 }
 
@@ -143,7 +142,6 @@ func TestIsPointWithinLineBounds(t *testing.T) {
 		if actual != tc.overlap {
 			t.Errorf("Test %d failed.", i+1)
 		}
-
 	}
 }
 
@@ -209,7 +207,6 @@ func TestCoordDistance2D(t *testing.T) {
 			expected: 103.16006979447037,
 		},
 	} {
-
 		distance := Distance2D(tc.src, tc.other)
 		if distance != tc.expected {
 			t.Errorf("Test %v failed: expected %v but got %v.  Test Data: %v", i+1, tc.expected, distance, tc)

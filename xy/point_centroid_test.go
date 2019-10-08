@@ -52,7 +52,6 @@ func TestPointGetCentroid(t *testing.T) {
 		checkPointCentroidFlatFunc(t, i, tc)
 		checkPointCentroidMultiPoint(t, i, tc)
 		checkAddEachPoint(t, i, tc)
-
 	}
 }
 

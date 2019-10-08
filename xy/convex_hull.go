@@ -257,7 +257,6 @@ func (calc *convexHullCalculator) computeOctPts(inputPts []float64) []float64 {
 	}
 
 	for i := stride; i < len(inputPts); i += stride {
-
 		if inputPts[i] < pts[0] {
 			for k := 0; k < stride; k++ {
 				pts[k] = inputPts[i+k]

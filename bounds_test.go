@@ -88,7 +88,6 @@ func TestBoundsIsEmpty(t *testing.T) {
 				break
 			}
 		}
-
 	}
 }
 
@@ -141,7 +140,6 @@ func TestBoundsOverlaps(t *testing.T) {
 				break
 			}
 		}
-
 	}
 }
 
