@@ -40,7 +40,6 @@ func TestAngle(t *testing.T) {
 		},
 	} {
 		calculated := xy.Angle(tc.p1, tc.p2)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.Angle(%v, %v) expected \n\t%v but got \n\t%v", i+1, tc.p1, tc.p2, tc.result, calculated)
 		}
@@ -74,7 +73,6 @@ func TestAngleFromOrigin(t *testing.T) {
 		},
 	} {
 		calculated := xy.AngleFromOrigin(tc.p1)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.AngleFromOrigin(%v) expected \n\t%v but got \n\t%v", i+1, tc.p1, tc.result, calculated)
 		}
@@ -118,7 +116,6 @@ func TestIsAcute(t *testing.T) {
 		},
 	} {
 		calculated := xy.IsAcute(tc.p1, tc.p2, tc.p3)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.IsAcute(%v, %v, %v) expected %v but got %v", i+1, tc.p1, tc.p2, tc.p3, tc.result, calculated)
 		}
@@ -162,7 +159,6 @@ func TestIsObtuse(t *testing.T) {
 		},
 	} {
 		calculated := xy.IsObtuse(tc.p1, tc.p2, tc.p3)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.IsObtuse(%v, %v, %v) expected %v but got %v", i+1, tc.p1, tc.p2, tc.p3, tc.result, calculated)
 		}
@@ -206,7 +202,6 @@ func TestAngleBetween(t *testing.T) {
 		},
 	} {
 		calculated := xy.AngleBetween(tc.p1, tc.p2, tc.p3)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.AngleBetween(%v, %v, %v) expected \n\t\t%v but got \n\t\t%v", i+1, tc.p1, tc.p2, tc.p3, tc.result, calculated)
 		}
@@ -250,7 +245,6 @@ func TestAngleBetweenOriented(t *testing.T) {
 		},
 	} {
 		calculated := xy.AngleBetweenOriented(tc.p1, tc.p2, tc.p3)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.AngleBetweenOriented(%v, %v, %v) expected \n\t%v but got \n\t%v", i+1, tc.p1, tc.p2, tc.p3, tc.result, calculated)
 		}
@@ -294,7 +288,6 @@ func TestInteriorAngle(t *testing.T) {
 		},
 	} {
 		calculated := xy.InteriorAngle(tc.p1, tc.p2, tc.p3)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.InteriorAngle(%v, %v, %v) expected \n\t%v but got \n\t%v", i+1, tc.p1, tc.p2, tc.p3, tc.result, calculated)
 		}
@@ -333,7 +326,6 @@ func TestGetAngleOrientation(t *testing.T) {
 		},
 	} {
 		calculated := xy.AngleOrientation(tc.p1, tc.p2)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.GetAngleOrientation(%v, %v) expected %v but got %v", i+1, tc.p1, tc.p2, tc.result, calculated)
 		}
@@ -367,7 +359,6 @@ func TestNormalize(t *testing.T) {
 		},
 	} {
 		calculated := xy.Normalize(tc.p1)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.Normalize(%v) expected %v but got %v", i+1, tc.p1, tc.result, calculated)
 		}
@@ -401,7 +392,6 @@ func TestNormalizePositive(t *testing.T) {
 		},
 	} {
 		calculated := xy.NormalizePositive(tc.p1)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.NormalizePositive(%v) expected %v but got %v", i+1, tc.p1, tc.result, calculated)
 		}
@@ -440,7 +430,6 @@ func TestDiff(t *testing.T) {
 		},
 	} {
 		calculated := xy.Diff(tc.p1, tc.p2)
-
 		if calculated != tc.result {
 			t.Errorf("Test %v failed: expected xy.Diff(%v, %v) expected %v but got %v", i+1, tc.p1, tc.p2, tc.result, calculated)
 		}
