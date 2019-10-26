@@ -4,6 +4,8 @@ linters:
     - dupl
     - funlen
     - gochecknoglobals
-    - godox
+    - gocognit
     - gocyclo
+    - godox
     - lll
+    - wsl

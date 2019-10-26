@@ -35,7 +35,6 @@ func TestGetIntersection(t *testing.T) {
 		},
 	} {
 		calculatedResult := centralendpoint.GetIntersection(tc.p1, tc.p2, tc.p3, tc.p4)
-
 		if !calculatedResult.Equal(tc.layout, tc.result) {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.result, calculatedResult)
 		}

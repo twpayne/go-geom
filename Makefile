@@ -15,11 +15,15 @@ lint:
 
 .PHONY: format
 format:
-	find . -name \*.go | xargs gofumports -w
+	find . -name \*.go | xargs $$(go env GOPATH)/bin/gofumports -w
+
+.PHONY: generate
+generate:
+	PATH=$$PATH:$$(go env GOPATH)/bin go generate ./...
 
 .PHONY: install-tools
 install-tools:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v1.19.1
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v1.21.0
 	GO111MODULE=off go get -u \
 		github.com/awalterschulze/goderive \
 		github.com/mattn/goveralls \

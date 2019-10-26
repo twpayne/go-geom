@@ -54,7 +54,6 @@ func TestIsSameSignAndNonZero(t *testing.T) {
 		},
 	} {
 		actual := internal.IsSameSignAndNonZero(tc.i, tc.j)
-
 		if actual != tc.expected {
 			t.Errorf("Test %d failed.", i+1)
 		}
@@ -80,7 +79,6 @@ func TestMin(t *testing.T) {
 		},
 	} {
 		actual := internal.Min(tc.v1, tc.v2, tc.v3, tc.v4)
-
 		if actual != tc.expected {
 			t.Errorf("Test %d failed.", i+1)
 		}

@@ -94,7 +94,6 @@ func TestDoLinesOverlap(t *testing.T) {
 		},
 	} {
 		actual := DoLinesOverlap(tc.line1End1, tc.line1End2, tc.line2End1, tc.line2End2)
-
 		if actual != tc.overlap {
 			t.Errorf("Test %d failed.", i+1)
 		}
@@ -138,7 +137,6 @@ func TestIsPointWithinLineBounds(t *testing.T) {
 		},
 	} {
 		actual := IsPointWithinLineBounds(tc.pt, tc.line2End1, tc.line2End2)
-
 		if actual != tc.overlap {
 			t.Errorf("Test %d failed.", i+1)
 		}
