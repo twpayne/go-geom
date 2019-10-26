@@ -1,4 +1,4 @@
-// +build !nodocker
+// +build docker
 
 package main
 

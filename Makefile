@@ -15,11 +15,11 @@ lint:
 
 .PHONY: format
 format:
-	find . -name \*.go | xargs gofumports -w
+	find . -name \*.go | xargs $$(go env GOPATH)/bin/gofumports -w
 
 .PHONY: generate
 generate:
-	go generate ./...
+	PATH=$$PATH:$$(go env GOPATH)/bin go generate ./...
 
 .PHONY: install-tools
 install-tools:
