@@ -17,6 +17,10 @@ lint:
 format:
 	find . -name \*.go | xargs gofumports -w
 
+.PHONY: generate
+generate:
+	go generate ./...
+
 .PHONY: install-tools
 install-tools:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v1.21.0
