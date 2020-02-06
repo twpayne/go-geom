@@ -9,8 +9,8 @@ import (
 	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
 	"github.com/twpayne/go-geom/xy/internal"
-	"github.com/twpayne/go-geom/xy/internal/lineintersector"
 	"github.com/twpayne/go-geom/xy/internal/raycrossing"
+	"github.com/twpayne/go-geom/xy/lineintersector"
 	"github.com/twpayne/go-geom/xy/location"
 	"github.com/twpayne/go-geom/xy/orientation"
 )
