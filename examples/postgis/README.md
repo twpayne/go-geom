@@ -22,7 +22,7 @@ geometry column:
 
     $ go run . -create
 
-Populate the database using [`pq.CopyIn`](https://godoc.org/github.com/lib/pq#CopyIn):
+Populate the database using [`pq.CopyIn`](https://pkg.go.dev/github.com/lib/pq#CopyIn):
 
     $ go run . -populate
 
