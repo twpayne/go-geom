@@ -178,6 +178,7 @@ func TestFeature(t *testing.T) {
 		},
 		{
 			f: &Feature{
+				BBox:     geom.NewBounds(geom.XY).Set(100, 0, 101, 1),
 				Geometry: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{100, 0}, {101, 0}, {101, 1}, {100, 1}, {100, 0}}}),
 				Properties: map[string]interface{}{
 					"prop0": "value0",
@@ -186,7 +187,7 @@ func TestFeature(t *testing.T) {
 					},
 				},
 			},
-			s: `{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}`,
+			s: `{"type":"Feature","bbox":[100,0,101,1],"geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}`,
 		},
 		{
 			f: &Feature{
@@ -236,6 +237,7 @@ func TestFeatureCollection(t *testing.T) {
 		},
 		{
 			fc: &FeatureCollection{
+				BBox: geom.NewBounds(geom.XY).Set(100, 0, 125.6, 10.1),
 				Features: []*Feature{
 					{
 						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
@@ -261,7 +263,7 @@ func TestFeatureCollection(t *testing.T) {
 					},
 				},
 			},
-			s: `{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]},"properties":{"prop0":"value0","prop1":0}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}]}`,
+			s: `{"type":"FeatureCollection","bbox":[100,0,125.6,10.1],"features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]},"properties":{"prop0":"value0","prop1":0}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[100,0],[101,0],[101,1],[100,1],[100,0]]]},"properties":{"prop0":"value0","prop1":{"this":"that"}}}]}`,
 		},
 	} {
 		if got, err := json.Marshal(tc.fc); err != nil || string(got) != tc.s {

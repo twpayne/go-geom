@@ -36,6 +36,7 @@ type Geometry struct {
 // A Feature is a GeoJSON Feature.
 type Feature struct {
 	ID         string
+	BBox       *geom.Bounds
 	Geometry   geom.T
 	Properties map[string]interface{}
 }
@@ -43,17 +44,20 @@ type Feature struct {
 type geojsonFeature struct {
 	Type       string                 `json:"type"`
 	ID         string                 `json:"id,omitempty"`
+	BBox       []float64              `json:"bbox,omitempty"`
 	Geometry   *Geometry              `json:"geometry"`
 	Properties map[string]interface{} `json:"properties"`
 }
 
 // A FeatureCollection is a GeoJSON FeatureCollection.
 type FeatureCollection struct {
+	BBox     *geom.Bounds
 	Features []*Feature
 }
 
 type geojsonFeatureCollection struct {
 	Type     string     `json:"type"`
+	BBox     []float64  `json:"bbox,omitempty"`
 	Features []*Feature `json:"features"`
 }
 
@@ -294,15 +298,55 @@ func Unmarshal(data []byte, g *geom.T) error {
 	return err
 }
 
+// decodeBBox decodes bb into a Bounds
+func decodeBBox(bb []float64) (*geom.Bounds, error) {
+	var layout geom.Layout
+	switch l := len(bb); l {
+	case 4:
+		layout = geom.XY
+	case 6:
+		layout = geom.XYZ
+	default:
+		return nil, ErrDimensionalityTooLow(l)
+	}
+
+	return geom.NewBounds(layout).Set(bb...), nil
+}
+
+// encodeBBox encodes b as a GeoJson Bounding Box
+func encodeBBox(b *geom.Bounds) ([]float64, error) {
+	switch l := b.Layout(); l {
+	case geom.XY, geom.XYM:
+		return []float64{b.Min(0), b.Min(1), b.Max(0), b.Max(1)}, nil
+	case geom.XYZ, geom.XYZM:
+		return []float64{
+			b.Min(0), b.Min(1), b.Min(2),
+			b.Max(0), b.Max(1), b.Max(2),
+		}, nil
+	default:
+		return []float64{}, ErrUnsupportedType(l)
+	}
+}
+
 // MarshalJSON implements json.Marshaler.MarshalJSON.
 func (f *Feature) MarshalJSON() ([]byte, error) {
 	geometry, err := Encode(f.Geometry)
 	if err != nil {
 		return nil, err
 	}
+
+	var bounds []float64
+	if f.BBox != nil {
+		bounds, err = encodeBBox(f.BBox)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return json.Marshal(&geojsonFeature{
 		ID:         f.ID,
 		Type:       "Feature",
+		BBox:       bounds,
 		Geometry:   geometry,
 		Properties: f.Properties,
 	})
@@ -319,6 +363,12 @@ func (f *Feature) UnmarshalJSON(data []byte) error {
 	}
 	f.ID = gf.ID
 	var err error
+	if gf.BBox != nil {
+		f.BBox, err = decodeBBox(gf.BBox)
+	}
+	if err != nil {
+		return err
+	}
 	f.Geometry, err = gf.Geometry.Decode()
 	if err != nil {
 		return err
@@ -333,6 +383,15 @@ func (fc *FeatureCollection) MarshalJSON() ([]byte, error) {
 		Type:     "FeatureCollection",
 		Features: fc.Features,
 	}
+
+	if fc.BBox != nil {
+		bounds, err := encodeBBox(fc.BBox)
+		if err != nil {
+			return nil, err
+		}
+		gfc.BBox = bounds
+	}
+
 	if gfc.Features == nil {
 		gfc.Features = []*Feature{}
 	}
@@ -344,6 +403,13 @@ func (fc *FeatureCollection) UnmarshalJSON(data []byte) error {
 	var gfc geojsonFeatureCollection
 	if err := json.Unmarshal(data, &gfc); err != nil {
 		return err
+	}
+	var err error
+	if gfc.BBox != nil {
+		fc.BBox, err = decodeBBox(gfc.BBox)
+		if err != nil {
+			return err
+		}
 	}
 	if gfc.Type != "FeatureCollection" {
 		return ErrUnsupportedType(gfc.Type)
