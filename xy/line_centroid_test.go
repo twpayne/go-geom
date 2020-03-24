@@ -29,7 +29,8 @@ var lineTestData = []lineDataType{
 			geom.NewLineStringFlat(geom.XY, []float64{0, 0, 10, 0}),
 		},
 		lineCentroid: geom.Coord{5, 0},
-	}, {
+	},
+	{
 		lines: []*geom.LineString{
 			geom.NewLineStringFlat(geom.XY, []float64{0, 0, 10, 10}),
 		},

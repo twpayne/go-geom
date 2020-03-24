@@ -66,7 +66,8 @@ func TestBoundsIsEmpty(t *testing.T) {
 		{
 			bounds:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{-1, -1}},
 			isEmpty: true,
-		}, {
+		},
+		{
 			bounds:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
 			isEmpty: false,
 		},

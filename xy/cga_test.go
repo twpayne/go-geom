@@ -167,7 +167,8 @@ func TestDistanceFromPointToLine(t *testing.T) {
 			startLine: geom.Coord{1, 0},
 			endLine:   geom.Coord{1, 1},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{1, 1},
 			endLine:   geom.Coord{1, -1},
@@ -178,32 +179,38 @@ func TestDistanceFromPointToLine(t *testing.T) {
 			startLine: geom.Coord{0, 1},
 			endLine:   geom.Coord{0, -1},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{1, 0},
 			endLine:   geom.Coord{2, 0},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{2, 0},
 			endLine:   geom.Coord{1, 0},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{2, 0},
 			endLine:   geom.Coord{0, 0},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{0, 0},
 			endLine:   geom.Coord{0, 0},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{1, 0},
 			endLine:   geom.Coord{1, 0},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{3, 4},
 			endLine:   geom.Coord{0, 9},
@@ -228,42 +235,50 @@ func TestPerpendicularDistanceFromPointToLine(t *testing.T) {
 			startLine: geom.Coord{1, 0},
 			endLine:   geom.Coord{1, 1},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{1, 1},
 			endLine:   geom.Coord{1, -1},
 			distance:  1,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{0, 1},
 			endLine:   geom.Coord{0, -1},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{1, 0},
 			endLine:   geom.Coord{2, 0},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{2, 0},
 			endLine:   geom.Coord{1, 0},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{2, 0},
 			endLine:   geom.Coord{0, 0},
 			distance:  0,
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{0, 0},
 			endLine:   geom.Coord{0, 0},
 			distance:  math.NaN(),
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{1, 0},
 			endLine:   geom.Coord{1, 0},
 			distance:  math.NaN(),
-		}, {
+		},
+		{
 			p:         geom.Coord{0, 0},
 			startLine: geom.Coord{3, 4},
 			endLine:   geom.Coord{3, 9},

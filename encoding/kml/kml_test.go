@@ -57,25 +57,29 @@ func Test(t *testing.T) {
 		},
 		{
 			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{
-				{0, 0}, {1, 1},
+				{0, 0},
+				{1, 1},
 			}),
 			want: `<LineString><coordinates>0,0 1,1</coordinates></LineString>`,
 		},
 		{
 			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{
-				{1, 2, 3}, {4, 5, 6},
+				{1, 2, 3},
+				{4, 5, 6},
 			}),
 			want: `<LineString><coordinates>1,2,3 4,5,6</coordinates></LineString>`,
 		},
 		{
 			g: geom.NewLineString(geom.XYM).MustSetCoords([]geom.Coord{
-				{1, 2, 3}, {4, 5, 6},
+				{1, 2, 3},
+				{4, 5, 6},
 			}),
 			want: `<LineString><coordinates>1,2 4,5</coordinates></LineString>`,
 		},
 		{
 			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{
-				{1, 2, 3, 4}, {5, 6, 7, 8},
+				{1, 2, 3, 4},
+				{5, 6, 7, 8},
 			}),
 			want: `<LineString><coordinates>1,2,3 5,6,7</coordinates></LineString>`,
 		},

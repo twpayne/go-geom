@@ -56,19 +56,31 @@ func TestArea(t *testing.T) {
 		},
 		{
 			g: NewLinearRing(XY).MustSetCoords([]Coord{
-				{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0},
+				{0, 0},
+				{1, 0},
+				{1, 1},
+				{0, 1},
+				{0, 0},
 			}),
 			want: 1,
 		},
 		{
 			g: NewLinearRing(XY).MustSetCoords([]Coord{
-				{0, 0}, {1, 1}, {1, 0}, {0, 0},
+				{0, 0},
+				{1, 1},
+				{1, 0},
+				{0, 0},
 			}),
 			want: -0.5,
 		},
 		{
 			g: NewLinearRing(XY).MustSetCoords([]Coord{
-				{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2},
+				{-3, -2},
+				{-1, 4},
+				{6, 1},
+				{3, 10},
+				{-4, 9},
+				{-3, -2},
 			}),
 			want: 60,
 		},
@@ -436,7 +448,8 @@ func TestLength(t *testing.T) {
 		},
 		{
 			g: NewLineString(XY).MustSetCoords([]Coord{
-				{0, 0}, {1, 0},
+				{0, 0},
+				{1, 0},
 			}),
 			want: 1,
 		},
@@ -446,7 +459,11 @@ func TestLength(t *testing.T) {
 		},
 		{
 			g: NewLinearRing(XY).MustSetCoords([]Coord{
-				{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0},
+				{0, 0},
+				{1, 0},
+				{1, 1},
+				{0, 1},
+				{0, 0},
 			}),
 			want: 4,
 		},

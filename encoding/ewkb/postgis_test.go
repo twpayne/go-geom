@@ -35,7 +35,11 @@ func TestPostGIS(t *testing.T) {
 
 	queryP := &ewkb.Polygon{
 		Polygon: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{
-			{4, 4}, {4, 0}, {8, 0}, {8, 4}, {4, 4},
+			{4, 4},
+			{4, 0},
+			{8, 0},
+			{8, 4},
+			{4, 4},
 		}}),
 	}
 	var p ewkb.Polygon
