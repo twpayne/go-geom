@@ -55,6 +55,10 @@ func TestGeometry(t *testing.T) {
 		s string
 	}{
 		{
+			g: nil,
+			s: `null`,
+		},
+		{
 			g: geom.NewPoint(DefaultLayout),
 			s: `{"type":"Point","coordinates":[0,0]}`,
 		},
@@ -157,6 +161,10 @@ func TestFeature(t *testing.T) {
 		f *Feature
 		s string
 	}{
+		{
+			f: &Feature{},
+			s: `{"type":"Feature","geometry":null,"properties":null}`,
+		},
 		{
 			f: &Feature{
 				Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),

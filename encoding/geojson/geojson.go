@@ -2,11 +2,14 @@
 package geojson
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
 	geom "github.com/twpayne/go-geom"
 )
+
+var nullGeometry = []byte("null")
 
 // DefaultLayout is the default layout for empty geometries.
 // FIXME This should be Codec-specific, not global
@@ -99,6 +102,9 @@ func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
 
 // Decode decodes g to a geometry.
 func (g *Geometry) Decode() (geom.T, error) {
+	if g == nil {
+		return nil, nil
+	}
 	switch g.Type {
 	case "Point":
 		if g.Coordinates == nil {
@@ -199,6 +205,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 
 // Encode encodes g as a GeoJSON geometry.
 func Encode(g geom.T) (*Geometry, error) {
+	if g == nil {
+		return nil, nil
+	}
 	switch g := g.(type) {
 	case *geom.Point:
 		var coords json.RawMessage
@@ -280,6 +289,9 @@ func Encode(g geom.T) (*Geometry, error) {
 
 // Marshal marshals an arbitrary geometry to a []byte.
 func Marshal(g geom.T) ([]byte, error) {
+	if g == nil {
+		return nullGeometry, nil
+	}
 	geojson, err := Encode(g)
 	if err != nil {
 		return nil, err
@@ -289,9 +301,17 @@ func Marshal(g geom.T) ([]byte, error) {
 
 // Unmarshal unmarshalls a []byte to an arbitrary geometry.
 func Unmarshal(data []byte, g *geom.T) error {
+	if bytes.Equal(data, nullGeometry) {
+		*g = nil
+		return nil
+	}
 	gg := &Geometry{}
 	if err := json.Unmarshal(data, gg); err != nil {
 		return err
+	}
+	if gg == nil {
+		*g = nil
+		return nil
 	}
 	var err error
 	*g, err = gg.Decode()
