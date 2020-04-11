@@ -77,6 +77,34 @@ func TestPolygon(t *testing.T) {
 	}
 }
 
+func TestPolygonArea(t *testing.T) {
+	for _, c := range []struct {
+		polygon      *Polygon
+		expectedArea float64
+	}{
+		{
+			polygon:      NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {100, 0}, {100, 100}, {0, 100}, {0, 0}}}),
+			expectedArea: 10000,
+		},
+		{
+			polygon: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {100, 0}, {100, 100}, {0, 100}, {0, 0}},
+				{{10, 10}, {20, 10}, {20, 20}, {10, 20}, {10, 10}}}),
+			expectedArea: 9900,
+		},
+		{
+			polygon: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {100, 0}, {100, 100}, {0, 100}, {0, 0}},
+				{{10, 10}, {90, 10}, {90, 90}, {10, 90}, {10, 10}},
+				{{20, 20}, {80, 20}, {80, 80}, {20, 80}, {20, 20}},
+				{{30, 30}, {70, 30}, {70, 70}, {30, 70}, {30, 30}}}),
+			expectedArea: 5600,
+		},
+	} {
+		if got := c.polygon.Area(); got != c.expectedArea {
+			t.Errorf("polygon.Area() == %v, want %v", got, c.expectedArea)
+		}
+	}
+}
+
 func TestPolygonClone(t *testing.T) {
 	p1 := NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {

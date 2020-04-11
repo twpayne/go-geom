@@ -24,7 +24,20 @@ func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
 
 // Area returns the area.
 func (g *Polygon) Area() float64 {
-	return doubleArea2(g.flatCoords, 0, g.ends, g.stride) / 2
+	if g.NumLinearRings() == 0 {
+		return 0
+	}
+	var area float64 = g.LinearRing(0).Area()
+
+	for i := 1; i < g.NumLinearRings(); i++ {
+		if i%2 == 1 {
+			// every 2nd ring area needs to be subtracted!
+			area -= g.LinearRing(i).Area()
+		} else {
+			area += g.LinearRing(i).Area()
+		}
+	}
+	return area
 }
 
 // Clone returns a deep copy.
@@ -42,7 +55,7 @@ func (g *Polygon) Length() float64 {
 	return length2(g.flatCoords, 0, g.ends, g.stride)
 }
 
-// LinearRing returns the ith LinearRing.
+// LinearRing returns the ith LinearRing. Index 0 represents the outer ring followed by subsequent interior rings.
 func (g *Polygon) LinearRing(i int) *LinearRing {
 	offset := 0
 	if i > 0 {
