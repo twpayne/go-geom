@@ -1,19 +1,24 @@
 package wkt
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/twpayne/go-geom"
 )
 
-func TestMarshal(t *testing.T) {
+func TestMarshalAndUnmarshal(t *testing.T) {
 	for _, tc := range []struct {
 		g geom.T
 		s string
 	}{
 		{
-			g: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
-			s: "POINT (1 2)",
+			g: geom.NewPointEmpty(geom.XY),
+			s: "POINT EMPTY",
+		},
+		{
+			g: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1.337, 2.42}),
+			s: "POINT (1.337 2.42)",
 		},
 		{
 			g: geom.NewPoint(geom.XYZ).MustSetCoords(geom.Coord{1, 2, 3}),
@@ -28,8 +33,16 @@ func TestMarshal(t *testing.T) {
 			s: "POINT ZM (1 2 3 4)",
 		},
 		{
+			g: geom.NewLineString(geom.XY),
+			s: "LINESTRING EMPTY",
+		},
+		{
 			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
 			s: "LINESTRING (1 2, 3 4)",
+		},
+		{
+			g: geom.NewLinearRing(geom.XY).MustSetCoords([]geom.Coord{{0, 0}, {10, 0}, {10, 10}, {0, 0}}),
+			s: "LINESTRING (0 0, 10 0, 10 10, 0 0)",
 		},
 		{
 			g: geom.NewLineString(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
@@ -42,6 +55,10 @@ func TestMarshal(t *testing.T) {
 		{
 			g: geom.NewLineString(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 3, 4}, {5, 6, 7, 8}}),
 			s: "LINESTRING ZM (1 2 3 4, 5 6 7 8)",
+		},
+		{
+			g: geom.NewPolygon(geom.XY),
+			s: "POLYGON EMPTY",
 		},
 		{
 			g: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}, {5, 6}}}),
@@ -62,6 +79,10 @@ func TestMarshal(t *testing.T) {
 		{
 			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
 			s: "MULTIPOINT (1 2, 3 4)",
+		},
+		{
+			g: geom.NewMultiPoint(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 1, 42}, {3, 4, 1, 43}}),
+			s: "MULTIPOINT ZM (1 2 1 42, 3 4 1 43)",
 		},
 		{
 			g: geom.NewMultiLineString(geom.XY),
@@ -88,6 +109,18 @@ func TestMarshal(t *testing.T) {
 			s: "MULTIPOLYGON (((1 2, 3 4, 5 6)), ((7 8, 9 10, 11 12)))",
 		},
 		{
+			g: geom.NewMultiPolygon(geom.XYZM).MustSetCoords([][][]geom.Coord{
+				{
+					{{-1, -1, 10, 42}, {1000, -1, 10, 42}, {1000, 1000, 10, 42}, {-1, -1, 10, 42}},
+				},
+				{
+					{{0, 0, 10, 42}, {100, 0, 10, 42}, {100, 100, 10, 42}, {0, 0, 10, 42}},
+					{{10, 10, 10, 42}, {90, 10, 10, 42}, {90, 90, 10, 42}, {10, 10, 10, 42}},
+				},
+			}),
+			s: "MULTIPOLYGON ZM (((-1 -1 10 42, 1000 -1 10 42, 1000 1000 10 42, -1 -1 10 42)), ((0 0 10 42, 100 0 10 42, 100 100 10 42, 0 0 10 42), (10 10 10 42, 90 10 10 42, 90 90 10 42, 10 10 10 42)))",
+		},
+		{
 			g: geom.NewGeometryCollection(),
 			s: "GEOMETRYCOLLECTION EMPTY",
 		},
@@ -101,6 +134,9 @@ func TestMarshal(t *testing.T) {
 	} {
 		if got, err := Marshal(tc.g); err != nil || got != tc.s {
 			t.Errorf("Marshal(%#v) == %v, %v, want %v, nil", tc.g, got, err, tc.s)
+		}
+		if got, err := Unmarshal(tc.s); err != nil || !reflect.DeepEqual(got, tc.g) {
+			t.Errorf("Unmarshal(%#v) == %v, %v, want %v, nil", tc.s, got, err, tc.g)
 		}
 	}
 }
