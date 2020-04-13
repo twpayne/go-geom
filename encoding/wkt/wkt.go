@@ -4,18 +4,26 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
-const tPoint, tMultiPoint = "POINT ", "MULTIPOINT "
-const tLineString, tMultiLineString = "LINESTRING ", "MULTILINESTRING "
-const tPolygon, tMultiPolygon = "POLYGON ", "MULTIPOLYGON "
-const tGeometryCollection = "GEOMETRYCOLLECTION "
-const tZ, tM, tZm, tEmpty = "Z ", "M ", "ZM ", "EMPTY"
+const (
+	tPoint              = "POINT "
+	tMultiPoint         = "MULTIPOINT "
+	tLineString         = "LINESTRING "
+	tMultiLineString    = "MULTILINESTRING "
+	tPolygon            = "POLYGON "
+	tMultiPolygon       = "MULTIPOLYGON "
+	tGeometryCollection = "GEOMETRYCOLLECTION "
+	tZ                  = "Z "
+	tM                  = "M "
+	tZm                 = "ZM "
+	tEmpty              = "EMPTY"
+)
 
-// Marshal marshals an arbitrary geometry.
+// Marshal translates a geometry to the corresponding WKT.
 func Marshal(g geom.T) (string, error) {
 	return encode(g)
 }
 
-// Unmarshal marshals an arbitrary geometry.
+// Unmarshal translates a WKT to the corresponding geometry.
 func Unmarshal(wkt string) (geom.T, error) {
 	return decode(wkt)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// decode translates a WKT to the corresponding geometry.
 func decode(wkt string) (geom.T, error) {
 	t, l, err := findTypeAndLayout(wkt)
 	if err != nil {

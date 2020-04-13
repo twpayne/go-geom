@@ -7,6 +7,7 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
+// encode translates a geometry to the corresponding WKT.
 func encode(g geom.T) (string, error) {
 	b := &bytes.Buffer{}
 	if err := write(b, g); err != nil {
