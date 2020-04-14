@@ -102,31 +102,33 @@ func findTypeAndLayout(wkt string) (string, geom.Layout, error) {
 	typeString := ""
 	layout := geom.NoLayout
 
-	if strings.HasPrefix(wkt, tPoint) {
+	switch {
+	case strings.HasPrefix(wkt, tPoint):
 		typeString = tPoint
-	} else if strings.HasPrefix(wkt, tLineString) {
+	case strings.HasPrefix(wkt, tLineString):
 		typeString = tLineString
-	} else if strings.HasPrefix(wkt, tPolygon) {
+	case strings.HasPrefix(wkt, tPolygon):
 		typeString = tPolygon
-	} else if strings.HasPrefix(wkt, tMultiPoint) {
+	case strings.HasPrefix(wkt, tMultiPoint):
 		typeString = tMultiPoint
-	} else if strings.HasPrefix(wkt, tMultiLineString) {
+	case strings.HasPrefix(wkt, tMultiLineString):
 		typeString = tMultiLineString
-	} else if strings.HasPrefix(wkt, tMultiPolygon) {
+	case strings.HasPrefix(wkt, tMultiPolygon):
 		typeString = tMultiPolygon
-	} else if strings.HasPrefix(wkt, tGeometryCollection) {
+	case strings.HasPrefix(wkt, tGeometryCollection):
 		typeString = tGeometryCollection
-	} else {
+	default:
 		return typeString, layout, errors.New("Unknown geometry type in WKT: " + wkt)
 	}
 
-	if strings.HasPrefix(wkt, (typeString + tZm)) {
+	switch {
+	case strings.HasPrefix(wkt, (typeString + tZm)):
 		layout = geom.XYZM
-	} else if strings.HasPrefix(wkt, (typeString + tM)) {
+	case strings.HasPrefix(wkt, (typeString + tM)):
 		layout = geom.XYM
-	} else if strings.HasPrefix(wkt, (typeString + tZ)) {
+	case strings.HasPrefix(wkt, (typeString + tZ)):
 		layout = geom.XYZ
-	} else {
+	default:
 		layout = geom.XY
 	}
 
@@ -270,12 +272,11 @@ func coordsFromBraceContent(s string, l geom.Layout) ([]geom.Coord, error) {
 	return coords, nil
 }
 
-/*braceContentAndRest returns
-
-- the string between the first opening brace "(" and its closing brace ")"
-
-- the rest of the input string (starting with the next the opening brace "(")
-*/
+// braceContentAndRest returns:
+//
+// -the string between the first opening brace "(" and its closing brace ")"
+//
+// -the rest of the input string (starting with the next opening brace "(")
 func braceContentAndRest(s string) (string, string, error) {
 	braceOpenIdx := -1
 	braceCloseIdx := -1

@@ -140,3 +140,43 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 		}
 	}
 }
+
+func TestUnmarshalEmptyGeomWithArbitrarySpaces(t *testing.T) {
+	for _, tc := range []struct {
+		g geom.T
+		s string
+	}{
+		{
+			g: geom.NewPointEmpty(geom.XY),
+			s: "POINT      EMPTY",
+		},
+		{
+			g: geom.NewLineString(geom.XY),
+			s: "LINESTRING     EMPTY",
+		},
+		{
+			g: geom.NewPolygon(geom.XY),
+			s: "POLYGON      EMPTY",
+		},
+		{
+			g: geom.NewMultiPoint(geom.XY),
+			s: "MULTIPOINT      EMPTY",
+		},
+		{
+			g: geom.NewMultiLineString(geom.XY),
+			s: "MULTILINESTRING   EMPTY",
+		},
+		{
+			g: geom.NewMultiPolygon(geom.XY),
+			s: "MULTIPOLYGON                EMPTY",
+		},
+		{
+			g: geom.NewGeometryCollection(),
+			s: "GEOMETRYCOLLECTION      EMPTY",
+		},
+	} {
+		if got, err := Unmarshal(tc.s); err != nil || !reflect.DeepEqual(got, tc.g) {
+			t.Errorf("Unmarshal(%#v) == %v, %v, want %v, nil", tc.s, got, err, tc.g)
+		}
+	}
+}

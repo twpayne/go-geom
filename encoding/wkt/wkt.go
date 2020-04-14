@@ -1,3 +1,4 @@
+// Package wkt implements Well Known Text encoding and decoding.
 package wkt
 
 import (
