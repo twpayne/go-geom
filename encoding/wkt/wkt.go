@@ -2,6 +2,8 @@
 package wkt
 
 import (
+	"errors"
+
 	"github.com/twpayne/go-geom"
 )
 
@@ -18,6 +20,9 @@ const (
 	tZm                 = "ZM "
 	tEmpty              = "EMPTY"
 )
+
+// ErrBraceMismatch is returned when braces do not match.
+var ErrBraceMismatch = errors.New("wkt: brace mismatch")
 
 // Marshal translates a geometry to the corresponding WKT.
 func Marshal(g geom.T) (string, error) {
