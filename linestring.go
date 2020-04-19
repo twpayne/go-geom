@@ -31,9 +31,9 @@ func (g *LineString) Clone() *LineString {
 	return deriveCloneLineString(g)
 }
 
-// Empty returns false.
+// Empty returns true if the geometry has no coordinate.
 func (g *LineString) Empty() bool {
-	return false
+	return len(g.FlatCoords()) == 0
 }
 
 // Interpolate returns the index and delta of val in dimension dim.
