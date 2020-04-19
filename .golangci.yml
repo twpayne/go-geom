@@ -7,5 +7,6 @@ linters:
     - gocognit
     - gocyclo
     - godox
+    - gomnd
     - lll
     - wsl
