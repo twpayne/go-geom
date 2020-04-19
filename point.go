@@ -34,11 +34,6 @@ func (g *Point) Clone() *Point {
 	return deriveClonePoint(g)
 }
 
-// Empty returns true if the geometry has no coordinate.
-func (g *Point) Empty() bool {
-	return len(g.FlatCoords()) == 0
-}
-
 // Length returns the length of g, i.e. zero.
 func (g *Point) Length() float64 {
 	return 0

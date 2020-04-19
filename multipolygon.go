@@ -30,11 +30,6 @@ func (g *MultiPolygon) Clone() *MultiPolygon {
 	return deriveCloneMultiPolygon(g)
 }
 
-// Empty returns true if the collection is empty.
-func (g *MultiPolygon) Empty() bool {
-	return g.NumPolygons() == 0
-}
-
 // Length returns the sum of the perimeters of the Polygons.
 func (g *MultiPolygon) Length() float64 {
 	return length3(g.flatCoords, 0, g.endss, g.stride)

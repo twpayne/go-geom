@@ -32,11 +32,6 @@ func (g *Polygon) Clone() *Polygon {
 	return deriveClonePolygon(g)
 }
 
-// Empty returns true if the geometry has no coordinate.
-func (g *Polygon) Empty() bool {
-	return len(g.FlatCoords()) == 0
-}
-
 // Length returns the perimter.
 func (g *Polygon) Length() float64 {
 	return length2(g.flatCoords, 0, g.ends, g.stride)
