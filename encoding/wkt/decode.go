@@ -39,12 +39,6 @@ func decode(wkt string) (geom.T, error) {
 			return geom.NewLineString(l), nil
 		}
 
-		isLinearRing := coords[0].Equal(l, coords[(len(coords)-1)])
-		if isLinearRing {
-			lr := geom.NewLinearRing(l).MustSetCoords(coords)
-			return lr, nil
-		}
-
 		ls := geom.NewLineString(l).MustSetCoords(coords)
 		return ls, nil
 	case tPolygon:

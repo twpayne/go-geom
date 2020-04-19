@@ -41,7 +41,7 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 			s: "LINESTRING (1 2, 3 4)",
 		},
 		{
-			g: geom.NewLinearRing(geom.XY).MustSetCoords([]geom.Coord{{0, 0}, {10, 0}, {10, 10}, {0, 0}}),
+			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{0, 0}, {10, 0}, {10, 10}, {0, 0}}),
 			s: "LINESTRING (0 0, 10 0, 10 10, 0 0)",
 		},
 		{
