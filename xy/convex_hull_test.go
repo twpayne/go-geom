@@ -174,6 +174,34 @@ func TestOctRing(t *testing.T) {
 	}
 }
 
+func TestOctRingPanic(t *testing.T) {
+	flat := []float64{
+		1, 1,
+		1, 2,
+		2, 3,
+		3, 3,
+		4, 2,
+		4, 1,
+		3, 0,
+		2, 0,
+	}
+	calc := convexHullCalculator{layout: geom.XYM, stride: 2}
+	got := calc.computeOctRing(flat)
+	expected := []float64{
+		1, 1,
+		1, 2,
+		2, 3,
+		3, 3,
+		4, 2,
+		4, 1,
+		3, 0,
+		1, 1,
+	}
+	if !reflect.DeepEqual(expected, got) {
+		t.Fatalf("calc.computeOctRing failed. Expected \n\t%v\nbut was \n\t%v", expected, got)
+	}
+}
+
 func TestGrahamScan(t *testing.T) {
 	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
 	coords := append([]float64{}, internal.RING.FlatCoords()...)

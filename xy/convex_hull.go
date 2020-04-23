@@ -237,9 +237,21 @@ func (calc *convexHullCalculator) computeOctRing(inputPts []float64) []float64 {
 	}
 
 	copyTo += stride
-	octPts = octPts[0 : copyTo+stride]
+
+	// if ring already closed, just return
+	if internal.Equal(octPts, copyTo-stride, octPts, 0) {
+		return octPts
+	}
 
 	// close ring
+	// make sure there is enough capacity
+	if len(octPts) < copyTo+stride {
+		t := make([]float64, copyTo+stride)
+		copy(t, octPts)
+		octPts = t
+	}
+	octPts = octPts[0 : copyTo+stride]
+
 	for j := 0; j < stride; j++ {
 		octPts[copyTo+j] = octPts[j]
 	}
