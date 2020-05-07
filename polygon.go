@@ -7,6 +7,9 @@ type Polygon struct {
 	geom2
 }
 
+// Polygon implements interface T.
+var _ T = (*Polygon)(nil)
+
 // NewPolygon returns a new, empty, Polygon.
 func NewPolygon(layout Layout) *Polygon {
 	return NewPolygonFlat(layout, nil, nil)

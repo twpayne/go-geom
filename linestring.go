@@ -6,6 +6,9 @@ type LineString struct {
 	geom1
 }
 
+// MultiLineString implements interface T.
+var _ T = (*MultiLineString)(nil)
+
 // NewLineString returns a new LineString with layout l and no control points.
 func NewLineString(l Layout) *LineString {
 	return NewLineStringFlat(l, nil)

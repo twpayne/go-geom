@@ -5,6 +5,9 @@ type Point struct {
 	geom0
 }
 
+// MultiPoint implements interface T.
+var _ T = (*MultiPoint)(nil)
+
 // NewPoint allocates a new Point with layout l and all values zero.
 func NewPoint(l Layout) *Point {
 	return NewPointFlat(l, make([]float64, l.Stride()))

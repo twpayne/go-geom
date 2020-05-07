@@ -5,6 +5,9 @@ type MultiPoint struct {
 	geom1
 }
 
+// MultiPoint implements interface T.
+var _ T = (*MultiPoint)(nil)
+
 // NewMultiPoint returns a new, empty, MultiPoint.
 func NewMultiPoint(layout Layout) *MultiPoint {
 	return NewMultiPointFlat(layout, nil)
