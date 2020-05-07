@@ -10,7 +10,7 @@ import (
 	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
-func test(t *testing.T, g geom.T, xdr string, ndr string) {
+func test(t *testing.T, g geom.T, xdr, ndr string) {
 	if xdr != "" {
 		if got, err := Decode(xdr); err != nil || !reflect.DeepEqual(got, g) {
 			t.Errorf("Decode(%s) == %#v, %#v, want %#v, nil", xdr, got, err, g)

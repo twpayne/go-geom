@@ -7,6 +7,9 @@ linters:
     - gocognit
     - gocyclo
     - godox
+    - godot
     - gomnd
     - lll
+    - nestif
+    - testpackage
     - wsl
