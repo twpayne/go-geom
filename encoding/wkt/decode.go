@@ -39,12 +39,6 @@ func decode(wkt string) (geom.T, error) {
 			return geom.NewLineString(l), nil
 		}
 
-		isLinearRing := coords[0].Equal(l, coords[(len(coords)-1)])
-		if isLinearRing {
-			lr := geom.NewLinearRing(l).MustSetCoords(coords)
-			return lr, nil
-		}
-
 		ls := geom.NewLineString(l).MustSetCoords(coords)
 		return ls, nil
 	case tPolygon:
@@ -93,8 +87,7 @@ func decode(wkt string) (geom.T, error) {
 	case tGeometryCollection:
 		return createGeomCollectionForWkt(wkt)
 	default:
-		msg := fmt.Sprintf("Cannot create geometry for unsupported type %s", t)
-		return nil, errors.New(msg)
+		return nil, fmt.Errorf("wkt: cannot create geometry for unsupported type %s", t)
 	}
 }
 
@@ -254,16 +247,17 @@ func coordsFromBraceContent(s string, l geom.Layout) ([]geom.Coord, error) {
 	for _, coordStr := range coordStrings {
 		coordElems := strings.Split(strings.TrimSpace(coordStr), " ")
 		if len(coordElems) != l.Stride() {
-			msg := fmt.Sprintf("Expected coordinates with dimension %v. Found: %v", l.Stride(), s)
-			return nil, errors.New(msg)
+			return nil, geom.ErrStrideMismatch{
+				Got:  len(coordElems),
+				Want: l.Stride(),
+			}
 		}
 
 		coordVals := make([]float64, l.Stride())
 		for i, val := range coordElems {
 			f, err := strconv.ParseFloat(val, 64)
 			if err != nil {
-				msg := fmt.Sprintf("Found invalid coordinate value in WKT String: %v \n", val)
-				return nil, errors.New(msg)
+				return nil, err
 			}
 			coordVals[i] = f
 		}
@@ -299,8 +293,7 @@ func braceContentAndRest(s string) (string, string, error) {
 	}
 
 	if braceOpenIdx < 0 || braceCloseIdx < 0 {
-		msg := fmt.Sprintf("Malformatted braces in WKT string: %s", s)
-		return "", "", errors.New(msg)
+		return "", "", ErrBraceMismatch
 	}
 
 	braceContent := s[(braceOpenIdx + 1):braceCloseIdx]

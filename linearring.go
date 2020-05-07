@@ -29,11 +29,6 @@ func (g *LinearRing) Clone() *LinearRing {
 	return deriveCloneLinearRing(g)
 }
 
-// Empty returns false.
-func (g *LinearRing) Empty() bool {
-	return false
-}
-
 // Length returns the length of the perimeter.
 func (g *LinearRing) Length() float64 {
 	return length1(g.flatCoords, 0, len(g.flatCoords), g.stride)

@@ -33,6 +33,11 @@ func (g *geom0) Coords() Coord {
 	return inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)
 }
 
+// Empty returns true if g contains no coordinates.
+func (g *geom0) Empty() bool {
+	return len(g.flatCoords) == 0
+}
+
 // Ends returns the end indexes of sub-structures of g, i.e. an empty slice.
 func (g *geom0) Ends() []int {
 	return nil

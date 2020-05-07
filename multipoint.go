@@ -29,11 +29,6 @@ func (g *MultiPoint) Clone() *MultiPoint {
 	return deriveCloneMultiPoint(g)
 }
 
-// Empty returns true if the collection is empty.
-func (g *MultiPoint) Empty() bool {
-	return g.NumPoints() == 0
-}
-
 // Length returns zero.
 func (g *MultiPoint) Length() float64 {
 	return 0
