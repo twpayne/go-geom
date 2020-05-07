@@ -1,22 +1,22 @@
 package wkt
 
 import (
-	"bytes"
 	"strconv"
+	"strings"
 
 	"github.com/twpayne/go-geom"
 )
 
 // encode translates a geometry to the corresponding WKT.
 func encode(g geom.T) (string, error) {
-	b := &bytes.Buffer{}
-	if err := write(b, g); err != nil {
+	sb := &strings.Builder{}
+	if err := write(sb, g); err != nil {
 		return "", err
 	}
-	return b.String(), nil
+	return sb.String(), nil
 }
 
-func write(b *bytes.Buffer, g geom.T) error {
+func write(sb *strings.Builder, g geom.T) error {
 	typeString := ""
 	switch g := g.(type) {
 	case *geom.Point:
@@ -53,76 +53,76 @@ func write(b *bytes.Buffer, g geom.T) error {
 	default:
 		return geom.ErrUnsupportedLayout(layout)
 	}
-	if _, err := b.WriteString(typeString); err != nil {
+	if _, err := sb.WriteString(typeString); err != nil {
 		return err
 	}
 	switch g := g.(type) {
 	case *geom.Point:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords0(b, g.FlatCoords(), layout.Stride())
+		return writeFlatCoords0(sb, g.FlatCoords(), layout.Stride())
 	case *geom.LineString:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords1(b, g.FlatCoords(), layout.Stride())
+		return writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
 	case *geom.LinearRing:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords1(b, g.FlatCoords(), layout.Stride())
+		return writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
 	case *geom.Polygon:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords2(b, g.FlatCoords(), 0, g.Ends(), layout.Stride())
+		return writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
 	case *geom.MultiPoint:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords1(b, g.FlatCoords(), layout.Stride())
+		return writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
 	case *geom.MultiLineString:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords2(b, g.FlatCoords(), 0, g.Ends(), layout.Stride())
+		return writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
 	case *geom.MultiPolygon:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		return writeFlatCoords3(b, g.FlatCoords(), g.Endss(), layout.Stride())
+		return writeFlatCoords3(sb, g.FlatCoords(), g.Endss(), layout.Stride())
 	case *geom.GeometryCollection:
 		if g.Empty() {
-			return writeEMPTY(b)
+			return writeEMPTY(sb)
 		}
-		if _, err := b.WriteRune('('); err != nil {
+		if _, err := sb.WriteRune('('); err != nil {
 			return err
 		}
 		for i, g := range g.Geoms() {
 			if i != 0 {
-				if _, err := b.WriteString(", "); err != nil {
+				if _, err := sb.WriteString(", "); err != nil {
 					return err
 				}
 			}
-			if err := write(b, g); err != nil {
+			if err := write(sb, g); err != nil {
 				return err
 			}
 		}
-		_, err := b.WriteRune(')')
+		_, err := sb.WriteRune(')')
 		return err
 	}
 	return nil
 }
 
-func writeCoord(b *bytes.Buffer, coord []float64) error {
+func writeCoord(sb *strings.Builder, coord []float64) error {
 	for i, x := range coord {
 		if i != 0 {
-			if _, err := b.WriteRune(' '); err != nil {
+			if _, err := sb.WriteRune(' '); err != nil {
 				return err
 			}
 		}
-		if _, err := b.WriteString(strconv.FormatFloat(x, 'f', -1, 64)); err != nil {
+		if _, err := sb.WriteString(strconv.FormatFloat(x, 'f', -1, 64)); err != nil {
 			return err
 		}
 	}
@@ -130,75 +130,75 @@ func writeCoord(b *bytes.Buffer, coord []float64) error {
 }
 
 //nolint:interfacer
-func writeEMPTY(b *bytes.Buffer) error {
-	_, err := b.WriteString(tEmpty)
+func writeEMPTY(sb *strings.Builder) error {
+	_, err := sb.WriteString(tEmpty)
 	return err
 }
 
-func writeFlatCoords0(b *bytes.Buffer, flatCoords []float64, stride int) error {
-	if _, err := b.WriteRune('('); err != nil {
+func writeFlatCoords0(sb *strings.Builder, flatCoords []float64, stride int) error {
+	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
-	if err := writeCoord(b, flatCoords[:stride]); err != nil {
+	if err := writeCoord(sb, flatCoords[:stride]); err != nil {
 		return err
 	}
-	_, err := b.WriteRune(')')
+	_, err := sb.WriteRune(')')
 	return err
 }
 
-func writeFlatCoords1(b *bytes.Buffer, flatCoords []float64, stride int) error {
-	if _, err := b.WriteRune('('); err != nil {
+func writeFlatCoords1(sb *strings.Builder, flatCoords []float64, stride int) error {
+	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
 	for i, n := 0, len(flatCoords); i < n; i += stride {
 		if i != 0 {
-			if _, err := b.WriteString(", "); err != nil {
+			if _, err := sb.WriteString(", "); err != nil {
 				return err
 			}
 		}
-		if err := writeCoord(b, flatCoords[i:i+stride]); err != nil {
+		if err := writeCoord(sb, flatCoords[i:i+stride]); err != nil {
 			return err
 		}
 	}
-	_, err := b.WriteRune(')')
+	_, err := sb.WriteRune(')')
 	return err
 }
 
-func writeFlatCoords2(b *bytes.Buffer, flatCoords []float64, start int, ends []int, stride int) error {
-	if _, err := b.WriteRune('('); err != nil {
+func writeFlatCoords2(sb *strings.Builder, flatCoords []float64, start int, ends []int, stride int) error {
+	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
 	for i, end := range ends {
 		if i != 0 {
-			if _, err := b.WriteString(", "); err != nil {
+			if _, err := sb.WriteString(", "); err != nil {
 				return err
 			}
 		}
-		if err := writeFlatCoords1(b, flatCoords[start:end], stride); err != nil {
+		if err := writeFlatCoords1(sb, flatCoords[start:end], stride); err != nil {
 			return err
 		}
 		start = end
 	}
-	_, err := b.WriteRune(')')
+	_, err := sb.WriteRune(')')
 	return err
 }
 
-func writeFlatCoords3(b *bytes.Buffer, flatCoords []float64, endss [][]int, stride int) error {
-	if _, err := b.WriteRune('('); err != nil {
+func writeFlatCoords3(sb *strings.Builder, flatCoords []float64, endss [][]int, stride int) error {
+	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
 	start := 0
 	for i, ends := range endss {
 		if i != 0 {
-			if _, err := b.WriteString(", "); err != nil {
+			if _, err := sb.WriteString(", "); err != nil {
 				return err
 			}
 		}
-		if err := writeFlatCoords2(b, flatCoords, start, ends, stride); err != nil {
+		if err := writeFlatCoords2(sb, flatCoords, start, ends, stride); err != nil {
 			return err
 		}
 		start = ends[len(ends)-1]
 	}
-	_, err := b.WriteRune(')')
+	_, err := sb.WriteRune(')')
 	return err
 }
