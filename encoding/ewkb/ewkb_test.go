@@ -210,6 +210,11 @@ func Test(t *testing.T) {
 			ndr: mustDecodeString("01010000e0e6100000000000000000f03f000000000000004000000000000008400000000000001040"),
 		},
 		{
+			g:   geom.NewGeometryCollection().SetSRID(4326),
+			xdr: mustDecodeString("0020000007000010e600000000"),
+			ndr: mustDecodeString("0107000020e610000000000000"),
+		},
+		{
 			g: geom.NewGeometryCollection().SetSRID(4326).MustPush(
 				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{3, 4}, {5, 6}}),
