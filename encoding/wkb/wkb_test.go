@@ -11,7 +11,7 @@ import (
 	"github.com/twpayne/go-geom/internal/testdata"
 )
 
-func test(t *testing.T, g geom.T, xdr []byte, ndr []byte) {
+func test(t *testing.T, g geom.T, xdr, ndr []byte) {
 	if xdr != nil {
 		if got, err := Unmarshal(xdr); err != nil || !reflect.DeepEqual(got, g) {
 			t.Errorf("Unmarshal(%s) == %#v, %#v, want %#v, nil", hex.EncodeToString(xdr), got, err, g)
