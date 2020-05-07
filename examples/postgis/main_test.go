@@ -53,7 +53,7 @@ func TestMain(t *testing.T) {
 	r := bytes.NewBufferString(`{"name":"Paris","geometry":{"type":"Point","coordinates":[2.3508,48.8567]}}`)
 	require.NoError(t, readGeoJSON(db, r))
 
-	w := &bytes.Buffer{}
+	w := &strings.Builder{}
 	require.NoError(t, writeGeoJSON(db, w))
 	assert.Equal(t, strings.Join([]string{
 		`{"id":1,"name":"London","geometry":{"type":"Point","coordinates":[0.1275,51.50722]}}` + "\n",

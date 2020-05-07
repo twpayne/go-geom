@@ -1,8 +1,8 @@
 package kml
 
 import (
-	"bytes"
 	"encoding/xml"
+	"strings"
 	"testing"
 
 	"github.com/twpayne/go-geom"
@@ -222,8 +222,8 @@ func Test(t *testing.T) {
 				`</MultiGeometry>`,
 		},
 	} {
-		b := &bytes.Buffer{}
-		e := xml.NewEncoder(b)
+		sb := &strings.Builder{}
+		e := xml.NewEncoder(sb)
 		element, err := Encode(tc.g)
 		if err != nil {
 			t.Errorf("Encode(%#v) == %#v, %v, want ..., nil", tc.g, element, err)
@@ -233,7 +233,7 @@ func Test(t *testing.T) {
 			t.Errorf("Encode(%#v) == %v, want nil", element, err)
 			continue
 		}
-		if got := b.String(); got != tc.want {
+		if got := sb.String(); got != tc.want {
 			t.Errorf("Encode(Encode(%#v))\nwrote %v\n want %v", tc.g, got, tc.want)
 		}
 	}
