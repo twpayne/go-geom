@@ -247,58 +247,92 @@ func (calc *convexHullCalculator) computeOctRing(inputPts []float64) []float64 {
 	return octPts
 }
 
-func (calc *convexHullCalculator) computeOctPts(inputPts []float64) []float64 {
+// computeOctPts computes the irregular convex octagon such that any point
+// inside this octagon is guaranteed to not be in the convex hull. See
+// https://en.wikipedia.org/wiki/Convex_hull_algorithms#Akl%E2%80%93Toussaint_heuristic.
+func (calc *convexHullCalculator) computeOctPts(flatCoords []float64) []float64 {
+	if len(flatCoords) == 0 {
+		return nil
+	}
+
 	stride := calc.stride
-	pts := make([]float64, 8*stride)
-	for j := 0; j < len(pts); j += stride {
-		for k := 0; k < stride; k++ {
-			pts[j+k] = inputPts[k]
+
+	var (
+		x0        = flatCoords[0]
+		y0        = flatCoords[1]
+		x0MinusY0 = x0 - y0
+		x0PlusY0  = x0 + y0
+
+		minX       = x0
+		minXMinusY = x0MinusY0
+		maxY       = y0
+		maxXPlusY  = x0PlusY0
+		maxX       = x0
+		maxXMinusY = x0MinusY0
+		minY       = y0
+		minXPlusY  = x0PlusY0
+
+		minXIndex       = 0
+		minXMinusYIndex = 0
+		maxYIndex       = 0
+		maxXPlusYIndex  = 0
+		maxXIndex       = 0
+		maxXMinusYIndex = 0
+		minYIndex       = 0
+		minXPlusYIndex  = 0
+	)
+
+	for i := stride; i < len(flatCoords); i += stride {
+		var (
+			x       = flatCoords[i]
+			y       = flatCoords[i+1]
+			xMinusY = x - y
+			xPlusY  = x + y
+		)
+		if x < minX {
+			minXIndex = i
+			minX = x
+		}
+		if xMinusY < minXMinusY {
+			minXMinusY = xMinusY
+			minXMinusYIndex = i
+		}
+		if y > maxY {
+			maxY = y
+			maxYIndex = i
+		}
+		if xPlusY > maxXPlusY {
+			maxXPlusY = xPlusY
+			maxXPlusYIndex = i
+		}
+		if x > maxX {
+			maxX = x
+			maxXIndex = i
+		}
+		if xMinusY > maxXMinusY {
+			maxXMinusY = xMinusY
+			maxXMinusYIndex = i
+		}
+		if y < minY {
+			minY = y
+			minYIndex = i
+		}
+		if xPlusY < minXPlusY {
+			minXPlusY = xPlusY
+			minXPlusYIndex = i
 		}
 	}
 
-	for i := stride; i < len(inputPts); i += stride {
-		if inputPts[i] < pts[0] {
-			for k := 0; k < stride; k++ {
-				pts[k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i]-inputPts[i+1] < pts[stride]-pts[stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[stride+k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i+1] > pts[2*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[2*stride+k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i]+inputPts[i+1] > pts[3*stride]+pts[3*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[3*stride+k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i] > pts[4*stride] {
-			for k := 0; k < stride; k++ {
-				pts[4*stride+k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i]-inputPts[i+1] > pts[5*stride]-pts[5*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[5*stride+k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i+1] < pts[6*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[6*stride+k] = inputPts[i+k]
-			}
-		}
-		if inputPts[i]+inputPts[i+1] < pts[7*stride]+pts[7*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[7*stride+k] = inputPts[i+k]
-			}
-		}
-	}
-	return pts
+	result := make([]float64, 0, 8*stride)
+	result = append(result, flatCoords[minXIndex:minXIndex+stride]...)
+	result = append(result, flatCoords[minXMinusYIndex:minXMinusYIndex+stride]...)
+	result = append(result, flatCoords[maxYIndex:maxYIndex+stride]...)
+	result = append(result, flatCoords[maxXPlusYIndex:maxXPlusYIndex+stride]...)
+	result = append(result, flatCoords[maxXIndex:maxXIndex+stride]...)
+	result = append(result, flatCoords[maxXMinusYIndex:maxXMinusYIndex+stride]...)
+	result = append(result, flatCoords[minYIndex:minYIndex+stride]...)
+	result = append(result, flatCoords[minXPlusYIndex:minXPlusYIndex+stride]...)
+	return result
 }
 
 type comparator struct{}
