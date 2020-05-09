@@ -120,7 +120,7 @@ func TestIsRingCounterClockwise(t *testing.T) {
 		},
 		{
 			desc:         "clockwise ring many points",
-			lineSegments: internal.RING.FlatCoords(),
+			lineSegments: internal.TestRing.FlatCoords(),
 			ccw:          false,
 		},
 		{
@@ -420,7 +420,7 @@ func TestSignedArea(t *testing.T) {
 		},
 		{
 			desc:        "A more complex ring, Counter Clockwise",
-			lines:       internal.RING.FlatCoords(),
+			lines:       internal.TestRing.FlatCoords(),
 			area:        -0.024959177231354802,
 			areaReverse: -0.024959177231354795,
 		},
