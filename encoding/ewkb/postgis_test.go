@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
+
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/ewkb"
 )

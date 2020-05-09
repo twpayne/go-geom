@@ -58,7 +58,7 @@ var lineTestData = []lineDataType{
 	},
 	{
 		lines: []*geom.LineString{
-			geom.NewLineStringFlat(internal.RING.Layout(), internal.RING.FlatCoords()),
+			geom.NewLineStringFlat(internal.TestRing.Layout(), internal.TestRing.FlatCoords()),
 		},
 		lineCentroid: geom.Coord{-44.10405031184597, 42.3149062174918},
 	},

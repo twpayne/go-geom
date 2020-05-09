@@ -11,8 +11,8 @@ import (
 )
 
 func TestNewRadialSorting(t *testing.T) {
-	pts := make([]float64, len(internal.RING.FlatCoords()))
-	copy(pts, internal.RING.FlatCoords())
+	pts := make([]float64, len(internal.TestRing.FlatCoords()))
+	copy(pts, internal.TestRing.FlatCoords())
 
 	for i, tc := range []struct {
 		p1, p2, origin geom.Coord
@@ -263,8 +263,8 @@ func TestNewRadialSorting(t *testing.T) {
 }
 
 func TestNewRadialComparatorSorting(t *testing.T) {
-	pts := make([]float64, len(internal.RING.FlatCoords()))
-	copy(pts, internal.RING.FlatCoords())
+	pts := make([]float64, len(internal.TestRing.FlatCoords()))
+	copy(pts, internal.TestRing.FlatCoords())
 
 	sorting := xy.NewRadialSorting(geom.XY, pts, geom.Coord{-17.1041375307579, 42.3147318674446})
 	sort.Sort(sorting)

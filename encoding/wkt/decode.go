@@ -266,11 +266,9 @@ func coordsFromBraceContent(s string, l geom.Layout) ([]geom.Coord, error) {
 	return coords, nil
 }
 
-// braceContentAndRest returns:
-//
-// -the string between the first opening brace "(" and its closing brace ")"
-//
-// -the rest of the input string (starting with the next opening brace "(")
+// braceContentAndRest returns the string between the first opening brace "("
+// and its closing brace ")" and the rest of the input string (starting with the
+// next opening brace "(").
 func braceContentAndRest(s string) (string, string, error) {
 	braceOpenIdx := -1
 	braceCloseIdx := -1

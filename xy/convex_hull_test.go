@@ -27,7 +27,7 @@ func TestConvexHull(t *testing.T) {
 			expected: geom.NewPolygonFlat(geom.XY, []float64{1, 1, 2, 5, 4, 4, 1, 1}, []int{8}),
 		},
 		{
-			polygon: internal.RING,
+			polygon: internal.TestRing,
 			expected: geom.NewPolygonFlat(geom.XY, []float64{
 				-71.103396240451, 42.3138632439557, -71.1041521907712, 42.3141153348029, -71.1042515013869, 42.3151287620809,
 				-71.1040194562988, 42.3151832057859, -71.1031627617667, 42.3152960829043, -17.1035447555574, 42.3152608696313,
@@ -49,7 +49,7 @@ func TestConvexHull(t *testing.T) {
 
 func TestPresort(t *testing.T) {
 	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
-	coords := append([]float64{}, internal.RING.FlatCoords()...)
+	coords := append([]float64{}, internal.TestRing.FlatCoords()...)
 	calc.preSort(coords)
 
 	expected := []float64{
@@ -102,7 +102,7 @@ func TestPresort(t *testing.T) {
 func TestReduce(t *testing.T) {
 	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
 
-	reduced := calc.reduce(internal.RING.FlatCoords())
+	reduced := calc.reduce(internal.TestRing.FlatCoords())
 
 	expected := []float64{
 		-71.1042515013869, 42.3151287620809,
@@ -176,7 +176,7 @@ func TestOctRing(t *testing.T) {
 
 func TestGrahamScan(t *testing.T) {
 	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
-	coords := append([]float64{}, internal.RING.FlatCoords()...)
+	coords := append([]float64{}, internal.TestRing.FlatCoords()...)
 	scan := calc.grahamScan(coords)
 
 	expected := []float64{
@@ -199,7 +199,7 @@ func TestGrahamScan(t *testing.T) {
 	if !reflect.DeepEqual(scan, expected) {
 		t.Fatalf("calc.grahamScan(...) failed.  Expected \n\t%v\nbut was\n\t%v", expected, scan)
 	}
-	if !reflect.DeepEqual(internal.RING.FlatCoords(), coords) {
-		t.Fatalf("calc.grahamScan(...) mutated the input coords.  Expected \n\t%v\nbut was\n\t%v", internal.RING.FlatCoords(), coords)
+	if !reflect.DeepEqual(internal.TestRing.FlatCoords(), coords) {
+		t.Fatalf("calc.grahamScan(...) mutated the input coords.  Expected \n\t%v\nbut was\n\t%v", internal.TestRing.FlatCoords(), coords)
 	}
 }

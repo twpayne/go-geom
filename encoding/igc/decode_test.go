@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/d4l3k/messagediff"
+
 	"github.com/twpayne/go-geom"
 )
 

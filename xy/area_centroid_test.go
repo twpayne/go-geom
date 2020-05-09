@@ -57,7 +57,7 @@ var polygonTestData = []struct {
 	},
 	{
 		polygons: []*geom.Polygon{
-			geom.NewPolygonFlat(geom.XY, internal.RING.FlatCoords(), []int{internal.RING.NumCoords() * 2}),
+			geom.NewPolygonFlat(geom.XY, internal.TestRing.FlatCoords(), []int{internal.TestRing.NumCoords() * 2}),
 		},
 		areaCentroid: geom.Coord{-53.10266611446687, 42.314777901050384},
 		lineCentroid: geom.Coord{-44.10405031184597, 42.3149062174918},

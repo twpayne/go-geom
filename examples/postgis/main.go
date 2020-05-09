@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/lib/pq"
+
 	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/ewkb"
 	"github.com/twpayne/go-geom/encoding/ewkbhex"
