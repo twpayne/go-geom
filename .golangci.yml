@@ -1,15 +1,73 @@
 linters:
-  enable-all: true
+  enable:
+  - bodyclose
+  - deadcode
+  - depguard
+  - dogsled
+  - dupl
+  - errcheck
+  - godot
+  - gocritic
+  - gofmt
+  - goimports
+  - golint
+  - gomodguard
+  - goprintffuncname
+  - gosec
+  - gosimple
+  - govet
+  - ineffassign
+  - maligned
+  - interfacer
+  - misspell
+  - nakedret
+  - prealloc
+  - rowserrcheck
+  - scopelint
+  - staticcheck
+  - structcheck
+  - stylecheck
+  - typecheck
+  - unconvert
+  - unparam
+  - unused
+  - varcheck
+  - whitespace
   disable:
+  - funlen
+  - gochecknoglobals
+  - gocognit
+  - goconst
+  - gocyclo
+  - godox
+  - gomnd
+  - lll
+  - nestif
+  - testpackage
+  - wsl
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/twpayne/go-geom
+
+issues:
+  exclude-rules:
+  - linters:
     - dupl
-    - funlen
-    - gochecknoglobals
-    - gocognit
-    - gocyclo
-    - godox
+    - scopelint
+    path: "_test\\.go"
+  - linters:
     - godot
-    - gomnd
-    - lll
-    - nestif
-    - testpackage
-    - wsl
+    path: "^bigxy/"
+  - linters:
+    - godot
+    path: "^sorting/"
+  - linters:
+    - godot
+    path: "^transform/"
+  - linters:
+    - godot
+    path: "^xy/"
+  - linters:
+    - godot
+    path: "^xyz/"
