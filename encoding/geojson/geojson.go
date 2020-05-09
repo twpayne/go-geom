@@ -12,7 +12,7 @@ import (
 var nullGeometry = []byte("null")
 
 // DefaultLayout is the default layout for empty geometries.
-// FIXME This should be Codec-specific, not global
+// FIXME This should be Codec-specific, not global.
 var DefaultLayout = geom.XY
 
 // ErrDimensionalityTooLow is returned when the dimensionality is too low.
@@ -318,7 +318,7 @@ func Unmarshal(data []byte, g *geom.T) error {
 	return err
 }
 
-// decodeBBox decodes bb into a Bounds
+// decodeBBox decodes bb into a Bounds.
 func decodeBBox(bb []float64) (*geom.Bounds, error) {
 	var layout geom.Layout
 	switch l := len(bb); l {
@@ -333,7 +333,7 @@ func decodeBBox(bb []float64) (*geom.Bounds, error) {
 	return geom.NewBounds(layout).Set(bb...), nil
 }
 
-// encodeBBox encodes b as a GeoJson Bounding Box
+// encodeBBox encodes b as a GeoJson Bounding Box.
 func encodeBBox(b *geom.Bounds) ([]float64, error) {
 	switch l := b.Layout(); l {
 	case geom.XY, geom.XYM:
@@ -418,7 +418,7 @@ func (fc *FeatureCollection) MarshalJSON() ([]byte, error) {
 	return json.Marshal(gfc)
 }
 
-// UnmarshalJSON implements json.Unmarshaler.UnmarshalJSON
+// UnmarshalJSON implements json.Unmarshaler.UnmarshalJSON.
 func (fc *FeatureCollection) UnmarshalJSON(data []byte) error {
 	var gfc geojsonFeatureCollection
 	if err := json.Unmarshal(data, &gfc); err != nil {

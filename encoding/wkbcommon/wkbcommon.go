@@ -69,8 +69,8 @@ func (e ErrUnexpectedType) Error() string {
 // importing the `github.com/twpayne/go-geom/encoding/wkbcommon` module and
 // setting the value of `wkbcommon.MaxGeometryElements`.
 //
-// FIXME This should be Codec-specific, not global
-// FIXME Consider overall per-geometry limit rather than per-level limit
+// FIXME This should be Codec-specific, not global.
+// FIXME Consider overall per-geometry limit rather than per-level limit.
 var MaxGeometryElements = [4]int{
 	0,  // Unused
 	-1, // LineString, LinearRing, and MultiPoint
