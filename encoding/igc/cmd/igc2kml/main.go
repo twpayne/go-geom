@@ -4,8 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/twpayne/go-geom/encoding/igc"
 	"github.com/twpayne/go-kml"
+
+	"github.com/twpayne/go-geom/encoding/igc"
 )
 
 func run() error {

@@ -15,7 +15,7 @@ lint:
 
 .PHONY: format
 format:
-	find . -name \*.go | xargs $$(go env GOPATH)/bin/gofumports -w
+	find . -name \*.go | xargs $$(go env GOPATH)/bin/gofumports -local github.com/twpayne/go-geom -w
 
 .PHONY: generate
 generate:
