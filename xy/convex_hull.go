@@ -58,10 +58,6 @@ func (calc convexHullCalculator) getConvexHull() geom.T {
 
 	reducedPts := transform.UniqueCoords(calc.layout, comparator{}, calc.inputPts)
 
-	// use heuristic to reduce points, if large
-	if len(calc.inputPts)/calc.stride > 50 {
-		reducedPts = calc.reduce(calc.inputPts)
-	}
 	// sort points for Graham scan.
 	calc.preSort(reducedPts)
 
@@ -218,33 +214,28 @@ func (calc *convexHullCalculator) padArray3(pts []float64) []float64 {
 	return pad
 }
 
-func (calc *convexHullCalculator) computeOctRing(inputPts []float64) []float64 {
+// computeOctRing returns the flat coordinates of a ring that such that any
+// points inside the ring are guaranteed not to be in the convex hull.
+func (calc *convexHullCalculator) computeOctRing(flatCoords []float64) []float64 {
+	ringFlatCoords := calc.computeOctPts(flatCoords)
+
 	stride := calc.stride
-	octPts := calc.computeOctPts(inputPts)
-	copyTo := 0
-	for i := stride; i < len(octPts); i += stride {
-		if !internal.Equal(octPts, i-stride, octPts, i) {
-			copyTo += stride
+	/*
+		// Filter out duplicate coordinates in place.
+		n := stride
+		for i := stride; i < len(ringFlatCoords); i += stride {
+			if ringFlatCoords[i] != ringFlatCoords[n-stride] || ringFlatCoords[i+1] != ringFlatCoords[n-stride+1] {
+				copy(ringFlatCoords[n:n+stride], ringFlatCoords[i:i+stride])
+				n++
+			}
 		}
-		for j := 0; j < stride; j++ {
-			octPts[copyTo+j] = octPts[i+j]
-		}
-	}
+		ringFlatCoords = ringFlatCoords[:n]
 
-	// points must all lie in a line
-	if copyTo < 6 {
-		return nil
-	}
+	*/
+	// Close ring.
+	ringFlatCoords = append(ringFlatCoords, ringFlatCoords[:stride]...)
 
-	copyTo += stride
-	octPts = octPts[0 : copyTo+stride]
-
-	// close ring
-	for j := 0; j < stride; j++ {
-		octPts[copyTo+j] = octPts[j]
-	}
-
-	return octPts
+	return ringFlatCoords
 }
 
 // computeOctPts computes the irregular convex octagon such that any point

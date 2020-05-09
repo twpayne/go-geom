@@ -130,7 +130,6 @@ func TestReduce(t *testing.T) {
 
 func TestOctRing(t *testing.T) {
 	data := []float64{
-
 		1, 1, 10,
 		1, 0, 10,
 		10, 1, 10,
