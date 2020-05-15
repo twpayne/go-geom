@@ -29,6 +29,13 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
 }
 
+// ErrEmptyData is returned when directly decoding empty GeoJSON bytes
+type ErrEmptyData string
+
+func (e ErrEmptyData) Error() string {
+	return fmt.Sprintf("geojson: empty source data")
+}
+
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
 	Type        string           `json:"type"`
@@ -203,6 +210,21 @@ func (g *Geometry) Decode() (geom.T, error) {
 	}
 }
 
+// DecodeGeoJSON returns an arbitrary decoded geometry after
+// unmarshalling the bytes to an intermediate GeoJSON
+func DecodeGeoJSON(data []byte) (interface{}, error) {
+	if data == nil || len(data) == 0 || bytes.Equal(data, nullGeometry) {
+		return nil, ErrEmptyData("")
+	}
+	gg := &Geometry{}
+	if err := json.Unmarshal(data, gg); err != nil {
+		return nil, err
+	}
+	var err error
+	g, err := gg.Decode()
+	return g, err
+}
+
 // Encode encodes g as a GeoJSON geometry.
 func Encode(g geom.T) (*Geometry, error) {
 	if g == nil {
@@ -308,10 +330,6 @@ func Unmarshal(data []byte, g *geom.T) error {
 	gg := &Geometry{}
 	if err := json.Unmarshal(data, gg); err != nil {
 		return err
-	}
-	if gg == nil {
-		*g = nil
-		return nil
 	}
 	var err error
 	*g, err = gg.Decode()

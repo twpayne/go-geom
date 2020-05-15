@@ -287,3 +287,15 @@ func TestFeatureCollection(t *testing.T) {
 		}
 	}
 }
+
+func TestDecodeGeoJSON(t *testing.T) {
+	test := `{"type":"Point","coordinates":[-71.09981854336587,42.327161019017154]}`
+	val, err := DecodeGeoJSON([]byte(test))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if _, ok := val.(*geom.Point); !ok {
+		t.Errorf("DecodeJson(%v), improper decoding, wanted point, got:\n%v", test, val)
+	}
+}
