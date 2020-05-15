@@ -29,7 +29,7 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
 }
 
-// ErrEmptyData is returned when directly decoding empty GeoJSON bytes
+// ErrEmptyData is returned when directly decoding empty GeoJSON bytes.
 type ErrEmptyData string
 
 func (e ErrEmptyData) Error() string {
