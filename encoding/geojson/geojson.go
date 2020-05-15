@@ -210,10 +210,9 @@ func (g *Geometry) Decode() (geom.T, error) {
 	}
 }
 
-// DecodeGeoJSON returns an arbitrary decoded geometry after
-// unmarshalling the bytes to an intermediate GeoJSON
+// DecodeGeoJSON returns an arbitrary decoded geometry after unmarshalling the bytes to an intermediate GeoJSON.
 func DecodeGeoJSON(data []byte) (interface{}, error) {
-	if data == nil || len(data) == 0 || bytes.Equal(data, nullGeometry) {
+	if data == nil || bytes.Equal(data, nullGeometry) {
 		return nil, ErrEmptyData("")
 	}
 	gg := &Geometry{}
