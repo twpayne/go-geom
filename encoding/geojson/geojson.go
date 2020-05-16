@@ -4,6 +4,7 @@ package geojson
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	geom "github.com/twpayne/go-geom"
@@ -30,11 +31,7 @@ func (e ErrUnsupportedType) Error() string {
 }
 
 // ErrEmptyData is returned when directly decoding empty GeoJSON bytes.
-type ErrEmptyData string
-
-func (e ErrEmptyData) Error() string {
-	return fmt.Sprintf("geojson: empty source data")
-}
+var ErrEmptyData = errors.New("geojson: empty source data")
 
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
@@ -213,7 +210,7 @@ func (g *Geometry) Decode() (geom.T, error) {
 // DecodeGeoJSON returns an arbitrary decoded geometry after unmarshalling the bytes to an intermediate GeoJSON.
 func DecodeGeoJSON(data []byte) (interface{}, error) {
 	if data == nil || bytes.Equal(data, nullGeometry) {
-		return nil, ErrEmptyData("")
+		return nil, ErrEmptyData
 	}
 	gg := &Geometry{}
 	if err := json.Unmarshal(data, gg); err != nil {
