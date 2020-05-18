@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// MultiLineString implements interface T.
+var _ T = &MultiLineString{}
+
 type testMultiLineString struct {
 	layout     Layout
 	stride     int

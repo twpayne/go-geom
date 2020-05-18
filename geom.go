@@ -128,6 +128,7 @@ type T interface {
 	Ends() []int
 	Endss() [][]int
 	SRID() int
+	Empty() bool
 }
 
 // MIndex returns the index of the M dimension, or -1 if the l does not have an

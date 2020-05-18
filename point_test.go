@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// Point implements interface T.
+var _ T = &Point{}
+
 type testPoint struct {
 	layout     Layout
 	stride     int

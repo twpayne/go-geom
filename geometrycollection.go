@@ -70,8 +70,15 @@ func (g *GeometryCollection) Bounds() *Bounds {
 }
 
 // Empty returns true if the collection is empty.
+// This can return true if the GeometryCollection contains multiple Geometry objects
+// which are all empty.
 func (g *GeometryCollection) Empty() bool {
-	return len(g.geoms) == 0
+	for _, g := range g.geoms {
+		if !g.Empty() {
+			return false
+		}
+	}
+	return true
 }
 
 // FlatCoords panics.

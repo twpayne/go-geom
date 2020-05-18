@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// MultiPolygon implements interface T.
+var _ T = &MultiPolygon{}
+
 type testMultiPolygon struct {
 	layout     Layout
 	stride     int

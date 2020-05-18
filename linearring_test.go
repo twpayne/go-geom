@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// LinearRing implements interface T.
+var _ T = &LinearRing{}
+
 type testLinearRing struct {
 	layout     Layout
 	stride     int
