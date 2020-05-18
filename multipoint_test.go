@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// MultiPoint implements interface T.
+var _ T = &MultiPoint{}
+
 type testMultiPoint struct {
 	layout     Layout
 	stride     int

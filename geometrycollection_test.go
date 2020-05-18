@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// GeometryCollection implements interface T.
+var _ T = &GeometryCollection{}
+
 func TestGeometryCollectionBounds(t *testing.T) {
 	for _, tc := range []struct {
 		geoms []T
@@ -57,6 +60,45 @@ func TestGeometryCollectionBounds(t *testing.T) {
 		if got := NewGeometryCollection().MustPush(tc.geoms...).Bounds(); !reflect.DeepEqual(got, tc.want) {
 			t.Errorf("NewGeometryCollection().MustPush(%+v).Bounds() == %+v, want %+v", tc.geoms, got, tc.want)
 		}
+	}
+}
+
+func TestGeometryCollectionEmpty(t *testing.T) {
+	for _, tc := range []struct {
+		desc     string
+		geoms    []T
+		expected bool
+	}{
+		{
+			desc:     "empty GEOMETRYCOLLECTION",
+			geoms:    []T{},
+			expected: true,
+		},
+		{
+			desc:     "GEOMETRYCOLLECTION with all EMPTY geometries",
+			geoms:    []T{NewLineString(XY), NewPolygon(XY)},
+			expected: true,
+		},
+		{
+			desc:     "GEOMETRYCOLLECTION with one EMPTY object",
+			geoms:    []T{NewLineString(XY), NewPointFlat(XY, []float64{1, 2})},
+			expected: false,
+		},
+		{
+			desc:     "GEOMETRYCOLLECTION with no EMPTY object",
+			geoms:    []T{NewPointFlat(XY, []float64{1, 2})},
+			expected: false,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			gc := NewGeometryCollection()
+			for _, g := range tc.geoms {
+				gc.MustPush(g)
+			}
+			if got := gc.Empty(); got != tc.expected {
+				t.Errorf("%s: got %v, want %v", tc.desc, got, tc.expected)
+			}
+		})
 	}
 }
 

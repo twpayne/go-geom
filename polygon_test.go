@@ -6,6 +6,9 @@ import (
 	"testing"
 )
 
+// Polygon implements interface T.
+var _ T = &Polygon{}
+
 func ExampleNewPolygon() {
 	unitSquare := NewPolygon(XY).MustSetCoords([][]Coord{
 		{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
