@@ -5,6 +5,9 @@ type LinearRing struct {
 	geom1
 }
 
+// LinearRing implements interface T.
+var _ T = (*LinearRing)(nil)
+
 // NewLinearRing returns a new LinearRing with no coordinates.
 func NewLinearRing(layout Layout) *LinearRing {
 	return NewLinearRingFlat(layout, nil)

@@ -7,6 +7,9 @@ type GeometryCollection struct {
 	srid  int
 }
 
+// GeometryCollection implements interface T.
+var _ T = (*GeometryCollection)(nil)
+
 // NewGeometryCollection returns a new empty GeometryCollection.
 func NewGeometryCollection() *GeometryCollection {
 	return &GeometryCollection{}

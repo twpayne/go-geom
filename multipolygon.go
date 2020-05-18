@@ -5,6 +5,9 @@ type MultiPolygon struct {
 	geom3
 }
 
+// MultiPolygon implements interface T.
+var _ T = (*MultiPolygon)(nil)
+
 // NewMultiPolygon returns a new MultiPolygon with no Polygons.
 func NewMultiPolygon(layout Layout) *MultiPolygon {
 	return NewMultiPolygonFlat(layout, nil, nil)
