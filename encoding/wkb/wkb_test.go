@@ -165,6 +165,31 @@ func Test(t *testing.T) {
 		ndr []byte
 	}{
 		{
+			g:   geom.NewPointEmpty(geom.XY),
+			xdr: geomtest.MustHexDecode("00000000017ff80000000000007ff8000000000000"),
+			ndr: geomtest.MustHexDecode("0101000000000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XYM),
+			xdr: geomtest.MustHexDecode("00000007d17ff80000000000007ff80000000000007ff8000000000000"),
+			ndr: geomtest.MustHexDecode("01d1070000000000000000f87f000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XYZ),
+			xdr: geomtest.MustHexDecode("00000003e97ff80000000000007ff80000000000007ff8000000000000"),
+			ndr: geomtest.MustHexDecode("01e9030000000000000000f87f000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XYZM),
+			xdr: geomtest.MustHexDecode("0000000bb97ff80000000000007ff80000000000007ff80000000000007ff8000000000000"),
+			ndr: geomtest.MustHexDecode("01b90b0000000000000000f87f000000000000f87f000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustPush(geom.NewPointEmpty(geom.XY)),
+			xdr: geomtest.MustHexDecode("00000000070000000100000000017ff80000000000007ff8000000000000"),
+			ndr: geomtest.MustHexDecode("0107000000010000000101000000000000000000f87f000000000000f87f"),
+		},
+		{
 			g:   geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 			xdr: geomtest.MustHexDecode("00000000013ff00000000000004000000000000000"),
 			ndr: geomtest.MustHexDecode("0101000000000000000000f03f0000000000000040"),

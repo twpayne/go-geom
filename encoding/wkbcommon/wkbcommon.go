@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 )
 
 // Byte order IDs.
@@ -129,7 +130,9 @@ func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 }
 
 // ReadFlatCoords2 reads flat coordinates 2.
-func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, []int, error) {
+func ReadFlatCoords2(
+	r io.Reader, byteOrder binary.ByteOrder, stride int,
+) ([]float64, []int, error) {
 	n, err := ReadUInt32(r, byteOrder)
 	if err != nil {
 		return nil, nil, err
@@ -164,7 +167,9 @@ func WriteFlatCoords1(w io.Writer, byteOrder binary.ByteOrder, coords []float64,
 }
 
 // WriteFlatCoords2 writes flat coordinates 2.
-func WriteFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, flatCoords []float64, ends []int, stride int) error {
+func WriteFlatCoords2(
+	w io.Writer, byteOrder binary.ByteOrder, flatCoords []float64, ends []int, stride int,
+) error {
 	if err := WriteUInt32(w, byteOrder, uint32(len(ends))); err != nil {
 		return err
 	}
@@ -176,4 +181,24 @@ func WriteFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, flatCoords []floa
 		offset = end
 	}
 	return nil
+}
+
+// WriteEmptyPoint writes a POINT EMPTY.
+func WriteEmptyPoint(w io.Writer, byteOrder binary.ByteOrder, stride int) error {
+	coords := make([]float64, stride)
+	for i := 0; i < stride; i++ {
+		// math.NaN() returns 0x7ff8000000000001 so we have to encode 0x7FF8000000000000 ourselves.
+		coords[i] = math.Float64frombits(0x7FF8000000000000)
+	}
+	return WriteFlatCoords0(w, byteOrder, coords)
+}
+
+// IsEmptyPoint checks whether given coords read from WKB/EWKB represents an empty point.
+func IsEmptyPoint(flatCoords []float64) bool {
+	for _, p := range flatCoords {
+		if !math.IsNaN(p) {
+			return false
+		}
+	}
+	return true
 }
