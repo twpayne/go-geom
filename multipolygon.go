@@ -51,7 +51,12 @@ func (g *MultiPolygon) Polygon(i int) *Polygon {
 	offset := 0
 	if i > 0 {
 		ends := g.endss[i-1]
-		offset = ends[len(ends)-1]
+		if len(ends) > 0 {
+			offset = ends[len(ends)-1]
+		}
+	}
+	if len(g.endss[i]) == 0 {
+		return NewPolygon(g.layout)
 	}
 	ends := make([]int, len(g.endss[i]))
 	if offset == 0 {

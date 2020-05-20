@@ -15,6 +15,7 @@ type testMultiPolygon struct {
 	flatCoords []float64
 	endss      [][]int
 	bounds     *Bounds
+	empty      bool
 }
 
 func testMultiPolygonEquals(t *testing.T, mp *MultiPolygon, tmp *testMultiPolygon) {
@@ -38,6 +39,9 @@ func testMultiPolygonEquals(t *testing.T, mp *MultiPolygon, tmp *testMultiPolygo
 	}
 	if !reflect.DeepEqual(mp.Bounds(), tmp.bounds) {
 		t.Errorf("mp.Bounds() == %v, want %v", mp.Bounds(), tmp.bounds)
+	}
+	if mp.Empty() != tmp.empty {
+		t.Errorf("mp.Empty() == %t, want %t", mp.Empty(), tmp.empty)
 	}
 	if got := mp.NumPolygons(); got != len(tmp.coords) {
 		t.Errorf("mp.NumPolygons() == %v, want %v", got, len(tmp.coords))
@@ -64,6 +68,43 @@ func TestMultiPolygon(t *testing.T) {
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{{6, 12}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
+				empty:      false,
+			},
+		},
+		{
+			mp: NewMultiPolygon(XY),
+			tmp: &testMultiPolygon{
+				layout:     XY,
+				stride:     2,
+				coords:     [][][]Coord{},
+				flatCoords: nil,
+				endss:      nil,
+				bounds:     NewBounds(XY),
+				empty:      true,
+			},
+		},
+		{
+			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{}, {}}),
+			tmp: &testMultiPolygon{
+				layout:     XY,
+				stride:     2,
+				coords:     [][][]Coord{{}, {}},
+				flatCoords: nil,
+				endss:      [][]int{nil, nil},
+				bounds:     NewBounds(XY),
+				empty:      true,
+			},
+		},
+		{
+			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}}),
+			tmp: &testMultiPolygon{
+				layout:     XY,
+				stride:     2,
+				coords:     [][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				endss:      [][]int{nil, nil, {6, 12}, nil},
+				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
+				empty:      false,
 			},
 		},
 	} {

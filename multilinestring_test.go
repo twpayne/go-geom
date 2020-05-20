@@ -14,6 +14,7 @@ type testMultiLineString struct {
 	coords     [][]Coord
 	flatCoords []float64
 	ends       []int
+	empty      bool
 	bounds     *Bounds
 }
 
@@ -28,16 +29,19 @@ func testMultiLineStringEquals(t *testing.T, mls *MultiLineString, tmls *testMul
 		t.Errorf("mls.Stride() == %v, want %v", mls.Stride(), tmls.stride)
 	}
 	if !reflect.DeepEqual(mls.Coords(), tmls.coords) {
-		t.Errorf("mls.Coords() == %v, want %v", mls.Coords(), tmls.coords)
+		t.Errorf("mls.Coords() == %#v, want %#v", mls.Coords(), tmls.coords)
 	}
 	if !reflect.DeepEqual(mls.FlatCoords(), tmls.flatCoords) {
-		t.Errorf("mls.FlatCoords() == %v, want %v", mls.FlatCoords(), tmls.flatCoords)
+		t.Errorf("mls.FlatCoords() == %#v, want %#v", mls.FlatCoords(), tmls.flatCoords)
 	}
 	if !reflect.DeepEqual(mls.Ends(), tmls.ends) {
-		t.Errorf("mls.Ends() == %v, want %v", mls.Ends(), tmls.ends)
+		t.Errorf("mls.Ends() == %#v, want %#v", mls.Ends(), tmls.ends)
 	}
 	if !reflect.DeepEqual(mls.Bounds(), tmls.bounds) {
 		t.Errorf("mls.Bounds() == %v, want %v", mls.Bounds(), tmls.bounds)
+	}
+	if mls.Empty() != tmls.empty {
+		t.Errorf("mls.Empty() == %t, want %t", mls.Empty(), tmls.empty)
 	}
 	if got := mls.NumLineStrings(); got != len(tmls.coords) {
 		t.Errorf("mls.NumLineStrings() == %v, want %v", got, len(tmls.coords))
@@ -64,6 +68,43 @@ func TestMultiLineString(t *testing.T) {
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				ends:       []int{6, 12},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
+				empty:      false,
+			},
+		},
+		{
+			mls: NewMultiLineString(XY),
+			tmls: &testMultiLineString{
+				layout:     XY,
+				stride:     2,
+				coords:     [][]Coord{},
+				flatCoords: nil,
+				ends:       nil,
+				bounds:     NewBounds(XY),
+				empty:      true,
+			},
+		},
+		{
+			mls: NewMultiLineString(XY).MustSetCoords([][]Coord{{}, {}}),
+			tmls: &testMultiLineString{
+				layout:     XY,
+				stride:     2,
+				coords:     [][]Coord{{}, {}},
+				flatCoords: nil,
+				ends:       []int{0, 0},
+				bounds:     NewBounds(XY),
+				empty:      true,
+			},
+		},
+		{
+			mls: NewMultiLineString(XY).MustSetCoords([][]Coord{{}, {}, {{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}, {}}),
+			tmls: &testMultiLineString{
+				layout:     XY,
+				stride:     2,
+				coords:     [][]Coord{{}, {}, {{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}, {}},
+				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				ends:       []int{0, 0, 6, 12, 12},
+				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
+				empty:      false,
 			},
 		},
 	} {
