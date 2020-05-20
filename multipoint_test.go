@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
@@ -14,6 +15,7 @@ type testMultiPoint struct {
 	coords     []Coord
 	flatCoords []float64
 	bounds     *Bounds
+	empty      bool
 }
 
 func testMultiPointEquals(t *testing.T, mp *MultiPoint, tmp *testMultiPoint) {
@@ -34,6 +36,9 @@ func testMultiPointEquals(t *testing.T, mp *MultiPoint, tmp *testMultiPoint) {
 	}
 	if !reflect.DeepEqual(mp.Bounds(), tmp.bounds) {
 		t.Errorf("mp.Bounds() == %v, want %v", mp.Bounds(), tmp.bounds)
+	}
+	if mp.Empty() != tmp.empty {
+		t.Errorf("mp.Empty() == %t, want %t", mp.Empty(), tmp.empty)
 	}
 	if got := mp.NumCoords(); got != len(tmp.coords) {
 		t.Errorf("mp.NumCoords() == %v, want %v", got, len(tmp.coords))
@@ -90,8 +95,69 @@ func TestMultiPoint(t *testing.T) {
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
 		},
+		{
+			mp: NewMultiPoint(XY),
+			tmp: &testMultiPoint{
+				layout:     XY,
+				stride:     2,
+				coords:     []Coord{},
+				flatCoords: nil,
+				bounds:     NewBounds(XY),
+				empty:      true,
+			},
+		},
 	} {
 		testMultiPointEquals(t, c.mp, c.tmp)
+	}
+
+	// Unfortunately, reflect.DeepEqual cannot handle the NaN comparisons.
+	// Just double check these are empty.
+	for _, tc := range []struct {
+		mp     *MultiPoint
+		empty  bool
+		coords []Coord
+	}{
+		{
+			mp: NewMultiPoint(XY).MustSetCoords([]Coord{
+				{emptyPointFloat64, emptyPointFloat64},
+				{emptyPointFloat64, emptyPointFloat64},
+			}),
+			empty: true,
+			coords: []Coord{
+				{emptyPointFloat64, emptyPointFloat64},
+				{emptyPointFloat64, emptyPointFloat64},
+			},
+		},
+		{
+			mp: NewMultiPoint(XY).MustSetCoords([]Coord{
+				{emptyPointFloat64, emptyPointFloat64},
+				{emptyPointFloat64, emptyPointFloat64},
+				{1, 2},
+				{emptyPointFloat64, emptyPointFloat64},
+			}),
+			empty: false,
+			coords: []Coord{
+				{emptyPointFloat64, emptyPointFloat64},
+				{emptyPointFloat64, emptyPointFloat64},
+				{1, 2},
+				{emptyPointFloat64, emptyPointFloat64},
+			},
+		},
+	} {
+		if tc.mp.Empty() != tc.empty {
+			t.Errorf("mp.Empty() == %t, want %t", tc.mp.Empty(), tc.empty)
+		}
+		for i, c := range tc.coords {
+			if math.IsNaN(c[0]) {
+				if !tc.mp.Point(i).Empty() {
+					t.Errorf("mp.Coord(%v) not Empty()", i)
+				}
+			} else {
+				if !reflect.DeepEqual(tc.mp.Coord(i), c) {
+					t.Errorf("mp.Coord(%v) == %v, want %v", i, tc.mp.Coord(i), c)
+				}
+			}
+		}
 	}
 }
 
@@ -109,6 +175,7 @@ func TestMultiPointPush(t *testing.T) {
 		stride: 2,
 		coords: []Coord{},
 		bounds: NewBounds(XY),
+		empty:  true,
 	})
 	if err := mp.Push(NewPoint(XY).MustSetCoords(Coord{1, 2})); err != nil {
 		t.Error(err)

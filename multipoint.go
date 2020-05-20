@@ -24,6 +24,19 @@ func (g *MultiPoint) Area() float64 {
 	return 0
 }
 
+// Empty returns whether the MultiPoint is empty, or contains entirely empty points.
+func (g *MultiPoint) Empty() bool {
+	if g.geom1.Empty() {
+		return true
+	}
+	for i := 0; i < g.NumPoints(); i++ {
+		if !g.Point(i).Empty() {
+			return false
+		}
+	}
+	return true
+}
+
 // Clone returns a deep copy.
 func (g *MultiPoint) Clone() *MultiPoint {
 	return deriveCloneMultiPoint(g)

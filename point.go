@@ -1,18 +1,35 @@
 package geom
 
+import "math"
+
 // A Point represents a single point.
 type Point struct {
 	geom0
 }
+
+// emptyPointFloat64 signifies whether the Point actually POINT EMPTY.
+// This complies with Requirement 152 of http://www.geopackage.org/spec/.
+var emptyPointFloat64 = math.Float64frombits(0x7FF8000000000000)
 
 // NewPoint allocates a new Point with layout l and all values zero.
 func NewPoint(l Layout) *Point {
 	return NewPointFlat(l, make([]float64, l.Stride()))
 }
 
-// NewPointEmpty allocates a new Point with no coordinates.
+// NewPointEmpty allocates a new Point representing an empty Point.
+// This follows Requirement 152 of http://www.geopackage.org/spec/:
+//   If the geometry is a Point, it SHALL be encoded with each coordinate
+//   value set to an IEEE-754 quiet NaN value. GeoPackages SHALL use big
+//   endian 0x7ff8000000000000 or little endian 0x000000000000f87f as the
+//   binary encoding of the NaN values. (This is because Well-Known Binary
+//   as defined in OGC 06-103r4 [9] does not provide a standardized encoding
+//   for an empty point set, i.e., 'Point Empty' in Well-Known Text.)
 func NewPointEmpty(l Layout) *Point {
-	return NewPointFlat(l, []float64{})
+	coords := make([]float64, l.Stride())
+	for i := 0; i < l.Stride(); i++ {
+		coords[i] = emptyPointFloat64
+	}
+	return NewPointFlat(l, coords)
 }
 
 // NewPointFlat allocates a new Point with layout l and flat coordinates flatCoords.
@@ -27,6 +44,17 @@ func NewPointFlat(l Layout, flatCoords []float64) *Point {
 // Area returns g's area, i.e. zero.
 func (g *Point) Area() float64 {
 	return 0
+}
+
+// Empty returns whether g is empty.
+func (g *Point) Empty() bool {
+	for i := 0; i < g.Stride(); i++ {
+		// We cannot compare NaN vs NaN directly.
+		if !math.IsNaN(g.flatCoords[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 // Clone returns a copy of g that does not alias g.

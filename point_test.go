@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
@@ -14,6 +15,7 @@ type testPoint struct {
 	coords     Coord
 	flatCoords []float64
 	bounds     *Bounds
+	empty      bool
 }
 
 func testPointEquals(t *testing.T, p *Point, tp *testPoint) {
@@ -34,6 +36,9 @@ func testPointEquals(t *testing.T, p *Point, tp *testPoint) {
 	}
 	if !reflect.DeepEqual(p.Bounds(), tp.bounds) {
 		t.Errorf("p.Bounds() == %v, want %v", p.Bounds(), tp.bounds)
+	}
+	if p.Empty() != tp.empty {
+		t.Errorf("p.Empty() == %t, want %t", p.Empty(), tp.empty)
 	}
 }
 
@@ -131,6 +136,18 @@ func TestPointClone(t *testing.T) {
 	p1 := NewPoint(XY).MustSetCoords(Coord{1, 2})
 	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
 		t.Error("Clone() should not alias flatCoords")
+	}
+}
+
+func TestPointEmpty(t *testing.T) {
+	p := NewPointEmpty(XY)
+	if !p.Empty() {
+		t.Error("expected empty point to be empty")
+	}
+	for i := 0; i < p.Stride(); i++ {
+		if !math.IsNaN(p.flatCoords[i]) {
+			t.Errorf("expected NaN coordinate at position %d", i)
+		}
 	}
 }
 
