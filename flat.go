@@ -290,7 +290,9 @@ func deflate1(flatCoords []float64, coords1 []Coord, stride int) ([]float64, err
 	return flatCoords, nil
 }
 
-func deflate2(flatCoords []float64, ends []int, coords2 [][]Coord, stride int) ([]float64, []int, error) {
+func deflate2(
+	flatCoords []float64, ends []int, coords2 [][]Coord, stride int,
+) ([]float64, []int, error) {
 	for _, coords1 := range coords2 {
 		var err error
 		flatCoords, err = deflate1(flatCoords, coords1, stride)
@@ -302,7 +304,9 @@ func deflate2(flatCoords []float64, ends []int, coords2 [][]Coord, stride int) (
 	return flatCoords, ends, nil
 }
 
-func deflate3(flatCoords []float64, endss [][]int, coords3 [][][]Coord, stride int) ([]float64, [][]int, error) {
+func deflate3(
+	flatCoords []float64, endss [][]int, coords3 [][][]Coord, stride int,
+) ([]float64, [][]int, error) {
 	for _, coords2 := range coords3 {
 		var err error
 		var ends []int
@@ -348,7 +352,9 @@ func inflate3(flatCoords []float64, offset int, endss [][]int, stride int) [][][
 	for i := range coords3 {
 		ends := endss[i]
 		coords3[i] = inflate2(flatCoords, offset, ends, stride)
-		offset = ends[len(ends)-1]
+		if len(ends) > 0 {
+			offset = ends[len(ends)-1]
+		}
 	}
 	return coords3
 }

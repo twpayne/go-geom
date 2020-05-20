@@ -41,6 +41,9 @@ func (g *MultiLineString) LineString(i int) *LineString {
 	if i > 0 {
 		offset = g.ends[i-1]
 	}
+	if offset == g.ends[i] {
+		return NewLineString(g.layout)
+	}
 	return NewLineStringFlat(g.layout, g.flatCoords[offset:g.ends[i]])
 }
 
