@@ -226,7 +226,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	switch g.Layout() {
 	case geom.NoLayout:
 		// Special case for empty GeometryCollections
-		if g, ok := g.(*geom.GeometryCollection); !ok || !g.Empty() {
+		if _, ok := g.(*geom.GeometryCollection); !ok || !g.Empty() {
 			return geom.ErrUnsupportedLayout(g.Layout())
 		}
 	case geom.XY:
