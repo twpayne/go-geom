@@ -1,6 +1,7 @@
 package wkt
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -138,6 +139,46 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 		if got, err := Unmarshal(tc.s); err != nil || !reflect.DeepEqual(got, tc.g) {
 			t.Errorf("Unmarshal(%#v) == %v, %v, want %v, nil", tc.s, got, err, tc.g)
 		}
+	}
+}
+
+func TestMarshalWithMaxDecimalDigits(t *testing.T) {
+	for _, tc := range []struct {
+		g                geom.T
+		maxDecimalDigits int
+		s                string
+	}{
+		{
+			g:                geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			maxDecimalDigits: 0,
+			s:                "POINT (1 1)",
+		},
+		{
+			g:                geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			maxDecimalDigits: 1,
+			s:                "POINT (1 1.1)",
+		},
+		{
+			g:                geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			maxDecimalDigits: 2,
+			s:                "POINT (1 1.07)",
+		},
+		{
+			g:                geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			maxDecimalDigits: 3,
+			s:                "POINT (1.001 1.066)",
+		},
+		{
+			g:                geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			maxDecimalDigits: 4,
+			s:                "POINT (1.001 1.066)",
+		},
+	} {
+		t.Run(fmt.Sprintf("%s(maxDecimalDigits=%d)", tc.s, tc.maxDecimalDigits), func(t *testing.T) {
+			if got, err := MarshalWithMaxDecimalDigits(tc.g, tc.maxDecimalDigits); err != nil || got != tc.s {
+				t.Errorf("Marshal(%#v) == %v, %v, want %v, nil", tc.g, got, err, tc.s)
+			}
+		})
 	}
 }
 
