@@ -7,16 +7,16 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
-// encode translates a geometry to the corresponding WKT.
-func encode(g geom.T) (string, error) {
+// Encode translates a geometry to the corresponding WKT.
+func (e *Encoder) Encode(g geom.T) (string, error) {
 	sb := &strings.Builder{}
-	if err := write(sb, g); err != nil {
+	if err := e.write(sb, g); err != nil {
 		return "", err
 	}
 	return sb.String(), nil
 }
 
-func write(sb *strings.Builder, g geom.T) error {
+func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
 	typeString := ""
 	switch g := g.(type) {
 	case *geom.Point:
@@ -59,42 +59,42 @@ func write(sb *strings.Builder, g geom.T) error {
 	switch g := g.(type) {
 	case *geom.Point:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords0(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords0(sb, g.FlatCoords(), layout.Stride())
 	case *geom.LineString:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
 	case *geom.LinearRing:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
 	case *geom.Polygon:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
+		return e.writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
 	case *geom.MultiPoint:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
 	case *geom.MultiLineString:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
+		return e.writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
 	case *geom.MultiPolygon:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
-		return writeFlatCoords3(sb, g.FlatCoords(), g.Endss(), layout.Stride())
+		return e.writeFlatCoords3(sb, g.FlatCoords(), g.Endss(), layout.Stride())
 	case *geom.GeometryCollection:
 		if g.Empty() {
-			return writeEMPTY(sb)
+			return e.writeEMPTY(sb)
 		}
 		if _, err := sb.WriteRune('('); err != nil {
 			return err
@@ -105,7 +105,7 @@ func write(sb *strings.Builder, g geom.T) error {
 					return err
 				}
 			}
-			if err := write(sb, g); err != nil {
+			if err := e.write(sb, g); err != nil {
 				return err
 			}
 		}
@@ -115,14 +115,18 @@ func write(sb *strings.Builder, g geom.T) error {
 	return nil
 }
 
-func writeCoord(sb *strings.Builder, coord []float64) error {
+func (e *Encoder) writeCoord(sb *strings.Builder, coord []float64) error {
 	for i, x := range coord {
 		if i != 0 {
 			if _, err := sb.WriteRune(' '); err != nil {
 				return err
 			}
 		}
-		if _, err := sb.WriteString(strconv.FormatFloat(x, 'f', -1, 64)); err != nil {
+		coordStr := strconv.FormatFloat(x, 'f', e.maxDecimalDigits, 64)
+		if e.maxDecimalDigits != -1 {
+			coordStr = strings.TrimRight(strings.TrimRight(coordStr, "0"), ".")
+		}
+		if _, err := sb.WriteString(coordStr); err != nil {
 			return err
 		}
 	}
@@ -130,23 +134,23 @@ func writeCoord(sb *strings.Builder, coord []float64) error {
 }
 
 //nolint:interfacer
-func writeEMPTY(sb *strings.Builder) error {
+func (e *Encoder) writeEMPTY(sb *strings.Builder) error {
 	_, err := sb.WriteString(tEmpty)
 	return err
 }
 
-func writeFlatCoords0(sb *strings.Builder, flatCoords []float64, stride int) error {
+func (e *Encoder) writeFlatCoords0(sb *strings.Builder, flatCoords []float64, stride int) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
-	if err := writeCoord(sb, flatCoords[:stride]); err != nil {
+	if err := e.writeCoord(sb, flatCoords[:stride]); err != nil {
 		return err
 	}
 	_, err := sb.WriteRune(')')
 	return err
 }
 
-func writeFlatCoords1(sb *strings.Builder, flatCoords []float64, stride int) error {
+func (e *Encoder) writeFlatCoords1(sb *strings.Builder, flatCoords []float64, stride int) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
@@ -156,7 +160,7 @@ func writeFlatCoords1(sb *strings.Builder, flatCoords []float64, stride int) err
 				return err
 			}
 		}
-		if err := writeCoord(sb, flatCoords[i:i+stride]); err != nil {
+		if err := e.writeCoord(sb, flatCoords[i:i+stride]); err != nil {
 			return err
 		}
 	}
@@ -164,7 +168,9 @@ func writeFlatCoords1(sb *strings.Builder, flatCoords []float64, stride int) err
 	return err
 }
 
-func writeFlatCoords2(sb *strings.Builder, flatCoords []float64, start int, ends []int, stride int) error {
+func (e *Encoder) writeFlatCoords2(
+	sb *strings.Builder, flatCoords []float64, start int, ends []int, stride int,
+) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
@@ -174,7 +180,7 @@ func writeFlatCoords2(sb *strings.Builder, flatCoords []float64, start int, ends
 				return err
 			}
 		}
-		if err := writeFlatCoords1(sb, flatCoords[start:end], stride); err != nil {
+		if err := e.writeFlatCoords1(sb, flatCoords[start:end], stride); err != nil {
 			return err
 		}
 		start = end
@@ -183,7 +189,9 @@ func writeFlatCoords2(sb *strings.Builder, flatCoords []float64, start int, ends
 	return err
 }
 
-func writeFlatCoords3(sb *strings.Builder, flatCoords []float64, endss [][]int, stride int) error {
+func (e *Encoder) writeFlatCoords3(
+	sb *strings.Builder, flatCoords []float64, endss [][]int, stride int,
+) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
@@ -194,7 +202,7 @@ func writeFlatCoords3(sb *strings.Builder, flatCoords []float64, endss [][]int, 
 				return err
 			}
 		}
-		if err := writeFlatCoords2(sb, flatCoords, start, ends, stride); err != nil {
+		if err := e.writeFlatCoords2(sb, flatCoords, start, ends, stride); err != nil {
 			return err
 		}
 		start = ends[len(ends)-1]
