@@ -1,6 +1,7 @@
 package wkt
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -138,6 +139,46 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 		if got, err := Unmarshal(tc.s); err != nil || !reflect.DeepEqual(got, tc.g) {
 			t.Errorf("Unmarshal(%#v) == %v, %v, want %v, nil", tc.s, got, err, tc.g)
 		}
+	}
+}
+
+func TestEncoder(t *testing.T) {
+	for _, tc := range []struct {
+		encoder *Encoder
+		g       geom.T
+		s       string
+	}{
+		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(0)),
+			g:       geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			s:       "POINT (1 1)",
+		},
+		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(1)),
+			g:       geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			s:       "POINT (1 1.1)",
+		},
+		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(2)),
+			g:       geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			s:       "POINT (1 1.07)",
+		},
+		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(3)),
+			g:       geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			s:       "POINT (1.001 1.066)",
+		},
+		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(4)),
+			g:       geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
+			s:       "POINT (1.001 1.066)",
+		},
+	} {
+		t.Run(fmt.Sprintf("%s(encoder=%#v)", tc.s, tc.encoder), func(t *testing.T) {
+			if got, err := tc.encoder.Encode(tc.g); err != nil || got != tc.s {
+				t.Errorf("Marshal(%#v) == %v, %v, want %v, nil", tc.g, got, err, tc.s)
+			}
+		})
 	}
 }
 
