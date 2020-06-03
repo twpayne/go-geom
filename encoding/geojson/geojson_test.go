@@ -52,12 +52,43 @@ func TestGeometryDecode_NilCoordinates(t *testing.T) {
 
 func TestGeometry(t *testing.T) {
 	for _, tc := range []struct {
-		g geom.T
-		s string
+		g    geom.T
+		opts []EncodeGeometryOption
+		s    string
 	}{
 		{
 			g: nil,
 			s: `null`,
+		},
+		{
+			g: nil,
+			opts: []EncodeGeometryOption{
+				EncodeGeometryWithBounds(geom.NewBounds(geom.XY).SetCoords(geom.Coord{0, 1}, geom.Coord{2, 3})),
+				EncodeGeometryWithCRS(&CRS{
+					Type: "name",
+					Properties: map[string]interface{}{
+						"name": "urn:ogc:def:crs:OGC:1.3:CRS84",
+					},
+				}),
+			},
+			s: `null`,
+		},
+		{
+			g: geom.NewPoint(DefaultLayout),
+			opts: []EncodeGeometryOption{
+				EncodeGeometryWithBounds(geom.NewBounds(geom.XY).SetCoords(geom.Coord{0, 1}, geom.Coord{2, 3})),
+				EncodeGeometryWithCRS(&CRS{
+					Type: "name",
+					Properties: map[string]interface{}{
+						"name": "urn:ogc:def:crs:OGC:1.3:CRS84",
+					},
+				}),
+			},
+			s: `{"type":"Point","bbox":[0,1,2,3],"crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"coordinates":[0,0]}`,
+		},
+		{
+			g: geom.NewPoint(DefaultLayout),
+			s: `{"type":"Point","coordinates":[0,0]}`,
 		},
 		{
 			g: geom.NewPoint(DefaultLayout),
@@ -147,8 +178,8 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100,0]},{"type":"LineString","coordinates":[[101,0],[102,1]]}]}`,
 		},
 	} {
-		if got, err := Marshal(tc.g); err != nil || string(got) != tc.s {
-			t.Errorf("Marshal(%#v) == %#v, %v, want %#v, nil", tc.g, string(got), err, tc.s)
+		if got, err := Marshal(tc.g, tc.opts...); err != nil || string(got) != tc.s {
+			t.Errorf("Marshal(%#v, %#v) == %#v, %v, want %#v, nil", tc.g, tc.opts, string(got), err, tc.s)
 		}
 		var g geom.T
 		if err := Unmarshal([]byte(tc.s), &g); err != nil || !reflect.DeepEqual(g, tc.g) {

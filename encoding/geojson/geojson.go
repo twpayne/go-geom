@@ -29,9 +29,18 @@ func (e ErrUnsupportedType) Error() string {
 	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
 }
 
+// CRS is a deprecated field but still populated in some programs (e.g. PostGIS).
+// See https://geojson.org/geojson-spec for original specification of CRS.
+type CRS struct {
+	Type       string                 `json:"type"`
+	Properties map[string]interface{} `json:"properties"`
+}
+
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
 	Type        string           `json:"type"`
+	BBox        []float64        `json:"bbox,omitempty"`
+	CRS         *CRS             `json:"crs,omitempty"`
 	Coordinates *json.RawMessage `json:"coordinates,omitempty"`
 	Geometries  []*Geometry      `json:"geometries,omitempty"`
 }
@@ -203,11 +212,46 @@ func (g *Geometry) Decode() (geom.T, error) {
 	}
 }
 
+// EncodeGeometryOption applies extra metadata to the Geometry GeoJSON encoding.
+type EncodeGeometryOption func(*Geometry) error
+
+// EncodeGeometryWithBounds adds a bbox field to the Geometry GeoJSON encoding.
+func EncodeGeometryWithBounds(b *geom.Bounds) EncodeGeometryOption {
+	return func(g *Geometry) error {
+		var err error
+		g.BBox, err = encodeBBox(b)
+		return err
+	}
+}
+
+// EncodeGeometryWithCRS adds the crs field to the Geometry GeoJSON encoding.
+func EncodeGeometryWithCRS(crs *CRS) EncodeGeometryOption {
+	return func(g *Geometry) error {
+		var err error
+		g.CRS = crs
+		return err
+	}
+}
+
 // Encode encodes g as a GeoJSON geometry.
-func Encode(g geom.T) (*Geometry, error) {
+func Encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 	if g == nil {
 		return nil, nil
 	}
+	ret, err := encode(g)
+	if err != nil {
+		return nil, err
+	}
+	for _, opt := range opts {
+		if err := opt(ret); err != nil {
+			return nil, err
+		}
+	}
+	return ret, nil
+}
+
+// encode encodes the geometry assuming it is not nil.
+func encode(g geom.T) (*Geometry, error) {
 	switch g := g.(type) {
 	case *geom.Point:
 		var coords json.RawMessage
@@ -288,11 +332,11 @@ func Encode(g geom.T) (*Geometry, error) {
 }
 
 // Marshal marshals an arbitrary geometry to a []byte.
-func Marshal(g geom.T) ([]byte, error) {
+func Marshal(g geom.T, opts ...EncodeGeometryOption) ([]byte, error) {
 	if g == nil {
 		return nullGeometry, nil
 	}
-	geojson, err := Encode(g)
+	geojson, err := Encode(g, opts...)
 	if err != nil {
 		return nil, err
 	}
