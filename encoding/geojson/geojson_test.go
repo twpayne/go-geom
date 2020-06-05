@@ -52,9 +52,10 @@ func TestGeometryDecode_NilCoordinates(t *testing.T) {
 
 func TestGeometry(t *testing.T) {
 	for _, tc := range []struct {
-		g    geom.T
-		opts []EncodeGeometryOption
-		s    string
+		g             geom.T
+		opts          []EncodeGeometryOption
+		s             string
+		skipUnmarshal bool
 	}{
 		{
 			g: nil,
@@ -63,7 +64,7 @@ func TestGeometry(t *testing.T) {
 		{
 			g: nil,
 			opts: []EncodeGeometryOption{
-				EncodeGeometryWithBounds(geom.NewBounds(geom.XY).SetCoords(geom.Coord{0, 1}, geom.Coord{2, 3})),
+				EncodeGeometryWithBBox(),
 				EncodeGeometryWithCRS(&CRS{
 					Type: "name",
 					Properties: map[string]interface{}{
@@ -76,7 +77,7 @@ func TestGeometry(t *testing.T) {
 		{
 			g: geom.NewPoint(DefaultLayout),
 			opts: []EncodeGeometryOption{
-				EncodeGeometryWithBounds(geom.NewBounds(geom.XY).SetCoords(geom.Coord{0, 1}, geom.Coord{2, 3})),
+				EncodeGeometryWithBBox(),
 				EncodeGeometryWithCRS(&CRS{
 					Type: "name",
 					Properties: map[string]interface{}{
@@ -84,7 +85,7 @@ func TestGeometry(t *testing.T) {
 					},
 				}),
 			},
-			s: `{"type":"Point","bbox":[0,1,2,3],"crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"coordinates":[0,0]}`,
+			s: `{"type":"Point","bbox":[0,0,0,0],"crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"coordinates":[0,0]}`,
 		},
 		{
 			g: geom.NewPoint(DefaultLayout),
@@ -107,8 +108,25 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"Point","coordinates":[1,2,3,4]}`,
 		},
 		{
+			g:             geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1.451, 2.89, 3.14, 4.23}),
+			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(1)},
+			s:             `{"type":"Point","coordinates":[1.5,2.9,3.1,4.2]}`,
+			skipUnmarshal: true,
+		},
+		{
 			g: geom.NewLineString(DefaultLayout),
 			s: `{"type":"LineString","coordinates":[]}`,
+		},
+		{
+			g:    geom.NewLineString(DefaultLayout),
+			opts: []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(1)},
+			s:    `{"type":"LineString","coordinates":[]}`,
+		},
+		{
+			g:             geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1.1234, 2.5678}, {3.1234, 4.01234}}),
+			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(1)},
+			s:             `{"type":"LineString","coordinates":[[1.1,2.6],[3.1,4.0]]}`,
+			skipUnmarshal: true,
 		},
 		{
 			g: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
@@ -133,6 +151,12 @@ func TestGeometry(t *testing.T) {
 		{
 			g: geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 2, 3}}}),
 			s: `{"type":"Polygon","coordinates":[[[1,2,3],[4,5,6],[7,8,9],[1,2,3]]]}`,
+		},
+		{
+			g:             geom.NewPolygon(geom.XYZ).MustSetCoords([][]geom.Coord{{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9}, {1.1, 2.2, 3.3}}}),
+			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(0)},
+			s:             `{"type":"Polygon","coordinates":[[[1,2,3],[4,6,7],[8,9,10],[1,2,3]]]}`,
+			skipUnmarshal: true,
 		},
 		{
 			g: geom.NewMultiPoint(DefaultLayout),
@@ -177,13 +201,33 @@ func TestGeometry(t *testing.T) {
 			),
 			s: `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100,0]},{"type":"LineString","coordinates":[[101,0],[102,1]]}]}`,
 		},
+		{
+			g: geom.NewGeometryCollection().MustPush(
+				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{100.123, 0.456}),
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{101.569, 0.898}, {102.123, 1.567}}),
+			),
+			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(2)},
+			s:             `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100.12,0.46]},{"type":"LineString","coordinates":[[101.57,0.90],[102.12,1.57]]}]}`,
+			skipUnmarshal: true,
+		},
+		{
+			g: geom.NewGeometryCollection().MustPush(
+				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{100.123, 0.456}),
+				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{101.569, 0.898}, {102.123, 1.567}}),
+			),
+			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(2), EncodeGeometryWithBBox()},
+			s:             `{"type":"GeometryCollection","bbox":[100.12,0.46,102.12,1.57],"geometries":[{"type":"Point","coordinates":[100.12,0.46]},{"type":"LineString","coordinates":[[101.57,0.90],[102.12,1.57]]}]}`,
+			skipUnmarshal: true,
+		},
 	} {
 		if got, err := Marshal(tc.g, tc.opts...); err != nil || string(got) != tc.s {
 			t.Errorf("Marshal(%#v, %#v) == %#v, %v, want %#v, nil", tc.g, tc.opts, string(got), err, tc.s)
 		}
-		var g geom.T
-		if err := Unmarshal([]byte(tc.s), &g); err != nil || !reflect.DeepEqual(g, tc.g) {
-			t.Errorf("Unmarshal(%#v, %#v) == %v, want %#v, nil", tc.s, g, err, tc.g)
+		if !tc.skipUnmarshal {
+			var g geom.T
+			if err := Unmarshal([]byte(tc.s), &g); err != nil || !reflect.DeepEqual(g, tc.g) {
+				t.Errorf("Unmarshal(%#v, %#v) == %v, want %#v, nil", tc.s, g, err, tc.g)
+			}
 		}
 	}
 }
