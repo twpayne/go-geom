@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strconv"
 
 	geom "github.com/twpayne/go-geom"
 )
@@ -39,7 +41,7 @@ type CRS struct {
 // A Geometry is a geometry in GeoJSON format.
 type Geometry struct {
 	Type        string           `json:"type"`
-	BBox        []float64        `json:"bbox,omitempty"`
+	BBox        *json.RawMessage `json:"bbox,omitempty"`
 	CRS         *CRS             `json:"crs,omitempty"`
 	Coordinates *json.RawMessage `json:"coordinates,omitempty"`
 	Geometries  []*Geometry      `json:"geometries,omitempty"`
@@ -213,23 +215,103 @@ func (g *Geometry) Decode() (geom.T, error) {
 }
 
 // EncodeGeometryOption applies extra metadata to the Geometry GeoJSON encoding.
-type EncodeGeometryOption func(*Geometry) error
+type EncodeGeometryOption struct {
+	onGeometryHandler func(*Geometry, geom.T, ...EncodeGeometryOption) error
+	onFloat64Handler  func(interface{}) interface{}
+}
 
-// EncodeGeometryWithBounds adds a bbox field to the Geometry GeoJSON encoding.
-func EncodeGeometryWithBounds(b *geom.Bounds) EncodeGeometryOption {
-	return func(g *Geometry) error {
-		var err error
-		g.BBox, err = encodeBBox(b)
-		return err
+// nestedFloat64WithMaxDecimalDigits is a wrapper around any nested array
+// of float64s that will marshal into JSON with the maximum JSON digits.
+type nestedFloat64WithMaxDecimalDigits struct {
+	obj              interface{}
+	maxDecimalDigits int
+}
+
+// MarshalJSON implements the json.Marshaller interface.
+func (c *nestedFloat64WithMaxDecimalDigits) MarshalJSON() ([]byte, error) {
+	return c.marshalJSON([]byte{}, reflect.ValueOf(c.obj))
+}
+
+// marshalJSON is a helper routine that recurses down slices of float64s,
+// appending float64 to a JSON list structure.
+func (c *nestedFloat64WithMaxDecimalDigits) marshalJSON(
+	buf []byte, val reflect.Value,
+) ([]byte, error) {
+	switch val.Kind() {
+	case reflect.Slice:
+		buf = append(buf, '[')
+		for i := 0; i < val.Len(); i++ {
+			if i > 0 {
+				buf = append(buf, ',')
+			}
+			var err error
+			buf, err = c.marshalJSON(buf, val.Index(i))
+			if err != nil {
+				return nil, err
+			}
+		}
+		buf = append(buf, ']')
+	case reflect.Float64:
+		buf = strconv.AppendFloat(buf, val.Interface().(float64), 'f', c.maxDecimalDigits, 64)
+	default:
+		return nil, fmt.Errorf("unknown type of coord: %T", val)
+	}
+	return buf, nil
+}
+
+// encodeJSONFloat64WithMaxDecimalDigits is an option implementation that converts slices of float64s
+// to round to the maxDecimalDigits if necessary.
+func encodeJSONFloat64WithMaxDecimalDigits(maxDecimalDigits int) func(interface{}) interface{} {
+	return func(obj interface{}) interface{} {
+		return &nestedFloat64WithMaxDecimalDigits{obj: obj, maxDecimalDigits: maxDecimalDigits}
+	}
+}
+
+// EncodeGeometryWithBBox adds a bbox field to the Geometry GeoJSON encoding.
+func EncodeGeometryWithBBox() EncodeGeometryOption {
+	return EncodeGeometryOption{
+		onGeometryHandler: func(g *Geometry, t geom.T, opts ...EncodeGeometryOption) error {
+			bounds := t.Bounds()
+			if t.Empty() {
+				bounds = geom.NewBounds(t.Layout())
+			}
+			bbox, err := encodeBBox(bounds)
+			if err != nil {
+				return err
+			}
+			var coords json.RawMessage
+			var bboxIn interface{} = bbox
+			for _, opt := range opts {
+				if opt.onFloat64Handler != nil {
+					bboxIn = opt.onFloat64Handler(bboxIn)
+				}
+			}
+			coords, err = json.Marshal(bboxIn)
+			if err != nil {
+				return err
+			}
+			g.BBox = &coords
+			return nil
+		},
 	}
 }
 
 // EncodeGeometryWithCRS adds the crs field to the Geometry GeoJSON encoding.
 func EncodeGeometryWithCRS(crs *CRS) EncodeGeometryOption {
-	return func(g *Geometry) error {
-		var err error
-		g.CRS = crs
-		return err
+	return EncodeGeometryOption{
+		onGeometryHandler: func(g *Geometry, t geom.T, opts ...EncodeGeometryOption) error {
+			var err error
+			g.CRS = crs
+			return err
+		},
+	}
+}
+
+// EncodeGeometryWithMaxDecimalDigits encodes the Geometry with maximum decimal digits
+// in the JSON representation.
+func EncodeGeometryWithMaxDecimalDigits(maxDecimalDigits int) EncodeGeometryOption {
+	return EncodeGeometryOption{
+		onFloat64Handler: encodeJSONFloat64WithMaxDecimalDigits(maxDecimalDigits),
 	}
 }
 
@@ -238,24 +320,35 @@ func Encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 	if g == nil {
 		return nil, nil
 	}
-	ret, err := encode(g)
+	ret, err := encode(g, opts...)
 	if err != nil {
 		return nil, err
 	}
 	for _, opt := range opts {
-		if err := opt(ret); err != nil {
-			return nil, err
+		if opt.onGeometryHandler != nil {
+			if err := opt.onGeometryHandler(ret, g, opts...); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return ret, nil
 }
 
 // encode encodes the geometry assuming it is not nil.
-func encode(g geom.T) (*Geometry, error) {
+func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
+	if g == nil {
+		return nil, nil
+	}
 	switch g := g.(type) {
 	case *geom.Point:
 		var coords json.RawMessage
-		coords, err := json.Marshal(g.Coords())
+		var coordsIn interface{} = g.Coords()
+		for _, opt := range opts {
+			if opt.onFloat64Handler != nil {
+				coordsIn = opt.onFloat64Handler(g.Coords())
+			}
+		}
+		coords, err := json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -265,7 +358,13 @@ func encode(g geom.T) (*Geometry, error) {
 		}, nil
 	case *geom.LineString:
 		var coords json.RawMessage
-		coords, err := json.Marshal(g.Coords())
+		var coordsIn interface{} = g.Coords()
+		for _, opt := range opts {
+			if opt.onFloat64Handler != nil {
+				coordsIn = opt.onFloat64Handler(g.Coords())
+			}
+		}
+		coords, err := json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -275,7 +374,13 @@ func encode(g geom.T) (*Geometry, error) {
 		}, nil
 	case *geom.Polygon:
 		var coords json.RawMessage
-		coords, err := json.Marshal(g.Coords())
+		var coordsIn interface{} = g.Coords()
+		for _, opt := range opts {
+			if opt.onFloat64Handler != nil {
+				coordsIn = opt.onFloat64Handler(g.Coords())
+			}
+		}
+		coords, err := json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -285,7 +390,13 @@ func encode(g geom.T) (*Geometry, error) {
 		}, nil
 	case *geom.MultiPoint:
 		var coords json.RawMessage
-		coords, err := json.Marshal(g.Coords())
+		var coordsIn interface{} = g.Coords()
+		for _, opt := range opts {
+			if opt.onFloat64Handler != nil {
+				coordsIn = opt.onFloat64Handler(g.Coords())
+			}
+		}
+		coords, err := json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -295,7 +406,13 @@ func encode(g geom.T) (*Geometry, error) {
 		}, nil
 	case *geom.MultiLineString:
 		var coords json.RawMessage
-		coords, err := json.Marshal(g.Coords())
+		var coordsIn interface{} = g.Coords()
+		for _, opt := range opts {
+			if opt.onFloat64Handler != nil {
+				coordsIn = opt.onFloat64Handler(g.Coords())
+			}
+		}
+		coords, err := json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -305,7 +422,13 @@ func encode(g geom.T) (*Geometry, error) {
 		}, nil
 	case *geom.MultiPolygon:
 		var coords json.RawMessage
-		coords, err := json.Marshal(g.Coords())
+		var coordsIn interface{} = g.Coords()
+		for _, opt := range opts {
+			if opt.onFloat64Handler != nil {
+				coordsIn = opt.onFloat64Handler(g.Coords())
+			}
+		}
+		coords, err := json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -317,7 +440,7 @@ func encode(g geom.T) (*Geometry, error) {
 		geometries := make([]*Geometry, len(g.Geoms()))
 		for i, subGeometry := range g.Geoms() {
 			var err error
-			geometries[i], err = Encode(subGeometry)
+			geometries[i], err = encode(subGeometry, opts...)
 			if err != nil {
 				return nil, err
 			}
