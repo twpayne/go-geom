@@ -108,9 +108,9 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"Point","coordinates":[1,2,3,4]}`,
 		},
 		{
-			g:             geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1.451, 2.89, 3.14, 4.23}),
+			g:             geom.NewPoint(geom.XYZM).MustSetCoords(geom.Coord{1.451, 2.89, 3.14, 4.03}),
 			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(1)},
-			s:             `{"type":"Point","coordinates":[1.5,2.9,3.1,4.2]}`,
+			s:             `{"type":"Point","coordinates":[1.5,2.9,3.1,4]}`,
 			skipUnmarshal: true,
 		},
 		{
@@ -125,7 +125,7 @@ func TestGeometry(t *testing.T) {
 		{
 			g:             geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{1.1234, 2.5678}, {3.1234, 4.01234}}),
 			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(1)},
-			s:             `{"type":"LineString","coordinates":[[1.1,2.6],[3.1,4.0]]}`,
+			s:             `{"type":"LineString","coordinates":[[1.1,2.6],[3.1,4]]}`,
 			skipUnmarshal: true,
 		},
 		{
@@ -207,7 +207,7 @@ func TestGeometry(t *testing.T) {
 				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{101.569, 0.898}, {102.123, 1.567}}),
 			),
 			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(2)},
-			s:             `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100.12,0.46]},{"type":"LineString","coordinates":[[101.57,0.90],[102.12,1.57]]}]}`,
+			s:             `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[100.12,0.46]},{"type":"LineString","coordinates":[[101.57,0.9],[102.12,1.57]]}]}`,
 			skipUnmarshal: true,
 		},
 		{
@@ -216,7 +216,7 @@ func TestGeometry(t *testing.T) {
 				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{101.569, 0.898}, {102.123, 1.567}}),
 			),
 			opts:          []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(2), EncodeGeometryWithBBox()},
-			s:             `{"type":"GeometryCollection","bbox":[100.12,0.46,102.12,1.57],"geometries":[{"type":"Point","coordinates":[100.12,0.46]},{"type":"LineString","coordinates":[[101.57,0.90],[102.12,1.57]]}]}`,
+			s:             `{"type":"GeometryCollection","bbox":[100.12,0.46,102.12,1.57],"geometries":[{"type":"Point","coordinates":[100.12,0.46]},{"type":"LineString","coordinates":[[101.57,0.9],[102.12,1.57]]}]}`,
 			skipUnmarshal: true,
 		},
 	} {
