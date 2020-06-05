@@ -154,6 +154,16 @@ func TestEncoder(t *testing.T) {
 			s:       "POINT (1 1)",
 		},
 		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(0)),
+			g:       geom.NewPointFlat(geom.XY, []float64{10.001, 100.066}),
+			s:       "POINT (10 100)",
+		},
+		{
+			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(1)),
+			g:       geom.NewPointFlat(geom.XY, []float64{10.001, 1.066}),
+			s:       "POINT (10 1.1)",
+		},
+		{
 			encoder: NewEncoder(EncodeOptionWithMaxDecimalDigits(1)),
 			g:       geom.NewPointFlat(geom.XY, []float64{1.001, 1.066}),
 			s:       "POINT (1 1.1)",

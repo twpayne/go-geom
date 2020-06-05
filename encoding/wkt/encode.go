@@ -123,7 +123,7 @@ func (e *Encoder) writeCoord(sb *strings.Builder, coord []float64) error {
 			}
 		}
 		coordStr := strconv.FormatFloat(x, 'f', e.maxDecimalDigits, 64)
-		if e.maxDecimalDigits != -1 {
+		if e.maxDecimalDigits > 0 {
 			coordStr = strings.TrimRight(strings.TrimRight(coordStr, "0"), ".")
 		}
 		if _, err := sb.WriteString(coordStr); err != nil {

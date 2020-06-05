@@ -253,6 +253,9 @@ func (c *nestedFloat64WithMaxDecimalDigits) marshalJSON(
 		buf = append(buf, ']')
 	case reflect.Float64:
 		buf = strconv.AppendFloat(buf, val.Interface().(float64), 'f', c.maxDecimalDigits, 64)
+		if c.maxDecimalDigits > 0 {
+			buf = bytes.TrimRight(bytes.TrimRight(buf, "0"), ".")
+		}
 	default:
 		return nil, fmt.Errorf("unknown type of coord: %T", val)
 	}
