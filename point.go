@@ -1,5 +1,16 @@
 package geom
 
+import "math"
+
+// PointEmptyCoordHex is the hex representation of a NaN that represents
+// an empty coord in a shape.
+const PointEmptyCoordHex = 0x7FF8000000000000
+
+// PointEmptyCoord is the NaN float64 representation of the empty coordinate.
+func PointEmptyCoord() float64 {
+	return math.Float64frombits(PointEmptyCoordHex)
+}
+
 // A Point represents a single point.
 type Point struct {
 	geom0
@@ -22,6 +33,22 @@ func NewPointFlat(l Layout, flatCoords []float64) *Point {
 	g.stride = l.Stride()
 	g.flatCoords = flatCoords
 	return g
+}
+
+// NewPointFlatMaybeEmpty returns a new point, checking whether the point may be empty
+// by checking wther all the points are NaN.
+func NewPointFlatMaybeEmpty(layout Layout, flatCoords []float64) *Point {
+	isEmpty := true
+	for _, coord := range flatCoords {
+		if math.Float64bits(coord) != PointEmptyCoordHex {
+			isEmpty = false
+			break
+		}
+	}
+	if isEmpty {
+		return NewPointEmpty(layout)
+	}
+	return NewPointFlat(layout, flatCoords)
 }
 
 // Area returns g's area, i.e. zero.

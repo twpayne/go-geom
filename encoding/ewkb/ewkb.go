@@ -78,7 +78,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPointFlat(layout, flatCoords).SetSRID(int(srid)), nil
+		return geom.NewPointFlatMaybeEmpty(layout, flatCoords).SetSRID(int(srid)), nil
 	case wkbcommon.LineStringID:
 		flatCoords, err := wkbcommon.ReadFlatCoords1(r, byteOrder, layout.Stride())
 		if err != nil {
@@ -254,6 +254,9 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 
 	switch g := g.(type) {
 	case *geom.Point:
+		if g.Empty() {
+			return wkbcommon.WriteEmptyPointAsNaN(w, byteOrder, g.Stride())
+		}
 		return wkbcommon.WriteFlatCoords0(w, byteOrder, g.FlatCoords())
 	case *geom.LineString:
 		return wkbcommon.WriteFlatCoords1(w, byteOrder, g.FlatCoords(), g.Stride())

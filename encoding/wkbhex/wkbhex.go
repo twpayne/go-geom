@@ -8,6 +8,7 @@ import (
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkb"
+	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
 var (
@@ -18,8 +19,8 @@ var (
 )
 
 // Encode encodes an arbitrary geometry to a string.
-func Encode(g geom.T, byteOrder binary.ByteOrder) (string, error) {
-	wkb, err := wkb.Marshal(g, byteOrder)
+func Encode(g geom.T, byteOrder binary.ByteOrder, opts ...wkbcommon.WKBOption) (string, error) {
+	wkb, err := wkb.Marshal(g, byteOrder, opts...)
 	if err != nil {
 		return "", err
 	}
@@ -27,10 +28,10 @@ func Encode(g geom.T, byteOrder binary.ByteOrder) (string, error) {
 }
 
 // Decode decodes an arbitrary geometry from a string.
-func Decode(s string) (geom.T, error) {
+func Decode(s string, opts ...wkbcommon.WKBOption) (geom.T, error) {
 	data, err := hex.DecodeString(s)
 	if err != nil {
 		return nil, err
 	}
-	return wkb.Unmarshal(data)
+	return wkb.Unmarshal(data, opts...)
 }

@@ -6,14 +6,46 @@ import (
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkb"
+	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
 func Test(t *testing.T) {
 	for _, tc := range []struct {
-		g   geom.T
-		ndr string
-		xdr string
+		g    geom.T
+		opts []wkbcommon.WKBOption
+		ndr  string
+		xdr  string
 	}{
+		{
+			g:    geom.NewPointEmpty(geom.XY),
+			opts: []wkbcommon.WKBOption{wkbcommon.WKBOptionEmptyPointHandling(wkbcommon.EmptyPointHandlingNaN)},
+			xdr:  "00000000017ff80000000000007ff8000000000000",
+			ndr:  "0101000000000000000000f87f000000000000f87f",
+		},
+		{
+			g:    geom.NewPointEmpty(geom.XYM),
+			opts: []wkbcommon.WKBOption{wkbcommon.WKBOptionEmptyPointHandling(wkbcommon.EmptyPointHandlingNaN)},
+			xdr:  "00000007d17ff80000000000007ff80000000000007ff8000000000000",
+			ndr:  "01d1070000000000000000f87f000000000000f87f000000000000f87f",
+		},
+		{
+			g:    geom.NewPointEmpty(geom.XYZ),
+			opts: []wkbcommon.WKBOption{wkbcommon.WKBOptionEmptyPointHandling(wkbcommon.EmptyPointHandlingNaN)},
+			xdr:  "00000003e97ff80000000000007ff80000000000007ff8000000000000",
+			ndr:  "01e9030000000000000000f87f000000000000f87f000000000000f87f",
+		},
+		{
+			g:    geom.NewPointEmpty(geom.XYZM),
+			opts: []wkbcommon.WKBOption{wkbcommon.WKBOptionEmptyPointHandling(wkbcommon.EmptyPointHandlingNaN)},
+			xdr:  "0000000bb97ff80000000000007ff80000000000007ff80000000000007ff8000000000000",
+			ndr:  "01b90b0000000000000000f87f000000000000f87f000000000000f87f000000000000f87f",
+		},
+		{
+			g:    geom.NewGeometryCollection().MustPush(geom.NewPointEmpty(geom.XY)),
+			opts: []wkbcommon.WKBOption{wkbcommon.WKBOptionEmptyPointHandling(wkbcommon.EmptyPointHandlingNaN)},
+			xdr:  "00000000070000000100000000017ff80000000000007ff8000000000000",
+			ndr:  "0107000000010000000101000000000000000000f87f000000000000f87f",
+		},
 		{
 			g:   geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 			ndr: "0101000000000000000000f03f0000000000000040",
@@ -120,18 +152,18 @@ func Test(t *testing.T) {
 		},
 	} {
 		if tc.ndr != "" {
-			if got, err := Encode(tc.g, wkb.NDR); err != nil || got != tc.ndr {
+			if got, err := Encode(tc.g, wkb.NDR, tc.opts...); err != nil || got != tc.ndr {
 				t.Errorf("Encode(%#v, %#v) == %#v, %#v, want %#v, nil", tc.g, wkb.NDR, got, err, tc.ndr)
 			}
-			if got, err := Decode(tc.ndr); err != nil || !reflect.DeepEqual(got, tc.g) {
+			if got, err := Decode(tc.ndr, tc.opts...); err != nil || !reflect.DeepEqual(got, tc.g) {
 				t.Errorf("Decode(%#v) == %#v, %v, want %#v, nil", tc.ndr, got, err, tc.g)
 			}
 		}
 		if tc.xdr != "" {
-			if got, err := Encode(tc.g, wkb.XDR); err != nil || got != tc.xdr {
+			if got, err := Encode(tc.g, wkb.XDR, tc.opts...); err != nil || got != tc.xdr {
 				t.Errorf("Encode(%#v, %#v) == %#v, %#v, want %#v, nil", tc.g, wkb.XDR, got, err, tc.xdr)
 			}
-			if got, err := Decode(tc.xdr); err != nil || !reflect.DeepEqual(got, tc.g) {
+			if got, err := Decode(tc.xdr, tc.opts...); err != nil || !reflect.DeepEqual(got, tc.g) {
 				t.Errorf("Decode(%#v) == %#v, %v, want %#v, nil", tc.xdr, got, err, tc.g)
 			}
 		}
