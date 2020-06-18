@@ -170,6 +170,36 @@ func Test(t *testing.T) {
 		ndr []byte
 	}{
 		{
+			g:   geom.NewPointEmpty(geom.XY),
+			xdr: mustDecodeString("00000000017ff80000000000007ff8000000000000"),
+			ndr: mustDecodeString("0101000000000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XYM),
+			xdr: mustDecodeString("00400000017ff80000000000007ff80000000000007ff8000000000000"),
+			ndr: mustDecodeString("0101000040000000000000f87f000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XYZ),
+			xdr: mustDecodeString("00800000017ff80000000000007ff80000000000007ff8000000000000"),
+			ndr: mustDecodeString("0101000080000000000000f87f000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XYZM),
+			xdr: mustDecodeString("00c00000017ff80000000000007ff80000000000007ff80000000000007ff8000000000000"),
+			ndr: mustDecodeString("01010000c0000000000000f87f000000000000f87f000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustPush(geom.NewPointEmpty(geom.XY)),
+			xdr: mustDecodeString("00000000070000000100000000017ff80000000000007ff8000000000000"),
+			ndr: mustDecodeString("0107000000010000000101000000000000000000f87f000000000000f87f"),
+		},
+		{
+			g:   geom.NewPointEmpty(geom.XY).SetSRID(4326),
+			xdr: mustDecodeString("0020000001000010e67ff80000000000007ff8000000000000"),
+			ndr: mustDecodeString("0101000020e6100000000000000000f87f000000000000f87f"),
+		},
+		{
 			g:   geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{1, 2}),
 			xdr: mustDecodeString("00000000013ff00000000000004000000000000000"),
 			ndr: mustDecodeString("0101000000000000000000f03f0000000000000040"),
