@@ -291,6 +291,12 @@ func Test(t *testing.T) {
 			ndr: geomtest.MustHexDecode("01bc0b00000200000001b90b0000000000000000f03f00000000000000400000000000000840000000000000104001b90b0000000000000000144000000000000018400000000000001c400000000000002040"),
 		},
 		{
+			g:    geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{nil, {1, 2}, {3, 4}}),
+			opts: []wkbcommon.WKBOption{wkbcommon.WKBOptionEmptyPointHandling(wkbcommon.EmptyPointHandlingNaN)},
+			xdr:  geomtest.MustHexDecode("00000000040000000300000000017ff80000000000007ff800000000000000000000013ff00000000000004000000000000000000000000140080000000000004010000000000000"),
+			ndr:  geomtest.MustHexDecode("0104000000030000000101000000000000000000f87f000000000000f87f0101000000000000000000f03f0000000000000040010100000000000000000008400000000000001040"),
+		},
+		{
 			g:   geom.NewGeometryCollection(),
 			xdr: geomtest.MustHexDecode("000000000700000000"),
 			ndr: geomtest.MustHexDecode("010700000000000000"),
@@ -308,9 +314,17 @@ func Test(t *testing.T) {
 		test(t, tc.g, tc.xdr, tc.ndr, tc.opts...)
 	}
 
-	t.Run("errors when encoding WKB by default", func(t *testing.T) {
+	t.Run("errors when encoding empty point WKBs by default", func(t *testing.T) {
 		_, err := Marshal(geom.NewPointEmpty(geom.XY), binary.LittleEndian)
-		matchStr := "cannot encode empty WKB"
+		matchStr := "cannot encode empty Point in WKB"
+		if err == nil || err.Error() != matchStr {
+			t.Errorf("expected error matching %s, got %#v", matchStr, err)
+		}
+	})
+
+	t.Run("errors when encoding empty MultiPoint WKBs by default", func(t *testing.T) {
+		_, err := Marshal(geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{nil, {1, 2}}), binary.LittleEndian)
+		matchStr := "cannot encode empty Point in WKB"
 		if err == nil || err.Error() != matchStr {
 			t.Errorf("expected error matching %s, got %#v", matchStr, err)
 		}

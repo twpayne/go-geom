@@ -167,6 +167,11 @@ func TestGeometry(t *testing.T) {
 			s: `{"type":"MultiPoint","coordinates":[[1,2],[3,4]]}`,
 		},
 		{
+			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, nil, {3, 4}}),
+			// In PostGIS, the empty point is not handled in GeoJSON (it emits invalid JSON).
+			s: `{"type":"MultiPoint","coordinates":[[1,2],null,[3,4]]}`,
+		},
+		{
 			g: geom.NewMultiPoint(geom.XYZ).MustSetCoords([]geom.Coord{{1, 2, 3}, {4, 5, 6}}),
 			s: `{"type":"MultiPoint","coordinates":[[1,2,3],[4,5,6]]}`,
 		},

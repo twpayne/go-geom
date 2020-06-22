@@ -168,9 +168,9 @@ func deriveDeepCopy_3(dst, src *MultiLineString) {
 // deriveDeepCopy_4 recursively copies the contents of src into dst.
 func deriveDeepCopy_4(dst, src *MultiPoint) {
 	func() {
-		field := new(geom1)
-		deriveDeepCopy_8(field, &src.geom1)
-		dst.geom1 = *field
+		field := new(geom2)
+		deriveDeepCopy_9(field, &src.geom2)
+		dst.geom2 = *field
 	}()
 }
 
