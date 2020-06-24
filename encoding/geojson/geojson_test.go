@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/d4l3k/messagediff"
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 )
@@ -17,7 +18,7 @@ func TestGeometryDecode_NilCoordinates(t *testing.T) {
 	}{
 		{
 			geometry: Geometry{Type: "Point"},
-			want:     geom.NewPoint(geom.NoLayout),
+			want:     geom.NewPointEmpty(geom.NoLayout),
 		},
 		{
 			geometry: Geometry{Type: "LineString"},
@@ -60,6 +61,34 @@ func TestGeometry(t *testing.T) {
 		{
 			g: nil,
 			s: `null`,
+		},
+		{
+			g: geom.NewPointEmpty(geom.XY),
+			s: `{"type":"Point","coordinates":[]}`,
+		},
+		{
+			g: geom.NewLineString(geom.XY),
+			s: `{"type":"LineString","coordinates":[]}`,
+		},
+		{
+			g: geom.NewPolygon(geom.XY),
+			s: `{"type":"Polygon","coordinates":[]}`,
+		},
+		{
+			g: geom.NewMultiPoint(geom.XY),
+			s: `{"type":"MultiPoint","coordinates":[]}`,
+		},
+		{
+			g: geom.NewMultiLineString(geom.XY),
+			s: `{"type":"MultiLineString","coordinates":[]}`,
+		},
+		{
+			g: geom.NewMultiPolygon(geom.XY),
+			s: `{"type":"MultiPolygon","coordinates":[]}`,
+		},
+		{
+			g: geom.NewGeometryCollection(),
+			s: `{"type":"GeometryCollection","geometries":[]}`,
 		},
 		{
 			g: nil,
@@ -225,15 +254,17 @@ func TestGeometry(t *testing.T) {
 			skipUnmarshal: true,
 		},
 	} {
-		if got, err := Marshal(tc.g, tc.opts...); err != nil || string(got) != tc.s {
-			t.Errorf("Marshal(%#v, %#v) == %#v, %v, want %#v, nil", tc.g, tc.opts, string(got), err, tc.s)
-		}
-		if !tc.skipUnmarshal {
-			var g geom.T
-			if err := Unmarshal([]byte(tc.s), &g); err != nil || !reflect.DeepEqual(g, tc.g) {
-				t.Errorf("Unmarshal(%#v, %#v) == %v, want %#v, nil", tc.s, g, err, tc.g)
+		t.Run(tc.s, func(t *testing.T) {
+			got, err := Marshal(tc.g, tc.opts...)
+			require.NoError(t, err)
+			require.Equal(t, tc.s, string(got))
+
+			if !tc.skipUnmarshal {
+				var g geom.T
+				require.NoError(t, Unmarshal([]byte(tc.s), &g))
+				require.Equal(t, tc.g, g)
 			}
-		}
+		})
 	}
 }
 

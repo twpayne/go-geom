@@ -23,7 +23,7 @@ func NewPoint(l Layout) *Point {
 
 // NewPointEmpty allocates a new Point with no coordinates.
 func NewPointEmpty(l Layout) *Point {
-	return NewPointFlat(l, []float64{})
+	return NewPointFlat(l, nil)
 }
 
 // NewPointFlat allocates a new Point with layout l and flat coordinates flatCoords.
