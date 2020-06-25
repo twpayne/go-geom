@@ -1,8 +1,9 @@
 package geom
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -167,9 +168,7 @@ func TestArea(t *testing.T) {
 			want: 57,
 		},
 	} {
-		if got := tc.g.Area(); got != tc.want {
-			t.Errorf("%#v.Area() == %f, want %f", tc.g, got, tc.want)
-		}
+		assert.Equal(t, tc.want, tc.g.Area())
 	}
 }
 
@@ -182,9 +181,8 @@ func TestSet(t *testing.T) {
 		{Coord{1.0, 2.0}, Coord{2.0, 3.0, 4.0}, Coord{2.0, 3.0}},
 		{Coord{1.0, 2.0, 3.0}, Coord{2.0, 3.0}, Coord{2.0, 3.0, 3.0}},
 	} {
-		if tc.c.Set(tc.other); !reflect.DeepEqual(tc.c, tc.want) {
-			t.Errorf("%v.Set(%v); got %v, want %v", tc.c, tc.other, tc.c, tc.want)
-		}
+		tc.c.Set(tc.other)
+		assert.Equal(t, tc.want, tc.c)
 	}
 }
 
@@ -200,9 +198,7 @@ func TestLayoutString(t *testing.T) {
 		{XYZM, "XYZM"},
 		{Layout(5), "Layout(5)"},
 	} {
-		if got := tc.l.String(); got != tc.want {
-			t.Errorf("%#v.String() == %v, want %v", tc.l, got, tc.want)
-		}
+		assert.Equal(t, tc.want, tc.l.String())
 	}
 }
 
@@ -318,9 +314,7 @@ func TestVerify(t *testing.T) {
 			errIncorrectEnd,
 		},
 	} {
-		if got := tc.v.verify(); got != tc.want {
-			t.Errorf("%#v.verify() == %v, want %v", tc.v, got, tc.want)
-		}
+		assert.Equal(t, tc.want, tc.v.verify())
 	}
 }
 
@@ -421,9 +415,7 @@ func TestEqualCoords(t *testing.T) {
 			equal:  false,
 		},
 	} {
-		if tc.c1.Equal(tc.layout, tc.c2) != tc.equal {
-			t.Errorf("%v.Equals(%s, %v) is not '%v'", tc.c1, tc.layout, tc.c2, tc.equal)
-		}
+		assert.Equal(t, tc.equal, tc.c1.Equal(tc.layout, tc.c2))
 	}
 }
 
@@ -510,9 +502,7 @@ func TestLength(t *testing.T) {
 			want: 14,
 		},
 	} {
-		if got := tc.g.Length(); got != tc.want {
-			t.Errorf("%#v.Length() == %f, want %f", tc.g, got, tc.want)
-		}
+		assert.Equal(t, tc.want, tc.g.Length())
 	}
 }
 
@@ -548,8 +538,6 @@ func TestSetCoord(t *testing.T) {
 		},
 	} {
 		tc.dest.Set(tc.src)
-		if !tc.dest.Equal(tc.layout, tc.expected) {
-			t.Errorf("Setting %v with %v did not result in %v", tc.dest, tc.src, tc.dest)
-		}
+		assert.True(t, tc.dest.Equal(tc.layout, tc.expected))
 	}
 }

@@ -2,8 +2,10 @@ package geom
 
 import (
 	"fmt"
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // Polygon implements interface T.
@@ -17,56 +19,38 @@ func ExampleNewPolygon() {
 	// Output: unitSquare.Area() == 1.000000
 }
 
-type testPolygon struct {
+type expectedPolygon struct {
 	layout     Layout
 	stride     int
-	coords     [][]Coord
-	ends       []int
 	flatCoords []float64
+	ends       []int
+	coords     [][]Coord
 	bounds     *Bounds
 }
 
-func testPolygonEquals(t *testing.T, p *Polygon, tp *testPolygon) {
-	if err := p.verify(); err != nil {
-		t.Error(err)
-	}
-	if p.Layout() != tp.layout {
-		t.Errorf("p.Layout() == %v, want %v", p.Layout(), tp.layout)
-	}
-	if p.Stride() != tp.stride {
-		t.Errorf("p.Stride() == %v, want %v", p.Stride(), tp.stride)
-	}
-	if !reflect.DeepEqual(p.Coords(), tp.coords) {
-		t.Errorf("p.Coords() == %v, want %v", p.Coords(), tp.coords)
-	}
-	if !reflect.DeepEqual(p.FlatCoords(), tp.flatCoords) {
-		t.Errorf("p.FlatCoords() == %v, want %v", p.FlatCoords(), tp.flatCoords)
-	}
-	if !reflect.DeepEqual(p.Ends(), tp.ends) {
-		t.Errorf("p.Ends() == %v, want %v", p.Ends(), tp.ends)
-	}
-	if !reflect.DeepEqual(p.Bounds(), tp.bounds) {
-		t.Errorf("p.Bounds() == %v, want %v", p.Bounds(), tp.bounds)
-	}
-	if got := p.NumLinearRings(); got != len(tp.coords) {
-		t.Errorf("p.NumLinearRings() == %v, want %v", got, len(tp.coords))
-	}
-	for i, c := range tp.coords {
-		want := NewLinearRing(p.Layout()).MustSetCoords(c)
-		if got := p.LinearRing(i); !reflect.DeepEqual(got, want) {
-			t.Errorf("p.LinearRing(%v) == %v, want %v", i, got, want)
-		}
+func (g *Polygon) assertEquals(t *testing.T, e *expectedPolygon) {
+	assert.NoError(t, g.verify())
+	assert.Equal(t, e.layout, g.Layout())
+	assert.Equal(t, e.stride, g.Stride())
+	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Equal(t, e.ends, g.Ends())
+	assert.Nil(t, g.Endss())
+	assert.Equal(t, e.coords, g.Coords())
+	assert.Equal(t, e.bounds, g.Bounds())
+	assert.Equal(t, len(e.coords), g.NumLinearRings())
+	for i, c := range e.coords {
+		assert.Equal(t, NewLinearRing(g.Layout()).MustSetCoords(c), g.LinearRing(i))
 	}
 }
 
 func TestPolygon(t *testing.T) {
-	for _, c := range []struct {
-		p  *Polygon
-		tp *testPolygon
+	for i, tc := range []struct {
+		p        *Polygon
+		expected *expectedPolygon
 	}{
 		{
 			p: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
-			tp: &testPolygon{
+			expected: &expectedPolygon{
 				layout:     XY,
 				stride:     2,
 				coords:     [][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
@@ -76,57 +60,57 @@ func TestPolygon(t *testing.T) {
 			},
 		},
 	} {
-		testPolygonEquals(t, c.p, c.tp)
-	}
-}
-
-func TestPolygonClone(t *testing.T) {
-	p1 := NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}})
-	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
-		t.Error("Clone() should not alias flatCoords")
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			tc.p.assertEquals(t, tc.expected)
+			assert.False(t, aliases(tc.p.FlatCoords(), tc.p.Clone().FlatCoords()))
+		})
 	}
 }
 
 func TestPolygonStrideMismatch(t *testing.T) {
-	for _, c := range []struct {
-		layout Layout
-		coords [][]Coord
-		err    error
+	for i, tc := range []struct {
+		l        Layout
+		cs       [][]Coord
+		expected error
 	}{
 		{
-			layout: XY,
-			coords: nil,
-			err:    nil,
+			l:        XY,
+			cs:       nil,
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: [][]Coord{},
-			err:    nil,
+			l:        XY,
+			cs:       [][]Coord{},
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: [][]Coord{{{1, 2}, {}}},
-			err:    ErrStrideMismatch{Got: 0, Want: 2},
+			l:        XY,
+			cs:       [][]Coord{{{1, 2}, {}}},
+			expected: ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
-			layout: XY,
-			coords: [][]Coord{{{1, 2}, {1}}},
-			err:    ErrStrideMismatch{Got: 1, Want: 2},
+			l:        XY,
+			cs:       [][]Coord{{{1, 2}, {1}}},
+			expected: ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
-			layout: XY,
-			coords: [][]Coord{{{1, 2}, {3, 4}}},
-			err:    nil,
+			l:        XY,
+			cs:       [][]Coord{{{1, 2}, {3, 4}}},
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: [][]Coord{{{1, 2}, {3, 4, 5}}},
-			err:    ErrStrideMismatch{Got: 3, Want: 2},
+			l:        XY,
+			cs:       [][]Coord{{{1, 2}, {3, 4, 5}}},
+			expected: ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {
-		p := NewPolygon(c.layout)
-		if _, err := p.SetCoords(c.coords); err != c.err {
-			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			_, err := NewPolygon(tc.l).SetCoords(tc.cs)
+			assert.Equal(t, tc.expected, err)
+		})
 	}
+}
+
+func TestPolygonSetSRID(t *testing.T) {
+	assert.Equal(t, 4326, NewPolygon(NoLayout).SetSRID(4326).SRID())
 }

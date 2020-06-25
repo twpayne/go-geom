@@ -1,198 +1,152 @@
 package geom
 
 import (
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // GeometryCollection implements interface T.
 var _ T = &GeometryCollection{}
 
-func TestGeometryCollectionBounds(t *testing.T) {
-	for _, tc := range []struct {
-		geoms []T
-		want  *Bounds
+type expectedGeometryCollection struct {
+	layout Layout
+	stride int
+	bounds *Bounds
+	empty  bool
+}
+
+func (g *GeometryCollection) assertEqual(t *testing.T, e *expectedGeometryCollection, geoms []T) {
+	assert.Equal(t, e.layout, g.Layout())
+	assert.Equal(t, e.stride, g.Stride())
+	assert.Equal(t, e.bounds, g.Bounds())
+	assert.Panics(t, func() { g.FlatCoords() })
+	assert.Panics(t, func() { g.Ends() })
+	assert.Panics(t, func() { g.Endss() })
+	assert.Equal(t, e.empty, g.Empty())
+	assert.Equal(t, len(geoms), g.NumGeoms())
+	assert.Equal(t, geoms, g.Geoms())
+	for i, geom := range geoms {
+		assert.Equal(t, geom, g.Geom(i))
+	}
+}
+
+func TestGeometryCollection(t *testing.T) {
+	for i, tc := range []struct {
+		geoms    []T
+		expected *expectedGeometryCollection
 	}{
 		{
-			want: NewBounds(NoLayout),
+			expected: &expectedGeometryCollection{
+				layout: NoLayout,
+				stride: 0,
+				bounds: NewBounds(NoLayout),
+				empty:  true,
+			},
 		},
 		{
 			geoms: []T{
 				NewPoint(XY),
 			},
-			want: NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
+			expected: &expectedGeometryCollection{
+				layout: XY,
+				stride: 2,
+				bounds: NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
+				empty:  false,
+			},
 		},
 		{
 			geoms: []T{
 				NewPoint(XY),
+				NewLineString(XY),
 			},
-			want: NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
+			expected: &expectedGeometryCollection{
+				layout: XY,
+				stride: 2,
+				bounds: NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
+				empty:  false,
+			},
+		},
+		{
+			geoms: []T{
+				NewLineString(XY),
+				NewPolygon(XY),
+			},
+			expected: &expectedGeometryCollection{
+				layout: XY,
+				stride: 2,
+				bounds: NewBounds(XY),
+				empty:  true,
+			},
 		},
 		{
 			geoms: []T{
 				NewPoint(XY).MustSetCoords(Coord{1, 2}),
 				NewPoint(XY).MustSetCoords(Coord{3, 4}),
 			},
-			want: NewBounds(XY).SetCoords(Coord{1, 2}, Coord{3, 4}),
+			expected: &expectedGeometryCollection{
+				layout: XY,
+				stride: 2,
+				bounds: NewBounds(XY).SetCoords(Coord{1, 2}, Coord{3, 4}),
+				empty:  false,
+			},
 		},
 		{
 			geoms: []T{
 				NewPoint(XY).MustSetCoords(Coord{1, 2}),
 				NewPoint(XYZ).MustSetCoords(Coord{3, 4, 5}),
 			},
-			want: NewBounds(XYZ).SetCoords(Coord{1, 2, 5}, Coord{3, 4, 5}),
+			expected: &expectedGeometryCollection{
+				layout: XYZ,
+				stride: 3,
+				bounds: NewBounds(XYZ).SetCoords(Coord{1, 2, 5}, Coord{3, 4, 5}),
+				empty:  false,
+			},
 		},
 		{
 			geoms: []T{
 				NewPoint(XY).MustSetCoords(Coord{1, 2}),
 				NewPoint(XYM).MustSetCoords(Coord{3, 4, 5}),
 			},
-			want: NewBounds(XYM).SetCoords(Coord{1, 2, 5}, Coord{3, 4, 5}),
+			expected: &expectedGeometryCollection{
+				layout: XYM,
+				stride: 3,
+				bounds: NewBounds(XYM).SetCoords(Coord{1, 2, 5}, Coord{3, 4, 5}),
+				empty:  false,
+			},
 		},
 		{
 			geoms: []T{
 				NewPoint(XYZ).MustSetCoords(Coord{1, 2, 3}),
 				NewPoint(XYM).MustSetCoords(Coord{4, 5, 6}),
 			},
-			want: NewBounds(XYZM).SetCoords(Coord{1, 2, 3, 6}, Coord{4, 5, 3, 6}),
+			expected: &expectedGeometryCollection{
+				layout: XYZM,
+				stride: 4,
+				bounds: NewBounds(XYZM).SetCoords(Coord{1, 2, 3, 6}, Coord{4, 5, 3, 6}),
+				empty:  false,
+			},
+		},
+		{
+			geoms: []T{
+				NewPoint(XYM).MustSetCoords(Coord{1, 2, 3}),
+				NewPoint(XYZ).MustSetCoords(Coord{4, 5, 6}),
+			},
+			expected: &expectedGeometryCollection{
+				layout: XYZM,
+				stride: 4,
+				bounds: NewBounds(XYZM).SetCoords(Coord{1, 2, 6, 3}, Coord{4, 5, 6, 3}),
+				empty:  false,
+			},
 		},
 	} {
-		if got := NewGeometryCollection().MustPush(tc.geoms...).Bounds(); !reflect.DeepEqual(got, tc.want) {
-			t.Errorf("NewGeometryCollection().MustPush(%+v).Bounds() == %+v, want %+v", tc.geoms, got, tc.want)
-		}
-	}
-}
-
-func TestGeometryCollectionEmpty(t *testing.T) {
-	for _, tc := range []struct {
-		desc     string
-		geoms    []T
-		expected bool
-	}{
-		{
-			desc:     "empty GEOMETRYCOLLECTION",
-			geoms:    []T{},
-			expected: true,
-		},
-		{
-			desc:     "GEOMETRYCOLLECTION with all EMPTY geometries",
-			geoms:    []T{NewLineString(XY), NewPolygon(XY)},
-			expected: true,
-		},
-		{
-			desc:     "GEOMETRYCOLLECTION with one EMPTY object",
-			geoms:    []T{NewLineString(XY), NewPointFlat(XY, []float64{1, 2})},
-			expected: false,
-		},
-		{
-			desc:     "GEOMETRYCOLLECTION with no EMPTY object",
-			geoms:    []T{NewPointFlat(XY, []float64{1, 2})},
-			expected: false,
-		},
-	} {
-		t.Run(tc.desc, func(t *testing.T) {
-			gc := NewGeometryCollection()
-			for _, g := range tc.geoms {
-				gc.MustPush(g)
-			}
-			if got := gc.Empty(); got != tc.expected {
-				t.Errorf("%s: got %v, want %v", tc.desc, got, tc.expected)
-			}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			NewGeometryCollection().MustPush(tc.geoms...).assertEqual(t, tc.expected, tc.geoms)
 		})
 	}
 }
 
-func TestGeometryCollectionLayout(t *testing.T) {
-	for _, tc := range []struct {
-		geoms []T
-		want  Layout
-	}{
-		{
-			want: NoLayout,
-		},
-		{
-			geoms: []T{
-				NewPoint(XY),
-			},
-			want: XY,
-		},
-		{
-			geoms: []T{
-				NewPoint(XYZ),
-			},
-			want: XYZ,
-		},
-		{
-			geoms: []T{
-				NewPoint(XYM),
-			},
-			want: XYM,
-		},
-		{
-			geoms: []T{
-				NewPoint(XYZM),
-			},
-			want: XYZM,
-		},
-		{
-			geoms: []T{
-				NewPoint(XY),
-				NewPoint(XYZ),
-			},
-			want: XYZ,
-		},
-		{
-			geoms: []T{
-				NewPoint(XY),
-				NewPoint(XYM),
-			},
-			want: XYM,
-		},
-		{
-			geoms: []T{
-				NewPoint(XY),
-				NewPoint(XYZ),
-				NewPoint(XYM),
-			},
-			want: XYZM,
-		},
-	} {
-		if got := NewGeometryCollection().MustPush(tc.geoms...).Layout(); got != tc.want {
-			t.Errorf("NewGeometryCollection().MustPush(%+v).Layout() == %s, want %s", tc.geoms, got, tc.want)
-		}
-	}
-}
-
-func TestGeometryCollectionPush(t *testing.T) {
-	for _, tc := range []struct {
-		srid    int
-		geoms   []T
-		g       T
-		wantErr error
-	}{
-		{
-			g: NewPoint(XY),
-		},
-		{
-			g: NewPoint(XY).SetSRID(4326),
-		},
-		{
-			srid: 4326,
-			g:    NewPoint(XY).SetSRID(4326),
-		},
-		{
-			geoms: []T{
-				NewPoint(XY).SetSRID(4326),
-			},
-			g: NewPoint(XY).SetSRID(3857),
-		},
-		{
-			srid: 4326,
-			g:    NewPoint(XY).SetSRID(3857),
-		},
-	} {
-		if gotErr := NewGeometryCollection().SetSRID(tc.srid).MustPush(tc.geoms...).Push(tc.g); gotErr != tc.wantErr {
-			t.Errorf("NewGeometryCollection().SetSRID(%d).MustPush(%+v).Push(%+v) == %v, want %v", tc.srid, tc.geoms, tc.g, gotErr, tc.wantErr)
-		}
-	}
+func TestGeometryCollectionSetSRID(t *testing.T) {
+	assert.Equal(t, 4326, NewGeometryCollection().SetSRID(4326).SRID())
 }

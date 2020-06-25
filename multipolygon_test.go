@@ -1,164 +1,146 @@
 package geom
 
 import (
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // MultiPolygon implements interface T.
 var _ T = &MultiPolygon{}
 
-type testMultiPolygon struct {
+type expectedMultiPolygon struct {
 	layout     Layout
 	stride     int
-	coords     [][][]Coord
 	flatCoords []float64
 	endss      [][]int
+	coords     [][][]Coord
 	bounds     *Bounds
 	empty      bool
 }
 
-func testMultiPolygonEquals(t *testing.T, mp *MultiPolygon, tmp *testMultiPolygon) {
-	if err := mp.verify(); err != nil {
-		t.Error(err)
-	}
-	if mp.Layout() != tmp.layout {
-		t.Errorf("mp.Layout() == %v, want %v", mp.Layout(), tmp.layout)
-	}
-	if mp.Stride() != tmp.stride {
-		t.Errorf("mp.Stride() == %v, want %v", mp.Stride(), tmp.stride)
-	}
-	if !reflect.DeepEqual(mp.Coords(), tmp.coords) {
-		t.Errorf("mp.Coords() == %v, want %v", mp.Coords(), tmp.coords)
-	}
-	if !reflect.DeepEqual(mp.FlatCoords(), tmp.flatCoords) {
-		t.Errorf("mp.FlatCoords() == %v, want %v", mp.FlatCoords(), tmp.flatCoords)
-	}
-	if !reflect.DeepEqual(mp.Endss(), tmp.endss) {
-		t.Errorf("mp.Endss() == %v, want %v", mp.Endss(), tmp.endss)
-	}
-	if !reflect.DeepEqual(mp.Bounds(), tmp.bounds) {
-		t.Errorf("mp.Bounds() == %v, want %v", mp.Bounds(), tmp.bounds)
-	}
-	if mp.Empty() != tmp.empty {
-		t.Errorf("mp.Empty() == %t, want %t", mp.Empty(), tmp.empty)
-	}
-	if got := mp.NumPolygons(); got != len(tmp.coords) {
-		t.Errorf("mp.NumPolygons() == %v, want %v", got, len(tmp.coords))
-	}
-	for i, c := range tmp.coords {
-		want := NewPolygon(mp.Layout()).MustSetCoords(c)
-		if got := mp.Polygon(i); !reflect.DeepEqual(got, want) {
-			t.Errorf("mp.Polygon(%v) == %v, want %v", i, got, want)
-		}
+func (g *MultiPolygon) assertEquals(t *testing.T, e *expectedMultiPolygon) {
+	assert.NoError(t, g.verify())
+	assert.Equal(t, e.layout, g.Layout())
+	assert.Equal(t, e.stride, g.Stride())
+	assert.Equal(t, e.coords, g.Coords())
+	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Nil(t, g.Ends())
+	assert.Equal(t, e.endss, g.Endss())
+	assert.Equal(t, e.bounds, g.Bounds())
+	assert.Equal(t, e.empty, g.Empty())
+	assert.Equal(t, len(e.coords), g.NumPolygons())
+	for i, c := range e.coords {
+		assert.Equal(t, NewPolygon(g.Layout()).MustSetCoords(c), g.Polygon(i))
 	}
 }
 
 func TestMultiPolygon(t *testing.T) {
-	for _, c := range []struct {
-		mp  *MultiPolygon
-		tmp *testMultiPolygon
+	for i, tc := range []struct {
+		mp       *MultiPolygon
+		expected *expectedMultiPolygon
 	}{
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}}),
-			tmp: &testMultiPolygon{
+			expected: &expectedMultiPolygon{
 				layout:     XY,
 				stride:     2,
-				coords:     [][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{{6, 12}},
+				coords:     [][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
 				empty:      false,
 			},
 		},
 		{
 			mp: NewMultiPolygon(XY),
-			tmp: &testMultiPolygon{
+			expected: &expectedMultiPolygon{
 				layout:     XY,
 				stride:     2,
-				coords:     [][][]Coord{},
 				flatCoords: nil,
 				endss:      nil,
+				coords:     [][][]Coord{},
 				bounds:     NewBounds(XY),
 				empty:      true,
 			},
 		},
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{}, {}}),
-			tmp: &testMultiPolygon{
+			expected: &expectedMultiPolygon{
 				layout:     XY,
 				stride:     2,
-				coords:     [][][]Coord{{}, {}},
 				flatCoords: nil,
 				endss:      [][]int{nil, nil},
+				coords:     [][][]Coord{{}, {}},
 				bounds:     NewBounds(XY),
 				empty:      true,
 			},
 		},
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}}),
-			tmp: &testMultiPolygon{
+			expected: &expectedMultiPolygon{
 				layout:     XY,
 				stride:     2,
-				coords:     [][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{nil, nil, {6, 12}, nil},
+				coords:     [][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
 				empty:      false,
 			},
 		},
 	} {
-		testMultiPolygonEquals(t, c.mp, c.tmp)
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			tc.mp.assertEquals(t, tc.expected)
+			assert.False(t, aliases(tc.mp.FlatCoords(), tc.mp.Clone().FlatCoords()))
+		})
 	}
 }
 
-func TestMultiPolygonClone(t *testing.T) {
-	p1 := NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}}})
-	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
-		t.Error("Clone() should not alias flatCoords")
-	}
+func TestMultiPolygonSetSRID(t *testing.T) {
+	assert.Equal(t, 4326, NewMultiPolygon(NoLayout).SetSRID(4326).SRID())
 }
 
 func TestMultiPolygonStrideMismatch(t *testing.T) {
-	for _, c := range []struct {
-		layout Layout
-		coords [][][]Coord
-		err    error
+	for i, tc := range []struct {
+		l        Layout
+		cs       [][][]Coord
+		expected error
 	}{
 		{
-			layout: XY,
-			coords: nil,
-			err:    nil,
+			l:        XY,
+			cs:       nil,
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: [][][]Coord{},
-			err:    nil,
+			l:        XY,
+			cs:       [][][]Coord{},
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: [][][]Coord{{{{1, 2}, {}}}},
-			err:    ErrStrideMismatch{Got: 0, Want: 2},
+			l:        XY,
+			cs:       [][][]Coord{{{{1, 2}, {}}}},
+			expected: ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
-			layout: XY,
-			coords: [][][]Coord{{{{1, 2}, {1}}}},
-			err:    ErrStrideMismatch{Got: 1, Want: 2},
+			l:        XY,
+			cs:       [][][]Coord{{{{1, 2}, {1}}}},
+			expected: ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
-			layout: XY,
-			coords: [][][]Coord{{{{1, 2}, {3, 4}}}},
-			err:    nil,
+			l:        XY,
+			cs:       [][][]Coord{{{{1, 2}, {3, 4}}}},
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: [][][]Coord{{{{1, 2}, {3, 4, 5}}}},
-			err:    ErrStrideMismatch{Got: 3, Want: 2},
+			l:        XY,
+			cs:       [][][]Coord{{{{1, 2}, {3, 4, 5}}}},
+			expected: ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {
-		mp := NewMultiPolygon(c.layout)
-		if _, err := mp.SetCoords(c.coords); err != c.err {
-			t.Errorf("mp.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			_, err := NewMultiPolygon(tc.l).SetCoords(tc.cs)
+			assert.Equal(t, tc.expected, err)
+		})
 	}
 }

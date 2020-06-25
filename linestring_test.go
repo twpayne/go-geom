@@ -1,110 +1,94 @@
 package geom
 
 import (
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // MultiLineString implements interface T.
 var _ T = &MultiLineString{}
 
-type testLineString struct {
+type expectedLineString struct {
 	layout     Layout
 	stride     int
-	coords     []Coord
 	flatCoords []float64
+	coords     []Coord
 	bounds     *Bounds
 }
 
-func testLineStringEquals(t *testing.T, ls *LineString, tls *testLineString) {
-	if err := ls.verify(); err != nil {
-		t.Error(err)
-	}
-	if ls.Layout() != tls.layout {
-		t.Errorf("ls.Layout() == %v, want %v", ls.Layout(), tls.layout)
-	}
-	if ls.Stride() != tls.stride {
-		t.Errorf("ls.Stride() == %v, want %v", ls.Stride(), tls.stride)
-	}
-	if !reflect.DeepEqual(ls.Coords(), tls.coords) {
-		t.Errorf("ls.Coords() == %v, want %v", ls.Coords(), tls.coords)
-	}
-	if !reflect.DeepEqual(ls.FlatCoords(), tls.flatCoords) {
-		t.Errorf("ls.FlatCoords() == %v, want %v", ls.FlatCoords(), tls.flatCoords)
-	}
-	if !reflect.DeepEqual(ls.Bounds(), tls.bounds) {
-		t.Errorf("ls.Bounds() == %v, want %v", ls.Bounds(), tls.bounds)
-	}
-	if got := ls.NumCoords(); got != len(tls.coords) {
-		t.Errorf("ls.NumCoords() == %v, want %v", got, len(tls.coords))
-	}
-	for i, c := range tls.coords {
-		if !reflect.DeepEqual(ls.Coord(i), c) {
-			t.Errorf("ls.Coord(%v) == %v, want %v", i, ls.Coord(i), c)
-		}
+func (g *LineString) assertEquals(t *testing.T, e *expectedLineString) {
+	assert.NoError(t, g.verify())
+	assert.Equal(t, e.layout, g.Layout())
+	assert.Equal(t, e.stride, g.Stride())
+	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Nil(t, g.Ends())
+	assert.Nil(t, g.Endss())
+	assert.Equal(t, e.coords, g.Coords())
+	assert.Equal(t, e.bounds, g.Bounds())
+	assert.Equal(t, len(e.coords), g.NumCoords())
+	for i, c := range e.coords {
+		assert.Equal(t, c, g.Coord(i))
 	}
 }
 
 func TestLineString(t *testing.T) {
-	for _, c := range []struct {
-		ls  *LineString
-		tls *testLineString
+	for i, tc := range []struct {
+		ls       *LineString
+		expected *expectedLineString
 	}{
 		{
 			ls: NewLineString(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}}),
-			tls: &testLineString{
+			expected: &expectedLineString{
 				layout:     XY,
 				stride:     2,
-				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
 		},
 		{
 			ls: NewLineString(XYZ).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
-			tls: &testLineString{
+			expected: &expectedLineString{
 				layout:     XYZ,
 				stride:     3,
-				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
 			ls: NewLineString(XYM).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
-			tls: &testLineString{
+			expected: &expectedLineString{
 				layout:     XYM,
 				stride:     3,
-				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
 		},
 		{
 			ls: NewLineString(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
-			tls: &testLineString{
+			expected: &expectedLineString{
 				layout:     XYZM,
 				stride:     4,
-				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
 		},
 	} {
-		testLineStringEquals(t, c.ls, c.tls)
-	}
-}
-
-func TestLineStringClone(t *testing.T) {
-	p1 := NewLineString(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}})
-	if p2 := p1.Clone(); aliases(p1.FlatCoords(), p2.FlatCoords()) {
-		t.Error("Clone() should not alias flatCoords")
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			tc.ls.assertEquals(t, tc.expected)
+			assert.False(t, aliases(tc.ls.FlatCoords(), tc.ls.Clone().FlatCoords()))
+		})
 	}
 }
 
 func TestLineStringInterpolate(t *testing.T) {
 	ls := NewLineString(XYM).MustSetCoords([]Coord{{1, 2, 0}, {2, 4, 1}, {3, 8, 2}})
-	for _, c := range []struct {
+	for _, tc := range []struct {
 		val float64
 		dim int
 		i   int
@@ -118,63 +102,74 @@ func TestLineStringInterpolate(t *testing.T) {
 		{val: 2.0, dim: 2, i: 2, f: 0.0},
 		{val: 2.5, dim: 2, i: 2, f: 0.0},
 	} {
-		if i, f := ls.Interpolate(c.val, c.dim); i != c.i || f != c.f {
-			t.Errorf("ls.Interpolate(%v, %v) == %v, %v, want %v, %v", c.val, c.dim, i, f, c.i, c.f)
-		}
+		i, f := ls.Interpolate(tc.val, tc.dim)
+		assert.Equal(t, tc.i, i)
+		assert.Equal(t, tc.f, f)
 	}
+}
+
+func TestLineStringInterpolateEmpty(t *testing.T) {
+	ls := NewLineString(XYM)
+	assert.Panics(t, func() { ls.Interpolate(0, 0) })
 }
 
 func TestLineStringReserve(t *testing.T) {
 	ls := NewLineString(XYZM)
-	if got, want := cap(ls.flatCoords), 0; got != want {
-		t.Errorf("cap(ls.flatCoords) == %d, want %d", got, want)
-	}
+	assert.Equal(t, 0, cap(ls.flatCoords))
 	ls.Reserve(2)
-	if got, want := cap(ls.flatCoords), 8; got != want {
-		t.Errorf("cap(ls.flatCoords) == %d, want %d", got, want)
-	}
+	assert.Equal(t, 8, cap(ls.flatCoords))
 }
 
 func TestLineStringStrideMismatch(t *testing.T) {
-	for _, c := range []struct {
-		layout Layout
-		coords []Coord
-		err    error
+	for i, tc := range []struct {
+		l        Layout
+		cs       []Coord
+		expected error
 	}{
 		{
-			layout: XY,
-			coords: nil,
-			err:    nil,
+			l:        XY,
+			cs:       nil,
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: []Coord{},
-			err:    nil,
+			l:        XY,
+			cs:       []Coord{},
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: []Coord{{1, 2}, {}},
-			err:    ErrStrideMismatch{Got: 0, Want: 2},
+			l:        XY,
+			cs:       []Coord{{1, 2}, {}},
+			expected: ErrStrideMismatch{Got: 0, Want: 2},
 		},
 		{
-			layout: XY,
-			coords: []Coord{{1, 2}, {1}},
-			err:    ErrStrideMismatch{Got: 1, Want: 2},
+			l:        XY,
+			cs:       []Coord{{1, 2}, {1}},
+			expected: ErrStrideMismatch{Got: 1, Want: 2},
 		},
 		{
-			layout: XY,
-			coords: []Coord{{1, 2}, {3, 4}},
-			err:    nil,
+			l:        XY,
+			cs:       []Coord{{1, 2}, {3, 4}},
+			expected: nil,
 		},
 		{
-			layout: XY,
-			coords: []Coord{{1, 2}, {3, 4, 5}},
-			err:    ErrStrideMismatch{Got: 3, Want: 2},
+			l:        XY,
+			cs:       []Coord{{1, 2}, {3, 4, 5}},
+			expected: ErrStrideMismatch{Got: 3, Want: 2},
 		},
 	} {
-		p := NewLineString(c.layout)
-		if _, err := p.SetCoords(c.coords); err != c.err {
-			t.Errorf("p.SetCoords(%v) == %v, want %v", c.coords, err, c.err)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			_, err := NewLineString(tc.l).SetCoords(tc.cs)
+			assert.Equal(t, tc.expected, err)
+		})
 	}
+}
+
+func TestLineStringSetSRID(t *testing.T) {
+	assert.Equal(t, 4326, NewLineString(NoLayout).SetSRID(4326).SRID())
+}
+
+func TestLineStringSubLineString(t *testing.T) {
+	ls := NewLineString(XY).MustSetCoords([]Coord{{0, 1}, {2, 3}, {4, 5}})
+	sls := ls.SubLineString(0, 1)
+	assert.True(t, aliases(ls.FlatCoords(), sls.FlatCoords()))
 }
