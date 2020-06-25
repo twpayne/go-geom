@@ -44,7 +44,7 @@ type Geometry struct {
 	BBox        *json.RawMessage `json:"bbox,omitempty"`
 	CRS         *CRS             `json:"crs,omitempty"`
 	Coordinates *json.RawMessage `json:"coordinates,omitempty"`
-	Geometries  []*Geometry      `json:"geometries,omitempty"`
+	Geometries  *json.RawMessage `json:"geometries,omitempty"`
 }
 
 // A Feature is a GeoJSON Feature.
@@ -119,11 +119,14 @@ func (g *Geometry) Decode() (geom.T, error) {
 	switch g.Type {
 	case "Point":
 		if g.Coordinates == nil {
-			return geom.NewPoint(geom.NoLayout), nil
+			return geom.NewPointEmpty(geom.NoLayout), nil
 		}
 		var coords geom.Coord
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
+		}
+		if len(coords) == 0 {
+			return geom.NewPointEmpty(DefaultLayout), nil
 		}
 		layout, err := guessLayout0(coords)
 		if err != nil {
@@ -196,8 +199,15 @@ func (g *Geometry) Decode() (geom.T, error) {
 		}
 		return geom.NewMultiPolygon(layout).SetCoords(coords)
 	case "GeometryCollection":
-		geoms := make([]geom.T, len(g.Geometries))
-		for i, subGeometry := range g.Geometries {
+		var geometries []Geometry
+		if g.Geometries != nil {
+			err := json.Unmarshal(*g.Geometries, &geometries)
+			if err != nil {
+				return nil, err
+			}
+		}
+		geoms := make([]geom.T, len(geometries))
+		for i, subGeometry := range geometries {
 			var err error
 			geoms[i], err = subGeometry.Decode()
 			if err != nil {
@@ -345,13 +355,19 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 	switch g := g.(type) {
 	case *geom.Point:
 		var coords json.RawMessage
-		var coordsIn interface{} = g.Coords()
+		var coordsIn interface{}
+		if !g.Empty() {
+			coordsIn = g.Coords()
+		} else {
+			coordsIn = []geom.Coord{}
+		}
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
 				coordsIn = opt.onFloat64Handler(g.Coords())
 			}
 		}
-		coords, err := json.Marshal(coordsIn)
+		var err error
+		coords, err = json.Marshal(coordsIn)
 		if err != nil {
 			return nil, err
 		}
@@ -440,6 +456,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 			Coordinates: &coords,
 		}, nil
 	case *geom.GeometryCollection:
+		var marshalledGeometries json.RawMessage
 		geometries := make([]*Geometry, len(g.Geoms()))
 		for i, subGeometry := range g.Geoms() {
 			var err error
@@ -448,9 +465,13 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 				return nil, err
 			}
 		}
+		marshalledGeometries, err := json.Marshal(geometries)
+		if err != nil {
+			return nil, err
+		}
 		return &Geometry{
 			Type:       "GeometryCollection",
-			Geometries: geometries,
+			Geometries: &marshalledGeometries,
 		}, nil
 	default:
 		return nil, geom.ErrUnsupportedType{Value: g}
