@@ -2,8 +2,10 @@ package bigxy_test
 
 import (
 	"math"
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
@@ -59,15 +61,15 @@ func TestOrientationIndex(t *testing.T) {
 			result:       orientation.Clockwise,
 		},
 	} {
-		orientationIndex := bigxy.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)
-		if orientationIndex != testData.result {
-			t.Errorf("Test %v Failed. Expected: %v (%v) but was %v (%v) : TestData: %v", i+1, testData.result, int(testData.result), orientationIndex, int(orientationIndex), testData)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			orientationIndex := bigxy.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)
+			require.Equal(t, testData.result, orientationIndex)
+		})
 	}
 }
 
 func TestIntersection(t *testing.T) {
-	for i, tc := range []struct {
+	for _, tc := range []struct {
 		desc                                       string
 		line1Start, line1End, line2Start, line2End geom.Coord
 		result                                     geom.Coord
@@ -113,9 +115,9 @@ func TestIntersection(t *testing.T) {
 			result:     geom.Coord{2, 0},
 		},
 	} {
-		calculatedIntersection := bigxy.Intersection(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
-		if !reflect.DeepEqual(calculatedIntersection, tc.result) {
-			t.Errorf("Test %v (%v) Failed. Expected: %v but was %v ", i+1, tc.desc, tc.result, calculatedIntersection)
-		}
+		t.Run(tc.desc, func(t *testing.T) {
+			calculatedIntersection := bigxy.Intersection(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
+			require.Equal(t, tc.result, calculatedIntersection)
+		})
 	}
 }
