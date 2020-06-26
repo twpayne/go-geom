@@ -2,8 +2,9 @@ package wkt
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 )
@@ -133,12 +134,19 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 			s: "GEOMETRYCOLLECTION (POINT (1 2), LINESTRING (3 4, 5 6))",
 		},
 	} {
-		if got, err := Marshal(tc.g); err != nil || got != tc.s {
-			t.Errorf("Marshal(%#v) == %v, %v, want %v, nil", tc.g, got, err, tc.s)
-		}
-		if got, err := Unmarshal(tc.s); err != nil || !reflect.DeepEqual(got, tc.g) {
-			t.Errorf("Unmarshal(%#v) == %v, %v, want %v, nil", tc.s, got, err, tc.g)
-		}
+		t.Run(tc.s, func(t *testing.T) {
+			t.Run("marshal", func(t *testing.T) {
+				got, err := Marshal(tc.g)
+				require.NoError(t, err)
+				require.Equal(t, tc.s, got)
+			})
+
+			t.Run("unmarshal", func(t *testing.T) {
+				got, err := Unmarshal(tc.s)
+				require.NoError(t, err)
+				require.Equal(t, tc.g, got)
+			})
+		})
 	}
 }
 
@@ -185,9 +193,9 @@ func TestEncoder(t *testing.T) {
 		},
 	} {
 		t.Run(fmt.Sprintf("%s(encoder=%#v)", tc.s, tc.encoder), func(t *testing.T) {
-			if got, err := tc.encoder.Encode(tc.g); err != nil || got != tc.s {
-				t.Errorf("Marshal(%#v) == %v, %v, want %v, nil", tc.g, got, err, tc.s)
-			}
+			got, err := tc.encoder.Encode(tc.g)
+			require.NoError(t, err)
+			require.Equal(t, tc.s, got)
 		})
 	}
 }
@@ -226,8 +234,10 @@ func TestUnmarshalEmptyGeomWithArbitrarySpaces(t *testing.T) {
 			s: "GEOMETRYCOLLECTION      EMPTY",
 		},
 	} {
-		if got, err := Unmarshal(tc.s); err != nil || !reflect.DeepEqual(got, tc.g) {
-			t.Errorf("Unmarshal(%#v) == %v, %v, want %v, nil", tc.s, got, err, tc.g)
-		}
+		t.Run(tc.s, func(t *testing.T) {
+			got, err := Unmarshal(tc.s)
+			require.NoError(t, err)
+			require.Equal(t, tc.g, got)
+		})
 	}
 }

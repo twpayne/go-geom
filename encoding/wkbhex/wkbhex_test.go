@@ -1,8 +1,10 @@
 package wkbhex
 
 import (
-	"reflect"
+	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkb"
@@ -152,20 +154,32 @@ func Test(t *testing.T) {
 		},
 	} {
 		if tc.ndr != "" {
-			if got, err := Encode(tc.g, wkb.NDR, tc.opts...); err != nil || got != tc.ndr {
-				t.Errorf("Encode(%#v, %#v) == %#v, %#v, want %#v, nil", tc.g, wkb.NDR, got, err, tc.ndr)
-			}
-			if got, err := Decode(tc.ndr, tc.opts...); err != nil || !reflect.DeepEqual(got, tc.g) {
-				t.Errorf("Decode(%#v) == %#v, %v, want %#v, nil", tc.ndr, got, err, tc.g)
-			}
+			t.Run(fmt.Sprintf("ndr:%s", tc.ndr), func(t *testing.T) {
+				t.Run("encode", func(t *testing.T) {
+					got, err := Encode(tc.g, wkb.NDR, tc.opts...)
+					require.NoError(t, err)
+					require.Equal(t, tc.ndr, got)
+				})
+				t.Run("decode", func(t *testing.T) {
+					got, err := Decode(tc.ndr, tc.opts...)
+					require.NoError(t, err)
+					require.Equal(t, tc.g, got)
+				})
+			})
 		}
 		if tc.xdr != "" {
-			if got, err := Encode(tc.g, wkb.XDR, tc.opts...); err != nil || got != tc.xdr {
-				t.Errorf("Encode(%#v, %#v) == %#v, %#v, want %#v, nil", tc.g, wkb.XDR, got, err, tc.xdr)
-			}
-			if got, err := Decode(tc.xdr, tc.opts...); err != nil || !reflect.DeepEqual(got, tc.g) {
-				t.Errorf("Decode(%#v) == %#v, %v, want %#v, nil", tc.xdr, got, err, tc.g)
-			}
+			t.Run(fmt.Sprintf("xdr:%s", tc.xdr), func(t *testing.T) {
+				t.Run("encode", func(t *testing.T) {
+					got, err := Encode(tc.g, wkb.XDR, tc.opts...)
+					require.NoError(t, err)
+					require.Equal(t, tc.xdr, got)
+				})
+				t.Run("decode", func(t *testing.T) {
+					got, err := Decode(tc.xdr, tc.opts...)
+					require.NoError(t, err)
+					require.Equal(t, tc.g, got)
+				})
+			})
 		}
 	}
 }

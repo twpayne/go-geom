@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/twpayne/go-geom"
 )
 
@@ -222,19 +224,13 @@ func Test(t *testing.T) {
 				`</MultiGeometry>`,
 		},
 	} {
-		sb := &strings.Builder{}
-		e := xml.NewEncoder(sb)
-		element, err := Encode(tc.g)
-		if err != nil {
-			t.Errorf("Encode(%#v) == %#v, %v, want ..., nil", tc.g, element, err)
-			continue
-		}
-		if err := e.Encode(element); err != nil {
-			t.Errorf("Encode(%#v) == %v, want nil", element, err)
-			continue
-		}
-		if got := sb.String(); got != tc.want {
-			t.Errorf("Encode(Encode(%#v))\nwrote %v\n want %v", tc.g, got, tc.want)
-		}
+		t.Run(tc.want, func(t *testing.T) {
+			sb := &strings.Builder{}
+			e := xml.NewEncoder(sb)
+			element, err := Encode(tc.g)
+			require.NoError(t, err)
+			require.NoError(t, e.Encode(element))
+			require.Equal(t, tc.want, sb.String())
+		})
 	}
 }

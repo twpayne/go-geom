@@ -2,9 +2,10 @@ package wkb
 
 import (
 	"encoding/binary"
-	"encoding/hex"
-	"reflect"
+	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkbcommon"
@@ -14,163 +15,137 @@ import (
 
 func test(t *testing.T, g geom.T, xdr, ndr []byte, opts ...wkbcommon.WKBOption) {
 	if xdr != nil {
-		if got, err := Unmarshal(xdr, opts...); err != nil || !reflect.DeepEqual(got, g) {
-			t.Errorf("Unmarshal(%s) == %#v, %#v, want %#v, nil", hex.EncodeToString(xdr), got, err, g)
-		}
-		if got, err := Marshal(g, XDR, opts...); err != nil || !reflect.DeepEqual(got, xdr) {
-			t.Errorf("Marshal(%#v, XDR) == %s, %#v, want %s, nil", g, hex.EncodeToString(got), err, hex.EncodeToString(xdr))
-		}
+		t.Run("xdr", func(t *testing.T) {
+			t.Run("unmarshal", func(t *testing.T) {
+				got, err := Unmarshal(xdr, opts...)
+				require.NoError(t, err)
+				require.Equal(t, g, got)
+			})
+
+			t.Run("marshal", func(t *testing.T) {
+				got, err := Marshal(g, XDR, opts...)
+				require.NoError(t, err)
+				require.Equal(t, xdr, got)
+			})
+		})
 	}
 	if ndr != nil {
-		if got, err := Unmarshal(ndr, opts...); err != nil || !reflect.DeepEqual(got, g) {
-			t.Errorf("Unmarshal(%s) == %#v, %#v, want %#v, nil", hex.EncodeToString(ndr), got, err, g)
-		}
-		if got, err := Marshal(g, NDR, opts...); err != nil || !reflect.DeepEqual(got, ndr) {
-			t.Errorf("Marshal(%#v, NDR) == %s, %#v, want %#v, nil", g, hex.EncodeToString(got), err, hex.EncodeToString(ndr))
-		}
+		t.Run("ndr", func(t *testing.T) {
+			t.Run("unmarshal", func(t *testing.T) {
+				got, err := Unmarshal(ndr, opts...)
+				require.NoError(t, err)
+				require.Equal(t, g, got)
+			})
+
+			t.Run("marshal", func(t *testing.T) {
+				got, err := Marshal(g, NDR, opts...)
+				require.NoError(t, err)
+				require.Equal(t, ndr, got)
+			})
+		})
 	}
-	switch g := g.(type) {
-	case *geom.Point:
-		p := Point{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := p.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(xdr), err)
+	t.Run("scan", func(t *testing.T) {
+		switch g := g.(type) {
+		case *geom.Point:
+			p := Point{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, p.Scan(xdr))
+					require.Equal(t, Point{g, opts}, p)
+				})
 			}
-			if !reflect.DeepEqual(p, Point{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), p, Point{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, p.Scan(ndr))
+					require.Equal(t, Point{g, opts}, p)
+				})
 			}
-		}
-		if ndr != nil {
-			if err := p.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(ndr), err)
+		case *geom.LineString:
+			ls := LineString{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, ls.Scan(xdr))
+					require.Equal(t, LineString{g, opts}, ls)
+				})
 			}
-			if !reflect.DeepEqual(p, Point{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), p, Point{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, ls.Scan(ndr))
+					require.Equal(t, LineString{g, opts}, ls)
+				})
 			}
-		}
-	case *geom.LineString:
-		ls := LineString{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := ls.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", ls, string(xdr), err)
+		case *geom.Polygon:
+			p := Polygon{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, p.Scan(xdr))
+					require.Equal(t, Polygon{g, opts}, p)
+				})
 			}
-			if !reflect.DeepEqual(ls, LineString{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), ls, LineString{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, p.Scan(ndr))
+					require.Equal(t, Polygon{g, opts}, p)
+				})
 			}
-		}
-		if ndr != nil {
-			if err := ls.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", ls, string(ndr), err)
+		case *geom.MultiPoint:
+			mp := MultiPoint{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, mp.Scan(xdr))
+					require.Equal(t, MultiPoint{g, opts}, mp)
+				})
 			}
-			if !reflect.DeepEqual(ls, LineString{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), ls, LineString{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, mp.Scan(ndr))
+					require.Equal(t, MultiPoint{g, opts}, mp)
+				})
 			}
-		}
-	case *geom.Polygon:
-		p := Polygon{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := p.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(xdr), err)
+		case *geom.MultiLineString:
+			mls := MultiLineString{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, mls.Scan(xdr))
+					require.Equal(t, MultiLineString{g, opts}, mls)
+				})
 			}
-			if !reflect.DeepEqual(p, Polygon{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), p, Polygon{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, mls.Scan(ndr))
+					require.Equal(t, MultiLineString{g, opts}, mls)
+				})
 			}
-		}
-		if ndr != nil {
-			if err := p.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", p, string(ndr), err)
+		case *geom.MultiPolygon:
+			mp := MultiPolygon{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, mp.Scan(xdr))
+					require.Equal(t, MultiPolygon{g, opts}, mp)
+				})
 			}
-			if !reflect.DeepEqual(p, Polygon{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), p, Polygon{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, mp.Scan(ndr))
+					require.Equal(t, MultiPolygon{g, opts}, mp)
+				})
 			}
-		}
-	case *geom.MultiPoint:
-		mp := MultiPoint{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := mp.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
+		case *geom.GeometryCollection:
+			gc := GeometryCollection{opts: opts}
+			if xdr != nil {
+				t.Run("xdr", func(t *testing.T) {
+					require.NoError(t, gc.Scan(xdr))
+					require.Equal(t, GeometryCollection{g, opts}, gc)
+				})
 			}
-			if !reflect.DeepEqual(mp, MultiPoint{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, MultiPoint{g, opts})
-			}
-		}
-		if ndr != nil {
-			if err := mp.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(ndr), err)
-			}
-			if !reflect.DeepEqual(mp, MultiPoint{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPoint{g, opts})
-			}
-		}
-	case *geom.MultiLineString:
-		mls := MultiLineString{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := mls.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", mls, string(xdr), err)
-			}
-			if !reflect.DeepEqual(mls, MultiLineString{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mls, MultiLineString{g, opts})
-			}
-		}
-		if ndr != nil {
-			if err := mls.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", mls, string(ndr), err)
-			}
-			if !reflect.DeepEqual(mls, MultiLineString{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mls, MultiLineString{g, opts})
-			}
-		}
-	case *geom.MultiPolygon:
-		mp := MultiPolygon{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := mp.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(xdr), err)
-			}
-			if !reflect.DeepEqual(mp, MultiPolygon{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), mp, MultiPolygon{g, opts})
+			if ndr != nil {
+				t.Run("ndr", func(t *testing.T) {
+					require.NoError(t, gc.Scan(ndr))
+					require.Equal(t, GeometryCollection{g, opts}, gc)
+				})
 			}
 		}
-		if ndr != nil {
-			if err := mp.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", mp, string(ndr), err)
-			}
-			if !reflect.DeepEqual(mp, MultiPolygon{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), mp, MultiPolygon{g, opts})
-			}
-		}
-	case *geom.GeometryCollection:
-		gc := GeometryCollection{
-			opts: opts,
-		}
-		if xdr != nil {
-			if err := gc.Scan(xdr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(xdr), err)
-			}
-			if !reflect.DeepEqual(gc, GeometryCollection{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(xdr), gc, GeometryCollection{g, opts})
-			}
-		}
-		if ndr != nil {
-			if err := gc.Scan(ndr); err != nil {
-				t.Errorf("%#v.Scan(%#v) == %v, want nil", gc, string(ndr), err)
-			}
-			if !reflect.DeepEqual(gc, GeometryCollection{g, opts}) {
-				t.Errorf("Scan(%#v) got %#v, want %#v", string(ndr), gc, GeometryCollection{g, opts})
-			}
-		}
-	}
+	})
 }
 
 func Test(t *testing.T) {
@@ -311,7 +286,9 @@ func Test(t *testing.T) {
 			ndr: geomtest.MustHexDecode("0107000000030000000101000000550B36BFABD753C07CE58B07A5D24540010200000005000000C4190D2ABBD753C028AA6D799BD24540B51F84DBB5D753C07954A1269FD24540F9DB9E20B1D753C0E3D011AFA1D24540FB8E86F8ACD753C0ED444948A4D24540550B36BFABD753C07CE58B07A5D24540010200000002000000550B36BFABD753C07CE58B07A5D24540F6D786E5AAD753C0C619C39CA0D24540"),
 		},
 	} {
-		test(t, tc.g, tc.xdr, tc.ndr, tc.opts...)
+		t.Run(fmt.Sprintf("ndr:%s", tc.ndr), func(t *testing.T) {
+			test(t, tc.g, tc.xdr, tc.ndr, tc.opts...)
+		})
 	}
 
 	t.Run("errors when encoding empty point WKBs by default", func(t *testing.T) {
@@ -391,8 +368,9 @@ func TestCrashes(t *testing.T) {
 			want: wkbcommon.ErrGeometryTooLarge{Level: 1, N: 1946157063, Limit: wkbcommon.MaxGeometryElements[1]},
 		},
 	} {
-		if _, err := Unmarshal([]byte(tc.s)); !reflect.DeepEqual(err, tc.want) {
-			t.Errorf("Unmarshal([]byte(%#v)) == ..., %v, want %v", tc.s, err, tc.want)
-		}
+		t.Run(tc.s, func(t *testing.T) {
+			_, err := Unmarshal([]byte(tc.s))
+			require.Equal(t, tc.want, err)
+		})
 	}
 }
