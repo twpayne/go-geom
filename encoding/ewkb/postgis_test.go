@@ -4,10 +4,10 @@ package ewkb_test
 
 import (
 	"database/sql"
-	"reflect"
 	"testing"
 
 	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/ewkb"
@@ -47,7 +47,5 @@ func TestPostGIS(t *testing.T) {
 	if err := db.QueryRow("SELECT ST_AsEWKB(geom) FROM testgeoms WHERE ST_Within(geom, $1);", queryP).Scan(&p); err != nil {
 		t.Fatalf("db.QueryRow(...).Scan(...) == %v, want <nil>", err)
 	}
-	if got, want := p.Coords(), [][]geom.Coord{{{5, 3}, {5, 0}, {7, 0}, {7, 3}, {5, 3}}}; !reflect.DeepEqual(got, want) {
-		t.Errorf("p.Coords() == %v, want %v", got, want)
-	}
+	require.Equal(t, [][]geom.Coord{{{5, 3}, {5, 0}, {7, 0}, {7, 3}, {5, 3}}}, p.Coords())
 }

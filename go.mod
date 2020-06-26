@@ -7,7 +7,6 @@ require (
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/containerd/continuity v0.0.0-20181203112020-004b46473808 // indirect
-	github.com/d4l3k/messagediff v1.2.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.3.3 // indirect
 	github.com/google/go-cmp v0.4.0 // indirect

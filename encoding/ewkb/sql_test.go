@@ -3,8 +3,10 @@ package ewkb
 import (
 	"database/sql"
 	"database/sql/driver"
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/internal/geomtest"
@@ -25,7 +27,7 @@ var _ = []interface {
 }
 
 func TestPointScanAndValue(t *testing.T) {
-	for _, tc := range []struct {
+	for i, tc := range []struct {
 		value interface{}
 		point Point
 		valid bool
@@ -41,19 +43,14 @@ func TestPointScanAndValue(t *testing.T) {
 			valid: true,
 		},
 	} {
-		var gotPoint Point
-		if gotErr := gotPoint.Scan(tc.value); gotErr != nil {
-			t.Errorf("gotPoint.Scan(%v) == %v, want <nil>", tc.value, gotErr)
-		}
-		if !reflect.DeepEqual(gotPoint, tc.point) {
-			t.Errorf("gotPoint.Scan(%v); gotPoint == %v, want == %v", tc.value, gotPoint, tc.point)
-		}
-		if gotPointValid := gotPoint.Valid(); gotPointValid != tc.valid {
-			t.Errorf("gotPoint.Scan(%v); gotPoint.Valid() == %t, want %t", tc.value, gotPointValid, tc.valid)
-		}
-		gotValue, gotErr := tc.point.Value()
-		if gotErr != nil || !reflect.DeepEqual(gotValue, tc.value) {
-			t.Errorf("%v.Value() == %v, %v, want %v, <nil>", tc.point, gotValue, gotErr, tc.value)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			var gotPoint Point
+			require.NoError(t, gotPoint.Scan(tc.value))
+			require.Equal(t, tc.point, gotPoint)
+			require.Equal(t, tc.valid, gotPoint.Valid())
+			gotValue, gotErr := tc.point.Value()
+			require.NoError(t, gotErr)
+			require.Equal(t, tc.value, gotValue)
+		})
 	}
 }

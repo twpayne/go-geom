@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/d4l3k/messagediff"
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 )
@@ -69,14 +69,11 @@ func TestDecode(t *testing.T) {
 			},
 		},
 	} {
-		got, err := Read(bytes.NewBufferString(tc.s))
-		diff, equal := "", true
-		if err == nil {
-			diff, equal = messagediff.PrettyDiff(tc.t, got)
-		}
-		if err != nil || !equal {
-			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v\n%s", tc.s, got, err, tc.t, diff)
-		}
+		t.Run(tc.s, func(t *testing.T) {
+			got, err := Read(bytes.NewBufferString(tc.s))
+			require.NoError(t, err)
+			require.Equal(t, tc.t, got)
+		})
 	}
 }
 
@@ -148,13 +145,10 @@ func TestDecodeHeaders(t *testing.T) {
 			},
 		},
 	} {
-		got, err := Read(bytes.NewBufferString(tc.s))
-		diff, equal := "", true
-		if err == nil {
-			diff, equal = messagediff.PrettyDiff(tc.t.Headers, got.Headers)
-		}
-		if err != nil || !equal {
-			t.Errorf("Read(...(%#v)) == %#v, %v, want nil, %#v\n%s", tc.s, got, err, tc.t, diff)
-		}
+		t.Run(tc.s, func(t *testing.T) {
+			got, err := Read(bytes.NewBufferString(tc.s))
+			require.NoError(t, err)
+			require.Equal(t, tc.t.Headers, got.Headers)
+		})
 	}
 }
