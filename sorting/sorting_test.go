@@ -1,9 +1,11 @@
 package sorting_test
 
 import (
-	"reflect"
 	"sort"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
@@ -45,11 +47,9 @@ func TestCompare2D(t *testing.T) {
 			result: true,
 		},
 	} {
-		actual := sorting.IsLess2D(tc.c1, tc.c2)
-
-		if actual != tc.result {
-			t.Errorf("Test %d failed.  Expected %v but got %v", i+1, tc.result, actual)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			require.Equal(t, tc.result, sorting.IsLess2D(tc.c1, tc.c2))
+		})
 	}
 }
 
@@ -79,12 +79,12 @@ func TestNewFlatCoordSorting2D(t *testing.T) {
 			layout: geom.XYM,
 		},
 	} {
-		actual := make([]float64, len(tc.c1))
-		copy(actual, tc.c1)
-		sort.Sort(sorting.NewFlatCoordSorting2D(tc.layout, actual))
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			actual := make([]float64, len(tc.c1))
+			copy(actual, tc.c1)
+			sort.Sort(sorting.NewFlatCoordSorting2D(tc.layout, actual))
 
-		if !reflect.DeepEqual(tc.result, actual) {
-			t.Errorf("Test %d: Failed to sort coordinates correctly. Expected: \n\t%v\nBut was:\n\t%v", i+1, tc.result, actual)
-		}
+			require.Equal(t, tc.result, actual)
+		})
 	}
 }

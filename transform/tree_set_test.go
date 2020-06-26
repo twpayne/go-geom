@@ -1,8 +1,9 @@
 package transform
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
@@ -26,10 +27,7 @@ func TestTree(t *testing.T) {
 	}
 
 	actual := set.ToFlatArray()
-
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Incorrect ordering and sorting of data. Expected \n\t%v \nwas \n\t%v", expected, actual)
-	}
+	require.Equal(t, expected, actual)
 }
 
 type testCompare struct{}

@@ -1,8 +1,10 @@
 package transform
 
 import (
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/twpayne/go-geom"
 )
@@ -24,10 +26,9 @@ func TestUniqueCoords(t *testing.T) {
 			compare: testCompare{},
 		},
 	} {
-		filteredCoords := UniqueCoords(tc.layout, tc.compare, tc.pts)
-
-		if !reflect.DeepEqual(filteredCoords, tc.expected) {
-			t.Errorf("Test %v Failed: FlatCoords(%v, ..., %v) didn't result in the expected result.  Expected\n\t%v\nbut was\n\t%v", i+1, tc.layout, tc.compare, tc.expected, filteredCoords)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			filteredCoords := UniqueCoords(tc.layout, tc.compare, tc.pts)
+			require.Equal(t, tc.expected, filteredCoords)
+		})
 	}
 }
