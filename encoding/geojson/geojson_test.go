@@ -63,6 +63,11 @@ func TestGeometry(t *testing.T) {
 			s: `null`,
 		},
 		{
+			g:    geom.NewPointEmpty(geom.XY),
+			opts: []EncodeGeometryOption{EncodeGeometryWithMaxDecimalDigits(15)},
+			s:    `{"type":"Point","coordinates":[]}`,
+		},
+		{
 			g: geom.NewPointEmpty(geom.XY),
 			s: `{"type":"Point","coordinates":[]}`,
 		},
