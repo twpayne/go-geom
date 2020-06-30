@@ -363,7 +363,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 		}
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
-				coordsIn = opt.onFloat64Handler(g.Coords())
+				coordsIn = opt.onFloat64Handler(coordsIn)
 			}
 		}
 		var err error
@@ -380,7 +380,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 		var coordsIn interface{} = g.Coords()
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
-				coordsIn = opt.onFloat64Handler(g.Coords())
+				coordsIn = opt.onFloat64Handler(coordsIn)
 			}
 		}
 		coords, err := json.Marshal(coordsIn)
@@ -396,7 +396,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 		var coordsIn interface{} = g.Coords()
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
-				coordsIn = opt.onFloat64Handler(g.Coords())
+				coordsIn = opt.onFloat64Handler(coordsIn)
 			}
 		}
 		coords, err := json.Marshal(coordsIn)
@@ -412,7 +412,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 		var coordsIn interface{} = g.Coords()
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
-				coordsIn = opt.onFloat64Handler(g.Coords())
+				coordsIn = opt.onFloat64Handler(coordsIn)
 			}
 		}
 		coords, err := json.Marshal(coordsIn)
@@ -428,7 +428,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 		var coordsIn interface{} = g.Coords()
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
-				coordsIn = opt.onFloat64Handler(g.Coords())
+				coordsIn = opt.onFloat64Handler(coordsIn)
 			}
 		}
 		coords, err := json.Marshal(coordsIn)
@@ -444,7 +444,7 @@ func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 		var coordsIn interface{} = g.Coords()
 		for _, opt := range opts {
 			if opt.onFloat64Handler != nil {
-				coordsIn = opt.onFloat64Handler(g.Coords())
+				coordsIn = opt.onFloat64Handler(coordsIn)
 			}
 		}
 		coords, err := json.Marshal(coordsIn)
