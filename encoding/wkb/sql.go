@@ -79,7 +79,7 @@ func (p *Point) Scan(src interface{}) error {
 	}
 	p1, ok := got.(*geom.Point)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: p1, Want: p}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: p}
 	}
 	p.Point = p1
 	return nil
@@ -102,7 +102,7 @@ func (ls *LineString) Scan(src interface{}) error {
 	}
 	ls1, ok := got.(*geom.LineString)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: ls1, Want: ls}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: ls}
 	}
 	ls.LineString = ls1
 	return nil
@@ -125,7 +125,7 @@ func (p *Polygon) Scan(src interface{}) error {
 	}
 	p1, ok := got.(*geom.Polygon)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: p1, Want: p}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: p}
 	}
 	p.Polygon = p1
 	return nil
@@ -148,7 +148,7 @@ func (mp *MultiPoint) Scan(src interface{}) error {
 	}
 	mp1, ok := got.(*geom.MultiPoint)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: mp1, Want: mp}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: mp}
 	}
 	mp.MultiPoint = mp1
 	return nil
@@ -171,7 +171,7 @@ func (mls *MultiLineString) Scan(src interface{}) error {
 	}
 	mls1, ok := got.(*geom.MultiLineString)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: mls1, Want: mls}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: mls}
 	}
 	mls.MultiLineString = mls1
 	return nil
@@ -194,7 +194,7 @@ func (mp *MultiPolygon) Scan(src interface{}) error {
 	}
 	mp1, ok := got.(*geom.MultiPolygon)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: mp1, Want: mp}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: mp}
 	}
 	mp.MultiPolygon = mp1
 	return nil
@@ -217,7 +217,7 @@ func (gc *GeometryCollection) Scan(src interface{}) error {
 	}
 	gc1, ok := got.(*geom.GeometryCollection)
 	if !ok {
-		return wkbcommon.ErrUnexpectedType{Got: gc1, Want: gc}
+		return wkbcommon.ErrUnexpectedType{Got: got, Want: gc}
 	}
 	gc.GeometryCollection = gc1
 	return nil
