@@ -23,8 +23,6 @@ func (e ErrExpectedByteSlice) Error() string {
 // It can be used when the geometry shape is not defined.
 type Geom struct {
 	geom.T
-	// NOTE(tb) I've repeated the opts field like other types, but I'm not sure
-	// about its usage.
 	opts []wkbcommon.WKBOption
 }
 
@@ -97,8 +95,7 @@ func (g *Geom) Value() (driver.Value, error) {
 	return value(g.T)
 }
 
-// NOTE(tb) you asked for this method but since accessing the geom.T is trivial
-// as writing g.T, I wonder if it worth it.
+// Geom returns the underlying geom.T
 func (g *Geom) Geom() geom.T {
 	return g.T
 }
