@@ -1,234 +1,207 @@
 package geom
 
 import (
-	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBoundsExtend(t *testing.T) {
-	for _, tc := range []struct {
-		b    *Bounds
-		g    T
-		want *Bounds
+	for i, tc := range []struct {
+		b        *Bounds
+		g        T
+		expected *Bounds
 	}{
 		{
-			b:    NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
-			g:    NewPoint(XY).MustSetCoords(Coord{10, -10}),
-			want: NewBounds(XY).SetCoords(Coord{0, -10}, Coord{10, 0}),
+			b:        NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
+			g:        NewPoint(XY).MustSetCoords(Coord{10, -10}),
+			expected: NewBounds(XY).SetCoords(Coord{0, -10}, Coord{10, 0}),
 		},
 		{
-			b:    NewBounds(XY).SetCoords(Coord{-100, -100}, Coord{100, 100}),
-			g:    NewPoint(XY).MustSetCoords(Coord{-10, 10}),
-			want: NewBounds(XY).SetCoords(Coord{-100, -100}, Coord{100, 100}),
+			b:        NewBounds(XY).SetCoords(Coord{-100, -100}, Coord{100, 100}),
+			g:        NewPoint(XY).MustSetCoords(Coord{-10, 10}),
+			expected: NewBounds(XY).SetCoords(Coord{-100, -100}, Coord{100, 100}),
 		},
 		{
-			b:    NewBounds(XYZ).SetCoords(Coord{0, 0, -1}, Coord{10, 10, 1}),
-			g:    NewPoint(XY).MustSetCoords(Coord{5, -10}),
-			want: NewBounds(XYZ).SetCoords(Coord{0, -10, -1}, Coord{10, 10, 1}),
+			b:        NewBounds(XYZ).SetCoords(Coord{0, 0, -1}, Coord{10, 10, 1}),
+			g:        NewPoint(XY).MustSetCoords(Coord{5, -10}),
+			expected: NewBounds(XYZ).SetCoords(Coord{0, -10, -1}, Coord{10, 10, 1}),
 		},
 		{
-			b:    NewBounds(XYZ).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
-			g:    NewPoint(XYZ).MustSetCoords(Coord{5, -10, 3}),
-			want: NewBounds(XYZ).SetCoords(Coord{0, -10, 0}, Coord{10, 10, 10}),
+			b:        NewBounds(XYZ).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
+			g:        NewPoint(XYZ).MustSetCoords(Coord{5, -10, 3}),
+			expected: NewBounds(XYZ).SetCoords(Coord{0, -10, 0}, Coord{10, 10, 10}),
 		},
 		{
-			b:    NewBounds(XYZ).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
-			g:    NewMultiPoint(XYM).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
-			want: NewBounds(XYZM).SetCoords(Coord{-1, -1, 0, -1}, Coord{11, 11, 10, 11}),
+			b:        NewBounds(XYZ).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
+			g:        NewMultiPoint(XYM).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			expected: NewBounds(XYZM).SetCoords(Coord{-1, -1, 0, -1}, Coord{11, 11, 10, 11}),
 		},
 		{
-			b:    NewBounds(XY).SetCoords(Coord{0, 0}, Coord{10, 10}),
-			g:    NewMultiPoint(XYM).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
-			want: NewBounds(XYM).SetCoords(Coord{-1, -1, -1}, Coord{11, 11, 11}),
+			b:        NewBounds(XY).SetCoords(Coord{0, 0}, Coord{10, 10}),
+			g:        NewMultiPoint(XYM).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			expected: NewBounds(XYM).SetCoords(Coord{-1, -1, -1}, Coord{11, 11, 11}),
 		},
 		{
-			b:    NewBounds(XY).SetCoords(Coord{0, 0}, Coord{10, 10}),
-			g:    NewMultiPoint(XYZ).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
-			want: NewBounds(XYZ).SetCoords(Coord{-1, -1, -1}, Coord{11, 11, 11}),
+			b:        NewBounds(XY).SetCoords(Coord{0, 0}, Coord{10, 10}),
+			g:        NewMultiPoint(XYZ).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			expected: NewBounds(XYZ).SetCoords(Coord{-1, -1, -1}, Coord{11, 11, 11}),
 		},
 		{
-			b:    NewBounds(XYM).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
-			g:    NewMultiPoint(XYZ).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
-			want: NewBounds(XYZM).SetCoords(Coord{-1, -1, -1, 0}, Coord{11, 11, 11, 10}),
+			b:        NewBounds(XYM).SetCoords(Coord{0, 0, 0}, Coord{10, 10, 10}),
+			g:        NewMultiPoint(XYZ).MustSetCoords([]Coord{{-1, -1, -1}, {11, 11, 11}}),
+			expected: NewBounds(XYZM).SetCoords(Coord{-1, -1, -1, 0}, Coord{11, 11, 11, 10}),
 		},
 	} {
-		if got := tc.b.Clone().Extend(tc.g); !reflect.DeepEqual(got, tc.want) {
-			t.Errorf("%+v.Extend(%+v) == %+v, want %+v", tc.b, tc.g, got, tc.want)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.b.Clone().Extend(tc.g))
+		})
 	}
 }
 
 func TestBoundsIsEmpty(t *testing.T) {
-	for i, testData := range []struct {
-		bounds  Bounds
-		isEmpty bool
+	for i, tc := range []struct {
+		b        *Bounds
+		expected bool
 	}{
 		{
-			bounds:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{-1, -1}},
-			isEmpty: true,
+			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{-1, -1}},
+			expected: true,
 		},
 		{
-			bounds:  Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			isEmpty: false,
+			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			expected: false,
 		},
 		{
-			bounds:  Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
-			isEmpty: false,
+			b:        &Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			expected: false,
 		},
 	} {
-		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-		for j := 0; j < 10; j++ {
-			// do multiple checks to verify no obvious side effects are caused
-			isEmpty := copy.IsEmpty()
-			if isEmpty != testData.isEmpty {
-				t.Errorf("Test %v Failed.  Expected: %v but got: %v", i+1, testData.isEmpty, isEmpty)
-				break
-			}
-			if !reflect.DeepEqual(copy, testData.bounds) {
-				t.Errorf("Test %v Failed.  Function IsEmpty modified internal state of bounds.  Before: \n%v After: \n%v", i+1, testData.bounds, copy)
-				break
-			}
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.b.IsEmpty())
+		})
 	}
 }
 
 func TestBoundsOverlaps(t *testing.T) {
-	for i, testData := range []struct {
-		bounds, other Bounds
-		overlaps      bool
+	for i, tc := range []struct {
+		b1       *Bounds
+		b2       *Bounds
+		expected bool
 	}{
 		{
-			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			other:    Bounds{layout: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
-			overlaps: false,
+			b1:       &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			b2:       &Bounds{layout: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
+			expected: false,
 		},
 		{
-			bounds:   Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
-			other:    Bounds{layout: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
-			overlaps: true,
+			b1:       &Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			b2:       &Bounds{layout: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
+			expected: true,
 		},
 		{
-			bounds:   Bounds{layout: XY, min: Coord{1, 1}, max: Coord{5, 5}},
-			other:    Bounds{layout: XY, min: Coord{-5, -5}, max: Coord{-1, -1}},
-			overlaps: false,
+			b1:       &Bounds{layout: XY, min: Coord{1, 1}, max: Coord{5, 5}},
+			b2:       &Bounds{layout: XY, min: Coord{-5, -5}, max: Coord{-1, -1}},
+			expected: false,
 		},
 		{
-			bounds:   Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
-			other:    Bounds{layout: XYZ, min: Coord{-10, 0, 0}, max: Coord{-5, 10, 10}},
-			overlaps: true,
+			b1:       &Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
+			b2:       &Bounds{layout: XYZ, min: Coord{-10, 0, 0}, max: Coord{-5, 10, 10}},
+			expected: true,
 		},
 		{
-			bounds:   Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
-			other:    Bounds{layout: XYZ, min: Coord{5, 5, -10}, max: Coord{10, 10, -5}},
-			overlaps: false,
+			b1:       &Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
+			b2:       &Bounds{layout: XYZ, min: Coord{5, 5, -10}, max: Coord{10, 10, -5}},
+			expected: false,
 		},
 		{
-			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			other:    Bounds{layout: XY, min: Coord{-10, -10}, max: Coord{-0.000000000000000000000000000001, 0}},
-			overlaps: false,
+			b1:       &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			b2:       &Bounds{layout: XY, min: Coord{-10, -10}, max: Coord{-0.000000000000000000000000000001, 0}},
+			expected: false,
 		},
 	} {
-		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-		for j := 0; j < 10; j++ {
-			// do multiple checks to verify no obvious side effects are caused
-			overlaps := copy.Overlaps(testData.bounds.layout, &testData.other)
-			if overlaps != testData.overlaps {
-				t.Errorf("Test %v Failed.  Expected: %v but got: %v", i+1, testData.overlaps, overlaps)
-				break
-			}
-			if !reflect.DeepEqual(copy, testData.bounds) {
-				t.Errorf("Test %v Failed.  Function Overlaps modified internal state of bounds.  Before: \n%v After: \n%v", i+1, testData.bounds, copy)
-				break
-			}
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.b1.Overlaps(tc.b1.layout, tc.b2))
+		})
 	}
 }
 
 func TestBoundsOverlapsPoint(t *testing.T) {
-	for i, testData := range []struct {
-		bounds   Bounds
-		point    Coord
-		overlaps bool
+	for i, tc := range []struct {
+		b        *Bounds
+		p        Coord
+		expected bool
 	}{
 		{
-			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			point:    Coord{-10, 0},
-			overlaps: false,
+			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			p:        Coord{-10, 0},
+			expected: false,
 		},
 		{
-			bounds:   Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
-			point:    Coord{-10, 0},
-			overlaps: true,
+			b:        &Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			p:        Coord{-10, 0},
+			expected: true,
 		},
 		{
-			bounds:   Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
-			point:    Coord{-5, 10, 10},
-			overlaps: true,
+			b:        &Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
+			p:        Coord{-5, 10, 10},
+			expected: true,
 		},
 		{
-			bounds:   Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
-			point:    Coord{5, 5, -10},
-			overlaps: false,
+			b:        &Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
+			p:        Coord{5, 5, -10},
+			expected: false,
 		},
 		{
-			bounds:   Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}},
-			point:    Coord{-0.000000000000000000000000000001, 0},
-			overlaps: false,
+			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}},
+			p:        Coord{-0.000000000000000000000000000001, 0},
+			expected: false,
 		},
 	} {
-		copy := Bounds{layout: testData.bounds.layout, min: testData.bounds.min, max: testData.bounds.max}
-		for j := 0; j < 10; j++ {
-			// do multiple checks to verify no obvious side effects are caused
-			overlaps := copy.OverlapsPoint(testData.bounds.layout, testData.point)
-			if overlaps != testData.overlaps {
-				t.Errorf("Test %v Failed.  Expected: %v but got: %v", i+1, testData.overlaps, overlaps)
-				break
-			}
-			if !reflect.DeepEqual(copy, testData.bounds) {
-				t.Errorf("Test %v Failed.  Function Overlaps modified internal state of bounds.  Before: \n%v After: \n%v", i+1, testData.bounds, copy)
-				break
-			}
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.b.OverlapsPoint(tc.b.layout, tc.p))
+		})
 	}
 }
 
 func TestBoundsPolygon(t *testing.T) {
-	for _, tc := range []struct {
-		b    *Bounds
-		want *Polygon
+	for i, tc := range []struct {
+		b        *Bounds
+		expected *Polygon
 	}{
 		{
-			b:    NewBounds(NoLayout),
-			want: NewPolygon(XY),
+			b:        NewBounds(NoLayout),
+			expected: NewPolygon(XY),
 		},
 		{
-			b:    NewBounds(XY).Set(0, 0, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
+			b:        NewBounds(XY).Set(0, 0, 1, 1),
+			expected: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
-			b:    NewBounds(XYZ).Set(0, 0, 0, 1, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
+			b:        NewBounds(XYZ).Set(0, 0, 0, 1, 1, 1),
+			expected: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
-			b:    NewBounds(XYM).Set(0, 0, 0, 1, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
+			b:        NewBounds(XYM).Set(0, 0, 0, 1, 1, 1),
+			expected: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
-			b:    NewBounds(XYZM).Set(0, 0, 0, 0, 1, 1, 1, 1),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
+			b:        NewBounds(XYZM).Set(0, 0, 0, 0, 1, 1, 1, 1),
+			expected: NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0}}}),
 		},
 		{
-			b:    NewBounds(XY).Set(1, 2, 3, 4),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {1, 4}, {3, 4}, {3, 2}, {1, 2}}}),
+			b:        NewBounds(XY).Set(1, 2, 3, 4),
+			expected: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {1, 4}, {3, 4}, {3, 2}, {1, 2}}}),
 		},
 		{
-			b:    NewBounds(XYZ).Set(1, 2, 3, 4, 5, 6),
-			want: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {1, 5}, {4, 5}, {4, 2}, {1, 2}}}),
+			b:        NewBounds(XYZ).Set(1, 2, 3, 4, 5, 6),
+			expected: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {1, 5}, {4, 5}, {4, 2}, {1, 2}}}),
 		},
 	} {
-		if got := tc.b.Polygon(); !reflect.DeepEqual(tc.want, got) {
-			t.Errorf("%v.Polygon() == %v, want %v", tc.b, got, tc.want)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.b.Polygon())
+		})
 	}
 }
 
@@ -236,38 +209,23 @@ func TestBoundsSet(t *testing.T) {
 	bounds := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
 	bounds.Set(0, 0, 20, 20)
 	expected := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{20, 20}}
-	if !reflect.DeepEqual(expected, bounds) {
-		t.Errorf("Expected %v but got %v", expected, bounds)
-	}
-	func() {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Error("Expected a panic but didn't get it as expected")
-			} else if !reflect.DeepEqual(expected, bounds) {
-				t.Errorf("Set modified bounds even though error was thrown. Before %v after %v", expected, bounds)
-			}
-		}()
+	assert.Equal(t, expected, bounds)
+	assert.Panics(t, func() {
 		bounds.Set(2, 2, 2, 2, 2)
-	}()
+	})
 }
 
 func TestBoundsSetCoords(t *testing.T) {
 	bounds := &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
 	bounds.SetCoords(Coord{0, 0}, Coord{20, 20})
 	expected := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{20, 20}}
-	if !reflect.DeepEqual(expected, *bounds) {
-		t.Errorf("Expected %v but got %v", expected, *bounds)
-	}
+	assert.Equal(t, expected, *bounds)
 
 	bounds = NewBounds(XY)
 	bounds.SetCoords(Coord{0, 0}, Coord{20, 20})
-	if !reflect.DeepEqual(expected, *bounds) {
-		t.Errorf("Expected %v but got %v", expected, *bounds)
-	}
+	assert.Equal(t, expected, *bounds)
 
 	bounds = NewBounds(XY)
 	bounds.SetCoords(Coord{20, 0}, Coord{0, 20}) // set coords should ensure valid min / max
-	if !reflect.DeepEqual(expected, *bounds) {
-		t.Errorf("Expected %v but got %v", expected, *bounds)
-	}
+	assert.Equal(t, expected, *bounds)
 }
