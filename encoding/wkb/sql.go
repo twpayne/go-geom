@@ -95,7 +95,7 @@ func (g *Geom) Value() (driver.Value, error) {
 	return value(g.T)
 }
 
-// Geom returns the underlying geom.T
+// Geom returns the underlying geom.T.
 func (g *Geom) Geom() geom.T {
 	return g.T
 }
