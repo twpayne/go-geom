@@ -18,6 +18,14 @@ func (e ErrExpectedByteSlice) Error() string {
 	return fmt.Sprintf("wkb: want []byte, got %T", e.Value)
 }
 
+// A Geom is a WKB-ecoded Geometry that implements the sql.Scanner and
+// driver.Value interfaces.
+// It can be used when the geometry shape is not defined.
+type Geom struct {
+	geom.T
+	opts []wkbcommon.WKBOption
+}
+
 // A Point is a WKB-encoded Point that implements the sql.Scanner and
 // driver.Valuer interfaces.
 type Point struct {
@@ -65,6 +73,31 @@ type MultiPolygon struct {
 type GeometryCollection struct {
 	*geom.GeometryCollection
 	opts []wkbcommon.WKBOption
+}
+
+// Scan scans from a []byte.
+func (g *Geom) Scan(src interface{}) error {
+	b, ok := src.([]byte)
+	if !ok {
+		return ErrExpectedByteSlice{Value: src}
+	}
+	// NOTE(tb) other Scanners do not check the len of b, is it really useful ?
+	if len(b) == 0 {
+		return nil
+	}
+	var err error
+	g.T, err = Unmarshal(b, g.opts...)
+	return err
+}
+
+// Value returns the WKB encoding of g.
+func (g *Geom) Value() (driver.Value, error) {
+	return value(g.T)
+}
+
+// Geom returns the underlying geom.T.
+func (g *Geom) Geom() geom.T {
+	return g.T
 }
 
 // Scan scans from a []byte.
