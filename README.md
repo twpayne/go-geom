@@ -1,6 +1,6 @@
 # go-geom
 
-[![GoDoc](https://pkg.go.dev/github.com/twpayne/go-geom?status.svg)](https://pkg.go.dev/github.com/twpayne/go-geom)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-geom)](https://pkg.go.dev/github.com/twpayne/go-geom)
 [![Go Report Card](https://goreportcard.com/badge/github.com/twpayne/go-geom)](https://goreportcard.com/report/github.com/twpayne/go-geom)
 [![Coverage Status](https://coveralls.io/repos/github/twpayne/go-geom/badge.svg)](https://coveralls.io/github/twpayne/go-geom)
 
