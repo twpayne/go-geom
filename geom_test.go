@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -539,5 +540,30 @@ func TestSetCoord(t *testing.T) {
 	} {
 		tc.dest.Set(tc.src)
 		assert.True(t, tc.dest.Equal(tc.layout, tc.expected))
+	}
+}
+
+func TestTransformInPlace(t *testing.T) {
+	f := func(coord Coord) {
+		for i := range coord {
+			coord[i] += float64(i + 1)
+		}
+	}
+	for i, tc := range []struct {
+		g        T
+		expected T
+	}{
+		{
+			g:        NewPoint(XY).MustSetCoords(Coord{0, 0}),
+			expected: NewPoint(XY).MustSetCoords(Coord{1, 2}),
+		},
+		{
+			g:        NewPoint(XYZ).MustSetCoords(Coord{0, 0, 0}),
+			expected: NewPoint(XYZ).MustSetCoords(Coord{1, 2, 3}),
+		},
+	} {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, TransformInPlace(tc.g, f))
+		})
 	}
 }
