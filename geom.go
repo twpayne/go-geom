@@ -193,6 +193,18 @@ func (l Layout) ZIndex() int {
 	}
 }
 
+// TransformInPlace replaces all coordinates in g using f.
+func TransformInPlace(g T, f func(Coord)) T {
+	var (
+		flatCoords = g.FlatCoords()
+		stride     = g.Stride()
+	)
+	for i, n := 0, len(flatCoords); i < n; i += stride {
+		f(flatCoords[i : i+stride])
+	}
+	return g
+}
+
 // Must panics if err is not nil, otherwise it returns g.
 func Must(g T, err error) T {
 	if err != nil {
