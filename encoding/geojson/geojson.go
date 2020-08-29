@@ -535,7 +535,7 @@ func encodeBBox(b *geom.Bounds) ([]float64, error) {
 			b.Max(0), b.Max(1), b.Max(2),
 		}, nil
 	default:
-		return []float64{}, ErrUnsupportedType(l)
+		return []float64{}, ErrUnsupportedType(rune(l))
 	}
 }
 
