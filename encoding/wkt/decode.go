@@ -19,7 +19,7 @@ func decode(wkt string) (geom.T, error) {
 
 	switch t {
 	case tPoint:
-		coords, _, err := readCoordsDim1(l, wkt)
+		coords, _, err := readCoordsDim1(l, wkt, false)
 		if err != nil {
 			return nil, err
 		}
@@ -30,7 +30,7 @@ func decode(wkt string) (geom.T, error) {
 		}
 		return p, nil
 	case tLineString:
-		coords, _, err := readCoordsDim1(l, wkt)
+		coords, _, err := readCoordsDim1(l, wkt, false)
 		if err != nil {
 			return nil, err
 		}
@@ -53,7 +53,7 @@ func decode(wkt string) (geom.T, error) {
 		}
 		return p, nil
 	case tMultiPoint:
-		coords, _, err := readCoordsDim1(l, wkt)
+		coords, _, err := readCoordsDim1(l, wkt, true)
 		if err != nil {
 			return nil, err
 		}
@@ -163,18 +163,22 @@ func createGeomCollectionForWkt(wkt string) (*geom.GeometryCollection, error) {
 	return gc, nil
 }
 
-func readCoordsDim1(l geom.Layout, wkt string) ([]geom.Coord, string, error) {
-	isEmpty := strings.HasSuffix(wkt, tEmpty)
-	if isEmpty {
+func readCoordsDim1(
+	l geom.Layout, wkt string, allowEmptyCoordsInBrace bool,
+) ([]geom.Coord, string, error) {
+	if strings.HasPrefix(wkt, tEmpty) {
+		rest := strings.TrimLeft(wkt[len(tEmpty):], ", ")
+		return []geom.Coord{}, rest, nil
+	} else if strings.HasSuffix(wkt, tEmpty) {
 		return []geom.Coord{}, "", nil
 	}
 
-	braceContent, rest, err := braceContentAndRestStartingWithOpeningBrace(wkt)
+	braceContent, rest, err := braceContentAndRestAfterComma(wkt)
 	if err != nil {
 		return nil, rest, err
 	}
 
-	coords, err := coordsFromBraceContent(braceContent, l)
+	coords, err := coordsFromBraceContent(braceContent, l, allowEmptyCoordsInBrace)
 	if err != nil {
 		return nil, rest, err
 	}
@@ -184,18 +188,24 @@ func readCoordsDim1(l geom.Layout, wkt string) ([]geom.Coord, string, error) {
 
 func readCoordsDim2(l geom.Layout, wkt string) ([][]geom.Coord, string, error) {
 	coordsDim2 := [][]geom.Coord{}
-	isEmpty := strings.HasSuffix(wkt, tEmpty)
-	if isEmpty {
+	if strings.HasPrefix(wkt, tEmpty) {
+		rest := strings.TrimLeft(wkt[len(tEmpty):], ", ")
+		return coordsDim2, rest, nil
+	} else if strings.HasSuffix(wkt, tEmpty) {
 		return coordsDim2, "", nil
 	}
 
-	contentDim2, restDim2, err := braceContentAndRestStartingWithOpeningBrace(wkt)
+	if strings.HasSuffix(wkt, tEmpty) {
+		return coordsDim2, "", nil
+	}
+
+	contentDim2, restDim2, err := braceContentAndRestAfterComma(wkt)
 	if err != nil {
 		return nil, restDim2, err
 	}
 
 	for {
-		coordsDim1, restDim1, err := readCoordsDim1(l, contentDim2)
+		coordsDim1, restDim1, err := readCoordsDim1(l, contentDim2, false)
 		if err != nil {
 			return coordsDim2, restDim2, err
 		}
@@ -213,8 +223,7 @@ func readCoordsDim2(l geom.Layout, wkt string) ([][]geom.Coord, string, error) {
 
 func readCoordsDim3(l geom.Layout, wkt string) ([][][]geom.Coord, string, error) {
 	coordsDim3 := [][][]geom.Coord{}
-	isEmpty := strings.HasSuffix(wkt, tEmpty)
-	if isEmpty {
+	if strings.HasSuffix(wkt, tEmpty) {
 		return coordsDim3, "", nil
 	}
 
@@ -240,12 +249,18 @@ func readCoordsDim3(l geom.Layout, wkt string) ([][][]geom.Coord, string, error)
 	return coordsDim3, restDim3, nil
 }
 
-func coordsFromBraceContent(s string, l geom.Layout) ([]geom.Coord, error) {
+func coordsFromBraceContent(s string, l geom.Layout, allowEmpty bool) ([]geom.Coord, error) {
 	coords := []geom.Coord{}
 
 	coordStrings := strings.Split(s, ",")
 	for _, coordStr := range coordStrings {
-		coordElems := strings.Split(strings.TrimSpace(coordStr), " ")
+		coordStr = strings.TrimSpace(coordStr)
+		if allowEmpty && coordStr == tEmpty {
+			coords = append(coords, nil)
+			continue
+		}
+
+		coordElems := strings.Split(coordStr, " ")
 		if len(coordElems) != l.Stride() {
 			return nil, geom.ErrStrideMismatch{
 				Got:  len(coordElems),
@@ -300,6 +315,21 @@ func braceContentAndRest(s string) (string, string, error) {
 	return braceContent, rest, nil
 }
 
+func braceContentAndRestAfterComma(s string) (string, string, error) {
+	content, rest, err := braceContentAndRest(s)
+	if err != nil {
+		return content, rest, err
+	}
+
+	nextComma := strings.Index(rest, ",")
+	if nextComma >= 0 {
+		rest = strings.TrimSpace(rest[nextComma+1:])
+	} else {
+		rest = ""
+	}
+	return content, rest, nil
+}
+
 func braceContentAndRestStartingWithOpeningBrace(s string) (string, string, error) {
 	content, rest, err := braceContentAndRest(s)
 	if err != nil {
@@ -316,16 +346,22 @@ func braceContentAndRestStartingWithOpeningBrace(s string) (string, string, erro
 }
 
 func typeContentAndRestStartingWithLetter(s string) (string, string, error) {
-	content, rest, err := braceContentAndRest(s)
+	content, _, err := findTypeAndLayout(s)
 	if err != nil {
-		return content, rest, err
+		return "", "", err
 	}
-
-	t, _, err := findTypeAndLayout(s)
-	if err != nil {
-		return content, rest, err
+	rest := s[len(content):]
+	if strings.HasPrefix(rest, tEmpty) {
+		content += tEmpty
+		rest = rest[len(tEmpty):]
+	} else {
+		c, r, err := braceContentAndRest(rest)
+		if err != nil {
+			return content, rest, err
+		}
+		content = content + "(" + c + ")"
+		rest = r
 	}
-	content = t + "(" + content + ")"
 
 	nextLetterIdx := -1
 	for i, char := range rest {
