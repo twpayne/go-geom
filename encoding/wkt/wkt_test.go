@@ -75,40 +75,52 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 			s: "MULTIPOINT EMPTY",
 		},
 		{
+			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{nil, nil}),
+			s: "MULTIPOINT (EMPTY, EMPTY)",
+		},
+		{
 			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}}),
 			s: "MULTIPOINT (1 2)",
 		},
 		{
-			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, {3, 4}}),
-			s: "MULTIPOINT (1 2, 3 4)",
+			g: geom.NewMultiPoint(geom.XY).MustSetCoords([]geom.Coord{{1, 2}, nil, {3, 4}}),
+			s: "MULTIPOINT (1 2, EMPTY, 3 4)",
 		},
 		{
-			g: geom.NewMultiPoint(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 1, 42}, {3, 4, 1, 43}}),
-			s: "MULTIPOINT ZM (1 2 1 42, 3 4 1 43)",
+			g: geom.NewMultiPoint(geom.XYZM).MustSetCoords([]geom.Coord{{1, 2, 1, 42}, nil, {3, 4, 1, 43}}),
+			s: "MULTIPOINT ZM (1 2 1 42, EMPTY, 3 4 1 43)",
 		},
 		{
 			g: geom.NewMultiLineString(geom.XY),
 			s: "MULTILINESTRING EMPTY",
 		},
 		{
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{nil, nil}),
+			s: "MULTILINESTRING (EMPTY, EMPTY)",
+		},
+		{
 			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}}}),
 			s: "MULTILINESTRING ((1 2, 3 4))",
 		},
 		{
-			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}),
-			s: "MULTILINESTRING ((1 2, 3 4), (5 6, 7 8))",
+			g: geom.NewMultiLineString(geom.XY).MustSetCoords([][]geom.Coord{{{1, 2}, {3, 4}}, nil, {{5, 6}, {7, 8}}}),
+			s: "MULTILINESTRING ((1 2, 3 4), EMPTY, (5 6, 7 8))",
 		},
 		{
 			g: geom.NewMultiPolygon(geom.XY),
 			s: "MULTIPOLYGON EMPTY",
 		},
 		{
+			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord{nil, nil}),
+			s: "MULTIPOLYGON (EMPTY, EMPTY)",
+		},
+		{
 			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord{{{{1, 2}, {3, 4}, {5, 6}}}}),
 			s: "MULTIPOLYGON (((1 2, 3 4, 5 6)))",
 		},
 		{
-			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord{{{{1, 2}, {3, 4}, {5, 6}}}, {{{7, 8}, {9, 10}, {11, 12}}}}),
-			s: "MULTIPOLYGON (((1 2, 3 4, 5 6)), ((7 8, 9 10, 11 12)))",
+			g: geom.NewMultiPolygon(geom.XY).MustSetCoords([][][]geom.Coord{{{{1, 2}, {3, 4}, {5, 6}}}, nil, {{{7, 8}, {9, 10}, {11, 12}}}}),
+			s: "MULTIPOLYGON (((1 2, 3 4, 5 6)), EMPTY, ((7 8, 9 10, 11 12)))",
 		},
 		{
 			g: geom.NewMultiPolygon(geom.XYZM).MustSetCoords([][][]geom.Coord{
@@ -125,6 +137,18 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 		{
 			g: geom.NewGeometryCollection(),
 			s: "GEOMETRYCOLLECTION EMPTY",
+		},
+		{
+			g: geom.NewGeometryCollection().MustPush(geom.NewGeometryCollection()),
+			s: "GEOMETRYCOLLECTION (GEOMETRYCOLLECTION EMPTY)",
+		},
+		{
+			g: geom.NewGeometryCollection().MustPush(
+				geom.NewPointEmpty(geom.XY),
+				geom.NewLineString(geom.XY),
+				geom.NewPolygon(geom.XY),
+			),
+			s: "GEOMETRYCOLLECTION (POINT EMPTY, LINESTRING EMPTY, POLYGON EMPTY)",
 		},
 		{
 			g: geom.NewGeometryCollection().MustPush(
