@@ -48,15 +48,19 @@ func (g *MultiPolygon) NumPolygons() int {
 
 // Polygon returns the ith Polygon.
 func (g *MultiPolygon) Polygon(i int) *Polygon {
-	offset := 0
-	if i > 0 {
-		ends := g.endss[i-1]
-		if len(ends) > 0 {
-			offset = ends[len(ends)-1]
-		}
-	}
 	if len(g.endss[i]) == 0 {
 		return NewPolygon(g.layout)
+	}
+	// Find the offset from the previous non-empty polygon element.
+	offset := 0
+	lastNonEmptyIdx := i - 1
+	for lastNonEmptyIdx >= 0 {
+		ends := g.endss[lastNonEmptyIdx]
+		if len(ends) > 0 {
+			offset = ends[len(ends)-1]
+			break
+		}
+		lastNonEmptyIdx--
 	}
 	ends := make([]int, len(g.endss[i]))
 	if offset == 0 {
@@ -75,12 +79,15 @@ func (g *MultiPolygon) Push(p *Polygon) error {
 		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
 	}
 	offset := len(g.flatCoords)
-	ends := make([]int, len(p.ends))
-	if offset == 0 {
-		copy(ends, p.ends)
-	} else {
-		for i, end := range p.ends {
-			ends[i] = end + offset
+	var ends []int
+	if len(p.ends) > 0 {
+		ends = make([]int, len(p.ends))
+		if offset == 0 {
+			copy(ends, p.ends)
+		} else {
+			for i, end := range p.ends {
+				ends[i] = end + offset
+			}
 		}
 	}
 	g.flatCoords = append(g.flatCoords, p.flatCoords...)
