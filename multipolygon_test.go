@@ -89,6 +89,18 @@ func TestMultiPolygon(t *testing.T) {
 				empty:      false,
 			},
 		},
+		{
+			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {4, 5}, {6, 7}, {1, 2}}}, {}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}}),
+			expected: &expectedMultiPolygon{
+				layout:     XY,
+				stride:     2,
+				flatCoords: []float64{1, 2, 4, 5, 6, 7, 1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				endss:      [][]int{{8}, nil, nil, {14, 20}, nil},
+				coords:     [][][]Coord{{{{1, 2}, {4, 5}, {6, 7}, {1, 2}}}, {}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}},
+				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
+				empty:      false,
+			},
+		},
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			tc.mp.assertEquals(t, tc.expected)
