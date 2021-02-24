@@ -178,6 +178,12 @@ func Read(r io.Reader) (geom.T, error) {
 				return nil, err
 			}
 		}
+		// If EMPTY and Z and/or M is specified, mark the collection with a fixed layout.
+		if gc.Empty() && layout != geom.XY {
+			if err := gc.SetLayout(layout); err != nil {
+				return nil, err
+			}
+		}
 		return gc, nil
 	default:
 		return nil, wkbcommon.ErrUnsupportedType(ewkbGeometryType)
