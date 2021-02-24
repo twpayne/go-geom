@@ -149,6 +149,7 @@ func make3DCopy(coords []float64) []float64 {
 	for i := 0; i < len; i += 2 {
 		copied[j] = coords[i]
 		copied[j+1] = coords[i+1]
+		//nolint:gosec
 		copied[j+2] = rand.Float64()
 		j += 3
 	}

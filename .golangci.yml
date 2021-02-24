@@ -60,12 +60,16 @@ issues:
     - godot
     path: "^bigxy/"
   - linters:
+    - gocritic
+    path: "_example_test\\.go$"
+  - linters:
     - godot
     path: "^sorting/"
   - linters:
     - godot
     path: "^transform/"
   - linters:
+    - gocritic
     - godot
     path: "^xy/"
   - linters:
