@@ -147,6 +147,20 @@ func TestGeometryCollection(t *testing.T) {
 	}
 }
 
+func TestGeometryCollectionSetLayout(t *testing.T) {
+	mixedGeomCollection := NewGeometryCollection()
+	assert.Equal(t, NoLayout, mixedGeomCollection.Layout())
+	assert.NoError(t, mixedGeomCollection.Push(NewPointEmpty(XYZ)))
+	assert.Equal(t, XYZ, mixedGeomCollection.Layout())
+	assert.NoError(t, mixedGeomCollection.Push(NewPointEmpty(XYM)))
+	assert.Equal(t, XYZM, mixedGeomCollection.Layout())
+
+	zmGeomCollection := NewGeometryCollection().MustSetLayout(XYZM)
+	assert.Equal(t, XYZM, zmGeomCollection.Layout())
+	assert.NoError(t, zmGeomCollection.Push(NewPointEmpty(XYZM)))
+	assert.Error(t, zmGeomCollection.Push(NewPointEmpty(XY)))
+}
+
 func TestGeometryCollectionSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewGeometryCollection().SetSRID(4326).SRID())
 }

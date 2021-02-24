@@ -286,6 +286,21 @@ func Test(t *testing.T) {
 			ndr: geomtest.MustHexDecode("010700000000000000"),
 		},
 		{
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XYZ),
+			ndr: geomtest.MustHexDecode("01ef03000000000000"),
+			xdr: geomtest.MustHexDecode("00000003ef00000000"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XYM),
+			ndr: geomtest.MustHexDecode("01d707000000000000"),
+			xdr: geomtest.MustHexDecode("00000007d700000000"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XYZM),
+			ndr: geomtest.MustHexDecode("01bf0b000000000000"),
+			xdr: geomtest.MustHexDecode("0000000bbf00000000"),
+		},
+		{
 			g: geom.NewGeometryCollection().MustPush(
 				geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{-79.3698576, 43.6456613}),
 				geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{-79.3707986, 43.6453697}, {-79.3704747, 43.6454819}, {-79.370186, 43.6455592}, {-79.3699323, 43.6456385}, {-79.3698576, 43.6456613}}),
