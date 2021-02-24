@@ -102,8 +102,6 @@ func Intersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Co
 	return geom.Coord{x, y}
 }
 
-/////////////////  Implementation /////////////////////////////////
-
 // A filter for computing the orientation index of three coordinates.
 //
 // If the orientation can be computed safely using standard DP

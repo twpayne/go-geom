@@ -1,3 +1,5 @@
+GOLANGCI_LINT_VERSION=1.37.1
+
 .PHONY: all
 all: test lint
 
@@ -15,16 +17,31 @@ lint:
 
 .PHONY: format
 format:
-	find . -name \*.go | xargs $$(go env GOPATH)/bin/gofumports -local github.com/twpayne/go-geom -w
+	find . -name \*.go | xargs bin/gofumports -local github.com/twpayne/go-geom -w
 
 .PHONY: generate
 generate:
-	PATH=$$PATH:$$(go env GOPATH)/bin go generate ./...
+	PATH=$$PATH:$(shell pwd)/bin go generate ./...
 
 .PHONY: install-tools
-install-tools:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v1.26.0
-	GO111MODULE=off go get -u \
-		github.com/awalterschulze/goderive \
-		github.com/mattn/goveralls \
-		mvdan.cc/gofumpt/gofumports
+install-tools: ensure-goderive ensure-gofumports ensure-golangci-lint
+
+.PHONY: ensure-goderive
+ensure-goderive:
+	if [ ! -x bin/goderive ] ; then \
+		mkdir -p bin ; \
+		( cd $$(mktemp -d) && go mod init tmp && GOBIN=$(shell pwd)/bin go get github.com/awalterschulze/goderive ) ; \
+	fi
+
+.PHONY: ensure-gofumports
+ensure-gofumports:
+	if [ ! -x bin/gofumports ] ; then \
+		mkdir -p bin ; \
+		( cd $$(mktemp -d) && go mod init tmp && GOBIN=$(shell pwd)/bin go get mvdan.cc/gofumpt/gofumports ) ; \
+	fi
+
+.PHONY: ensure-golangci-lint
+ensure-golangci-lint:
+	if [ ! -x bin/golangci-lint ] || ( ./bin/golangci-lint --version | grep -Fqv "version ${GOLANGCI_LINT_VERSION}" ) ; then \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- v${GOLANGCI_LINT_VERSION} ; \
+	fi
