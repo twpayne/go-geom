@@ -227,7 +227,7 @@ func Test(t *testing.T) {
 			ndr: geomtest.MustHexDecode("0104000020e6100000030000000101000000000000000000f03f00000000000000400101000000000000000000f87f000000000000f87f010100000000000000000008400000000000001040"),
 		},
 		{
-			g:   geom.NewGeometryCollection().SetSRID(4326),
+			g:   geom.NewGeometryCollection().SetSRID(4326).MustSetLayout(geom.XY),
 			xdr: geomtest.MustHexDecode("0020000007000010e600000000"),
 			ndr: geomtest.MustHexDecode("0107000020e610000000000000"),
 		},
