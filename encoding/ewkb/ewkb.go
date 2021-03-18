@@ -178,6 +178,13 @@ func Read(r io.Reader) (geom.T, error) {
 				return nil, err
 			}
 		}
+		// If EMPTY, mark the collection with a fixed layout to differentiate
+		// GEOMETRYCOLLECTION EMPTY between 2D/Z/M/ZM.
+		if gc.Empty() && gc.NumGeoms() == 0 {
+			if err := gc.SetLayout(layout); err != nil {
+				return nil, err
+			}
+		}
 		return gc, nil
 	default:
 		return nil, wkbcommon.ErrUnsupportedType(ewkbGeometryType)

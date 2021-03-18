@@ -281,9 +281,24 @@ func Test(t *testing.T) {
 			ndr: geomtest.MustHexDecode("01060000000300000001030000000100000004000000000000000000f03f00000000000000400000000000000040000000000000084000000000000008400000000000001040000000000000f03f000000000000004001030000000000000001030000000100000004000000000000000000f03f00000000000000400000000000000840000000000000104000000000000014400000000000001840000000000000f03f0000000000000040"),
 		},
 		{
-			g:   geom.NewGeometryCollection(),
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XY),
 			xdr: geomtest.MustHexDecode("000000000700000000"),
 			ndr: geomtest.MustHexDecode("010700000000000000"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XYZ),
+			ndr: geomtest.MustHexDecode("01ef03000000000000"),
+			xdr: geomtest.MustHexDecode("00000003ef00000000"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XYM),
+			ndr: geomtest.MustHexDecode("01d707000000000000"),
+			xdr: geomtest.MustHexDecode("00000007d700000000"),
+		},
+		{
+			g:   geom.NewGeometryCollection().MustSetLayout(geom.XYZM),
+			ndr: geomtest.MustHexDecode("01bf0b000000000000"),
+			xdr: geomtest.MustHexDecode("0000000bbf00000000"),
 		},
 		{
 			g: geom.NewGeometryCollection().MustPush(

@@ -18,15 +18,15 @@ import (
 type Layout int
 
 const (
-	// NoLayout is an unknown layout
+	// NoLayout is an unknown layout.
 	NoLayout Layout = iota
-	// XY is a 2D layout (X and Y)
+	// XY is a 2D layout (X and Y).
 	XY
-	// XYZ is 3D layout (X, Y, and Z)
+	// XYZ is 3D layout (X, Y, and Z).
 	XYZ
-	// XYM is a 2D layout with an M value
+	// XYM is a 2D layout with an M value.
 	XYM
-	// XYZM is a 3D layout with an M value
+	// XYZM is a 3D layout with an M value.
 	XYZM
 )
 

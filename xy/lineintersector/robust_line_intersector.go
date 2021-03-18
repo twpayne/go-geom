@@ -12,8 +12,7 @@ import (
 
 // RobustLineIntersector is a less performant implementation when compared to the non robust implementation but
 // provides more consistent results in extreme cases
-type RobustLineIntersector struct {
-}
+type RobustLineIntersector struct{}
 
 func (intersector RobustLineIntersector) computePointOnLineIntersection(data *lineIntersectorData, point, lineStart, lineEnd geom.Coord) {
 	data.isProper = false

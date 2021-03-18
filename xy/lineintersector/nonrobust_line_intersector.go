@@ -7,8 +7,7 @@ import (
 )
 
 // NonRobustLineIntersector is a performant but non robust line intersection implementation.
-type NonRobustLineIntersector struct {
-}
+type NonRobustLineIntersector struct{}
 
 func (li NonRobustLineIntersector) computePointOnLineIntersection(data *lineIntersectorData, p, lineStart, lineEnd geom.Coord) {
 	/*
