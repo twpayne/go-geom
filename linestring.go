@@ -87,6 +87,10 @@ func (g *LineString) SetSRID(srid int) *LineString {
 	return g
 }
 
+func (g *LineString) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // SubLineString returns a LineString from starts at index start and stops at
 // index stop of g. The returned LineString aliases g.
 func (g *LineString) SubLineString(start, stop int) *LineString {

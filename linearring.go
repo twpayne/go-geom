@@ -54,6 +54,10 @@ func (g *LinearRing) SetSRID(srid int) *LinearRing {
 	return g
 }
 
+func (g *LinearRing) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // Swap swaps the values of g and g2.
 func (g *LinearRing) Swap(g2 *LinearRing) {
 	*g, *g2 = *g2, *g

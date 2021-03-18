@@ -81,6 +81,10 @@ func (g *Polygon) SetSRID(srid int) *Polygon {
 	return g
 }
 
+func (g *Polygon) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // Swap swaps the values of g and g2.
 func (g *Polygon) Swap(g2 *Polygon) {
 	*g, *g2 = *g2, *g

@@ -128,6 +128,7 @@ type T interface {
 	Ends() []int
 	Endss() [][]int
 	SRID() int
+	SetSRIDEx(int)
 	Empty() bool
 }
 

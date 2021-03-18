@@ -82,6 +82,10 @@ func (g *MultiLineString) SetSRID(srid int) *MultiLineString {
 	return g
 }
 
+func (g *MultiLineString) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // Swap swaps the values of g and g2.
 func (g *MultiLineString) Swap(g2 *MultiLineString) {
 	*g, *g2 = *g2, *g

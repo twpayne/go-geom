@@ -128,6 +128,10 @@ func (g *MultiPoint) SetSRID(srid int) *MultiPoint {
 	return g
 }
 
+func (g *MultiPoint) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // NumPoints returns the number of Points.
 func (g *MultiPoint) NumPoints() int {
 	return len(g.ends)

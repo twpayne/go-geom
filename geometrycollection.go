@@ -101,6 +101,10 @@ func (g *GeometryCollection) SRID() int {
 	return g.srid
 }
 
+func (g *GeometryCollection) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // MustPush pushes gs to g. It panics on any error.
 func (g *GeometryCollection) MustPush(gs ...T) *GeometryCollection {
 	if err := g.Push(gs...); err != nil {

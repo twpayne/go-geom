@@ -109,6 +109,10 @@ func (g *MultiPolygon) SetSRID(srid int) *MultiPolygon {
 	return g
 }
 
+func (g *MultiPolygon) SetSRIDEx(srid int) {
+	g.srid = srid
+}
+
 // Swap swaps the values of g and g2.
 func (g *MultiPolygon) Swap(g2 *MultiPolygon) {
 	*g, *g2 = *g2, *g
