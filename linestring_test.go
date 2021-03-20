@@ -166,6 +166,7 @@ func TestLineStringStrideMismatch(t *testing.T) {
 
 func TestLineStringSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewLineString(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewLineString(NoLayout), 4326)).SRID())
 }
 
 func TestLineStringSubLineString(t *testing.T) {

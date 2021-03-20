@@ -193,6 +193,32 @@ func (l Layout) ZIndex() int {
 	}
 }
 
+// SetSRID sets the SRID of an arbitrary geometry.
+func SetSRID(g T, srid int) (T, error) {
+	switch g := g.(type) {
+	case *Point:
+		return g.SetSRID(srid), nil
+	case *LineString:
+		return g.SetSRID(srid), nil
+	case *LinearRing:
+		return g.SetSRID(srid), nil
+	case *Polygon:
+		return g.SetSRID(srid), nil
+	case *MultiPoint:
+		return g.SetSRID(srid), nil
+	case *MultiLineString:
+		return g.SetSRID(srid), nil
+	case *MultiPolygon:
+		return g.SetSRID(srid), nil
+	case *GeometryCollection:
+		return g.SetSRID(srid), nil
+	default:
+		return g, &ErrUnsupportedType{
+			Value: g,
+		}
+	}
+}
+
 // TransformInPlace replaces all coordinates in g using f.
 func TransformInPlace(g T, f func(Coord)) T {
 	var (

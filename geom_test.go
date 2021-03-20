@@ -567,3 +567,8 @@ func TestTransformInPlace(t *testing.T) {
 		})
 	}
 }
+
+func TestSetSRID(t *testing.T) {
+	_, err := SetSRID(nil, 4326)
+	assert.Error(t, err)
+}

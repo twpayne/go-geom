@@ -132,4 +132,5 @@ func TestLinearRingStrideMismatch(t *testing.T) {
 
 func TestLinearRingSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewLinearRing(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewLinearRing(NoLayout), 4326)).SRID())
 }

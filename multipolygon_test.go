@@ -111,6 +111,7 @@ func TestMultiPolygon(t *testing.T) {
 
 func TestMultiPolygonSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewMultiPolygon(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewMultiPolygon(NoLayout), 4326)).SRID())
 }
 
 func TestMultiPolygonStrideMismatch(t *testing.T) {

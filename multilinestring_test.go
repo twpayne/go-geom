@@ -143,4 +143,5 @@ func TestMultiLineStringStrideMismatch(t *testing.T) {
 
 func TestMultiLineStringSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewMultiLineString(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewMultiLineString(NoLayout), 4326)).SRID())
 }
