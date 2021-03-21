@@ -113,4 +113,5 @@ func TestPolygonStrideMismatch(t *testing.T) {
 
 func TestPolygonSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewPolygon(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewPolygon(NoLayout), 4326)).SRID())
 }

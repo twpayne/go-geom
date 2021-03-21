@@ -176,7 +176,8 @@ func TestPointCloneAndSwap(t *testing.T) {
 }
 
 func TestPointSetSRID(t *testing.T) {
-	assert.Equal(t, 4326, NewPoint(XY).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, NewPoint(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewPoint(NoLayout), 4326)).SRID())
 }
 
 func TestPointXYZM(t *testing.T) {

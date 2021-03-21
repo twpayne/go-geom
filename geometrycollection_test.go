@@ -163,4 +163,5 @@ func TestGeometryCollectionSetLayout(t *testing.T) {
 
 func TestGeometryCollectionSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewGeometryCollection().SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewGeometryCollection(), 4326)).SRID())
 }

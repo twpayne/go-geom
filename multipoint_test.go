@@ -231,4 +231,5 @@ func TestMultiPointStrideMismatch(t *testing.T) {
 
 func TestMultiPointSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewMultiPoint(NoLayout).SetSRID(4326).SRID())
+	assert.Equal(t, 4326, Must(SetSRID(NewMultiPoint(NoLayout), 4326)).SRID())
 }
