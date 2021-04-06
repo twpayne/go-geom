@@ -6,7 +6,7 @@ require (
 	github.com/lib/pq v1.8.0
 	github.com/ory/dockertest/v3 v3.6.0
 	github.com/stretchr/testify v1.6.1
-	github.com/twpayne/go-kml v1.5.1
+	github.com/twpayne/go-kml v1.5.2
 )
 
 go 1.13
