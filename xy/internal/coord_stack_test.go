@@ -45,22 +45,21 @@ func TestBasicStackFunctionality(t *testing.T) {
 }
 
 func verifyPush(t *testing.T, stack *internal.CoordStack, toPush []float64, i int) {
-	c := stack.Push(toPush, i)
-
-	if !reflect.DeepEqual(c, toPush[i:i+3]) {
+	t.Helper()
+	if c := stack.Push(toPush, i); !reflect.DeepEqual(c, toPush[i:i+3]) {
 		t.Fatalf("stack.Peek() failed, expected %v but was %v", toPush[i:i+3], c)
 	}
 }
 
 func verifyPeek(t *testing.T, stack *internal.CoordStack, expectedCoord []float64) {
-	c := stack.Peek()
-
-	if !reflect.DeepEqual(c, expectedCoord) {
+	t.Helper()
+	if c := stack.Peek(); !reflect.DeepEqual(c, expectedCoord) {
 		t.Fatalf("stack.Peek() failed, expected %v but was %v", expectedCoord, c)
 	}
 }
 
 func verifyPop(t *testing.T, stack *internal.CoordStack, expectedSize int, expectedCoord []float64) {
+	t.Helper()
 	c, size := stack.Pop()
 
 	if size != expectedSize {

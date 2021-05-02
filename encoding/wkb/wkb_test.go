@@ -14,6 +14,7 @@ import (
 )
 
 func test(t *testing.T, g geom.T, xdr, ndr []byte, opts ...wkbcommon.WKBOption) {
+	t.Helper()
 	if xdr != nil {
 		t.Run("xdr", func(t *testing.T) {
 			t.Run("unmarshal", func(t *testing.T) {

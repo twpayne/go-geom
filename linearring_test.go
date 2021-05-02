@@ -19,6 +19,7 @@ type expectedLinearRing struct {
 }
 
 func (g *LinearRing) assertEquals(t *testing.T, e *expectedLinearRing) {
+	t.Helper()
 	assert.NoError(t, g.verify())
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())

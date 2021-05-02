@@ -19,6 +19,7 @@ type expectedLineString struct {
 }
 
 func (g *LineString) assertEquals(t *testing.T, e *expectedLineString) {
+	t.Helper()
 	assert.NoError(t, g.verify())
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())

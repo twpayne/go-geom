@@ -29,6 +29,7 @@ type expectedPolygon struct {
 }
 
 func (g *Polygon) assertEquals(t *testing.T, e *expectedPolygon) {
+	t.Helper()
 	assert.NoError(t, g.verify())
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())

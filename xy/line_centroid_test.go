@@ -73,14 +73,15 @@ func TestLineGetCentroidLines(t *testing.T) {
 }
 
 func verifyLineCentroid(t *testing.T, i int, tc lineDataType) {
-	centroid := xy.LinesCentroid(tc.lines[0], tc.lines[1:]...)
+	t.Helper()
 
-	if !reflect.DeepEqual(tc.lineCentroid, centroid) {
+	if centroid := xy.LinesCentroid(tc.lines[0], tc.lines[1:]...); !reflect.DeepEqual(tc.lineCentroid, centroid) {
 		t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 }
 
 func verifyMultiLineCentroid(t *testing.T, i int, tc lineDataType) {
+	t.Helper()
 	coords := []float64{}
 	ends := []int{}
 	for _, p := range tc.lines {
@@ -98,6 +99,7 @@ func verifyMultiLineCentroid(t *testing.T, i int, tc lineDataType) {
 }
 
 func verifyLinearRingsCentroid(t *testing.T, i int, tc lineDataType) {
+	t.Helper()
 	rings := make([]*geom.LinearRing, len(tc.lines))
 	for i, p := range tc.lines {
 		coords := append([]float64{}, p.FlatCoords()...)

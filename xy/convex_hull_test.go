@@ -1,7 +1,6 @@
 package xy
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -124,7 +123,7 @@ func TestReduce(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(reduced, expected) {
-		fmt.Printf("Expected \n\t %v \nbut was\n\t %v", expected, reduced)
+		t.Errorf("Expected \n\t %v \nbut was\n\t %v", expected, reduced)
 	}
 }
 
