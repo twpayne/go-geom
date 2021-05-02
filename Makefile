@@ -24,7 +24,7 @@ generate:
 	PATH=$$PATH:$(shell pwd)/bin go generate ./...
 
 .PHONY: install-tools
-install-tools: ensure-goderive ensure-gofumports ensure-golangci-lint
+install-tools: ensure-goderive ensure-gofumports ensure-golangci-lint ensure-goyacc
 
 .PHONY: ensure-goderive
 ensure-goderive:
@@ -44,4 +44,11 @@ ensure-gofumports:
 ensure-golangci-lint:
 	if [ ! -x bin/golangci-lint ] || ( ./bin/golangci-lint --version | grep -Fqv "version ${GOLANGCI_LINT_VERSION}" ) ; then \
 		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- v${GOLANGCI_LINT_VERSION} ; \
+	fi
+
+.PHONY: ensure-goyacc
+ensure-goyacc:
+	if [ ! -x bin/goyacc ] ; then \
+		mkdir -p bin ; \
+		( cd $$(mktemp -d) && go mod init tmp && GOBIN=$(shell pwd)/bin go get golang.org/x/tools/cmd/goyacc ) ; \
 	fi

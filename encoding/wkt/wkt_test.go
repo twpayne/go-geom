@@ -491,9 +491,11 @@ func TestUnmarshal(t *testing.T) {
 		},
 		{
 			desc: "parse 4D multilinestring",
-			equivInputs: []string{"MULTILINESTRING((0 0 0 0, 1 1 1 1), (-2 -3 -4 -5, 0.5 -0.75 1 -1.25, 0 1 5 7))",
+			equivInputs: []string{
+				"MULTILINESTRING((0 0 0 0, 1 1 1 1), (-2 -3 -4 -5, 0.5 -0.75 1 -1.25, 0 1 5 7))",
 				"MULTILINESTRING ZM ((0 0 0 0, 1 1 1 1), (-2 -3 -4 -5, 0.5 -0.75 1 -1.25, 0 1 5 7))",
-				"multilinestringzm((0 0 0 0, 1 1 1 1), (-2 -3 -4 -5, 0.5 -0.75 1 -1.25, 0 1 5 7))"},
+				"multilinestringzm((0 0 0 0, 1 1 1 1), (-2 -3 -4 -5, 0.5 -0.75 1 -1.25, 0 1 5 7))",
+			},
 			expected: geom.NewMultiLineStringFlat(geom.XYZM,
 				[]float64{0, 0, 0, 0, 1, 1, 1, 1, -2, -3, -4, -5, 0.5, -0.75, 1, -1.25, 0, 1, 5, 7}, []int{8, 20}),
 		},
@@ -746,7 +748,8 @@ MULTIPOLYGON M (((0 0 0, 1 1 1, 2 3 1, 0 0 0)))
 		},
 		{
 			desc: "parse 3D geometrycollection",
-			equivInputs: []string{`GEOMETRYCOLLECTION Z (
+			equivInputs: []string{
+				`GEOMETRYCOLLECTION Z (
 POINT Z (2 3 4),
 LINESTRING Z (0 -1 1, 7 -1 -9),
 POLYGON Z ((0 0 7, 1 -1 -50, 2 0 0, 0 0 7)),
@@ -790,7 +793,8 @@ MULTIPOLYGON(((0 0 0, 1 1 1, 2 3 1, 0 0 0)))
 		},
 		{
 			desc: "parse 4D geometrycollection",
-			equivInputs: []string{`GEOMETRYCOLLECTION ZM (
+			equivInputs: []string{
+				`GEOMETRYCOLLECTION ZM (
 POINT ZM (0 5 -10 15),
 LINESTRING ZM (0 0 0 0, 1 1 1 1),
 POLYGON ZM ((0 0 12 7, 1 -1 12 -50, 2 0 12 0, 0 0 12 7)),

@@ -78,11 +78,12 @@ func (l *wktLex) Lex(yylval *wktSymType) int {
 	case '(', ')', ',':
 		return int(l.next())
 	default:
-		if unicode.IsLetter(c) {
+		switch {
+		case unicode.IsLetter(c):
 			return l.keyword()
-		} else if isValidFirstNumRune(c) {
+		case isValidFirstNumRune(c):
 			return l.num(yylval)
-		} else {
+		default:
 			l.next()
 			l.setLexError("character")
 			return eof
