@@ -97,9 +97,8 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// # of ordinates without closing endpoint
 	nOrds := len(ring) - stride
 	// # of points without closing endpoint
-	nPts := nOrds / stride
 	// sanity check
-	if nPts < 3 {
+	if nPts := nOrds / stride; nPts < 3 {
 		panic("Ring has fewer than 3 points, so orientation cannot be determined")
 	}
 

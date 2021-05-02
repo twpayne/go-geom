@@ -307,7 +307,7 @@ func doParse(r io.Reader) (*parser, Errors) {
 		case len(line) == 0:
 		case foundA:
 			if err := p.parseLine(line); err != nil {
-				errors = append(errors, fmt.Errorf("line %d: %q: %v", lineno, line, err))
+				errors = append(errors, fmt.Errorf("line %d: %q: %w", lineno, line, err))
 			}
 		default:
 			if c := line[0]; c == 'A' {

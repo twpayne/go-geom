@@ -17,7 +17,7 @@ func (e *Encoder) Encode(g geom.T) (string, error) {
 }
 
 func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
-	typeString := ""
+	var typeString string
 	switch g := g.(type) {
 	case *geom.Point:
 		typeString = tPoint

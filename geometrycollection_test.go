@@ -18,6 +18,7 @@ type expectedGeometryCollection struct {
 }
 
 func (g *GeometryCollection) assertEqual(t *testing.T, e *expectedGeometryCollection, geoms []T) {
+	t.Helper()
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())
 	assert.Equal(t, e.bounds, g.Bounds())

@@ -99,6 +99,7 @@ func Example_scan_different_shapes() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var s Shape
 		err := rows.Scan(&s.Name, &s.Geom)

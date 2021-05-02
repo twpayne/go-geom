@@ -21,6 +21,7 @@ type expectedMultiPolygon struct {
 }
 
 func (g *MultiPolygon) assertEquals(t *testing.T, e *expectedMultiPolygon) {
+	t.Helper()
 	assert.NoError(t, g.verify())
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())

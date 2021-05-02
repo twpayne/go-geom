@@ -142,11 +142,11 @@ func TestIsRingCounterClockwise(t *testing.T) {
 }
 
 func make3DCopy(coords []float64) []float64 {
-	len := len(coords)
-	copied := make([]float64, len+(len/2))
+	n := len(coords)
+	copied := make([]float64, n+(n/2))
 
 	j := 0
-	for i := 0; i < len; i += 2 {
+	for i := 0; i < n; i += 2 {
 		copied[j] = coords[i]
 		copied[j+1] = coords[i+1]
 		//nolint:gosec
@@ -447,13 +447,13 @@ func TestSignedArea(t *testing.T) {
 }
 
 func reverseCopy(coords []float64) []float64 {
-	copy := make([]float64, len(coords))
+	reverseCoords := make([]float64, len(coords))
 
 	for i := 0; i < len(coords); i++ {
-		copy[i] = coords[len(coords)-1-i]
+		reverseCoords[i] = coords[len(coords)-1-i]
 	}
 
-	return copy
+	return reverseCoords
 }
 
 func TestIsPointInRing(t *testing.T) {

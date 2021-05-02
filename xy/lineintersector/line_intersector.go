@@ -84,9 +84,7 @@ func rParameter(p1, p2, p geom.Coord) float64 {
 	var r float64
 	// compute maximum delta, for numerical stability
 	// also handle case of p1-p2 being vertical or horizontal
-	dx := math.Abs(p2[0] - p1[0])
-	dy := math.Abs(p2[1] - p1[1])
-	if dx > dy {
+	if dx, dy := math.Abs(p2[0]-p1[0]), math.Abs(p2[1]-p1[1]); dx > dy {
 		r = (p[0] - p1[0]) / (p2[0] - p1[0])
 	} else {
 		r = (p[1] - p1[1]) / (p2[1] - p1[1])

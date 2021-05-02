@@ -12,6 +12,7 @@ import (
 )
 
 func test(t *testing.T, g geom.T, xdr, ndr string) {
+	t.Helper()
 	if xdr != "" {
 		t.Run("xdr", func(t *testing.T) {
 			t.Run("decode", func(t *testing.T) {

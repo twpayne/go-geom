@@ -21,6 +21,7 @@ type expectedMultiLineString struct {
 }
 
 func (g *MultiLineString) assertEquals(t *testing.T, e *expectedMultiLineString) {
+	t.Helper()
 	assert.NoError(t, g.verify())
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())

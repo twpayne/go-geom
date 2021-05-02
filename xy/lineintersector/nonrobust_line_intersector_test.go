@@ -3,7 +3,7 @@ package lineintersector
 import "testing"
 
 func TestNonRobustLineIntersectionPointOnLine(t *testing.T) {
-	exectuteLineIntersectionPointOnLineTest(t, NonRobustLineIntersector{})
+	executeLineIntersectionPointOnLineTest(t, NonRobustLineIntersector{})
 }
 
 func TestNonRobustLineIntersectionLines(t *testing.T) {

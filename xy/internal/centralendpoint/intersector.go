@@ -37,14 +37,13 @@ func (intersector *centralEndpointIntersector) compute() {
 }
 
 func average(pts [4]geom.Coord) geom.Coord {
-	n := float64(len(pts))
 	avg := geom.Coord{0, 0}
 
 	for i := 0; i < len(pts); i++ {
 		avg[0] += pts[i][0]
 		avg[1] += pts[i][1]
 	}
-	if n > 0 {
+	if n := float64(len(pts)); n > 0 {
 		avg[0] /= n
 		avg[1] /= n
 	}
