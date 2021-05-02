@@ -1,3 +1,5 @@
+//go:generate sh generate.sh
+
 // Package wkt implements Well Known Text encoding and decoding.
 package wkt
 
@@ -57,5 +59,10 @@ func Marshal(g geom.T, applyOptFns ...EncodeOption) (string, error) {
 
 // Unmarshal translates a WKT to the corresponding geometry.
 func Unmarshal(wkt string) (geom.T, error) {
-	return decode(wkt)
+	wktlex := newWKTLex(wkt)
+	wktParse(wktlex)
+	if wktlex.lastErr != nil {
+		return nil, wktlex.lastErr
+	}
+	return wktlex.ret, nil
 }
