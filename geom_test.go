@@ -572,3 +572,42 @@ func TestSetSRID(t *testing.T) {
 	_, err := SetSRID(nil, 4326)
 	assert.Error(t, err)
 }
+
+func TestReverse(t *testing.T) {
+	for _, tc := range []struct {
+		g interface {
+			Reverse()
+		}
+		want interface {
+			Reverse()
+		}
+	}{
+		{
+			g:    NewLinearRing(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			want: NewLinearRing(XYZM).MustSetCoords([]Coord{{9, 10, 11, 12}, {5, 6, 7, 8}, {1, 2, 3, 4}}),
+		},
+		{
+			g:    NewLineString(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
+			want: NewLineString(XYZM).MustSetCoords([]Coord{{9, 10, 11, 12}, {5, 6, 7, 8}, {1, 2, 3, 4}}),
+		},
+		{
+			g:    NewMultiLineString(XY).MustSetCoords([][]Coord{{}, {}, {{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}, {}}),
+			want: NewMultiLineString(XY).MustSetCoords([][]Coord{{}, {}, {{5, 6}, {3, 4}, {1, 2}}, {{11, 12}, {9, 10}, {7, 8}}, {}}),
+		},
+		{
+			g:    NewMultiPoint(XY).MustSetCoords([]Coord{nil, {1, 2}, nil, {3, 4}, nil, {5, 6}, nil}),
+			want: NewMultiPoint(XY).MustSetCoords([]Coord{nil, {1, 2}, nil, {3, 4}, nil, {5, 6}, nil}),
+		},
+		{
+			g:    NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {4, 5}, {6, 7}, {1, 2}}}, {}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}}),
+			want: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {6, 7}, {4, 5}, {1, 2}}}, {}, {}, {{{5, 6}, {3, 4}, {1, 2}}, {{11, 12}, {9, 10}, {7, 8}}}, {}}),
+		},
+		{
+			g:    NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
+			want: NewPolygon(XY).MustSetCoords([][]Coord{{{5, 6}, {3, 4}, {1, 2}}, {{11, 12}, {9, 10}, {7, 8}}}),
+		},
+	} {
+		tc.g.Reverse()
+		assert.Equal(t, tc.want, tc.g)
+	}
+}
