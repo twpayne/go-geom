@@ -120,6 +120,11 @@ func (g *geom1) NumCoords() int {
 	return len(g.flatCoords) / g.stride
 }
 
+// Reverse reverses the order of g's coordinates.
+func (g *geom1) Reverse() {
+	reverse1(g.flatCoords, 0, len(g.flatCoords), g.stride)
+}
+
 func (g *geom1) setCoords(coords1 []Coord) error {
 	var err error
 	g.flatCoords, err = deflate1(nil, coords1, g.stride)
@@ -150,6 +155,11 @@ func (g *geom2) Coords() [][]Coord {
 // Ends returns the end indexes of all sub-structures in g.
 func (g *geom2) Ends() []int {
 	return g.ends
+}
+
+// Reverse reverses the order of coordinates for each sub-structure in g.
+func (g *geom2) Reverse() {
+	reverse2(g.flatCoords, 0, g.ends, g.stride)
 }
 
 func (g *geom2) setCoords(coords2 [][]Coord) error {
@@ -198,6 +208,11 @@ func (g *geom3) Coords() [][][]Coord {
 // Endss returns a list of all the sub-sub-structures in g.
 func (g *geom3) Endss() [][]int {
 	return g.endss
+}
+
+// Reverse reverses the order of coordinates for each sub-sub-structure in g.
+func (g *geom3) Reverse() {
+	reverse3(g.flatCoords, 0, g.endss, g.stride)
 }
 
 func (g *geom3) setCoords(coords3 [][][]Coord) error {
@@ -385,4 +400,29 @@ func length3(flatCoords []float64, offset int, endss [][]int, stride int) float6
 		offset = ends[len(ends)-1]
 	}
 	return length
+}
+
+func reverse1(flatCoords []float64, offset, end, stride int) {
+	for i, j := offset+stride, end; i <= j; i, j = i+stride, j-stride {
+		for k := 0; k < stride; k++ {
+			flatCoords[i-stride+k], flatCoords[j-stride+k] = flatCoords[j-stride+k], flatCoords[i-stride+k]
+		}
+	}
+}
+
+func reverse2(flatCoords []float64, offset int, ends []int, stride int) {
+	for _, end := range ends {
+		reverse1(flatCoords, offset, end, stride)
+		offset = end
+	}
+}
+
+func reverse3(flatCoords []float64, offset int, endss [][]int, stride int) {
+	for _, ends := range endss {
+		if len(ends) == 0 {
+			continue
+		}
+		reverse2(flatCoords, offset, ends, stride)
+		offset = ends[len(ends)-1]
+	}
 }
