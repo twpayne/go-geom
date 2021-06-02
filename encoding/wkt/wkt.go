@@ -45,10 +45,10 @@ func NewEncoder(applyOptFns ...EncodeOption) *Encoder {
 	return encoder
 }
 
-// EncodeOptions specify options to apply to the encoder.
+// An EncodeOption is an encoder option.
 type EncodeOption func(*Encoder)
 
-// EncodeWithMaxDecimalDigits sets the maximum decimal digits to encode.
+// EncodeOptionWithMaxDecimalDigits sets the maximum decimal digits to encode.
 func EncodeOptionWithMaxDecimalDigits(maxDecimalDigits int) EncodeOption {
 	return func(e *Encoder) {
 		e.maxDecimalDigits = maxDecimalDigits
