@@ -128,8 +128,7 @@ func TestReduce(t *testing.T) {
 }
 
 func TestOctRing(t *testing.T) {
-	data := []float64{
-
+	dataWithOctDuplicates := []float64{
 		1, 1, 10,
 		1, 0, 10,
 		10, 1, 10,
@@ -143,7 +142,7 @@ func TestOctRing(t *testing.T) {
 
 	calc := &convexHullCalculator{layout: geom.XYM, stride: 3}
 
-	result := calc.computeOctPts(data)
+	result := calc.computeOctPts(dataWithOctDuplicates)
 	expected := []float64{
 		1.0, 1.0, 10.0,
 		1.5, 3.0, 10.0,
@@ -158,7 +157,7 @@ func TestOctRing(t *testing.T) {
 		t.Errorf("Incorrect ordering and sorting of octPts. Expected \n\t%v \nwas \n\t%v", expected, result)
 	}
 
-	result = calc.computeOctRing(data)
+	result = calc.computeOctRing(dataWithOctDuplicates)
 	expected = []float64{
 		1.0, 1.0, 10,
 		1.5, 3.0, 10,
@@ -166,7 +165,50 @@ func TestOctRing(t *testing.T) {
 		10.0, 1.0, 10,
 		6.0, -1.0, 10,
 		1.0, 0.0, 10,
-		1.0, 1.0, 10,
+	}
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("Incorrect ordering and sorting of OctRing. Expected \n\t%v \nwas \n\t%v", expected, result)
+	}
+
+	dataNoOctDuplicates := []float64{
+		1, 1, 10,
+		1, 0, 10,
+		10, 1, 10,
+		5, 4, 10,
+		6, -1, 10,
+		3, 3, 10,
+		1, 2, 10,
+		2, 1, 10,
+		1.5, 3, 10,
+		9.5, -0.75, 10,
+		10.1, 0, 10,
+	}
+
+	result = calc.computeOctPts(dataNoOctDuplicates)
+	expected = []float64{
+		1.0, 1.0, 10.0,
+		1.5, 3.0, 10.0,
+		5.0, 4.0, 10.0,
+		10.0, 1.0, 10.0,
+		10.1, 0, 10.0,
+		9.5, -0.75, 10.0,
+		6.0, -1.0, 10.0,
+		1.0, 0.0, 10.0,
+	}
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("Incorrect ordering and sorting of octPts. Expected \n\t%v \nwas \n\t%v", expected, result)
+	}
+
+	result = calc.computeOctRing(dataNoOctDuplicates)
+	expected = []float64{
+		1.0, 1.0, 10.0,
+		1.5, 3.0, 10.0,
+		5.0, 4.0, 10.0,
+		10.0, 1.0, 10.0,
+		10.1, 0, 10.0,
+		9.5, -0.75, 10.0,
+		6.0, -1.0, 10.0,
+		1.0, 0.0, 10.0,
 	}
 	if !reflect.DeepEqual(expected, result) {
 		t.Errorf("Incorrect ordering and sorting of OctRing. Expected \n\t%v \nwas \n\t%v", expected, result)
