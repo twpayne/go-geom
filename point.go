@@ -1,6 +1,9 @@
 package geom
 
-import "math"
+import (
+	"errors"
+	"math"
+)
 
 // PointEmptyCoordHex is the hex representation of a NaN that represents
 // an empty coord in a shape.
@@ -89,6 +92,38 @@ func (g *Point) SetSRID(srid int) *Point {
 // Swap swaps the values of g and g2.
 func (g *Point) Swap(g2 *Point) {
 	*g, *g2 = *g2, *g
+}
+
+func (g *Point) Buffer(numOfPoints int, distance float64) (*Polygon, error) {
+	if g.layout != XY {
+		return nil, errors.New("currently only supports 2d points")
+	}
+
+	if numOfPoints < 3 {
+		return nil, errors.New("numOfPoint must be more than 3")
+
+	}
+
+	coords := []Coord{}
+	angleIncrement := (float64(2) * math.Pi) / float64(numOfPoints)
+	var angle float64
+	var coordToAdd Coord
+	for i := 0; i < numOfPoints; i++ {
+		angle = float64(i) * angleIncrement
+		tempX := g.X() + distance*math.Cos(angle)
+		tempY := g.Y() + distance*math.Sin(angle)
+		coordToAdd = Coord{tempX, tempY}
+		coords = append(coords, coordToAdd)
+	}
+
+	polygon := NewPolygon(XY)
+
+	_, err := polygon.SetCoords([][]Coord{coords})
+	if err != nil {
+		return nil, err
+	}
+
+	return polygon, nil
 }
 
 // X returns g's X-coordinate.

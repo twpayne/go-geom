@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"math"
 	"strconv"
 	"testing"
 
@@ -218,4 +219,19 @@ func TestPointXYZM(t *testing.T) {
 			assert.Equal(t, tc.m, tc.p.M())
 		})
 	}
+}
+
+func TestPointBuffer(t *testing.T) {
+
+	pointToTest := NewPoint(XY).MustSetCoords([]float64{0, 0})
+
+	bufferedPolygon, err := pointToTest.Buffer(8, 1)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expectedFlatCoords := []float64{1, 0, math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0, 1, -math.Sqrt(2) / 2, math.Sqrt(2) / 2, -1, 0, -math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0, -1, math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0, 1}
+
+	assert.InDeltaSlice(t, expectedFlatCoords, bufferedPolygon.FlatCoords(), 0.0001)
 }
