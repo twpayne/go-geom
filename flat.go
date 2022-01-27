@@ -23,6 +23,8 @@ type geom3 struct {
 	endss [][]int
 }
 
+type CoordConvert func(x, y float64) (float64, float64)
+
 // Bounds returns the bounds of g.
 func (g *geom0) Bounds() *Bounds {
 	return NewBounds(g.layout).extendFlatCoords(g.flatCoords, 0, len(g.flatCoords), g.stride)
@@ -103,6 +105,13 @@ func (g *geom0) verify() error {
 		return errLengthStrideMismatch
 	}
 	return nil
+}
+
+// coords convert
+func (g *geom0) Convert(coordConvert CoordConvert) {
+	for i := 0; i < len(g.flatCoords); i += g.stride {
+		g.flatCoords[i], g.flatCoords[i+1] = coordConvert(g.flatCoords[i], g.flatCoords[i+1])
+	}
 }
 
 // Coord returns the ith coord of g.
