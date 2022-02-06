@@ -1,6 +1,7 @@
 module github.com/twpayne/go-geom
 
 require (
+	github.com/0fv/coords-convert v0.0.0-20220206072124-2795f89d7a59
 	github.com/DATA-DOG/go-sqlmock v1.3.2
 	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/lib/pq v1.8.0
