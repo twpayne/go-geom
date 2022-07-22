@@ -207,7 +207,12 @@ func intersection(data *lineIntersectorData, line1Start, line1End, line2Start, l
 }
 
 func intersectionWithNormalization(line1Start, line1End, line2Start, line2End geom.Coord) geom.Coord {
-	var line1End1Norm, line1End2Norm, line2End1Norm, line2End2Norm geom.Coord = geom.Coord{0, 0}, geom.Coord{0, 0}, geom.Coord{0, 0}, geom.Coord{0, 0}
+	var (
+		line1End1Norm = make(geom.Coord, 2)
+		line1End2Norm = make(geom.Coord, 2)
+		line2End1Norm = make(geom.Coord, 2)
+		line2End2Norm = make(geom.Coord, 2)
+	)
 	copy(line1End1Norm, line1Start)
 	copy(line1End2Norm, line1End)
 	copy(line2End1Norm, line2Start)

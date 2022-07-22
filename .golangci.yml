@@ -76,6 +76,11 @@ linters:
   - wsl
 
 linters-settings:
+  gci:
+    sections:
+    - standard
+    - default
+    - prefix(github.com/twpayne/go-geom)
   goimports:
     local-prefixes: github.com/twpayne/go-geom
 

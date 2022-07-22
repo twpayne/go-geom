@@ -2,11 +2,9 @@
 
 package wkt
 
-import (
-	__yyfmt__ "fmt"
+import __yyfmt__ "fmt"
 
-	"github.com/twpayne/go-geom"
-)
+import "github.com/twpayne/go-geom"
 
 type wktSymType struct {
 	yys               int
@@ -100,7 +98,7 @@ const (
 	wktInitialStackSize = 16
 )
 
-var wktExca = [...]int{
+var wktExca = [...]int8{
 	-1, 1,
 	1, -1,
 	-2, 0,
@@ -110,7 +108,7 @@ const wktPrivate = 57344
 
 const wktLast = 218
 
-var wktAct = [...]int{
+var wktAct = [...]uint8{
 	66, 2, 116, 126, 131, 106, 65, 111, 128, 121,
 	60, 57, 137, 118, 155, 156, 61, 70, 58, 101,
 	75, 114, 81, 63, 87, 69, 63, 64, 104, 63,
@@ -135,7 +133,7 @@ var wktAct = [...]int{
 	48, 49, 50, 51, 52, 53, 54, 55,
 }
 
-var wktPact = [...]int{
+var wktPact = [...]int16{
 	186, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
 	16, 27, 27, 16, 27, 27, 16, 27, 27, -16,
 	11, -16, 7, -16, -2, 21, 27, 27, -1000, -1000,
@@ -155,7 +153,7 @@ var wktPact = [...]int{
 	-1000, -1000, -1000, -1000, -1000, -1000,
 }
 
-var wktPgo = [...]int{
+var wktPgo = [...]uint8{
 	0, 1, 166, 150, 148, 146, 144, 143, 142, 36,
 	21, 10, 141, 47, 85, 140, 6, 13, 19, 139,
 	8, 5, 138, 137, 28, 7, 136, 135, 134, 133,
@@ -165,7 +163,7 @@ var wktPgo = [...]int{
 	97, 93, 92, 90, 87, 86, 83, 0,
 }
 
-var wktR1 = [...]int{
+var wktR1 = [...]int8{
 	0, 48, 1, 1, 1, 1, 1, 1, 1, 2,
 	2, 2, 49, 49, 50, 51, 51, 51, 3, 3,
 	3, 52, 52, 53, 54, 54, 54, 4, 4, 4,
@@ -181,7 +179,7 @@ var wktR1 = [...]int{
 	13, 12, 12, 9, 10, 11,
 }
 
-var wktR2 = [...]int{
+var wktR2 = [...]int8{
 	0, 1, 1, 1, 1, 1, 1, 1, 1, 2,
 	2, 2, 1, 1, 1, 1, 1, 1, 2, 2,
 	2, 1, 1, 1, 1, 1, 1, 2, 2, 2,
@@ -197,7 +195,7 @@ var wktR2 = [...]int{
 	1, 2, 1, 1, 1, 1,
 }
 
-var wktChk = [...]int{
+var wktChk = [...]int16{
 	-1000, -48, -1, -2, -3, -4, -5, -6, -7, -8,
 	-49, -50, -51, -52, -53, -54, -55, -56, -57, -58,
 	-59, -60, -61, -62, -63, -64, -65, -66, 4, 5,
@@ -217,7 +215,7 @@ var wktChk = [...]int{
 	-25, -32, -33, -40, -41, -1,
 }
 
-var wktDef = [...]int{
+var wktDef = [...]int8{
 	0, -2, 1, 2, 3, 4, 5, 6, 7, 8,
 	0, 12, 13, 0, 21, 22, 0, 30, 31, 0,
 	0, 0, 0, 0, 0, 0, 66, 67, 14, 15,
@@ -237,7 +235,7 @@ var wktDef = [...]int{
 	101, 87, 89, 77, 75, 64,
 }
 
-var wktTok1 = [...]int{
+var wktTok1 = [...]int8{
 	1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -245,14 +243,14 @@ var wktTok1 = [...]int{
 	34, 35, 3, 3, 36,
 }
 
-var wktTok2 = [...]int{
+var wktTok2 = [...]int8{
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
 	22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
 	32, 33,
 }
 
-var wktTok3 = [...]int{
+var wktTok3 = [...]int8{
 	0,
 }
 
@@ -332,9 +330,9 @@ func wktErrorMessage(state, lookAhead int) string {
 	expected := make([]int, 0, 4)
 
 	// Look for shiftable tokens.
-	base := wktPact[state]
+	base := int(wktPact[state])
 	for tok := TOKSTART; tok-1 < len(wktToknames); tok++ {
-		if n := base + tok; n >= 0 && n < wktLast && wktChk[wktAct[n]] == tok {
+		if n := base + tok; n >= 0 && n < wktLast && int(wktChk[int(wktAct[n])]) == tok {
 			if len(expected) == cap(expected) {
 				return res
 			}
@@ -344,13 +342,13 @@ func wktErrorMessage(state, lookAhead int) string {
 
 	if wktDef[state] == -2 {
 		i := 0
-		for wktExca[i] != -1 || wktExca[i+1] != state {
+		for wktExca[i] != -1 || int(wktExca[i+1]) != state {
 			i += 2
 		}
 
 		// Look for tokens that we accept or reduce.
 		for i += 2; wktExca[i] >= 0; i += 2 {
-			tok := wktExca[i]
+			tok := int(wktExca[i])
 			if tok < TOKSTART || wktExca[i+1] == 0 {
 				continue
 			}
@@ -381,30 +379,30 @@ func wktlex1(lex wktLexer, lval *wktSymType) (char, token int) {
 	token = 0
 	char = lex.Lex(lval)
 	if char <= 0 {
-		token = wktTok1[0]
+		token = int(wktTok1[0])
 		goto out
 	}
 	if char < len(wktTok1) {
-		token = wktTok1[char]
+		token = int(wktTok1[char])
 		goto out
 	}
 	if char >= wktPrivate {
 		if char < wktPrivate+len(wktTok2) {
-			token = wktTok2[char-wktPrivate]
+			token = int(wktTok2[char-wktPrivate])
 			goto out
 		}
 	}
 	for i := 0; i < len(wktTok3); i += 2 {
-		token = wktTok3[i+0]
+		token = int(wktTok3[i+0])
 		if token == char {
-			token = wktTok3[i+1]
+			token = int(wktTok3[i+1])
 			goto out
 		}
 	}
 
 out:
 	if token == 0 {
-		token = wktTok2[1] /* unknown char */
+		token = int(wktTok2[1]) /* unknown char */
 	}
 	if wktDebug >= 3 {
 		__yyfmt__.Printf("lex %s(%d)\n", wktTokname(token), uint(char))
@@ -459,7 +457,7 @@ wktstack:
 	wktS[wktp].yys = wktstate
 
 wktnewstate:
-	wktn = wktPact[wktstate]
+	wktn = int(wktPact[wktstate])
 	if wktn <= wktFlag {
 		goto wktdefault /* simple state */
 	}
@@ -470,8 +468,8 @@ wktnewstate:
 	if wktn < 0 || wktn >= wktLast {
 		goto wktdefault
 	}
-	wktn = wktAct[wktn]
-	if wktChk[wktn] == wkttoken { /* valid shift */
+	wktn = int(wktAct[wktn])
+	if int(wktChk[wktn]) == wkttoken { /* valid shift */
 		wktrcvr.char = -1
 		wkttoken = -1
 		wktVAL = wktrcvr.lval
@@ -484,7 +482,7 @@ wktnewstate:
 
 wktdefault:
 	/* default state action */
-	wktn = wktDef[wktstate]
+	wktn = int(wktDef[wktstate])
 	if wktn == -2 {
 		if wktrcvr.char < 0 {
 			wktrcvr.char, wkttoken = wktlex1(wktlex, &wktrcvr.lval)
@@ -493,18 +491,18 @@ wktdefault:
 		/* look through exception table */
 		xi := 0
 		for {
-			if wktExca[xi+0] == -1 && wktExca[xi+1] == wktstate {
+			if wktExca[xi+0] == -1 && int(wktExca[xi+1]) == wktstate {
 				break
 			}
 			xi += 2
 		}
 		for xi += 2; ; xi += 2 {
-			wktn = wktExca[xi+0]
+			wktn = int(wktExca[xi+0])
 			if wktn < 0 || wktn == wkttoken {
 				break
 			}
 		}
-		wktn = wktExca[xi+1]
+		wktn = int(wktExca[xi+1])
 		if wktn < 0 {
 			goto ret0
 		}
@@ -526,10 +524,10 @@ wktdefault:
 
 			/* find a state where "error" is a legal shift action */
 			for wktp >= 0 {
-				wktn = wktPact[wktS[wktp].yys] + wktErrCode
+				wktn = int(wktPact[wktS[wktp].yys]) + wktErrCode
 				if wktn >= 0 && wktn < wktLast {
-					wktstate = wktAct[wktn] /* simulate a shift of "error" */
-					if wktChk[wktstate] == wktErrCode {
+					wktstate = int(wktAct[wktn]) /* simulate a shift of "error" */
+					if int(wktChk[wktstate]) == wktErrCode {
 						goto wktstack
 					}
 				}
@@ -565,7 +563,7 @@ wktdefault:
 	wktpt := wktp
 	_ = wktpt // guard against "declared and not used"
 
-	wktp -= wktR2[wktn]
+	wktp -= int(wktR2[wktn])
 	// wktp is now the index of $0. Perform the default action. Iff the
 	// reduced production is ε, $1 is possibly out of range.
 	if wktp+1 >= len(wktS) {
@@ -576,16 +574,16 @@ wktdefault:
 	wktVAL = wktS[wktp+1]
 
 	/* consult goto table to find next state */
-	wktn = wktR1[wktn]
-	wktg := wktPgo[wktn]
+	wktn = int(wktR1[wktn])
+	wktg := int(wktPgo[wktn])
 	wktj := wktg + wktS[wktp].yys + 1
 
 	if wktj >= wktLast {
-		wktstate = wktAct[wktg]
+		wktstate = int(wktAct[wktg])
 	} else {
-		wktstate = wktAct[wktj]
-		if wktChk[wktstate] != -wktn {
-			wktstate = wktAct[wktg]
+		wktstate = int(wktAct[wktj])
+		if int(wktChk[wktstate]) != -wktn {
+			wktstate = int(wktAct[wktg])
 		}
 	}
 	// dummy call; replaced with literal code

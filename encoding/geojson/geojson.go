@@ -262,6 +262,7 @@ func (c *nestedFloat64WithMaxDecimalDigits) marshalJSON(
 		}
 		buf = append(buf, ']')
 	case reflect.Float64:
+		//nolint:forcetypeassert
 		buf = strconv.AppendFloat(buf, val.Interface().(float64), 'f', c.maxDecimalDigits, 64)
 		if c.maxDecimalDigits > 0 {
 			buf = bytes.TrimRight(bytes.TrimRight(buf, "0"), ".")
@@ -496,10 +497,14 @@ func Unmarshal(data []byte, g *geom.T) error {
 		*g = nil
 		return nil
 	}
+	// FIXME The following lint error is suppressed, but there is probably a genuine error here
+	//
+	//nolint:staticcheck
 	gg := &Geometry{}
 	if err := json.Unmarshal(data, gg); err != nil {
 		return err
 	}
+	//nolint:staticcheck
 	if gg == nil {
 		*g = nil
 		return nil

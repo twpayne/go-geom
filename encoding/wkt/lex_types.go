@@ -9,7 +9,7 @@ func makeGeomFlatCoordsRepr(flatCoords []float64) geomFlatCoordsRepr {
 	return geomFlatCoordsRepr{flatCoords: flatCoords, ends: []int{len(flatCoords)}}
 }
 
-func appendGeomFlatCoordsReprs(p1 geomFlatCoordsRepr, p2 geomFlatCoordsRepr) geomFlatCoordsRepr {
+func appendGeomFlatCoordsReprs(p1, p2 geomFlatCoordsRepr) geomFlatCoordsRepr {
 	if len(p1.ends) > 0 {
 		p1LastEnd := p1.ends[len(p1.ends)-1]
 		for i := range p2.ends {
@@ -32,7 +32,7 @@ func makeMultiPolygonFlatCoordsRepr(p geomFlatCoordsRepr) multiPolygonFlatCoords
 }
 
 func appendMultiPolygonFlatCoordsRepr(
-	p1 multiPolygonFlatCoordsRepr, p2 multiPolygonFlatCoordsRepr,
+	p1, p2 multiPolygonFlatCoordsRepr,
 ) multiPolygonFlatCoordsRepr {
 	p1LastEndsLastEnd := 0
 	for i := len(p1.endss) - 1; i >= 0; i-- {

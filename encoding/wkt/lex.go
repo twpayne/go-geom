@@ -385,7 +385,7 @@ func (l *wktLex) setLexError(expectedTokType string) {
 
 // setParseError is called when a context-sensitive error is detected during parsing.
 // The generated wktParse function can only catch context-free errors.
-func (l *wktLex) setParseError(problem string, hint string) {
+func (l *wktLex) setParseError(problem, hint string) {
 	l.setSyntaxError(problem, hint)
 }
 
@@ -395,7 +395,7 @@ func (l *wktLex) Error(s string) {
 }
 
 // setSyntaxError is called when a syntax error occurs.
-func (l *wktLex) setSyntaxError(problem string, hint string) {
+func (l *wktLex) setSyntaxError(problem, hint string) {
 	l.setError(&SyntaxError{
 		wkt:       l.wkt,
 		problem:   problem,
@@ -500,7 +500,7 @@ func defaultLayoutForStride(stride int) geom.Layout {
 
 // isCompatibleLayout returns whether a second layout is compatible with the first layout.
 // It is used for ensuring the layout of each nested geometry is consistent with the previously parsed layout.
-func isCompatibleLayout(outerLayout geom.Layout, innerLayout geom.Layout) bool {
+func isCompatibleLayout(outerLayout, innerLayout geom.Layout) bool {
 	assertValidLayout(outerLayout)
 	assertValidLayout(innerLayout)
 	if outerLayout != innerLayout && outerLayout != geom.NoLayout {

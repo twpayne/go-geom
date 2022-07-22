@@ -17,7 +17,6 @@ func TestOrientationIndex(t *testing.T) {
 		vectorOrigin, vectorEnd, point geom.Coord
 		result                         orientation.Type
 	}{
-
 		{
 			vectorOrigin: geom.Coord{-1.0, -1.0},
 			vectorEnd:    geom.Coord{1.0, 1.0},
