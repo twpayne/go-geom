@@ -108,6 +108,9 @@ func Example_scan_different_shapes() {
 		}
 		fmt.Printf("%s: %v\n", s.Name, s.Geom.FlatCoords())
 	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
 
 	// Output:
 	// Point: [1 2]
