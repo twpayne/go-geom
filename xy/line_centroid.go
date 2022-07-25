@@ -107,8 +107,8 @@ func (calc *LineCentroidCalculator) addLine(line []float64, startLine, endLine i
 		calc.totalLength += segmentLen
 
 		midx := (line[i] + line[i+calc.stride]) / 2
-		calc.centSum[0] += segmentLen * midx
+		calc.centSum[0] += float64(segmentLen * midx) // nolint:unconvert
 		midy := (line[i+1] + line[i+calc.stride+1]) / 2
-		calc.centSum[1] += segmentLen * midy
+		calc.centSum[1] += float64(segmentLen * midy) // nolint:unconvert
 	}
 }
