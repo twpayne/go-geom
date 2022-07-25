@@ -45,13 +45,13 @@ func DistancePointToLine(point, lineStart, lineEnd geom.Coord) float64 {
 	 */
 
 	len2 := float64((lineEnd[0]-lineStart[0])*(lineEnd[0]-lineStart[0])) + // nolint:unconvert
-		float64((lineEnd[1]-lineStart[1])*(lineEnd[1]-lineStart[1])) +     // nolint:unconvert
-		float64((lineEnd[2]-lineStart[2])*(lineEnd[2]-lineStart[2]))       // nolint:unconvert
+		float64((lineEnd[1]-lineStart[1])*(lineEnd[1]-lineStart[1])) + // nolint:unconvert
+		float64((lineEnd[2]-lineStart[2])*(lineEnd[2]-lineStart[2])) // nolint:unconvert
 	if math.IsNaN(len2) {
 		panic("Ordinates must not be NaN")
 	}
-	r := (float64((point[0]-lineStart[0])*(lineEnd[0]-lineStart[0])) +     // nolint:unconvert
-		float64((point[1]-lineStart[1])*(lineEnd[1]-lineStart[1])) +       // nolint:unconvert
+	r := (float64((point[0]-lineStart[0])*(lineEnd[0]-lineStart[0])) + // nolint:unconvert
+		float64((point[1]-lineStart[1])*(lineEnd[1]-lineStart[1])) + // nolint:unconvert
 		float64((point[2]-lineStart[2])*(lineEnd[2]-lineStart[2]))) / len2 // nolint:unconvert
 
 	if r <= 0.0 {
