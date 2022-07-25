@@ -25,12 +25,12 @@ func (li NonRobustLineIntersector) computePointOnLineIntersection(data *lineInte
 	 */
 	a1 := lineEnd[1] - lineStart[1]
 	b1 := lineStart[0] - lineEnd[0]
-	c1 := lineEnd[0]*lineStart[1] - lineStart[0]*lineEnd[1]
+	c1 := float64(lineEnd[0]*lineStart[1]) - float64(lineStart[0]*lineEnd[1]) // nolint:unconvert
 
 	/*
 	 *  Compute r3 and r4.
 	 */
-	r = a1*p[0] + b1*p[1] + c1
+	r = float64(a1*p[0]) + float64(b1*p[1]) + c1 // nolint:unconvert
 
 	// if r != 0 the point does not lie on the line
 	if r != 0 {
@@ -79,13 +79,13 @@ func (li NonRobustLineIntersector) computeLineOnLineIntersection(data *lineInter
 	 */
 	a1 := line1End[1] - line1Start[1]
 	b1 := line1Start[0] - line1End[0]
-	c1 := line1End[0]*line1Start[1] - line1Start[0]*line1End[1]
+	c1 := float64(line1End[0]*line1Start[1]) - float64(line1Start[0]*line1End[1]) // nolint:unconvert
 
 	/*
 	 *  Compute r3 and r4.
 	 */
-	r3 = a1*line2Start[0] + b1*line2Start[1] + c1
-	r4 = a1*line2End[0] + b1*line2End[1] + c1
+	r3 = float64(a1*line2Start[0]) + float64(b1*line2Start[1]) + c1 // nolint:unconvert
+	r4 = float64(a1*line2End[0]) + float64(b1*line2End[1]) + c1     // nolint:unconvert
 
 	/*
 	 *  Check signs of r3 and r4.  If both point 3 and point 4 lie on
@@ -101,13 +101,13 @@ func (li NonRobustLineIntersector) computeLineOnLineIntersection(data *lineInter
 	 */
 	a2 = line2End[1] - line2Start[1]
 	b2 = line2Start[0] - line2End[0]
-	c2 = line2End[0]*line2Start[1] - line2Start[0]*line2End[1]
+	c2 = float64(line2End[0]*line2Start[1]) - float64(line2Start[0]*line2End[1]) // nolint:unconvert
 
 	/*
 	 *  Compute r1 and r2
 	 */
-	r1 = a2*line1Start[0] + b2*line1Start[1] + c2
-	r2 = a2*line1End[0] + b2*line1End[1] + c2
+	r1 = float64(a2*line1Start[0]) + float64(b2*line1Start[1]) + c2 // nolint:unconvert
+	r2 = float64(a2*line1End[0]) + float64(b2*line1End[1]) + c2     // nolint:unconvert
 
 	/*
 	 *  Check signs of r1 and r2.  If both point 1 and point 2 lie
@@ -122,15 +122,15 @@ func (li NonRobustLineIntersector) computeLineOnLineIntersection(data *lineInter
 	/**
 	 *  Line segments intersect: compute intersection point.
 	 */
-	denom := a1*b2 - a2*b1
+	denom := float64(a1*b2) - float64(a2*b1) // nolint:unconvert
 	if denom == 0 {
 		li.computeCollinearIntersection(data, line1Start, line1End, line2Start, line2End)
 		return
 	}
-	numX := b1*c2 - b2*c1
+	numX := float64(b1*c2) - float64(b2*c1) // nolint:unconvert
 	data.pa[0] = numX / denom
 
-	numY := a2*c1 - a1*c2
+	numY := float64(a2*c1) - float64(a1*c2) // nolint:unconvert
 	data.pa[1] = numY / denom
 
 	// check if this is a proper intersection BEFORE truncating values,
