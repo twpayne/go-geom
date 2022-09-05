@@ -2,10 +2,10 @@ package xy_test
 
 import (
 	"math"
-	"reflect"
 	"testing"
 
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/geomtest"
 	"github.com/twpayne/go-geom/xy"
 	"github.com/twpayne/go-geom/xy/internal"
 )
@@ -75,7 +75,7 @@ func TestLineGetCentroidLines(t *testing.T) {
 func verifyLineCentroid(t *testing.T, i int, tc lineDataType) {
 	t.Helper()
 
-	if centroid := xy.LinesCentroid(tc.lines[0], tc.lines[1:]...); !reflect.DeepEqual(tc.lineCentroid, centroid) {
+	if centroid := xy.LinesCentroid(tc.lines[0], tc.lines[1:]...); !geomtest.CoordsEqualRel(tc.lineCentroid, centroid, 1e-15) {
 		t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 }
@@ -93,7 +93,7 @@ func verifyMultiLineCentroid(t *testing.T, i int, tc lineDataType) {
 	multiPolygon := geom.NewMultiLineStringFlat(layout, coords, ends)
 	centroid := xy.MultiLineCentroid(multiPolygon)
 
-	if !reflect.DeepEqual(tc.lineCentroid, centroid) {
+	if !geomtest.CoordsEqualRel(tc.lineCentroid, centroid, 1e-15) {
 		t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 }
@@ -111,7 +111,7 @@ func verifyLinearRingsCentroid(t *testing.T, i int, tc lineDataType) {
 
 	centroid := xy.LinearRingsCentroid(rings[0], rings[1:]...)
 
-	if !reflect.DeepEqual(tc.lineCentroid, centroid) {
+	if !geomtest.CoordsEqualRel(tc.lineCentroid, centroid, 1e-15) {
 		t.Errorf("Test '%v' failed: expected centroid for linear rings to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 	}
 }
@@ -124,7 +124,7 @@ func TestLineGetCentroidPolygons(t *testing.T) {
 		}
 		centroid := calc.GetCentroid()
 
-		if !reflect.DeepEqual(tc.lineCentroid, centroid) {
+		if !geomtest.CoordsEqualRel(tc.lineCentroid, centroid, 1e-15) {
 			t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.lineCentroid, centroid)
 		}
 	}

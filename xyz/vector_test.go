@@ -1,6 +1,7 @@
 package xyz_test
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -51,7 +52,7 @@ func TestVectorDot(t *testing.T) {
 	} {
 		dot := xyz.VectorDot(tc.v1, tc.v2, tc.v3, tc.v4)
 
-		if dot != tc.result {
+		if math.Abs(dot-tc.result) > 1e-16 {
 			t.Errorf("Test %v failed: expected %v but was %v", i+1, tc.result, dot)
 		}
 	}
@@ -85,7 +86,7 @@ func TestVectorLength(t *testing.T) {
 	} {
 		length := xyz.VectorLength(tc.v1)
 
-		if length != tc.result {
+		if math.Abs(length-tc.result) > 1e-15 {
 			t.Errorf("Test %v failed: expected %v but was %v", i+1, tc.result, length)
 		}
 	}

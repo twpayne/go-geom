@@ -1,10 +1,10 @@
 package xy_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/geomtest"
 	"github.com/twpayne/go-geom/xy"
 	"github.com/twpayne/go-geom/xy/internal"
 )
@@ -53,7 +53,7 @@ func TestCentroid(t *testing.T) {
 	} {
 		calculated, err := xy.Centroid(tc.geometry)
 
-		if !reflect.DeepEqual(calculated, tc.centroid) {
+		if !geomtest.CoordsEqualRel(calculated, tc.centroid, 1e-15) {
 			t.Errorf("Test %v failed.  Expected \n\t%v but got \n\t%v", tc.id, tc.centroid, calculated)
 		}
 		if err != nil {
