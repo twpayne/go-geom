@@ -4,6 +4,9 @@ import (
 	"reflect"
 	"runtime/debug"
 	"testing"
+
+	"github.com/twpayne/go-geom/geomtest"
+	"github.com/twpayne/go-geom/xy/lineintersection"
 )
 
 func TestRobustLineIntersectionPointOnLine(t *testing.T) {
@@ -47,7 +50,24 @@ func doLineIntersectsLineTest(t *testing.T, intersectionStrategy Strategy, i int
 
 	calculatedResult := LineIntersectsLine(intersectionStrategy, tc.P1, tc.P2, tc.P3, tc.P4)
 
-	if !reflect.DeepEqual(calculatedResult, tc.Result) {
+	if !lineInteresectionResultEqualsRel(calculatedResult, tc.Result, 1e-3) {
 		t.Errorf("%T - Test '%v' (%v) failed: expected \n%v but was \n%v", intersectionStrategy, i+1, tc.Desc, tc.Result, calculatedResult)
 	}
+}
+
+func lineInteresectionResultEqualsRel(r1, r2 lineintersection.Result, epsilon float64) bool {
+	if r1.Type() != r2.Type() {
+		return false
+	}
+	i1 := r1.Intersection()
+	i2 := r2.Intersection()
+	if len(i1) != len(i2) {
+		return false
+	}
+	for i := range i1 {
+		if !geomtest.CoordsEqualRel(i1[i], i2[i], epsilon) {
+			return false
+		}
+	}
+	return true
 }

@@ -20,7 +20,7 @@ func Distance(point1, point2 geom.Coord) float64 {
 	dx := point1[0] - point2[0]
 	dy := point1[1] - point2[1]
 	dz := point1[2] - point2[2]
-	return math.Sqrt(float64(dx*dx) + float64(dy*dy) + float64(dz*dz)) // nolint:unconvert
+	return math.Sqrt(dx*dx + dy*dy + dz*dz)
 }
 
 // DistancePointToLine calculates the distance from point to a point on the line
@@ -44,15 +44,11 @@ func DistancePointToLine(point, lineStart, lineEnd geom.Coord) float64 {
 	 *   0<r<1 P is interior to AB
 	 */
 
-	len2 := float64((lineEnd[0]-lineStart[0])*(lineEnd[0]-lineStart[0])) + // nolint:unconvert
-		float64((lineEnd[1]-lineStart[1])*(lineEnd[1]-lineStart[1])) + // nolint:unconvert
-		float64((lineEnd[2]-lineStart[2])*(lineEnd[2]-lineStart[2])) // nolint:unconvert
+	len2 := (lineEnd[0]-lineStart[0])*(lineEnd[0]-lineStart[0]) + (lineEnd[1]-lineStart[1])*(lineEnd[1]-lineStart[1]) + (lineEnd[2]-lineStart[2])*(lineEnd[2]-lineStart[2])
 	if math.IsNaN(len2) {
 		panic("Ordinates must not be NaN")
 	}
-	r := (float64((point[0]-lineStart[0])*(lineEnd[0]-lineStart[0])) + // nolint:unconvert
-		float64((point[1]-lineStart[1])*(lineEnd[1]-lineStart[1])) + // nolint:unconvert
-		float64((point[2]-lineStart[2])*(lineEnd[2]-lineStart[2]))) / len2 // nolint:unconvert
+	r := ((point[0]-lineStart[0])*(lineEnd[0]-lineStart[0]) + (point[1]-lineStart[1])*(lineEnd[1]-lineStart[1]) + (point[2]-lineStart[2])*(lineEnd[2]-lineStart[2])) / len2
 
 	if r <= 0.0 {
 		return Distance(point, lineStart)
@@ -62,14 +58,14 @@ func DistancePointToLine(point, lineStart, lineEnd geom.Coord) float64 {
 	}
 
 	// compute closest point q on line segment
-	qx := lineStart[0] + float64(r*(lineEnd[0]-lineStart[0])) // nolint:unconvert
-	qy := lineStart[1] + float64(r*(lineEnd[1]-lineStart[1])) // nolint:unconvert
-	qz := lineStart[2] + float64(r*(lineEnd[2]-lineStart[2])) // nolint:unconvert
+	qx := lineStart[0] + r*(lineEnd[0]-lineStart[0])
+	qy := lineStart[1] + r*(lineEnd[1]-lineStart[1])
+	qz := lineStart[2] + r*(lineEnd[2]-lineStart[2])
 	// result is distance from p to q
 	dx := point[0] - qx
 	dy := point[1] - qy
 	dz := point[2] - qz
-	return math.Sqrt(float64(dx*dx) + float64(dy*dy) + float64(dz*dz)) // nolint:unconvert
+	return math.Sqrt(dx*dx + dy*dy + dz*dz)
 }
 
 // Equals determines if the two coordinates have equal in 3d space
@@ -102,7 +98,7 @@ func DistanceLineToLine(line1Start, line1End, line2Start, line2End geom.Coord) f
 	d := VectorDot(line1Start, line1End, line2Start, line1Start)
 	e := VectorDot(line2Start, line2End, line2Start, line1Start)
 
-	denom := float64(a*c) - float64(b*b) // nolint:unconvert
+	denom := a*c - b*b
 	if math.IsNaN(denom) {
 		panic("Ordinates must not be NaN")
 	}
@@ -121,8 +117,8 @@ func DistanceLineToLine(line1Start, line1End, line2Start, line2End geom.Coord) f
 			t = e / c
 		}
 	} else {
-		s = (float64(b*e) - float64(c*d)) / denom // nolint:unconvert
-		t = (float64(a*e) - float64(b*d)) / denom // nolint:unconvert
+		s = (b*e - c*d) / denom
+		t = (a*e - b*d) / denom
 	}
 	switch {
 	case s < 0:
@@ -138,13 +134,13 @@ func DistanceLineToLine(line1Start, line1End, line2Start, line2End geom.Coord) f
 	 * The closest points are in interiors of segments,
 	 * so compute them directly
 	 */
-	x1 := line1Start[0] + float64(s*(line1End[0]-line1Start[0])) // nolint:unconvert
-	y1 := line1Start[1] + float64(s*(line1End[1]-line1Start[1])) // nolint:unconvert
-	z1 := line1Start[2] + float64(s*(line1End[2]-line1Start[2])) // nolint:unconvert
+	x1 := line1Start[0] + s*(line1End[0]-line1Start[0])
+	y1 := line1Start[1] + s*(line1End[1]-line1Start[1])
+	z1 := line1Start[2] + s*(line1End[2]-line1Start[2])
 
-	x2 := line2Start[0] + float64(t*(line2End[0]-line2Start[0])) // nolint:unconvert
-	y2 := line2Start[1] + float64(t*(line2End[1]-line2Start[1])) // nolint:unconvert
-	z2 := line2Start[2] + float64(t*(line2End[2]-line2Start[2])) // nolint:unconvert
+	x2 := line2Start[0] + t*(line2End[0]-line2Start[0])
+	y2 := line2Start[1] + t*(line2End[1]-line2Start[1])
+	z2 := line2Start[2] + t*(line2End[2]-line2Start[2])
 
 	// length (p1-p2)
 	return Distance(geom.Coord{x1, y1, z1}, geom.Coord{x2, y2, z2})

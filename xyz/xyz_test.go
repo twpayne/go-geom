@@ -1,6 +1,7 @@
 package xyz_test
 
 import (
+	"math"
 	"testing"
 
 	"github.com/twpayne/go-geom"
@@ -89,7 +90,7 @@ func TestDistanceLineToLine(t *testing.T) {
 	} {
 		distance := xyz.DistanceLineToLine(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
 
-		if distance != tc.result {
+		if math.Abs(distance-tc.result) > 1e-15 {
 			t.Errorf("Test %v failed: expected %v but was %v", i+1, tc.result, distance)
 		}
 	}
@@ -133,7 +134,7 @@ func TestDistancePointToLine(t *testing.T) {
 	} {
 		distance := xyz.DistancePointToLine(tc.p1, tc.p2, tc.p3)
 
-		if distance != tc.result {
+		if math.Abs(distance-tc.result) > 1e-15 {
 			t.Errorf("Test %v failed: expected %v but was %v", i+1, tc.result, distance)
 		}
 	}

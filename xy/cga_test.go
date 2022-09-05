@@ -427,12 +427,12 @@ func TestSignedArea(t *testing.T) {
 		},
 	} {
 		calculatedArea := xy.SignedArea(geom.XY, tc.lines)
-		if tc.area != calculatedArea {
+		if math.Abs(tc.area/calculatedArea-1) > 1e-15 {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.area, calculatedArea, tc.lines)
 		}
 
 		calculatedArea = xy.SignedArea(geom.XY, reverseCopy(tc.lines))
-		if tc.areaReverse != calculatedArea {
+		if math.Abs(tc.areaReverse/calculatedArea-1) > 1e-15 {
 			t.Errorf("Reversed Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.areaReverse, calculatedArea, reverseCopy(tc.lines))
 		}
 
@@ -440,7 +440,7 @@ func TestSignedArea(t *testing.T) {
 		copied := make3DCopy(tc.lines)
 		calculatedArea = xy.SignedArea(geom.XYZ, copied)
 
-		if tc.area != calculatedArea {
+		if math.Abs(tc.area/calculatedArea-1) > 1e-15 {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v: \n %v", i+1, tc.area, calculatedArea, tc.lines)
 		}
 	}

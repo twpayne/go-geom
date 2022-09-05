@@ -60,5 +60,5 @@ func Distance2D(c1, c2 geom.Coord) float64 {
 	dx := c1[0] - c2[0]
 	dy := c1[1] - c2[1]
 
-	return math.Sqrt(float64(dx*dx) + float64(dy*dy)) // nolint:unconvert
+	return math.Sqrt(dx*dx + dy*dy)
 }

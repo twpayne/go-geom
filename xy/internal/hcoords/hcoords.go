@@ -17,15 +17,15 @@ func GetIntersection(line1End1, line1End2, line2End1, line2End2 geom.Coord) (geo
 	// unrolled computation
 	line1Xdiff := line1End1[1] - line1End2[1]
 	line1Ydiff := line1End2[0] - line1End1[0]
-	line1W := float64(line1End1[0]*line1End2[1]) - float64(line1End2[0]*line1End1[1]) // nolint:unconvert
+	line1W := line1End1[0]*line1End2[1] - line1End2[0]*line1End1[1]
 
 	line2X := line2End1[1] - line2End2[1]
 	line2Y := line2End2[0] - line2End1[0]
-	line2W := float64(line2End1[0]*line2End2[1]) - float64(line2End2[0]*line2End1[1]) // nolint:unconvert
+	line2W := line2End1[0]*line2End2[1] - line2End2[0]*line2End1[1]
 
-	x := float64(line1Ydiff*line2W) - float64(line2Y*line1W)     // nolint:unconvert
-	y := float64(line2X*line1W) - float64(line1Xdiff*line2W)     // nolint:unconvert
-	w := float64(line1Xdiff*line2Y) - float64(line2X*line1Ydiff) // nolint:unconvert
+	x := line1Ydiff*line2W - line2Y*line1W
+	y := line2X*line1W - line1Xdiff*line2W
+	w := line1Xdiff*line2Y - line2X*line1Ydiff
 
 	xIntersection := x / w
 	yIntersection := y / w

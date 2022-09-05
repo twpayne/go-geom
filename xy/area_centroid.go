@@ -155,9 +155,9 @@ func (calc *AreaCentroidCalculator) addTriangle(p0, p1, p2 geom.Coord, isPositiv
 	}
 	centroid3(p0, p1, p2, calc.triangleCent3)
 	area2 := area2(p0, p1, p2)
-	calc.cg3[0] += float64(sign * area2 * calc.triangleCent3[0]) // nolint:unconvert
-	calc.cg3[1] += float64(sign * area2 * calc.triangleCent3[1]) // nolint:unconvert
-	calc.areasum2 += float64(sign * area2)                       // nolint:unconvert
+	calc.cg3[0] += sign * area2 * calc.triangleCent3[0]
+	calc.cg3[1] += sign * area2 * calc.triangleCent3[1]
+	calc.areasum2 += sign * area2
 }
 
 // Returns three times the centroid of the triangle p1-p2-p3.
@@ -170,7 +170,7 @@ func centroid3(p1, p2, p3, c geom.Coord) {
 // Returns twice the signed area of the triangle p1-p2-p3,
 // positive if a,b,c are oriented ccw, and negative if cw.
 func area2(p1, p2, p3 geom.Coord) float64 {
-	return float64((p2[0]-p1[0])*(p3[1]-p1[1])) - float64((p3[0]-p1[0])*(p2[1]-p1[1])) // nolint:unconvert
+	return (p2[0]-p1[0])*(p3[1]-p1[1]) - (p3[0]-p1[0])*(p2[1]-p1[1])
 }
 
 // Adds the linear segments defined by an array of coordinates
@@ -186,8 +186,8 @@ func (calc *AreaCentroidCalculator) addLinearSegments(pts []float64) {
 		calc.totalLength += segmentLen
 
 		midx := (pts[i] + pts[i+stride]) / 2
-		calc.centSum[0] += float64(segmentLen * midx) // nolint:unconvert
+		calc.centSum[0] += segmentLen * midx
 		midy := (pts[i+1] + pts[i+stride+1]) / 2
-		calc.centSum[1] += float64(segmentLen * midy) // nolint:unconvert
+		calc.centSum[1] += segmentLen * midy
 	}
 }

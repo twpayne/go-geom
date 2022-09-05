@@ -2,10 +2,10 @@ package xy_test
 
 import (
 	"math"
-	"reflect"
 	"testing"
 
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/geomtest"
 	"github.com/twpayne/go-geom/xy"
 	"github.com/twpayne/go-geom/xy/internal"
 )
@@ -68,7 +68,7 @@ func TestAreaGetCentroid(t *testing.T) {
 	for i, tc := range polygonTestData {
 		centroid := xy.PolygonsCentroid(tc.polygons[0], tc.polygons[1:]...)
 
-		if !reflect.DeepEqual(tc.areaCentroid, centroid) {
+		if !geomtest.CoordsEqualRel(tc.areaCentroid, centroid, 1e-15) {
 			t.Errorf("Test '%v' failed: expected centroid for polygon array to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)
 		}
 
@@ -90,7 +90,7 @@ func TestAreaGetCentroid(t *testing.T) {
 		multiPolygon := geom.NewMultiPolygonFlat(layout, coords, endss)
 		centroid = xy.MultiPolygonCentroid(multiPolygon)
 
-		if !reflect.DeepEqual(tc.areaCentroid, centroid) {
+		if !geomtest.CoordsEqualRel(tc.areaCentroid, centroid, 1e-15) {
 			t.Errorf("Test '%v' failed: expected centroid for multipolygon to be\n%v but was \n%v", i+1, tc.areaCentroid, centroid)
 		}
 	}
