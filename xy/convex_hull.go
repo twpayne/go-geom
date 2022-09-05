@@ -169,7 +169,6 @@ func (calc *convexHullCalculator) preSort(pts []float64) {
 //
 // To satisfy the requirements of the Graham Scan algorithm,
 // the returned array has at least 3 entries.
-//
 func (calc *convexHullCalculator) reduce(inputPts []float64) []float64 {
 	polyPts := calc.computeOctRing(inputPts)
 
