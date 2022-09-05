@@ -3,7 +3,6 @@ on:
   pull_request:
   push:
 env:
-  GO_VERSION: 1.17.12
   GOFUMPT_VERSION: 0.3.1
   GOLANGCI_LINT_VERSION: 1.47.2
 jobs:
@@ -14,7 +13,7 @@ jobs:
     - uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
       with:
         cache: true
-        go-version: ${{ env.GO_VERSION }}
+        go-version-file: go.mod
     - name: build
       run: go build ./...
     - name: test
@@ -34,7 +33,7 @@ jobs:
     - uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
       with:
         cache: true
-        go-version: ${{ env.GO_VERSION }}
+        go-version-file: go.mod
     - name: build
       run: go build ./...
     - name: test
@@ -46,7 +45,7 @@ jobs:
     - uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
       with:
         cache: true
-        go-version: ${{ env.GO_VERSION }}
+        go-version-file: go.mod
     - name: build
       run: go build ./...
     - name: test
@@ -58,7 +57,7 @@ jobs:
       - uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
         with:
           cache: true
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: go.mod
       - uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc
         with:
           version: v${{ env.GOLANGCI_LINT_VERSION }}
