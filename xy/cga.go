@@ -338,7 +338,7 @@ func SignedArea(layout geom.Layout, ring []float64) float64 {
 		x := ring[i] - x0
 		y1 := ring[i+stride+1]
 		y2 := ring[i-stride+1]
-		sum += float64(x * (y2 - y1)) // nolint:unconvert
+		sum += x * (y2 - y1)
 	}
 	return sum / 2.0
 }
