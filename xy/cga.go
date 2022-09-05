@@ -33,10 +33,9 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Typ
 // the ring.
 //
 // p - point to check for ring inclusion
-// ring - an array of coordinates representing the ring (which must have
-//        first point identical to last point)
+// ring - an array of coordinates representing the ring (which must have first
+// point identical to last point)
 // Returns true if p is inside ring
-//
 func IsPointInRing(layout geom.Layout, p geom.Coord, ring []float64) bool {
 	return LocatePointInRing(layout, p, ring) != location.Exterior
 }
@@ -49,7 +48,8 @@ func IsPointInRing(layout geom.Layout, p geom.Coord, ring []float64) bool {
 //
 // p - point to check for ring inclusion
 // ring - an array of coordinates representing the ring (which must have
-//        first point identical to last point)
+// first point identical to last point)
+//
 // Returns the Location of p relative to the ring
 func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Type {
 	return raycrossing.LocatePointInRing(layout, p, ring)
@@ -59,7 +59,7 @@ func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) locatio
 // coordinates.
 //
 // Returns true if the point is a vertex of the line or lies in the interior
-//         of a line segment in the linestring
+// of a line segment in the linestring
 func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []float64) bool {
 	stride := layout.Stride()
 	if len(lineSegmentCoordinates) < (2 * stride) {

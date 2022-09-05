@@ -1,7 +1,7 @@
 package xy
 
 // Adopted from https://github.com/paulmach/orb/blob/master/simplify/douglas_peucker.go
-// Original licence:
+// Original license:
 //
 // The MIT License (MIT)
 // Copyright (c) 2017 Paul Mach Permission is hereby granted, free of charge, to
@@ -18,13 +18,13 @@ package xy
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 // IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+//
 // SimplifyFlatCoords uses the Douglas-Peucker algorithm to simplify a 2D
 // flatCoords. It returns the indexes of the points. Note that the indexes are
 // based on points, So acesss to x, y pair should be:
 //
-//  x := flatCoords[i*stride]
-//  y := flatCoords[i*stride+1]
+// x := flatCoords[i*stride]
+// y := flatCoords[i*stride+1]
 //
 // Threshold is the distance between a point and the selected start
 // and end line segment. It returns the indexes of the points.
