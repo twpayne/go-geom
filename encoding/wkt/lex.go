@@ -324,7 +324,11 @@ func (l *wktLex) isValidPolygonRing(flatCoords []float64) bool {
 		l.setParseError("polygon ring doesn't have enough points", "minimum number of points is 4")
 		return false
 	}
-	for i := 0; i < stride; i++ {
+	dimensions := 2
+	if l.curLayout().ZIndex() != -1 {
+		dimensions = 3
+	}
+	for i := 0; i < dimensions; i++ {
 		if flatCoords[i] != flatCoords[len(flatCoords)-stride+i] {
 			l.setParseError("polygon ring not closed", "ensure first and last point are the same")
 			return false
