@@ -2,10 +2,10 @@ module github.com/twpayne/go-geom
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/lib/pq v1.10.6
+	github.com/lib/pq v1.10.7
 	github.com/ory/dockertest/v3 v3.9.1
-	github.com/stretchr/testify v1.8.0
-	github.com/twpayne/go-kml v1.5.2
+	github.com/stretchr/testify v1.8.1
+	github.com/twpayne/go-kml/v2 v2.0.0
 )
 
 require (
