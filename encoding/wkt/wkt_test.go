@@ -71,6 +71,14 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 			s: "POLYGON ((1 2, 3 4, 5 6, 1 2), (7 8, 9 10, 11 12, 7 8))",
 		},
 		{
+			g: geom.NewPolygon(geom.XYM).MustSetCoords([][]geom.Coord{{{0, 0, 0}, {1, 0, 1}, {1, 1, 2}, {0, 0, 3}}}),
+			s: "POLYGON M ((0 0 0, 1 0 1, 1 1 2, 0 0 3))",
+		},
+		{
+			g: geom.NewPolygon(geom.XYZM).MustSetCoords([][]geom.Coord{{{0, 0, 0, 0}, {1, 0, -1, 1}, {1, 1, -2, 2}, {0, 0, 0, 3}}}),
+			s: "POLYGON ZM ((0 0 0 0, 1 0 -1 1, 1 1 -2 2, 0 0 0 3))",
+		},
+		{
 			g: geom.NewMultiPoint(geom.XY),
 			s: "MULTIPOINT EMPTY",
 		},
