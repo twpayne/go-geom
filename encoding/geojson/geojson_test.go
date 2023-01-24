@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
 	"github.com/twpayne/go-geom"
 )
 
@@ -275,9 +274,17 @@ func TestGeometry(t *testing.T) {
 
 func TestFeature(t *testing.T) {
 	for _, tc := range []struct {
-		f *Feature
-		s string
+		skipMarshalTest bool
+		f               *Feature
+		s               string
 	}{
+		{
+			skipMarshalTest: true,
+			f: &Feature{
+				ID: "10",
+			},
+			s: `{"type":"Feature","id":10,"geometry":null,"properties":null}`,
+		},
 		{
 			f: &Feature{},
 			s: `{"type":"Feature","geometry":null,"properties":null}`,
@@ -330,11 +337,13 @@ func TestFeature(t *testing.T) {
 		},
 	} {
 		t.Run(tc.s, func(t *testing.T) {
-			t.Run("marshal", func(t *testing.T) {
-				got, err := json.Marshal(tc.f)
-				require.NoError(t, err)
-				require.Equal(t, tc.s, string(got))
-			})
+			if !tc.skipMarshalTest {
+				t.Run("marshal", func(t *testing.T) {
+					got, err := json.Marshal(tc.f)
+					require.NoError(t, err)
+					require.Equal(t, tc.s, string(got))
+				})
+			}
 
 			t.Run("unmarshal", func(t *testing.T) {
 				f := &Feature{}
