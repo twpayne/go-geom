@@ -2,9 +2,11 @@ package geojson
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
 	"github.com/twpayne/go-geom"
 )
 
@@ -275,6 +277,7 @@ func TestGeometry(t *testing.T) {
 func TestFeature(t *testing.T) {
 	for _, tc := range []struct {
 		skipMarshalTest bool
+		useNumber       bool
 		f               *Feature
 		s               string
 	}{
@@ -284,6 +287,14 @@ func TestFeature(t *testing.T) {
 				ID: "10",
 			},
 			s: `{"type":"Feature","id":10,"geometry":null,"properties":null}`,
+		},
+		{
+			skipMarshalTest: true,
+			useNumber:       true,
+			f: &Feature{
+				ID: "10",
+			},
+			s: `{"type":"Feature","id":10.0,"geometry":null,"properties":null}`,
 		},
 		{
 			f: &Feature{},
@@ -347,7 +358,11 @@ func TestFeature(t *testing.T) {
 
 			t.Run("unmarshal", func(t *testing.T) {
 				f := &Feature{}
-				require.NoError(t, json.Unmarshal([]byte(tc.s), f))
+				decoder := json.NewDecoder(strings.NewReader(tc.s))
+				if tc.useNumber {
+					decoder.UseNumber()
+				}
+				require.NoError(t, decoder.Decode(f))
 				require.Equal(t, tc.f, f)
 			})
 		})

@@ -592,6 +592,8 @@ func (f *Feature) UnmarshalJSON(data []byte) error {
 			f.ID = v
 		case float64:
 			f.ID = strconv.FormatFloat(v, 'f', -1, 64)
+		case json.Number:
+			f.ID = v.String()
 		default:
 			return &json.InvalidUnmarshalError{
 				Type: reflect.TypeOf(gf.ID),
