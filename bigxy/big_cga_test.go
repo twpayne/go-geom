@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/bigxy"
@@ -62,7 +62,7 @@ func TestOrientationIndex(t *testing.T) {
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			orientationIndex := bigxy.OrientationIndex(testData.vectorOrigin, testData.vectorEnd, testData.point)
-			require.Equal(t, testData.result, orientationIndex)
+			assert.Equal(t, testData.result, orientationIndex)
 		})
 	}
 }
@@ -116,7 +116,7 @@ func TestIntersection(t *testing.T) {
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			calculatedIntersection := bigxy.Intersection(tc.line1Start, tc.line1End, tc.line2Start, tc.line2End)
-			require.Equal(t, tc.result, calculatedIntersection)
+			assert.Equal(t, tc.result, calculatedIntersection)
 		})
 	}
 }

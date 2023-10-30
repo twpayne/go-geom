@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 )
@@ -46,8 +46,8 @@ func TestGeometryDecode_NilCoordinates(t *testing.T) {
 	} {
 		t.Run(tc.geometry.Type, func(t *testing.T) {
 			got, err := tc.geometry.Decode()
-			require.NoError(t, err)
-			require.Equal(t, tc.want, got)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }
@@ -262,13 +262,13 @@ func TestGeometry(t *testing.T) {
 	} {
 		t.Run(tc.s, func(t *testing.T) {
 			got, err := Marshal(tc.g, tc.opts...)
-			require.NoError(t, err)
-			require.Equal(t, tc.s, string(got))
+			assert.NoError(t, err)
+			assert.Equal(t, tc.s, string(got))
 
 			if !tc.skipUnmarshal {
 				var g geom.T
-				require.NoError(t, Unmarshal([]byte(tc.s), &g))
-				require.Equal(t, tc.g, g)
+				assert.NoError(t, Unmarshal([]byte(tc.s), &g))
+				assert.Equal(t, tc.g, g)
 			}
 		})
 	}
@@ -351,8 +351,8 @@ func TestFeature(t *testing.T) {
 			if !tc.skipMarshalTest {
 				t.Run("marshal", func(t *testing.T) {
 					got, err := json.Marshal(tc.f)
-					require.NoError(t, err)
-					require.Equal(t, tc.s, string(got))
+					assert.NoError(t, err)
+					assert.Equal(t, tc.s, string(got))
 				})
 			}
 
@@ -362,8 +362,8 @@ func TestFeature(t *testing.T) {
 				if tc.useNumber {
 					decoder.UseNumber()
 				}
-				require.NoError(t, decoder.Decode(f))
-				require.Equal(t, tc.f, f)
+				assert.NoError(t, decoder.Decode(f))
+				assert.Equal(t, tc.f, f)
 			})
 		})
 	}
@@ -421,14 +421,14 @@ func TestFeatureCollection(t *testing.T) {
 		t.Run(tc.s, func(t *testing.T) {
 			t.Run("marshal", func(t *testing.T) {
 				got, err := json.Marshal(tc.fc)
-				require.NoError(t, err)
-				require.Equal(t, tc.s, string(got))
+				assert.NoError(t, err)
+				assert.Equal(t, tc.s, string(got))
 			})
 
 			t.Run("unmarshal", func(t *testing.T) {
 				fc := &FeatureCollection{}
-				require.NoError(t, json.Unmarshal([]byte(tc.s), fc))
-				require.Equal(t, tc.fc, fc)
+				assert.NoError(t, json.Unmarshal([]byte(tc.s), fc))
+				assert.Equal(t, tc.fc, fc)
 			})
 		})
 	}

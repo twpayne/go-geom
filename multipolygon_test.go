@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/alecthomas/assert/v2"
 )
 
 // MultiPolygon implements interface T.
@@ -27,7 +27,7 @@ func (g *MultiPolygon) assertEquals(t *testing.T, e *expectedMultiPolygon) {
 	assert.Equal(t, e.stride, g.Stride())
 	assert.Equal(t, e.coords, g.Coords())
 	assert.Equal(t, e.flatCoords, g.FlatCoords())
-	assert.Nil(t, g.Ends())
+	assert.Zero(t, g.Ends())
 	assert.Equal(t, e.endss, g.Endss())
 	assert.Equal(t, e.bounds, g.Bounds())
 	assert.Equal(t, e.empty, g.Empty())

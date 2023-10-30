@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/internal/geomtest"
@@ -45,12 +45,12 @@ func TestPointScanAndValue(t *testing.T) {
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			var gotPoint Point
-			require.NoError(t, gotPoint.Scan(tc.value))
-			require.Equal(t, tc.point, gotPoint)
-			require.Equal(t, tc.valid, gotPoint.Valid())
+			assert.NoError(t, gotPoint.Scan(tc.value))
+			assert.Equal(t, tc.point, gotPoint)
+			assert.Equal(t, tc.valid, gotPoint.Valid())
 			gotValue, gotErr := tc.point.Value()
-			require.NoError(t, gotErr)
-			require.Equal(t, tc.value, gotValue)
+			assert.NoError(t, gotErr)
+			assert.Equal(t, tc.value, gotValue)
 		})
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 )
@@ -228,9 +228,9 @@ func Test(t *testing.T) {
 			sb := &strings.Builder{}
 			e := xml.NewEncoder(sb)
 			element, err := Encode(tc.g)
-			require.NoError(t, err)
-			require.NoError(t, e.Encode(element))
-			require.Equal(t, tc.want, sb.String())
+			assert.NoError(t, err)
+			assert.NoError(t, e.Encode(element))
+			assert.Equal(t, tc.want, sb.String())
 		})
 	}
 }

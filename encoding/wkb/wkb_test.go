@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkbcommon"
@@ -19,14 +19,14 @@ func test(t *testing.T, g geom.T, xdr, ndr []byte, opts ...wkbcommon.WKBOption) 
 		t.Run("xdr", func(t *testing.T) {
 			t.Run("unmarshal", func(t *testing.T) {
 				got, err := Unmarshal(xdr, opts...)
-				require.NoError(t, err)
-				require.Equal(t, g, got)
+				assert.NoError(t, err)
+				assert.Equal(t, g, got)
 			})
 
 			t.Run("marshal", func(t *testing.T) {
 				got, err := Marshal(g, XDR, opts...)
-				require.NoError(t, err)
-				require.Equal(t, xdr, got)
+				assert.NoError(t, err)
+				assert.Equal(t, xdr, got)
 			})
 		})
 	}
@@ -34,14 +34,14 @@ func test(t *testing.T, g geom.T, xdr, ndr []byte, opts ...wkbcommon.WKBOption) 
 		t.Run("ndr", func(t *testing.T) {
 			t.Run("unmarshal", func(t *testing.T) {
 				got, err := Unmarshal(ndr, opts...)
-				require.NoError(t, err)
-				require.Equal(t, g, got)
+				assert.NoError(t, err)
+				assert.Equal(t, g, got)
 			})
 
 			t.Run("marshal", func(t *testing.T) {
 				got, err := Marshal(g, NDR, opts...)
-				require.NoError(t, err)
-				require.Equal(t, ndr, got)
+				assert.NoError(t, err)
+				assert.Equal(t, ndr, got)
 			})
 		})
 	}
@@ -51,98 +51,98 @@ func test(t *testing.T, g geom.T, xdr, ndr []byte, opts ...wkbcommon.WKBOption) 
 			p := Point{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, p.Scan(xdr))
-					require.Equal(t, Point{g, opts}, p)
+					assert.NoError(t, p.Scan(xdr))
+					assert.Equal(t, Point{g, opts}, p)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, p.Scan(ndr))
-					require.Equal(t, Point{g, opts}, p)
+					assert.NoError(t, p.Scan(ndr))
+					assert.Equal(t, Point{g, opts}, p)
 				})
 			}
 		case *geom.LineString:
 			ls := LineString{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, ls.Scan(xdr))
-					require.Equal(t, LineString{g, opts}, ls)
+					assert.NoError(t, ls.Scan(xdr))
+					assert.Equal(t, LineString{g, opts}, ls)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, ls.Scan(ndr))
-					require.Equal(t, LineString{g, opts}, ls)
+					assert.NoError(t, ls.Scan(ndr))
+					assert.Equal(t, LineString{g, opts}, ls)
 				})
 			}
 		case *geom.Polygon:
 			p := Polygon{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, p.Scan(xdr))
-					require.Equal(t, Polygon{g, opts}, p)
+					assert.NoError(t, p.Scan(xdr))
+					assert.Equal(t, Polygon{g, opts}, p)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, p.Scan(ndr))
-					require.Equal(t, Polygon{g, opts}, p)
+					assert.NoError(t, p.Scan(ndr))
+					assert.Equal(t, Polygon{g, opts}, p)
 				})
 			}
 		case *geom.MultiPoint:
 			mp := MultiPoint{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(xdr))
-					require.Equal(t, MultiPoint{g, opts}, mp)
+					assert.NoError(t, mp.Scan(xdr))
+					assert.Equal(t, MultiPoint{g, opts}, mp)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(ndr))
-					require.Equal(t, MultiPoint{g, opts}, mp)
+					assert.NoError(t, mp.Scan(ndr))
+					assert.Equal(t, MultiPoint{g, opts}, mp)
 				})
 			}
 		case *geom.MultiLineString:
 			mls := MultiLineString{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, mls.Scan(xdr))
-					require.Equal(t, MultiLineString{g, opts}, mls)
+					assert.NoError(t, mls.Scan(xdr))
+					assert.Equal(t, MultiLineString{g, opts}, mls)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, mls.Scan(ndr))
-					require.Equal(t, MultiLineString{g, opts}, mls)
+					assert.NoError(t, mls.Scan(ndr))
+					assert.Equal(t, MultiLineString{g, opts}, mls)
 				})
 			}
 		case *geom.MultiPolygon:
 			mp := MultiPolygon{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(xdr))
-					require.Equal(t, MultiPolygon{g, opts}, mp)
+					assert.NoError(t, mp.Scan(xdr))
+					assert.Equal(t, MultiPolygon{g, opts}, mp)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(ndr))
-					require.Equal(t, MultiPolygon{g, opts}, mp)
+					assert.NoError(t, mp.Scan(ndr))
+					assert.Equal(t, MultiPolygon{g, opts}, mp)
 				})
 			}
 		case *geom.GeometryCollection:
 			gc := GeometryCollection{opts: opts}
 			if xdr != nil {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, gc.Scan(xdr))
-					require.Equal(t, GeometryCollection{g, opts}, gc)
+					assert.NoError(t, gc.Scan(xdr))
+					assert.Equal(t, GeometryCollection{g, opts}, gc)
 				})
 			}
 			if ndr != nil {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, gc.Scan(ndr))
-					require.Equal(t, GeometryCollection{g, opts}, gc)
+					assert.NoError(t, gc.Scan(ndr))
+					assert.Equal(t, GeometryCollection{g, opts}, gc)
 				})
 			}
 		}
@@ -395,7 +395,7 @@ func TestCrashes(t *testing.T) {
 	} {
 		t.Run(tc.s, func(t *testing.T) {
 			_, err := Unmarshal([]byte(tc.s))
-			require.Equal(t, tc.want, err)
+			assert.Equal(t, tc.want, err)
 		})
 	}
 }

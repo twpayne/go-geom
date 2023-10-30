@@ -3,7 +3,7 @@ package transform
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
@@ -27,7 +27,7 @@ func TestTree(t *testing.T) {
 	}
 
 	actual := set.ToFlatArray()
-	require.Equal(t, expected, actual)
+	assert.Equal(t, expected, actual)
 }
 
 type testCompare struct{}

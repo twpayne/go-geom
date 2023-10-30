@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 )
@@ -28,7 +28,7 @@ func TestUniqueCoords(t *testing.T) {
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			filteredCoords := UniqueCoords(tc.layout, tc.compare, tc.pts)
-			require.Equal(t, tc.expected, filteredCoords)
+			assert.Equal(t, tc.expected, filteredCoords)
 		})
 	}
 }
