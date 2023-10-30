@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 )
@@ -71,8 +71,8 @@ func TestDecode(t *testing.T) {
 	} {
 		t.Run(tc.s, func(t *testing.T) {
 			got, err := Read(bytes.NewBufferString(tc.s))
-			require.NoError(t, err)
-			require.Equal(t, tc.t, got)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.t, got)
 		})
 	}
 }
@@ -147,8 +147,8 @@ func TestDecodeHeaders(t *testing.T) {
 	} {
 		t.Run(tc.s, func(t *testing.T) {
 			got, err := Read(bytes.NewBufferString(tc.s))
-			require.NoError(t, err)
-			require.Equal(t, tc.t.Headers, got.Headers)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.t.Headers, got.Headers)
 		})
 	}
 }

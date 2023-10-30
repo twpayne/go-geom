@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 )
@@ -169,14 +169,14 @@ func TestMarshalAndUnmarshal(t *testing.T) {
 		t.Run(tc.s, func(t *testing.T) {
 			t.Run("marshal", func(t *testing.T) {
 				got, err := Marshal(tc.g)
-				require.NoError(t, err)
-				require.Equal(t, tc.s, got)
+				assert.NoError(t, err)
+				assert.Equal(t, tc.s, got)
 			})
 
 			t.Run("unmarshal", func(t *testing.T) {
 				got, err := Unmarshal(tc.s)
-				require.NoError(t, err)
-				require.Equal(t, tc.g, got)
+				assert.NoError(t, err)
+				assert.Equal(t, tc.g, got)
 			})
 		})
 	}
@@ -226,8 +226,8 @@ func TestEncoder(t *testing.T) {
 	} {
 		t.Run(fmt.Sprintf("%s(encoder=%#v)", tc.s, tc.encoder), func(t *testing.T) {
 			got, err := tc.encoder.Encode(tc.g)
-			require.NoError(t, err)
-			require.Equal(t, tc.s, got)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.s, got)
 		})
 	}
 }
@@ -268,8 +268,8 @@ func TestUnmarshalEmptyGeomWithArbitrarySpaces(t *testing.T) {
 	} {
 		t.Run(tc.s, func(t *testing.T) {
 			got, err := Unmarshal(tc.s)
-			require.NoError(t, err)
-			require.Equal(t, tc.g, got)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.g, got)
 		})
 	}
 }
@@ -872,8 +872,8 @@ MULTIPOLYGON(((0 0 0 0, 1 1 1 -1, 2 3 1 -2, 0 0 0 0)))
 			want := tc.expected
 			for _, input := range tc.equivInputs {
 				got, err := Unmarshal(input)
-				require.NoError(t, err)
-				require.Equal(t, want, got)
+				assert.NoError(t, err)
+				assert.Equal(t, want, got)
 			}
 		})
 	}
@@ -1313,7 +1313,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 	for _, tc := range errorTestCases {
 		t.Run(tc.desc, func(t *testing.T) {
 			_, err := Unmarshal(tc.input)
-			require.EqualError(t, err, tc.expectedErrStr)
+			assert.EqualError(t, err, tc.expectedErrStr)
 		})
 	}
 }

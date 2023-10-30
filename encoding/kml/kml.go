@@ -2,7 +2,7 @@
 package kml
 
 import (
-	"github.com/twpayne/go-kml/v2"
+	"github.com/twpayne/go-kml/v3"
 
 	"github.com/twpayne/go-geom"
 )

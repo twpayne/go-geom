@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/sorting"
@@ -48,7 +48,7 @@ func TestCompare2D(t *testing.T) {
 		},
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			require.Equal(t, tc.result, sorting.IsLess2D(tc.c1, tc.c2))
+			assert.Equal(t, tc.result, sorting.IsLess2D(tc.c1, tc.c2))
 		})
 	}
 }
@@ -84,7 +84,7 @@ func TestNewFlatCoordSorting2D(t *testing.T) {
 			copy(actual, tc.c1)
 			sort.Sort(sorting.NewFlatCoordSorting2D(tc.layout, actual))
 
-			require.Equal(t, tc.result, actual)
+			assert.Equal(t, tc.result, actual)
 		})
 	}
 }

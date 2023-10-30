@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/wkb"
@@ -157,13 +157,13 @@ func Test(t *testing.T) {
 			t.Run(fmt.Sprintf("ndr:%s", tc.ndr), func(t *testing.T) {
 				t.Run("encode", func(t *testing.T) {
 					got, err := Encode(tc.g, wkb.NDR, tc.opts...)
-					require.NoError(t, err)
-					require.Equal(t, tc.ndr, got)
+					assert.NoError(t, err)
+					assert.Equal(t, tc.ndr, got)
 				})
 				t.Run("decode", func(t *testing.T) {
 					got, err := Decode(tc.ndr, tc.opts...)
-					require.NoError(t, err)
-					require.Equal(t, tc.g, got)
+					assert.NoError(t, err)
+					assert.Equal(t, tc.g, got)
 				})
 			})
 		}
@@ -171,13 +171,13 @@ func Test(t *testing.T) {
 			t.Run(fmt.Sprintf("xdr:%s", tc.xdr), func(t *testing.T) {
 				t.Run("encode", func(t *testing.T) {
 					got, err := Encode(tc.g, wkb.XDR, tc.opts...)
-					require.NoError(t, err)
-					require.Equal(t, tc.xdr, got)
+					assert.NoError(t, err)
+					assert.Equal(t, tc.xdr, got)
 				})
 				t.Run("decode", func(t *testing.T) {
 					got, err := Decode(tc.xdr, tc.opts...)
-					require.NoError(t, err)
-					require.Equal(t, tc.g, got)
+					assert.NoError(t, err)
+					assert.Equal(t, tc.g, got)
 				})
 			})
 		}

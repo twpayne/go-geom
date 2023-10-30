@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/alecthomas/assert/v2"
 )
 
 // LinearRing implements interface T.
@@ -24,8 +24,8 @@ func (g *LinearRing) assertEquals(t *testing.T, e *expectedLinearRing) {
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())
 	assert.Equal(t, e.flatCoords, g.FlatCoords())
-	assert.Nil(t, g.Ends())
-	assert.Nil(t, g.Endss())
+	assert.Zero(t, g.Ends())
+	assert.Zero(t, g.Endss())
 	assert.Equal(t, e.coords, g.Coords())
 	assert.Equal(t, e.bounds, g.Bounds())
 	assert.Equal(t, len(e.coords), g.NumCoords())

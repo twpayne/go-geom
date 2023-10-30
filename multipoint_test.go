@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/alecthomas/assert/v2"
 )
 
 // MultiPoint implements interface T.
@@ -27,7 +27,7 @@ func (g *MultiPoint) assertEquals(t *testing.T, e *expectedMultiPoint) {
 	assert.Equal(t, e.stride, g.Stride())
 	assert.Equal(t, e.flatCoords, g.FlatCoords())
 	assert.Equal(t, e.ends, g.Ends())
-	assert.Nil(t, g.Endss())
+	assert.Zero(t, g.Endss())
 	assert.Equal(t, e.coords, g.Coords())
 	assert.Equal(t, e.bounds, g.Bounds())
 	assert.Equal(t, len(e.coords), g.NumCoords())

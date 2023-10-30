@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	geom "github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/encoding/ewkb"
@@ -17,14 +17,14 @@ func test(t *testing.T, g geom.T, xdr, ndr string) {
 		t.Run("xdr", func(t *testing.T) {
 			t.Run("decode", func(t *testing.T) {
 				got, err := Decode(xdr)
-				require.NoError(t, err)
-				require.Equal(t, g, got)
+				assert.NoError(t, err)
+				assert.Equal(t, g, got)
 			})
 
 			t.Run("encode", func(t *testing.T) {
 				got, err := Encode(g, XDR)
-				require.NoError(t, err)
-				require.Equal(t, xdr, got)
+				assert.NoError(t, err)
+				assert.Equal(t, xdr, got)
 			})
 		})
 	}
@@ -32,14 +32,14 @@ func test(t *testing.T, g geom.T, xdr, ndr string) {
 		t.Run("ndr", func(t *testing.T) {
 			t.Run("decode", func(t *testing.T) {
 				got, err := Decode(ndr)
-				require.NoError(t, err)
-				require.Equal(t, g, got)
+				assert.NoError(t, err)
+				assert.Equal(t, g, got)
 			})
 
 			t.Run("encode", func(t *testing.T) {
 				got, err := Encode(g, NDR)
-				require.NoError(t, err)
-				require.Equal(t, ndr, got)
+				assert.NoError(t, err)
+				assert.Equal(t, ndr, got)
 			})
 		})
 	}
@@ -49,98 +49,98 @@ func test(t *testing.T, g geom.T, xdr, ndr string) {
 			var p ewkb.Point
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, p.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.Point{Point: g}, p)
+					assert.NoError(t, p.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.Point{Point: g}, p)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, p.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.Point{Point: g}, p)
+					assert.NoError(t, p.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.Point{Point: g}, p)
 				})
 			}
 		case *geom.LineString:
 			var ls ewkb.LineString
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, ls.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.LineString{LineString: g}, ls)
+					assert.NoError(t, ls.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.LineString{LineString: g}, ls)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, ls.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.LineString{LineString: g}, ls)
+					assert.NoError(t, ls.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.LineString{LineString: g}, ls)
 				})
 			}
 		case *geom.Polygon:
 			var p ewkb.Polygon
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, p.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.Polygon{Polygon: g}, p)
+					assert.NoError(t, p.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.Polygon{Polygon: g}, p)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, p.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.Polygon{Polygon: g}, p)
+					assert.NoError(t, p.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.Polygon{Polygon: g}, p)
 				})
 			}
 		case *geom.MultiPoint:
 			var mp ewkb.MultiPoint
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.MultiPoint{MultiPoint: g}, mp)
+					assert.NoError(t, mp.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.MultiPoint{MultiPoint: g}, mp)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.MultiPoint{MultiPoint: g}, mp)
+					assert.NoError(t, mp.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.MultiPoint{MultiPoint: g}, mp)
 				})
 			}
 		case *geom.MultiLineString:
 			var mls ewkb.MultiLineString
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, mls.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.MultiLineString{MultiLineString: g}, mls)
+					assert.NoError(t, mls.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.MultiLineString{MultiLineString: g}, mls)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, mls.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.MultiLineString{MultiLineString: g}, mls)
+					assert.NoError(t, mls.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.MultiLineString{MultiLineString: g}, mls)
 				})
 			}
 		case *geom.MultiPolygon:
 			var mp ewkb.MultiPolygon
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.MultiPolygon{MultiPolygon: g}, mp)
+					assert.NoError(t, mp.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.MultiPolygon{MultiPolygon: g}, mp)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, mp.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.MultiPolygon{MultiPolygon: g}, mp)
+					assert.NoError(t, mp.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.MultiPolygon{MultiPolygon: g}, mp)
 				})
 			}
 		case *geom.GeometryCollection:
 			var gc ewkb.GeometryCollection
 			if xdr != "" {
 				t.Run("xdr", func(t *testing.T) {
-					require.NoError(t, gc.Scan(decodeString(xdr)))
-					require.Equal(t, ewkb.GeometryCollection{GeometryCollection: g}, gc)
+					assert.NoError(t, gc.Scan(decodeString(xdr)))
+					assert.Equal(t, ewkb.GeometryCollection{GeometryCollection: g}, gc)
 				})
 			}
 			if ndr != "" {
 				t.Run("ndr", func(t *testing.T) {
-					require.NoError(t, gc.Scan(decodeString(ndr)))
-					require.Equal(t, ewkb.GeometryCollection{GeometryCollection: g}, gc)
+					assert.NoError(t, gc.Scan(decodeString(ndr)))
+					assert.Equal(t, ewkb.GeometryCollection{GeometryCollection: g}, gc)
 				})
 			}
 		}

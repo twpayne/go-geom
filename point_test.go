@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/alecthomas/assert/v2"
 )
 
 // Point implements interface T.
@@ -24,8 +24,8 @@ func (g *Point) assertEquals(t *testing.T, e *expectedPoint) {
 	assert.Equal(t, e.layout, g.Layout())
 	assert.Equal(t, e.stride, g.Stride())
 	assert.Equal(t, e.flatCoords, g.FlatCoords())
-	assert.Nil(t, g.Ends())
-	assert.Nil(t, g.Endss())
+	assert.Zero(t, g.Ends())
+	assert.Zero(t, g.Endss())
 	assert.Equal(t, 1, g.NumCoords())
 	assert.Equal(t, e.coords, g.Coords())
 	assert.Equal(t, e.bounds, g.Bounds())
