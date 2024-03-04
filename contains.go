@@ -12,7 +12,7 @@ func pnPoly(coords []Coord, pt Coord) bool {
 	return in
 }
 
-// ContainsPoint reports whether a geometry T contains the given point
+// ContainsPoint reports whether a geometry T contains the given point.
 func ContainsPoint(geo T, point *Point) bool {
 	if geo.Bounds().OverlapsPoint(point.Layout(), point.Coords()) {
 		zero := NewPoint(point.Layout()).Coords()
