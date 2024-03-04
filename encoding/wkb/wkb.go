@@ -8,6 +8,7 @@ package wkb
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 
@@ -265,7 +266,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T, opts ...wkbcommon.
 			case wkbcommon.EmptyPointHandlingNaN:
 				return wkbcommon.WriteEmptyPointAsNaN(w, byteOrder, g.Stride())
 			case wkbcommon.EmptyPointHandlingError:
-				return fmt.Errorf("cannot encode empty Point in WKB")
+				return errors.New("cannot encode empty Point in WKB")
 			default:
 				return fmt.Errorf("cannot encode empty Point in WKB (unknown option: %d)", wkbcommon.EmptyPointHandlingNaN)
 			}

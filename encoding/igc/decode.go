@@ -204,7 +204,7 @@ func (p *parser) parseB(line string) error {
 func (p *parser) parseH(line string) error {
 	m := hRegexp.FindStringSubmatch(line)
 	if m == nil {
-		return fmt.Errorf("invalid H record")
+		return errors.New("invalid H record")
 	}
 	header := Header{
 		Source:   m[1],

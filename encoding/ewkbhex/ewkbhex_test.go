@@ -2,7 +2,6 @@ package ewkbhex
 
 import (
 	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/alecthomas/assert/v2"
@@ -215,7 +214,7 @@ func Test(t *testing.T) {
 			xdr: "0020000003000010e60000000100000005c05314cc94c5c52c40440619d4a35817c05314cbfce5c52c4044061ca33b581bc05314c9819fc5294044061b580f5817c05314ca197fc52b4044061891335816c05314cc94c5c52c40440619d4a35817",
 		},
 	} {
-		t.Run(fmt.Sprintf("ndr:%s", tc.ndr), func(t *testing.T) {
+		t.Run("ndr:"+tc.ndr, func(t *testing.T) {
 			test(t, tc.g, tc.xdr, tc.ndr)
 		})
 	}

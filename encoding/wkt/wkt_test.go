@@ -939,12 +939,12 @@ LINE 1: POINT Z M (1 1 1 1)
 			desc: "invalid geometry type split over multiple lines",
 			input: `POINT
 Z
-       Z (
+       M (
           0
           0
 )`,
 			expectedErrStr: `syntax error: invalid keyword at line 3, pos 7
-LINE 3:        Z (
+LINE 3:        M (
                ^`,
 		},
 		{
@@ -964,9 +964,9 @@ LINE 1: ..., 0 0, 0 0, 0 0, 0 0, 0 0, 0 0}
 		// ParseError
 		{
 			desc:  "invalid point",
-			input: "POINT POINT",
-			expectedErrStr: `syntax error: unexpected POINT, expecting '(' at line 1, pos 6
-LINE 1: POINT POINT
+			input: "POINT P",
+			expectedErrStr: `syntax error: invalid keyword at line 1, pos 6
+LINE 1: POINT P
               ^`,
 		},
 		{

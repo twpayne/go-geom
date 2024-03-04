@@ -2,10 +2,11 @@ package sorting
 
 import "github.com/twpayne/go-geom"
 
-// FlatCoord is a sort.Interface implementation that will result in sorting the wrapped coords based on the
-// the comparator function
+// FlatCoord is a sort.Interface implementation that will result in sorting the
+// wrapped coords based on the comparator function
 //
-// Note: this data struct cannot be used with its 0 values.  it must be constructed using NewFlatCoordSorting
+// Note: this data struct cannot be used with its 0 values.  it must be
+// constructed using NewFlatCoordSorting
 type FlatCoord struct {
 	isLess IsLess
 	coords []float64

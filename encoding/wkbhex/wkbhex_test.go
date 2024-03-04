@@ -1,7 +1,6 @@
 package wkbhex
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/alecthomas/assert/v2"
@@ -154,7 +153,7 @@ func Test(t *testing.T) {
 		},
 	} {
 		if tc.ndr != "" {
-			t.Run(fmt.Sprintf("ndr:%s", tc.ndr), func(t *testing.T) {
+			t.Run("ndr:"+tc.ndr, func(t *testing.T) {
 				t.Run("encode", func(t *testing.T) {
 					got, err := Encode(tc.g, wkb.NDR, tc.opts...)
 					assert.NoError(t, err)
@@ -168,7 +167,7 @@ func Test(t *testing.T) {
 			})
 		}
 		if tc.xdr != "" {
-			t.Run(fmt.Sprintf("xdr:%s", tc.xdr), func(t *testing.T) {
+			t.Run("xdr:"+tc.xdr, func(t *testing.T) {
 				t.Run("encode", func(t *testing.T) {
 					got, err := Encode(tc.g, wkb.XDR, tc.opts...)
 					assert.NoError(t, err)

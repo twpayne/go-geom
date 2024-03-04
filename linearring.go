@@ -19,7 +19,7 @@ func NewLinearRingFlat(layout Layout, flatCoords []float64) *LinearRing {
 	return g
 }
 
-// Area returns the the area.
+// Area returns the area.
 func (g *LinearRing) Area() float64 {
 	return doubleArea1(g.flatCoords, 0, len(g.flatCoords), g.stride) / 2
 }

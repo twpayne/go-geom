@@ -1,7 +1,7 @@
 package hcoords
 
 import (
-	"fmt"
+	"errors"
 	"math"
 
 	"github.com/twpayne/go-geom"
@@ -31,11 +31,11 @@ func GetIntersection(line1End1, line1End2, line2End1, line2End2 geom.Coord) (geo
 	yIntersection := y / w
 
 	if math.IsNaN(xIntersection) || math.IsNaN(yIntersection) {
-		return nil, fmt.Errorf("intersection cannot be calculated using the h-coords implementation")
+		return nil, errors.New("intersection cannot be calculated using the h-coords implementation")
 	}
 
 	if math.IsInf(xIntersection, 0) || math.IsInf(yIntersection, 0) {
-		return nil, fmt.Errorf("intersection cannot be calculated using the h-coords implementation")
+		return nil, errors.New("intersection cannot be calculated using the h-coords implementation")
 	}
 
 	return geom.Coord{xIntersection, yIntersection}, nil

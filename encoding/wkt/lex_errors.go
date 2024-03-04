@@ -59,11 +59,11 @@ func (e *SyntaxError) Error() string {
 	snippet := e.wkt[snipStart:snipEnd]
 	snippet = strings.ReplaceAll(snippet, "\t", " ")
 	err += strLinePrefix + snippet + strLineSuffix
-	err += fmt.Sprintf("%s^", strings.Repeat(" ", len(strLinePrefix)+snipPos))
+	err += strings.Repeat(" ", len(strLinePrefix)+snipPos) + "^"
 
 	// Print a hint, if applicable.
 	if e.hint != "" {
-		err += fmt.Sprintf("\nHINT: %s", e.hint)
+		err += "\nHINT: " + e.hint
 	}
 
 	return err
