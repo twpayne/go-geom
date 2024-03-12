@@ -28,7 +28,7 @@ func (e ErrDimensionalityTooLow) Error() string {
 type ErrUnsupportedType string
 
 func (e ErrUnsupportedType) Error() string {
-	return fmt.Sprintf("geojson: unsupported type: %s", string(e))
+	return "geojson: unsupported type: " + string(e)
 }
 
 // CRS is a deprecated field but still populated in some programs (e.g. PostGIS).
@@ -332,7 +332,7 @@ func EncodeGeometryWithMaxDecimalDigits(maxDecimalDigits int) EncodeGeometryOpti
 // Encode encodes g as a GeoJSON geometry.
 func Encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 	if g == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	ret, err := encode(g, opts...)
 	if err != nil {
@@ -351,7 +351,7 @@ func Encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 // encode encodes the geometry assuming it is not nil.
 func encode(g geom.T, opts ...EncodeGeometryOption) (*Geometry, error) {
 	if g == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	switch g := g.(type) {
 	case *geom.Point:

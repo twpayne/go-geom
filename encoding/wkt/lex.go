@@ -384,7 +384,7 @@ func (l *wktLex) nextScannedPointMustBeEmpty() bool {
 
 // setLexError is called by Lex when a lexing (tokenizing) error is detected.
 func (l *wktLex) setLexError(expectedTokType string) {
-	l.Error(fmt.Sprintf("invalid %s", expectedTokType))
+	l.Error("invalid " + expectedTokType)
 }
 
 // setParseError is called when a context-sensitive error is detected during parsing.

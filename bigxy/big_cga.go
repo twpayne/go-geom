@@ -17,16 +17,16 @@ import (
 // relative round-off error in big.Float precision numbers
 var dpSafeEpsilon = 1e-15
 
-// OrientationIndex returns the index of the direction of the point point relative to
-// a vector specified by vectorOrigin-vectorEnd
+// OrientationIndex returns the index of the direction of point relative
+// to a vector specified by vectorOrigin-vectorEnd
 //
-// vectorOrigin - the origin point of the vector
-// vectorEnd - the final point of the vector
-// point - the point to compute the direction to
+// vectorOrigin - the origin point of the vector vectorEnd - the final point of
+// the vector point - the point to compute the direction to
 //
-// Returns CounterClockwise if point is counter-clockwise (left) from vectorOrigin-vectorEnd
-// Returns Clockwise if point is clockwise (right) from vectorOrigin-vectorEnd
-// Returns Collinear if point is collinear with vectorOrigin-vectorEnd
+// Returns CounterClockwise if point is counter-clockwise (left) from
+// vectorOrigin-vectorEnd. Returns Clockwise if point is clockwise (right) from
+// vectorOrigin-vectorEnd. Returns Collinear if point is collinear with
+// vectorOrigin-vectorEnd.
 func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Type {
 	// fast filter for orientation index
 	// avoids use of slow extended-precision arithmetic in many cases
@@ -52,7 +52,7 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Typ
 }
 
 // Intersection computes the intersection point of the two lines using math.big.Float arithmetic.
-// The lines are considered infinate in length.  For example, (0,0), (1, 0) and (2, 1) (2, 2) will have intersection of (2, 0)
+// The lines are considered infinite in length.  For example, (0,0), (1, 0) and (2, 1) (2, 2) will have intersection of (2, 0)
 // Currently does not handle case of parallel lines.
 func Intersection(line1Start, line1End, line2Start, line2End geom.Coord) geom.Coord {
 	var denom1, denom2, denom, tmp1, tmp2 big.Float
