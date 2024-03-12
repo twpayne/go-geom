@@ -2,7 +2,6 @@ linters:
   enable:
   - asciicheck
   - bodyclose
-  - depguard
   - dogsled
   - dupl
   - durationcheck
@@ -37,6 +36,8 @@ linters:
   - predeclared
   - promlinter
   - revive
+  - rowserrcheck
+  - sqlclosecheck
   - staticcheck
   - stylecheck
   - tagliatelle
@@ -46,9 +47,11 @@ linters:
   - unconvert
   - unparam
   - unused
+  - wastedassign
   - whitespace
   disable:
   - cyclop
+  - depguard
   - exhaustive
   - exhaustivestruct
   - funlen
@@ -63,10 +66,7 @@ linters:
   - nestif
   - nlreturn
   - paralleltest
-  - rowserrcheck # https://github.com/golangci/golangci-lint/issues/2649
-  - sqlclosecheck # https://github.com/golangci/golangci-lint/issues/2649
   - testpackage
-  - wastedassign # https://github.com/golangci/golangci-lint/issues/2649
   - wrapcheck
   - wsl
 
