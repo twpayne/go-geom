@@ -313,7 +313,7 @@ func EncodeGeometryWithBBox() EncodeGeometryOption {
 // EncodeGeometryWithCRS adds the crs field to the Geometry GeoJSON encoding.
 func EncodeGeometryWithCRS(crs *CRS) EncodeGeometryOption {
 	return EncodeGeometryOption{
-		onGeometryHandler: func(g *Geometry, t geom.T, opts ...EncodeGeometryOption) error {
+		onGeometryHandler: func(g *Geometry, _ geom.T, _ ...EncodeGeometryOption) error {
 			var err error
 			g.CRS = crs
 			return err
