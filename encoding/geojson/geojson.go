@@ -493,18 +493,10 @@ func Marshal(g geom.T, opts ...EncodeGeometryOption) ([]byte, error) {
 
 // Unmarshal unmarshalls a []byte to an arbitrary geometry.
 func Unmarshal(data []byte, g *geom.T) error {
-	if bytes.Equal(data, nullGeometry) {
-		*g = nil
-		return nil
-	}
-	// FIXME The following lint error is suppressed, but there is probably a genuine error here
-	//
-	//nolint:staticcheck
 	gg := &Geometry{}
-	if err := json.Unmarshal(data, gg); err != nil {
+	if err := json.Unmarshal(data, &gg); err != nil {
 		return err
 	}
-	//nolint:staticcheck
 	if gg == nil {
 		*g = nil
 		return nil
