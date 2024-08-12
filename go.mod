@@ -4,11 +4,11 @@ go 1.21
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/alecthomas/assert/v2 v2.6.0
+	github.com/alecthomas/assert/v2 v2.10.0
 	github.com/lib/pq v1.10.9
 	github.com/testcontainers/testcontainers-go v0.29.1
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.29.1
-	github.com/twpayne/go-kml/v3 v3.1.0
+	github.com/twpayne/go-kml/v3 v3.1.1
 )
 
 require (
