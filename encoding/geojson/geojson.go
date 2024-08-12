@@ -114,7 +114,7 @@ func guessLayout3(coords3 [][][]geom.Coord) (geom.Layout, error) {
 // Decode decodes g to a geometry.
 func (g *Geometry) Decode() (geom.T, error) {
 	if g == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	switch g.Type {
 	case "Point":

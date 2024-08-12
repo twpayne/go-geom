@@ -90,7 +90,7 @@ func (p *Point) Valid() bool {
 // Value returns the EWKB encoding of p.
 func (p *Point) Value() (driver.Value, error) {
 	if p.Point == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(p.Point)
 }
@@ -125,7 +125,7 @@ func (ls *LineString) Valid() bool {
 // Value returns the EWKB encoding of ls.
 func (ls *LineString) Value() (driver.Value, error) {
 	if ls.LineString == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(ls.LineString)
 }
@@ -160,7 +160,7 @@ func (p *Polygon) Valid() bool {
 // Value returns the EWKB encoding of p.
 func (p *Polygon) Value() (driver.Value, error) {
 	if p.Polygon == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(p.Polygon)
 }
@@ -195,7 +195,7 @@ func (mp *MultiPoint) Valid() bool {
 // Value returns the EWKB encoding of mp.
 func (mp *MultiPoint) Value() (driver.Value, error) {
 	if mp.MultiPoint == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(mp.MultiPoint)
 }
@@ -230,7 +230,7 @@ func (mls *MultiLineString) Valid() bool {
 // Value returns the EWKB encoding of mls.
 func (mls *MultiLineString) Value() (driver.Value, error) {
 	if mls.MultiLineString == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(mls.MultiLineString)
 }
@@ -265,7 +265,7 @@ func (mp *MultiPolygon) Valid() bool {
 // Value returns the EWKB encoding of mp.
 func (mp *MultiPolygon) Value() (driver.Value, error) {
 	if mp.MultiPolygon == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(mp.MultiPolygon)
 }
@@ -300,7 +300,7 @@ func (gc *GeometryCollection) Valid() bool {
 // Value returns the EWKB encoding of gc.
 func (gc *GeometryCollection) Value() (driver.Value, error) {
 	if gc.GeometryCollection == nil {
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	}
 	return value(gc.GeometryCollection)
 }
