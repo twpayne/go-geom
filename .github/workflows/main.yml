@@ -10,8 +10,8 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-    - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
       with:
         cache: true
         go-version-file: go.mod
@@ -30,8 +30,8 @@ jobs:
   darwin:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-    - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
       with:
         cache: true
         go-version-file: go.mod
@@ -42,8 +42,8 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-    - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
       with:
         cache: true
         go-version-file: go.mod
@@ -54,12 +54,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
         with:
           cache: true
           go-version-file: go.mod
-      - uses: golangci/golangci-lint-action@3cfe3a4abbb849e10058ce4af15d205b6da42804
+      - uses: golangci/golangci-lint-action@aaa42aa0628b4ae2578232a66b541047968fac86
         with:
           version: v${{ env.GOLANGCI_LINT_VERSION }}
       - name: format
