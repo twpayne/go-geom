@@ -2,8 +2,6 @@ module github.com/twpayne/go-geom
 
 go 1.21
 
-toolchain go1.22.1
-
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/alecthomas/assert/v2 v2.6.0
