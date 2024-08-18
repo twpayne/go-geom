@@ -116,3 +116,26 @@ func TestPolygonSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewPolygon(NoLayout).SetSRID(4326).SRID())
 	assert.Equal(t, 4326, Must(SetSRID(NewPolygon(NoLayout), 4326)).SRID())
 }
+
+func TestPolygonArea(t *testing.T) {
+	for i, tc := range []struct {
+		polygon  *Polygon
+		expected float64
+	}{
+		{
+			polygon:  NewPolygon(XY).MustSetCoords([][]Coord{{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}}}),
+			expected: 1,
+		},
+		{
+			polygon: NewPolygon(XY).MustSetCoords([][]Coord{
+				{{0, 0}, {3, 0}, {3, 3}, {0, 3}, {0, 0}},
+				{{1, 1}, {1, 2}, {2, 2}, {2, 1}, {1, 1}},
+			}),
+			expected: 8,
+		},
+	} {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.polygon.Area())
+		})
+	}
+}

@@ -265,13 +265,8 @@ func doubleArea1(flatCoords []float64, offset, end, stride int) float64 {
 
 func doubleArea2(flatCoords []float64, offset int, ends []int, stride int) float64 {
 	var doubleArea float64
-	for i, end := range ends {
-		da := doubleArea1(flatCoords, offset, end, stride)
-		if i == 0 {
-			doubleArea = da
-		} else {
-			doubleArea -= da
-		}
+	for _, end := range ends {
+		doubleArea += doubleArea1(flatCoords, offset, end, stride)
 		offset = end
 	}
 	return doubleArea
