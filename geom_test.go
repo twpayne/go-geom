@@ -38,7 +38,7 @@ func aliases(x, y []float64) bool {
 }
 
 func TestArea(t *testing.T) {
-	for _, tc := range []struct {
+	for i, tc := range []struct {
 		g interface {
 			Area() float64
 		}
@@ -115,7 +115,7 @@ func TestArea(t *testing.T) {
 		{
 			g: NewPolygon(XY).MustSetCoords([][]Coord{
 				{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
-				{{0, 6}, {2, 6}, {2, 8}, {0, 8}, {0, 6}},
+				{{0, 6}, {0, 8}, {2, 8}, {2, 6}, {0, 6}},
 			}),
 			want: 56,
 		},
@@ -151,7 +151,7 @@ func TestArea(t *testing.T) {
 			g: NewMultiPolygon(XY).MustSetCoords([][][]Coord{
 				{
 					{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
-					{{0, 6}, {2, 6}, {2, 8}, {0, 8}, {0, 6}},
+					{{0, 6}, {0, 8}, {2, 8}, {2, 6}, {0, 6}},
 				},
 			}),
 			want: 56,
@@ -163,13 +163,28 @@ func TestArea(t *testing.T) {
 				},
 				{
 					{{-3, -2}, {-1, 4}, {6, 1}, {3, 10}, {-4, 9}, {-3, -2}},
-					{{0, 6}, {2, 6}, {2, 8}, {0, 8}, {0, 6}},
+					{{0, 6}, {0, 8}, {2, 8}, {2, 6}, {0, 6}},
 				},
 			}),
 			want: 57,
 		},
+		{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
+				{{0, 0}, {1, 0}, {1, 1}, {0, 1}, {0, 0}},
+			}),
+			want: 1,
+		},
+		{
+			g: NewPolygon(XY).MustSetCoords([][]Coord{
+				{{0, 0}, {3, 0}, {3, 3}, {0, 3}, {0, 0}},
+				{{1, 1}, {1, 2}, {2, 2}, {2, 1}, {1, 1}},
+			}),
+			want: 8,
+		},
 	} {
-		assert.Equal(t, tc.want, tc.g.Area())
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			assert.Equal(t, tc.want, tc.g.Area())
+		})
 	}
 }
 
