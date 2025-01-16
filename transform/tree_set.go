@@ -64,7 +64,7 @@ func (set *TreeSet) ToFlatArray() []float64 {
 
 	i := 0
 	set.walk(set.tree, func(v []float64) {
-		for j := 0; j < stride; j++ {
+		for j := range stride {
 			array[i+j] = v[j]
 		}
 		i += stride

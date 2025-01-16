@@ -39,7 +39,7 @@ func (intersector *centralEndpointIntersector) compute() {
 func average(pts [4]geom.Coord) geom.Coord {
 	avg := geom.Coord{0, 0}
 
-	for i := 0; i < len(pts); i++ {
+	for i := range pts {
 		avg[0] += pts[i][0]
 		avg[1] += pts[i][1]
 	}
@@ -53,7 +53,7 @@ func average(pts [4]geom.Coord) geom.Coord {
 func findNearestPoint(p geom.Coord, pts [4]geom.Coord) geom.Coord {
 	minDist := math.MaxFloat64
 	result := geom.Coord{}
-	for i := 0; i < len(pts); i++ {
+	for i := range pts {
 		dist := internal.Distance2D(p, pts[i])
 
 		// always initialize the result

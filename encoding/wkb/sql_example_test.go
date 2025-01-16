@@ -160,7 +160,6 @@ func Example_value_different_shapes() {
 	}
 
 	for _, s := range shapes {
-		s := s
 		result, err := db.Exec(`INSERT INTO objects (name, location) VALUES (?, ?);`, s.Name, &s.Geom)
 		if err != nil {
 			log.Fatal(err)

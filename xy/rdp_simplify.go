@@ -32,7 +32,7 @@ func SimplifyFlatCoords(flatCoords []float64, threshold float64, stride int) []i
 	size := len(flatCoords) / stride
 	if size < 3 {
 		ret := make([]int, size)
-		for i := 0; i < size; i++ {
+		for i := range size {
 			ret[i] = i
 		}
 		return ret

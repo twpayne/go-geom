@@ -449,7 +449,7 @@ func TestSignedArea(t *testing.T) {
 func reverseCopy(coords []float64) []float64 {
 	reverseCoords := make([]float64, len(coords))
 
-	for i := 0; i < len(coords); i++ {
+	for i := range coords {
 		reverseCoords[i] = coords[len(coords)-1-i]
 	}
 

@@ -18,12 +18,12 @@ type Encoder struct {
 // An EncoderOption sets an option on an Encoder.
 type EncoderOption func(*Encoder)
 
-func clamp(x, min, max int) int {
+func clamp(x, minValue, maxValue int) int {
 	switch {
-	case x < min:
-		return min
-	case x > max:
-		return max
+	case x < minValue:
+		return minValue
+	case x > maxValue:
+		return maxValue
 	default:
 		return x
 	}

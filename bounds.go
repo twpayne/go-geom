@@ -12,14 +12,14 @@ type Bounds struct {
 // NewBounds creates a new Bounds.
 func NewBounds(layout Layout) *Bounds {
 	stride := layout.Stride()
-	min, max := make(Coord, stride), make(Coord, stride)
-	for i := 0; i < stride; i++ {
-		min[i], max[i] = math.Inf(1), math.Inf(-1)
+	minValue, maxValue := make(Coord, stride), make(Coord, stride)
+	for i := range stride {
+		minValue[i], maxValue[i] = math.Inf(1), math.Inf(-1)
 	}
 	return &Bounds{
 		layout: layout,
-		min:    min,
-		max:    max,
+		min:    minValue,
+		max:    maxValue,
 	}
 }
 
@@ -103,19 +103,19 @@ func (b *Bounds) Set(args ...float64) *Bounds {
 	}
 	stride := len(args) / 2
 	b.extendStride(stride)
-	for i := 0; i < stride; i++ {
+	for i := range stride {
 		b.min[i], b.max[i] = args[i], args[i+stride]
 	}
 	return b
 }
 
 // SetCoords sets the minimum and maximum values of the Bounds.
-func (b *Bounds) SetCoords(min, max Coord) *Bounds {
+func (b *Bounds) SetCoords(minCoord, maxCoord Coord) *Bounds {
 	b.min = Coord(make([]float64, b.layout.Stride()))
 	b.max = Coord(make([]float64, b.layout.Stride()))
-	for i := 0; i < b.layout.Stride(); i++ {
-		b.min[i] = math.Min(min[i], max[i])
-		b.max[i] = math.Max(min[i], max[i])
+	for i := range b.layout.Stride() {
+		b.min[i] = math.Min(minCoord[i], maxCoord[i])
+		b.max[i] = math.Max(minCoord[i], maxCoord[i])
 	}
 	return b
 }
@@ -134,7 +134,7 @@ func (b *Bounds) OverlapsPoint(layout Layout, point Coord) bool {
 func (b *Bounds) extendFlatCoords(flatCoords []float64, offset, end, stride int) *Bounds {
 	b.extendStride(stride)
 	for i := offset; i < end; i += stride {
-		for j := 0; j < stride; j++ {
+		for j := range stride {
 			b.min[j] = math.Min(b.min[j], flatCoords[i+j])
 			b.max[j] = math.Max(b.max[j], flatCoords[i+j])
 		}

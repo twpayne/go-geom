@@ -399,7 +399,7 @@ func length3(flatCoords []float64, offset int, endss [][]int, stride int) float6
 
 func reverse1(flatCoords []float64, offset, end, stride int) {
 	for i, j := offset+stride, end; i <= j; i, j = i+stride, j-stride {
-		for k := 0; k < stride; k++ {
+		for k := range stride {
 			flatCoords[i-stride+k], flatCoords[j-stride+k] = flatCoords[j-stride+k], flatCoords[i-stride+k]
 		}
 	}

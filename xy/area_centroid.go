@@ -44,7 +44,7 @@ func PolygonsCentroid(polygon *geom.Polygon, extraPolys ...*geom.Polygon) (centr
 // In this case, the centroid of the line segments in the polygon will be returned.
 func MultiPolygonCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 	calc := NewAreaCentroidCalculator(polygon.Layout())
-	for i := 0; i < polygon.NumPolygons(); i++ {
+	for i := range polygon.NumPolygons() {
 		calc.AddPolygon(polygon.Polygon(i))
 	}
 	return calc.GetCentroid()

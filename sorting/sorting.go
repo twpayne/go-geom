@@ -56,7 +56,7 @@ func (s FlatCoord) Len() int {
 }
 
 func (s FlatCoord) Swap(i, j int) {
-	for k := 0; k < s.stride; k++ {
+	for k := range s.stride {
 		s.coords[i*s.stride+k], s.coords[j*s.stride+k] = s.coords[j*s.stride+k], s.coords[i*s.stride+k]
 	}
 }

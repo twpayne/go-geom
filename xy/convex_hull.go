@@ -45,7 +45,7 @@ func ConvexHullFlat(layout geom.Layout, coords []float64) geom.T {
 	return calc.getConvexHull()
 }
 
-func (calc convexHullCalculator) getConvexHull() geom.T {
+func (calc *convexHullCalculator) getConvexHull() geom.T {
 	if len(calc.inputPts) == 0 {
 		return nil
 	}
@@ -145,7 +145,7 @@ func (calc *convexHullCalculator) preSort(pts []float64) {
 	// This focal point is put in array location pts[0].
 	for i := calc.stride; i < len(pts); i += calc.stride {
 		if pts[i+1] < pts[1] || (pts[i+1] == pts[1] && pts[i] < pts[0]) {
-			for k := 0; k < calc.stride; k++ {
+			for k := range calc.stride {
 				pts[k], pts[i+k] = pts[i+k], pts[k]
 			}
 		}
@@ -242,49 +242,49 @@ func (calc *convexHullCalculator) computeOctPts(inputPts []float64) []float64 {
 	pts := make([]float64, 8*stride)
 
 	for j := 0; j < len(pts); j += stride {
-		for k := 0; k < stride; k++ {
+		for k := range stride {
 			pts[j+k] = inputPts[k]
 		}
 	}
 
 	for i := stride; i < len(inputPts); i += stride {
 		if inputPts[i] < pts[0] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i]-inputPts[i+1] < pts[stride]-pts[stride+1] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[stride+k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i+1] > pts[2*stride+1] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[2*stride+k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i]+inputPts[i+1] > pts[3*stride]+pts[3*stride+1] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[3*stride+k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i] > pts[4*stride] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[4*stride+k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i]-inputPts[i+1] > pts[5*stride]-pts[5*stride+1] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[5*stride+k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i+1] < pts[6*stride+1] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[6*stride+k] = inputPts[i+k]
 			}
 		}
 		if inputPts[i]+inputPts[i+1] < pts[7*stride]+pts[7*stride+1] {
-			for k := 0; k < stride; k++ {
+			for k := range stride {
 				pts[7*stride+k] = inputPts[i+k]
 			}
 		}

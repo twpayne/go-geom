@@ -100,7 +100,7 @@ func Read(r io.Reader) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 		}
 		mp := geom.NewMultiPoint(layout).SetSRID(int(srid))
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r)
 			if err != nil {
 				return nil, err
@@ -123,7 +123,7 @@ func Read(r io.Reader) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: int(n), Limit: limit}
 		}
 		mls := geom.NewMultiLineString(layout).SetSRID(int(srid))
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r)
 			if err != nil {
 				return nil, err
@@ -146,7 +146,7 @@ func Read(r io.Reader) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: int(n), Limit: limit}
 		}
 		mp := geom.NewMultiPolygon(layout).SetSRID(int(srid))
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r)
 			if err != nil {
 				return nil, err
@@ -169,7 +169,7 @@ func Read(r io.Reader) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 		}
 		gc := geom.NewGeometryCollection().SetSRID(int(srid))
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r)
 			if err != nil {
 				return nil, err
@@ -274,7 +274,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.Point(i)); err != nil {
 				return err
 			}
@@ -285,7 +285,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.LineString(i)); err != nil {
 				return err
 			}
@@ -296,7 +296,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.Polygon(i)); err != nil {
 				return err
 			}
@@ -307,7 +307,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 		if err := binary.Write(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.Geom(i)); err != nil {
 				return err
 			}
