@@ -138,14 +138,14 @@ func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 		return nil, nil, ErrGeometryTooLarge{Level: 2, N: int(n), Limit: limit}
 	}
 	var flatCoordss []float64
-	var ends []int
-	for i := 0; i < int(n); i++ {
+	ends := make([]int, n)
+	for i := range n {
 		flatCoords, err := ReadFlatCoords1(r, byteOrder, stride)
 		if err != nil {
 			return nil, nil, err
 		}
 		flatCoordss = append(flatCoordss, flatCoords...)
-		ends = append(ends, len(flatCoordss))
+		ends[i] = len(flatCoordss)
 	}
 	return flatCoordss, ends, nil
 }

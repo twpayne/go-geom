@@ -11,3 +11,5 @@ github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/twpayne/go-kml/v3 v3.1.1 h1:Fq2k4nKa2dIipJt0r5gwLEYcJA/7WeqKW2KTkrRXWOs=
 github.com/twpayne/go-kml/v3 v3.1.1/go.mod h1:7VT0jsr6fzn5CPZ5e4OB93vhgf3fZcwflK7ydbXFVos=
+github.com/twpayne/go-kml/v3 v3.2.1 h1:xkTIJ7KMnHGKpHGf30e4XS3UT8o/5jD62hmdGJPf7Io=
+github.com/twpayne/go-kml/v3 v3.2.1/go.mod h1:lPWoJR3nQAdePBy3SrnniLdBLVQX0hlxrcziCx9XgT0=

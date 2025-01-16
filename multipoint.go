@@ -45,7 +45,7 @@ func NewMultiPointFlat(
 			numCoords = len(flatCoords) / g.stride
 		}
 		g.ends = make([]int, numCoords)
-		for i := 0; i < numCoords; i++ {
+		for i := range numCoords {
 			g.ends[i] = (i + 1) * g.stride
 		}
 	}

@@ -40,7 +40,7 @@ type rayCrossingCounter struct {
 //
 // return the Location of the point
 
-func (counter rayCrossingCounter) getLocation() location.Type {
+func (counter *rayCrossingCounter) getLocation() location.Type {
 	if counter.isPointOnSegment {
 		return location.Boundary
 	}

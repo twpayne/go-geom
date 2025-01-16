@@ -250,7 +250,7 @@ func (c *nestedFloat64WithMaxDecimalDigits) marshalJSON(
 	switch val.Kind() {
 	case reflect.Slice:
 		buf = append(buf, '[')
-		for i := 0; i < val.Len(); i++ {
+		for i := range val.Len() {
 			if i > 0 {
 				buf = append(buf, ',')
 			}

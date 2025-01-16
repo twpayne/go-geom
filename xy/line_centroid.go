@@ -79,7 +79,7 @@ func (calc *LineCentroidCalculator) GetCentroid() geom.Coord {
 
 // AddPolygon adds a Polygon to the calculation.
 func (calc *LineCentroidCalculator) AddPolygon(polygon *geom.Polygon) *LineCentroidCalculator {
-	for i := 0; i < polygon.NumLinearRings(); i++ {
+	for i := range polygon.NumLinearRings() {
 		calc.AddLinearRing(polygon.LinearRing(i))
 	}
 

@@ -104,7 +104,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 		}
 		mp := geom.NewMultiPoint(layout)
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r, opts...)
 			if err != nil {
 				return nil, err
@@ -127,7 +127,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: int(n), Limit: limit}
 		}
 		mls := geom.NewMultiLineString(layout)
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r, opts...)
 			if err != nil {
 				return nil, err
@@ -150,7 +150,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: int(n), Limit: limit}
 		}
 		mp := geom.NewMultiPolygon(layout)
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r, opts...)
 			if err != nil {
 				return nil, err
@@ -170,7 +170,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 			return nil, err
 		}
 		gc := geom.NewGeometryCollection()
-		for i := uint32(0); i < n; i++ {
+		for range n {
 			g, err := Read(r, opts...)
 			if err != nil {
 				return nil, err
@@ -281,7 +281,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T, opts ...wkbcommon.
 		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.Point(i), opts...); err != nil {
 				return err
 			}
@@ -292,7 +292,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T, opts ...wkbcommon.
 		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.LineString(i), opts...); err != nil {
 				return err
 			}
@@ -303,7 +303,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T, opts ...wkbcommon.
 		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.Polygon(i), opts...); err != nil {
 				return err
 			}
@@ -314,7 +314,7 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T, opts ...wkbcommon.
 		if err := wkbcommon.WriteUInt32(w, byteOrder, uint32(n)); err != nil {
 			return err
 		}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if err := Write(w, byteOrder, g.Geom(i), opts...); err != nil {
 				return err
 			}

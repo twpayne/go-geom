@@ -106,7 +106,7 @@ func (c Coord) Equal(layout Layout, other Coord) bool {
 		return false
 	}
 
-	for i := 0; i < numOrds; i++ {
+	for i := range numOrds {
 		if math.IsNaN(c[i]) || math.IsNaN(other[i]) {
 			if !math.IsNaN(c[i]) || !math.IsNaN(other[i]) {
 				return false

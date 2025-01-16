@@ -340,7 +340,7 @@ func TestRandom(t *testing.T) {
 }
 
 func BenchmarkUnmarshal(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		for _, tc := range testdata.Random {
 			if _, err := Unmarshal(tc.WKB); err != nil {
 				b.Errorf("unmarshal error %v", err)
@@ -350,7 +350,7 @@ func BenchmarkUnmarshal(b *testing.B) {
 }
 
 func BenchmarkMarshal(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		for _, tc := range testdata.Random {
 			if _, err := Marshal(tc.G, NDR); err != nil {
 				b.Errorf("marshal error %v", err)

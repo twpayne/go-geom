@@ -79,7 +79,7 @@ func WriteByte(w io.Writer, value byte) error {
 // WriteEmptyPointAsNaN outputs EmptyPoint as NaN values.
 func WriteEmptyPointAsNaN(w io.Writer, byteOrder binary.ByteOrder, numCoords int) error {
 	coords := make([]float64, numCoords)
-	for i := 0; i < numCoords; i++ {
+	for i := range numCoords {
 		coords[i] = geom.PointEmptyCoord()
 	}
 	return WriteFlatCoords0(w, byteOrder, coords)

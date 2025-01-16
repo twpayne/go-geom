@@ -9,7 +9,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/testcontainers/testcontainers-go v0.35.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.35.0
-	github.com/twpayne/go-geom v0.0.0-00010101000000-000000000000
+	github.com/twpayne/go-geom v1.5.7
 )
 
 require (

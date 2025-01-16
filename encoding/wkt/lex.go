@@ -328,7 +328,7 @@ func (l *wktLex) isValidPolygonRing(flatCoords []float64) bool {
 	if l.curLayout().ZIndex() != -1 {
 		dimensions = 3
 	}
-	for i := 0; i < dimensions; i++ {
+	for i := range dimensions {
 		if flatCoords[i] != flatCoords[len(flatCoords)-stride+i] {
 			l.setParseError("polygon ring not closed", "ensure first and last point are the same")
 			return false

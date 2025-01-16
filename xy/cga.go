@@ -311,7 +311,7 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 		}
 	}
 	if noIntersection {
-		return internal.Min(
+		return min(
 			DistanceFromPointToLine(line1Start, line2Start, line2End),
 			DistanceFromPointToLine(line1End, line2Start, line2End),
 			DistanceFromPointToLine(line2Start, line1Start, line1End),

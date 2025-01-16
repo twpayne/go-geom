@@ -70,13 +70,13 @@ func parseDec(s string, start, stop int) (int, error) {
 
 // parseDecInRange parsers a decimal value in s[start:stop], and returns an
 // error if it is outside the range [min, max).
-func parseDecInRange(s string, start, stop, min, max int) (int, error) {
+func parseDecInRange(s string, start, stop, minValue, maxValue int) (int, error) {
 	result, err := parseDec(s, start, stop)
 	switch {
 	case err != nil:
 		return result, err
-	case result < min || max <= result:
-		return result, fmt.Errorf("value out of range: %d, want %d-%d", result, min, max)
+	case result < minValue || maxValue <= result:
+		return result, fmt.Errorf("value out of range: %d, want %d-%d", result, minValue, maxValue)
 	}
 	return result, nil
 }
@@ -255,7 +255,7 @@ func (p *parser) parseI(line string) error {
 	if len(line) < 7*n+3 {
 		return fmt.Errorf("invalid I record length: %d, want %d", len(line), 7*n+3)
 	}
-	for i := 0; i < n; i++ {
+	for i := range n {
 		var start, stop int
 		if start, err = parseDec(line, 7*i+3, 7*i+5); err != nil {
 			return err
