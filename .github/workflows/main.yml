@@ -4,7 +4,7 @@ on:
   push:
 env:
   GOFUMPT_VERSION: 0.7.0
-  GOLANGCI_LINT_VERSION: 1.63.4
+  GOLANGCI_LINT_VERSION: 2.1.1
 jobs:
   linux:
     runs-on: ubuntu-latest

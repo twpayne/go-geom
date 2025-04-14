@@ -102,8 +102,7 @@ func newParser() *parser {
 // parseB parses a B record from line and updates the state of p.
 func (p *parser) parseB(line string) error {
 	if len(line) < p.bRecordLen {
-		//nolint:stylecheck
-		return fmt.Errorf("B record too short: %d, want >=%d", len(line), p.bRecordLen)
+		return fmt.Errorf("B record too short: %d, want >=%d", len(line), p.bRecordLen) //nolint:staticcheck
 	}
 
 	var err error
@@ -215,8 +214,7 @@ func (p *parser) parseH(line string) error {
 	p.headers = append(p.headers, header)
 	if header.Key == "DTE" {
 		if len(header.Value) < 6 {
-			//nolint:stylecheck
-			return fmt.Errorf("H DTE value too short: %d, want >=6", len(header.Value))
+			return fmt.Errorf("H DTE value too short: %d, want >=6", len(header.Value)) //nolint:staticcheck
 		}
 		day, err := parseDecInRange(header.Value, 0, 2, 1, 31+1)
 		if err != nil {
@@ -246,8 +244,7 @@ func (p *parser) parseI(line string) error {
 	var err error
 	var n int
 	if len(line) < 3 {
-		//nolint:stylecheck
-		return fmt.Errorf("I record too short: %d, want >=3", len(line))
+		return fmt.Errorf("I record too short: %d, want >=3", len(line)) //nolint:staticcheck
 	}
 	if n, err = parseDec(line, 1, 3); err != nil {
 		return err
@@ -264,8 +261,7 @@ func (p *parser) parseI(line string) error {
 			return err
 		}
 		if start != p.bRecordLen+1 || stop < start {
-			//nolint:stylecheck
-			return fmt.Errorf("I record index out-of-range: %d-%d", start, stop-1)
+			return fmt.Errorf("I record index out-of-range: %d-%d", start, stop-1) //nolint:staticcheck
 		}
 		p.bRecordLen = stop
 		switch line[7*i+7 : 7*i+10] {
@@ -321,7 +317,7 @@ func doParse(r io.Reader) (*parser, Errors) {
 				// Leading Unicode byte order marks and XOFF characters are silently ignored.
 				// The noise must include at least one unprintable character.
 				for j, c := range line[:i] {
-					if !(c == ' ' || ('A' <= c && c <= 'Z')) {
+					if !(c == ' ' || ('A' <= c && c <= 'Z')) { //nolint:staticcheck
 						foundA = true
 						leadingNoise = j != 0 || (c != '\x13' && c != '\ufeff')
 						break
