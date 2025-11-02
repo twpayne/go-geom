@@ -102,7 +102,7 @@ func TestGeometry(t *testing.T) {
 				EncodeGeometryWithBBox(),
 				EncodeGeometryWithCRS(&CRS{
 					Type: "name",
-					Properties: map[string]interface{}{
+					Properties: map[string]any{
 						"name": "urn:ogc:def:crs:OGC:1.3:CRS84",
 					},
 				}),
@@ -115,7 +115,7 @@ func TestGeometry(t *testing.T) {
 				EncodeGeometryWithBBox(),
 				EncodeGeometryWithCRS(&CRS{
 					Type: "name",
-					Properties: map[string]interface{}{
+					Properties: map[string]any{
 						"name": "urn:ogc:def:crs:OGC:1.3:CRS84",
 					},
 				}),
@@ -303,7 +303,7 @@ func TestFeature(t *testing.T) {
 		{
 			f: &Feature{
 				Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
-				Properties: map[string]interface{}{
+				Properties: map[string]any{
 					"name": "Dinagat Islands",
 				},
 			},
@@ -312,7 +312,7 @@ func TestFeature(t *testing.T) {
 		{
 			f: &Feature{
 				Geometry: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{102, 0}, {103, 1}, {104, 0}, {105, 1}}),
-				Properties: map[string]interface{}{
+				Properties: map[string]any{
 					"prop0": "value0",
 					"prop1": 0.0,
 				},
@@ -323,9 +323,9 @@ func TestFeature(t *testing.T) {
 			f: &Feature{
 				BBox:     geom.NewBounds(geom.XY).Set(100, 0, 101, 1),
 				Geometry: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{100, 0}, {101, 0}, {101, 1}, {100, 1}, {100, 0}}}),
-				Properties: map[string]interface{}{
+				Properties: map[string]any{
 					"prop0": "value0",
-					"prop1": map[string]interface{}{
+					"prop1": map[string]any{
 						"this": "that",
 					},
 				},
@@ -379,7 +379,7 @@ func TestFeatureCollection(t *testing.T) {
 				Features: []*Feature{
 					{
 						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
-						Properties: map[string]interface{}{
+						Properties: map[string]any{
 							"name": "Dinagat Islands",
 						},
 					},
@@ -393,22 +393,22 @@ func TestFeatureCollection(t *testing.T) {
 				Features: []*Feature{
 					{
 						Geometry: geom.NewPoint(geom.XY).MustSetCoords([]float64{125.6, 10.1}),
-						Properties: map[string]interface{}{
+						Properties: map[string]any{
 							"name": "Dinagat Islands",
 						},
 					},
 					{
 						Geometry: geom.NewLineString(geom.XY).MustSetCoords([]geom.Coord{{102, 0}, {103, 1}, {104, 0}, {105, 1}}),
-						Properties: map[string]interface{}{
+						Properties: map[string]any{
 							"prop0": "value0",
 							"prop1": 0.0,
 						},
 					},
 					{
 						Geometry: geom.NewPolygon(geom.XY).MustSetCoords([][]geom.Coord{{{100, 0}, {101, 0}, {101, 1}, {100, 1}, {100, 0}}}),
-						Properties: map[string]interface{}{
+						Properties: map[string]any{
 							"prop0": "value0",
-							"prop1": map[string]interface{}{
+							"prop1": map[string]any{
 								"this": "that",
 							},
 						},

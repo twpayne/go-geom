@@ -28,7 +28,7 @@ var _ = []interface {
 
 func TestPointScanAndValue(t *testing.T) {
 	for i, tc := range []struct {
-		value interface{}
+		value any
 		point Point
 		valid bool
 	}{
