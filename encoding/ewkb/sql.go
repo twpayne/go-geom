@@ -11,7 +11,7 @@ import (
 
 // ErrExpectedByteSlice is returned when a []byte is expected.
 type ErrExpectedByteSlice struct {
-	Value interface{}
+	Value any
 }
 
 func (e ErrExpectedByteSlice) Error() string {
@@ -61,7 +61,7 @@ type GeometryCollection struct {
 }
 
 // Scan scans from a []byte.
-func (p *Point) Scan(src interface{}) error {
+func (p *Point) Scan(src any) error {
 	if src == nil {
 		p.Point = nil
 		return nil
@@ -96,7 +96,7 @@ func (p *Point) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (ls *LineString) Scan(src interface{}) error {
+func (ls *LineString) Scan(src any) error {
 	if src == nil {
 		ls.LineString = nil
 		return nil
@@ -131,7 +131,7 @@ func (ls *LineString) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (p *Polygon) Scan(src interface{}) error {
+func (p *Polygon) Scan(src any) error {
 	if src == nil {
 		p.Polygon = nil
 		return nil
@@ -166,7 +166,7 @@ func (p *Polygon) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (mp *MultiPoint) Scan(src interface{}) error {
+func (mp *MultiPoint) Scan(src any) error {
 	if src == nil {
 		mp.MultiPoint = nil
 		return nil
@@ -201,7 +201,7 @@ func (mp *MultiPoint) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (mls *MultiLineString) Scan(src interface{}) error {
+func (mls *MultiLineString) Scan(src any) error {
 	if src == nil {
 		mls.MultiLineString = nil
 		return nil
@@ -236,7 +236,7 @@ func (mls *MultiLineString) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (mp *MultiPolygon) Scan(src interface{}) error {
+func (mp *MultiPolygon) Scan(src any) error {
 	if src == nil {
 		mp.MultiPolygon = nil
 		return nil
@@ -271,7 +271,7 @@ func (mp *MultiPolygon) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (gc *GeometryCollection) Scan(src interface{}) error {
+func (gc *GeometryCollection) Scan(src any) error {
 	if src == nil {
 		gc.GeometryCollection = nil
 		return nil

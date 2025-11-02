@@ -11,7 +11,7 @@ import (
 
 // ErrExpectedByteSlice is returned when a []byte is expected.
 type ErrExpectedByteSlice struct {
-	Value interface{}
+	Value any
 }
 
 func (e ErrExpectedByteSlice) Error() string {
@@ -76,7 +76,7 @@ type GeometryCollection struct {
 }
 
 // Scan scans from a []byte.
-func (g *Geom) Scan(src interface{}) error {
+func (g *Geom) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -101,7 +101,7 @@ func (g *Geom) Geom() geom.T {
 }
 
 // Scan scans from a []byte.
-func (p *Point) Scan(src interface{}) error {
+func (p *Point) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -124,7 +124,7 @@ func (p *Point) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (ls *LineString) Scan(src interface{}) error {
+func (ls *LineString) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -147,7 +147,7 @@ func (ls *LineString) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (p *Polygon) Scan(src interface{}) error {
+func (p *Polygon) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -170,7 +170,7 @@ func (p *Polygon) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (mp *MultiPoint) Scan(src interface{}) error {
+func (mp *MultiPoint) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -193,7 +193,7 @@ func (mp *MultiPoint) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (mls *MultiLineString) Scan(src interface{}) error {
+func (mls *MultiLineString) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -216,7 +216,7 @@ func (mls *MultiLineString) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (mp *MultiPolygon) Scan(src interface{}) error {
+func (mp *MultiPolygon) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}
@@ -239,7 +239,7 @@ func (mp *MultiPolygon) Value() (driver.Value, error) {
 }
 
 // Scan scans from a []byte.
-func (gc *GeometryCollection) Scan(src interface{}) error {
+func (gc *GeometryCollection) Scan(src any) error {
 	b, ok := src.([]byte)
 	if !ok {
 		return ErrExpectedByteSlice{Value: src}

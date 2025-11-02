@@ -207,7 +207,7 @@ func (calc *convexHullCalculator) reduce(inputPts []float64) []float64 {
 func (calc *convexHullCalculator) padArray3(pts []float64) []float64 {
 	pad := make([]float64, 3*calc.stride)
 
-	for i := 0; i < len(pad); i++ {
+	for i := range pad {
 		if i < len(pts) {
 			pad[i] = pts[i]
 		} else {

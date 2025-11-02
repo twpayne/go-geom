@@ -55,10 +55,7 @@ func (enc *Encoder) Encode(ls *geom.LineString) error {
 			}
 			t0 = t
 		}
-		latMMin := int(math.Abs(60000 * coord[1]))
-		if latMMin > 90*60000 {
-			latMMin = 90 * 60000
-		}
+		latMMin := min(int(math.Abs(60000*coord[1])), 90*60000)
 		latDeg, latMMin := latMMin/60000, latMMin%60000
 		var latHemi string
 		if coord[1] < 0 {
@@ -66,10 +63,7 @@ func (enc *Encoder) Encode(ls *geom.LineString) error {
 		} else {
 			latHemi = "N"
 		}
-		lngMMin := int(math.Abs(60000 * coord[0]))
-		if lngMMin > 180*60000 {
-			lngMMin = 180 * 60000
-		}
+		lngMMin := min(int(math.Abs(60000*coord[0])), 180*60000)
 		lngDeg, lngMMin := lngMMin/60000, lngMMin%60000
 		var lngHemi string
 		if coord[0] < 0 {
