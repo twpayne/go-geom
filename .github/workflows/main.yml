@@ -3,8 +3,8 @@ on:
   pull_request:
   push:
 env:
-  GOFUMPT_VERSION: 0.7.0
-  GOLANGCI_LINT_VERSION: 2.1.1
+  GOFUMPT_VERSION: 0.10.0
+  GOLANGCI_LINT_VERSION: 2.12.2
 jobs:
   linux:
     runs-on: ubuntu-latest

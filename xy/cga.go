@@ -315,7 +315,8 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 			DistanceFromPointToLine(line1Start, line2Start, line2End),
 			DistanceFromPointToLine(line1End, line2Start, line2End),
 			DistanceFromPointToLine(line2Start, line1Start, line1End),
-			DistanceFromPointToLine(line2End, line1Start, line1End))
+			DistanceFromPointToLine(line2End, line1Start, line1End),
+		)
 	}
 	// segments intersect
 	return 0.0

@@ -12,7 +12,8 @@ func ExamplePointsCentroid() {
 		geom.NewPointFlat(geom.XY, []float64{0, 0}),
 		geom.NewPointFlat(geom.XY, []float64{2, 0}),
 		geom.NewPointFlat(geom.XY, []float64{2, 2}),
-		geom.NewPointFlat(geom.XY, []float64{0, 2}))
+		geom.NewPointFlat(geom.XY, []float64{0, 2}),
+	)
 
 	fmt.Println(centroid)
 	// Output: [1 1]

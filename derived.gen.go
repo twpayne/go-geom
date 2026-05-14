@@ -101,12 +101,12 @@ func deriveDeepCopy(dst, src *Bounds) {
 		if dst.min != nil {
 			if len(src.min) > len(dst.min) {
 				if cap(dst.min) >= len(src.min) {
-					dst.min = (dst.min)[:len(src.min)]
+					dst.min = dst.min[:len(src.min)]
 				} else {
 					dst.min = make([]float64, len(src.min))
 				}
 			} else if len(src.min) < len(dst.min) {
-				dst.min = (dst.min)[:len(src.min)]
+				dst.min = dst.min[:len(src.min)]
 			}
 		} else {
 			dst.min = make([]float64, len(src.min))
@@ -119,12 +119,12 @@ func deriveDeepCopy(dst, src *Bounds) {
 		if dst.max != nil {
 			if len(src.max) > len(dst.max) {
 				if cap(dst.max) >= len(src.max) {
-					dst.max = (dst.max)[:len(src.max)]
+					dst.max = dst.max[:len(src.max)]
 				} else {
 					dst.max = make([]float64, len(src.max))
 				}
 			} else if len(src.max) < len(dst.max) {
-				dst.max = (dst.max)[:len(src.max)]
+				dst.max = dst.max[:len(src.max)]
 			}
 		} else {
 			dst.max = make([]float64, len(src.max))
@@ -223,12 +223,12 @@ func deriveDeepCopy_9(dst, src *geom2) {
 		if dst.ends != nil {
 			if len(src.ends) > len(dst.ends) {
 				if cap(dst.ends) >= len(src.ends) {
-					dst.ends = (dst.ends)[:len(src.ends)]
+					dst.ends = dst.ends[:len(src.ends)]
 				} else {
 					dst.ends = make([]int, len(src.ends))
 				}
 			} else if len(src.ends) < len(dst.ends) {
-				dst.ends = (dst.ends)[:len(src.ends)]
+				dst.ends = dst.ends[:len(src.ends)]
 			}
 		} else {
 			dst.ends = make([]int, len(src.ends))
@@ -250,12 +250,12 @@ func deriveDeepCopy_10(dst, src *geom3) {
 		if dst.endss != nil {
 			if len(src.endss) > len(dst.endss) {
 				if cap(dst.endss) >= len(src.endss) {
-					dst.endss = (dst.endss)[:len(src.endss)]
+					dst.endss = dst.endss[:len(src.endss)]
 				} else {
 					dst.endss = make([][]int, len(src.endss))
 				}
 			} else if len(src.endss) < len(dst.endss) {
-				dst.endss = (dst.endss)[:len(src.endss)]
+				dst.endss = dst.endss[:len(src.endss)]
 			}
 		} else {
 			dst.endss = make([][]int, len(src.endss))
@@ -274,12 +274,12 @@ func deriveDeepCopy_11(dst, src *geom0) {
 		if dst.flatCoords != nil {
 			if len(src.flatCoords) > len(dst.flatCoords) {
 				if cap(dst.flatCoords) >= len(src.flatCoords) {
-					dst.flatCoords = (dst.flatCoords)[:len(src.flatCoords)]
+					dst.flatCoords = dst.flatCoords[:len(src.flatCoords)]
 				} else {
 					dst.flatCoords = make([]float64, len(src.flatCoords))
 				}
 			} else if len(src.flatCoords) < len(dst.flatCoords) {
-				dst.flatCoords = (dst.flatCoords)[:len(src.flatCoords)]
+				dst.flatCoords = dst.flatCoords[:len(src.flatCoords)]
 			}
 		} else {
 			dst.flatCoords = make([]float64, len(src.flatCoords))
@@ -298,12 +298,12 @@ func deriveDeepCopy_12(dst, src [][]int) {
 			if dst[src_i] != nil {
 				if len(src_value) > len(dst[src_i]) {
 					if cap(dst[src_i]) >= len(src_value) {
-						dst[src_i] = (dst[src_i])[:len(src_value)]
+						dst[src_i] = dst[src_i][:len(src_value)]
 					} else {
 						dst[src_i] = make([]int, len(src_value))
 					}
 				} else if len(src_value) < len(dst[src_i]) {
-					dst[src_i] = (dst[src_i])[:len(src_value)]
+					dst[src_i] = dst[src_i][:len(src_value)]
 				}
 			} else {
 				dst[src_i] = make([]int, len(src_value))

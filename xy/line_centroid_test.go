@@ -83,7 +83,7 @@ func verifyLineCentroid(t *testing.T, i int, tc lineDataType) {
 func verifyMultiLineCentroid(t *testing.T, i int, tc lineDataType) {
 	t.Helper()
 	coords := []float64{}
-	ends := []int{}
+	ends := make([]int, 0, len(tc.lines))
 	for _, p := range tc.lines {
 		coords = append(coords, p.FlatCoords()...)
 		ends = append(ends, len(coords))
