@@ -1,5 +1,7 @@
 package wkt
 
+import "slices"
+
 type geomFlatCoordsRepr struct {
 	flatCoords []float64
 	ends       []int
@@ -35,7 +37,7 @@ func appendMultiPolygonFlatCoordsRepr(
 	p1, p2 multiPolygonFlatCoordsRepr,
 ) multiPolygonFlatCoordsRepr {
 	p1LastEndsLastEnd := 0
-	for i := len(p1.endss) - 1; i >= 0; i-- {
+	for i := range slices.Backward(p1.endss) {
 		if len(p1.endss[i]) > 0 {
 			p1LastEndsLastEnd = p1.endss[i][len(p1.endss[i])-1]
 			break
