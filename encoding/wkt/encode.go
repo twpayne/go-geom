@@ -1,6 +1,7 @@
 package wkt
 
 import (
+	"math"
 	"strconv"
 	"strings"
 
@@ -117,6 +118,11 @@ func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
 
 func (e *Encoder) writeCoord(sb *strings.Builder, coord []float64) error {
 	for i, x := range coord {
+		// WKT has no token for non-finite ordinates and the decoder rejects
+		// them, so reject rather than emit output we cannot read back.
+		if math.IsNaN(x) || math.IsInf(x, 0) {
+			return ErrNonFiniteCoord{Value: x}
+		}
 		if i != 0 {
 			if _, err := sb.WriteRune(' '); err != nil {
 				return err

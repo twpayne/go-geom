@@ -8,6 +8,7 @@ package wkt
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/twpayne/go-geom"
 )
@@ -28,6 +29,16 @@ const (
 
 // ErrBraceMismatch is returned when braces do not match.
 var ErrBraceMismatch = errors.New("wkt: brace mismatch")
+
+// An ErrNonFiniteCoord is returned when encoding a coordinate whose ordinate is
+// not finite (NaN or ±Inf), which WKT cannot represent.
+type ErrNonFiniteCoord struct {
+	Value float64
+}
+
+func (e ErrNonFiniteCoord) Error() string {
+	return fmt.Sprintf("wkt: cannot encode non-finite coordinate %v", e.Value)
+}
 
 // Encoder encodes WKT based on specified parameters.
 type Encoder struct {
