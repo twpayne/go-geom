@@ -1,6 +1,6 @@
 module github.com/twpayne/go-geom
 
-go 1.25.0
+go 1.26.3
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -10,6 +10,6 @@ require (
 )
 
 require (
-	github.com/alecthomas/repr v0.5.2 // indirect
+	github.com/alecthomas/repr v0.5.4 // indirect
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 )

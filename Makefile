@@ -32,7 +32,7 @@ install-tools: ensure-goderive ensure-gofumpt ensure-golangci-lint ensure-goyacc
 ensure-goderive:
 	if [ ! -x bin/goderive ] ; then \
 		mkdir -p bin ; \
-		GOBIN=$(shell pwd)/bin ${GO} install "github.com/awalterschulze/goderive@latest" ; \
+		GOBIN=$(shell pwd)/bin ${GO} install "awalterschulze.org/go/goderive@latest" ; \
 	fi
 
 .PHONY: ensure-gofumpt
