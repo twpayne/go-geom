@@ -1,6 +1,6 @@
 module github.com/twpayne/go-geom
 
-go 1.25.0
+go 1.26.3
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
