@@ -1,6 +1,6 @@
 module github.com/twpayne/go-geom/examples
 
-go 1.25.0
+go 1.26.3
 
 replace github.com/twpayne/go-geom => ..
 
