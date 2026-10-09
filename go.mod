@@ -6,6 +6,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/alecthomas/assert/v2 v2.11.0
 	github.com/lib/pq v1.12.3
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/twpayne/go-kml/v3 v3.6.0
 )
 
