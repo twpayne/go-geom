@@ -10,6 +10,8 @@ import (
 type layoutStackObj struct {
 	// layout is the currently parsed geometry type.
 	layout geom.Layout
+	// declaredLayout is the layout declared for this frame.
+	declaredLayout geom.Layout
 	// inBaseTypeCollection is a bool where true means we are at the top-level or in a base type GEOMETRYCOLLECTION.
 	inBaseTypeCollection bool
 	// nextPointMustBeEmpty is a bool where true means the next scanned point must be EMPTY. It is used to handle
@@ -27,21 +29,24 @@ type layoutStack struct {
 // makeLayoutStack returns a newly created layoutStack. An initial frame is pushed for the top level context.
 func makeLayoutStack() layoutStack {
 	return layoutStack{
-		data: []layoutStackObj{{layout: geom.NoLayout, inBaseTypeCollection: true}},
+		data: []layoutStackObj{{layout: geom.NoLayout, declaredLayout: geom.NoLayout, inBaseTypeCollection: true}},
 	}
 }
 
 // push constructs a layoutStackObj for a layout and pushes it onto the layout stack.
-func (s *layoutStack) push(layout geom.Layout) {
+func (s *layoutStack) push(layout geom.Layout, inheritLayout bool) {
 	// inBaseTypeCollection inherits from outer context.
 	stackObj := layoutStackObj{
 		layout:               layout,
+		declaredLayout:       layout,
 		inBaseTypeCollection: s.topInBaseTypeCollection(),
 	}
 
 	switch layout {
 	case geom.NoLayout:
-		stackObj.layout = s.topLayout()
+		if inheritLayout {
+			stackObj.layout = s.topLayout()
+		}
 	case geom.XYM, geom.XYZ, geom.XYZM:
 		stackObj.inBaseTypeCollection = false
 	default:
@@ -82,6 +87,17 @@ func (s *layoutStack) topInBaseTypeCollection() bool {
 // topLayout returns the nextPointMustBeEmpty field of the topmost layoutStackObj.
 func (s *layoutStack) topNextPointMustBeEmpty() bool {
 	return s.top().nextPointMustBeEmpty
+}
+
+// topDeclaredLayout returns the declaredLayout field of the topmost layoutStackObj.
+func (s *layoutStack) topDeclaredLayout() geom.Layout {
+	return s.top().declaredLayout
+}
+
+// resetTopLayoutForCollectionChild resets the top frame's layout to its declaredLayout for parsing the next child.
+func (s *layoutStack) resetTopLayoutForCollectionChild() {
+	s.top().layout = s.top().declaredLayout
+	s.top().nextPointMustBeEmpty = false
 }
 
 // setTopLayout sets the layout field of the topmost layoutStackObj.

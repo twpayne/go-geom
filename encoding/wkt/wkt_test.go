@@ -1317,3 +1317,257 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		})
 	}
 }
+
+func TestDecodeOptionsRelaxedPostGISCompatibility(t *testing.T) {
+	t.Run("decoder_options_configuration", func(t *testing.T) {
+		dDefault := NewDecoder()
+		assert.Equal(t, true, dDefault.runPostGISCompatibilityChecks)
+
+		dExplicitStrict := NewDecoder(DecodeOptionRunPostGISCompatibilityChecks(true))
+		assert.Equal(t, true, dExplicitStrict.runPostGISCompatibilityChecks)
+
+		dNoArgStrict := NewDecoder(DecodeOptionRunPostGISCompatibilityChecks())
+		assert.Equal(t, true, dNoArgStrict.runPostGISCompatibilityChecks)
+
+		dRelaxed := NewDecoder(DecodeOptionRunPostGISCompatibilityChecks(false))
+		assert.Equal(t, false, dRelaxed.runPostGISCompatibilityChecks)
+
+		dRelaxedHelper := NewDecoder(DecodeOptionRelaxPostGISCompatibilityChecks())
+		assert.Equal(t, false, dRelaxedHelper.runPostGISCompatibilityChecks)
+	})
+
+	t.Run("geometrycollection_mixed_dimensions", func(t *testing.T) {
+		for _, tc := range []struct {
+			desc     string
+			input    string
+			expected geom.T
+		}{
+			{
+				desc:  "mixed 2D and 3D points",
+				input: "GEOMETRYCOLLECTION(POINT(1 2), POINT(1 2 3))",
+				expected: geom.NewGeometryCollection().MustPush(
+					geom.NewPointFlat(geom.XY, []float64{1, 2}),
+					geom.NewPointFlat(geom.XYZ, []float64{1, 2, 3}),
+				),
+			},
+			{
+				desc:  "mixed XYM point and XY linestring",
+				input: "GEOMETRYCOLLECTION(POINT M (0 0 0), LINESTRING(0 0, 1 1))",
+				expected: geom.NewGeometryCollection().MustPush(
+					geom.NewPointFlat(geom.XYM, []float64{0, 0, 0}),
+					geom.NewLineStringFlat(geom.XY, []float64{0, 0, 1, 1}),
+				),
+			},
+			{
+				desc:  "collection M with 3 coords base point",
+				input: "GEOMETRYCOLLECTION M (POINT(0 0 0))",
+				expected: geom.NewGeometryCollection().MustSetLayout(geom.XYM).MustPush(
+					geom.NewPointFlat(geom.XYM, []float64{0, 0, 0}),
+				),
+			},
+			{
+				desc:  "collection M with 3 coords base linestring",
+				input: "GEOMETRYCOLLECTION M (LINESTRING(0 0 0, 1 1 1))",
+				expected: geom.NewGeometryCollection().MustSetLayout(geom.XYM).MustPush(
+					geom.NewLineStringFlat(geom.XYM, []float64{0, 0, 0, 1, 1, 1}),
+				),
+			},
+			{
+				desc:  "collection with 3D point and base empty linestring",
+				input: "GEOMETRYCOLLECTION(POINT(0 0 0), LINESTRING EMPTY)",
+				expected: geom.NewGeometryCollection().MustPush(
+					geom.NewPointFlat(geom.XYZ, []float64{0, 0, 0}),
+					geom.NewLineString(geom.XY),
+				),
+			},
+			{
+				desc:  "collection with base empty linestring and 3D point",
+				input: "GEOMETRYCOLLECTION(LINESTRING EMPTY, POINT(0 0 0))",
+				expected: geom.NewGeometryCollection().MustPush(
+					geom.NewLineString(geom.XY),
+					geom.NewPointFlat(geom.XYZ, []float64{0, 0, 0}),
+				),
+			},
+			{
+				desc:  "collection 3D with nested 2D collection",
+				input: "GEOMETRYCOLLECTION Z (GEOMETRYCOLLECTION(POINT(0 0)))",
+				expected: geom.NewGeometryCollection().MustPush(
+					geom.NewGeometryCollection().MustSetLayout(geom.XY).MustPush(
+						geom.NewPointFlat(geom.XY, []float64{0, 0}),
+					),
+				),
+			},
+			{
+				desc: "multiline collection M with base type multipoint",
+				input: `GEOMETRYCOLLECTION M (
+	POINT EMPTY,
+	POINT M (-2 0 0.5),
+	LINESTRING M (0 0 200, 0.1 -1 -20),
+	POLYGON M ((0 0 7, 1 -1 -50, 2 0 0, 0 0 7)),
+	MULTIPOINT(-1 5 -16, 0.23 7.0 0),
+	MULTILINESTRING M ((0 -1 -2, 2 5 7)),
+	MULTIPOLYGON M (((0 0 0, 1 1 1, 2 3 1, 0 0 0)))
+)`,
+				expected: geom.NewGeometryCollection().MustSetLayout(geom.XYM).MustPush(
+					geom.NewPointEmpty(geom.XYM),
+					geom.NewPointFlat(geom.XYM, []float64{-2, 0, 0.5}),
+					geom.NewLineStringFlat(geom.XYM, []float64{0, 0, 200, 0.1, -1, -20}),
+					geom.NewPolygonFlat(geom.XYM, []float64{0, 0, 7, 1, -1, -50, 2, 0, 0, 0, 0, 7}, []int{12}),
+					geom.NewMultiPointFlat(geom.XYM, []float64{-1, 5, -16, 0.23, 7, 0}),
+					geom.NewMultiLineStringFlat(geom.XYM, []float64{0, -1, -2, 2, 5, 7}, []int{6}),
+					geom.NewMultiPolygonFlat(geom.XYM, []float64{0, 0, 0, 1, 1, 1, 2, 3, 1, 0, 0, 0}, [][]int{{12}}),
+				),
+			},
+			{
+				desc:  "homogeneous collection retains common layout",
+				input: "GEOMETRYCOLLECTION(POINT(1 2), POINT(3 4))",
+				expected: geom.NewGeometryCollection().MustSetLayout(geom.XY).MustPush(
+					geom.NewPointFlat(geom.XY, []float64{1, 2}),
+					geom.NewPointFlat(geom.XY, []float64{3, 4}),
+				),
+			},
+		} {
+			t.Run(tc.desc, func(t *testing.T) {
+				// Relaxed mode parses successfully.
+				got, err := Unmarshal(tc.input, DecodeOptionRelaxPostGISCompatibilityChecks())
+				assert.NoError(t, err)
+				assert.Equal(t, tc.expected, got)
+
+				// Strict mode (default) rejects.
+				if tc.desc != "homogeneous collection retains common layout" {
+					_, errStrict := Unmarshal(tc.input)
+					assert.Error(t, errStrict)
+
+					_, errStrictExplicit := Decode(tc.input, DecodeOptionRunPostGISCompatibilityChecks(true))
+					assert.Error(t, errStrictExplicit)
+				}
+			})
+		}
+	})
+
+	t.Run("multipoint_empty_points", func(t *testing.T) {
+		for _, tc := range []struct {
+			desc     string
+			input    string
+			expected geom.T
+		}{
+			{
+				desc:  "3D multipoint with trailing empty",
+				input: "MULTIPOINT(0 0 0, EMPTY)",
+				expected: geom.NewMultiPointFlat(
+					geom.XYZ,
+					[]float64{0, 0, 0},
+					geom.NewMultiPointFlatOptionWithEnds([]int{3, 3}),
+				),
+			},
+			{
+				desc:  "3D multipoint with leading empty",
+				input: "MULTIPOINT(EMPTY, (0 0 0))",
+				expected: geom.NewMultiPointFlat(
+					geom.XYZ,
+					[]float64{0, 0, 0},
+					geom.NewMultiPointFlatOptionWithEnds([]int{0, 3}),
+				),
+			},
+			{
+				desc:     "multipoint with only empty points defaults to XY",
+				input:    "MULTIPOINT(EMPTY, EMPTY)",
+				expected: geom.NewMultiPointFlat(geom.XY, nil, geom.NewMultiPointFlatOptionWithEnds([]int{0, 0})),
+			},
+		} {
+			t.Run(tc.desc, func(t *testing.T) {
+				got, err := Decode(tc.input, DecodeOptionRunPostGISCompatibilityChecks(false))
+				assert.NoError(t, err)
+				assert.Equal(t, tc.expected, got)
+
+				if tc.desc != "multipoint with only empty points defaults to XY" {
+					_, errStrict := Unmarshal(tc.input)
+					assert.Error(t, errStrict)
+				}
+			})
+		}
+	})
+
+	t.Run("multilinestring_and_multipolygon_empty", func(t *testing.T) {
+		t.Run("4D multilinestring with empty", func(t *testing.T) {
+			input := "MULTILINESTRING(EMPTY, (0 0 0 0, 2 3 -2 -3))"
+			var expected geom.T = geom.NewMultiLineStringFlat(geom.XYZM, []float64{0, 0, 0, 0, 2, 3, -2, -3}, []int{0, 8})
+
+			got, err := Unmarshal(input, DecodeOptionRelaxPostGISCompatibilityChecks())
+			assert.NoError(t, err)
+			assert.Equal(t, expected, got)
+
+			_, errStrict := Unmarshal(input)
+			assert.Error(t, errStrict)
+		})
+
+		t.Run("3D multipolygon with empty", func(t *testing.T) {
+			input := "MULTIPOLYGON(EMPTY, ((0 0 0, 1 1 1, 2 3 1, 0 0 0)))"
+			var expected geom.T = geom.NewMultiPolygonFlat(geom.XYZ, []float64{0, 0, 0, 1, 1, 1, 2, 3, 1, 0, 0, 0}, [][]int{nil, {12}})
+
+			got, err := Unmarshal(input, DecodeOptionRelaxPostGISCompatibilityChecks())
+			assert.NoError(t, err)
+			assert.Equal(t, expected, got)
+
+			_, errStrict := Unmarshal(input)
+			assert.Error(t, errStrict)
+		})
+	})
+
+	t.Run("linestring_point_count", func(t *testing.T) {
+		input := "LINESTRING(0 0)"
+		var expected geom.T = geom.NewLineStringFlat(geom.XY, []float64{0, 0})
+
+		got, err := Unmarshal(input, DecodeOptionRelaxPostGISCompatibilityChecks())
+		assert.NoError(t, err)
+		assert.Equal(t, expected, got)
+
+		_, errStrict := Unmarshal(input)
+		assert.Error(t, errStrict)
+	})
+
+	t.Run("polygon_ring_vertex_count_and_closure", func(t *testing.T) {
+		for _, tc := range []struct {
+			desc     string
+			input    string
+			expected geom.T
+		}{
+			{
+				desc:     "polygon with 3 points",
+				input:    "POLYGON((0 0, 1 1, 2 0))",
+				expected: geom.NewPolygonFlat(geom.XY, []float64{0, 0, 1, 1, 2, 0}, []int{6}),
+			},
+			{
+				desc:     "polygon not closed",
+				input:    "POLYGON((0 0, 1 1, 2 0, 1 -1))",
+				expected: geom.NewPolygonFlat(geom.XY, []float64{0, 0, 1, 1, 2, 0, 1, -1}, []int{8}),
+			},
+			{
+				desc:     "polygon with invalid second ring point count",
+				input:    "POLYGON((0 0, 1 -1, 2 0, 0 0), (0.5 -0.5))",
+				expected: geom.NewPolygonFlat(geom.XY, []float64{0, 0, 1, -1, 2, 0, 0, 0, 0.5, -0.5}, []int{8, 10}),
+			},
+		} {
+			t.Run(tc.desc, func(t *testing.T) {
+				got, err := Unmarshal(tc.input, DecodeOptionRelaxPostGISCompatibilityChecks())
+				assert.NoError(t, err)
+				assert.Equal(t, tc.expected, got)
+
+				_, errStrict := Unmarshal(tc.input)
+				assert.Error(t, errStrict)
+			})
+		}
+	})
+
+	t.Run("coordinate_with_leading_plus", func(t *testing.T) {
+		input := "POINT(+1 2)"
+		var expected geom.T = geom.NewPointFlat(geom.XY, []float64{1, 2})
+
+		got, err := Unmarshal(input, DecodeOptionRelaxPostGISCompatibilityChecks())
+		assert.NoError(t, err)
+		assert.Equal(t, expected, got)
+
+		_, errStrict := Unmarshal(input)
+		assert.Error(t, errStrict)
+	})
+}

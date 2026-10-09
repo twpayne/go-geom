@@ -60,12 +60,58 @@ func Marshal(g geom.T, applyOptFns ...EncodeOption) (string, error) {
 	return NewEncoder(applyOptFns...).Encode(g)
 }
 
-// Unmarshal translates a WKT to the corresponding geometry.
-func Unmarshal(wkt string) (geom.T, error) {
-	wktlex := newWKTLex(wkt)
+// Decoder decodes WKT based on specified parameters.
+type Decoder struct {
+	runPostGISCompatibilityChecks bool
+}
+
+// NewDecoder returns a new decoder with the given options set.
+func NewDecoder(applyOptFns ...DecodeOption) *Decoder {
+	decoder := &Decoder{
+		runPostGISCompatibilityChecks: true,
+	}
+	for _, applyOptFn := range applyOptFns {
+		applyOptFn(decoder)
+	}
+	return decoder
+}
+
+// A DecodeOption is a decoder option.
+type DecodeOption func(*Decoder)
+
+// DecodeOptionRunPostGISCompatibilityChecks sets whether to run PostGIS compatibility checks.
+// When called without arguments, it defaults to true.
+func DecodeOptionRunPostGISCompatibilityChecks(run ...bool) DecodeOption {
+	runChecks := true
+	if len(run) > 0 {
+		runChecks = run[0]
+	}
+	return func(d *Decoder) {
+		d.runPostGISCompatibilityChecks = runChecks
+	}
+}
+
+// DecodeOptionRelaxPostGISCompatibilityChecks relaxes PostGIS compatibility checks.
+func DecodeOptionRelaxPostGISCompatibilityChecks() DecodeOption {
+	return DecodeOptionRunPostGISCompatibilityChecks(false)
+}
+
+// Decode translates a WKT string to the corresponding geometry.
+func (d *Decoder) Decode(wkt string) (geom.T, error) {
+	wktlex := newWKTLex(wkt, d)
 	wktParse(wktlex)
 	if wktlex.lastErr != nil {
 		return nil, wktlex.lastErr
 	}
 	return wktlex.ret, nil
+}
+
+// Decode translates a WKT string to the corresponding geometry.
+func Decode(wkt string, applyOptFns ...DecodeOption) (geom.T, error) {
+	return NewDecoder(applyOptFns...).Decode(wkt)
+}
+
+// Unmarshal translates a WKT to the corresponding geometry.
+func Unmarshal(wkt string, applyOptFns ...DecodeOption) (geom.T, error) {
+	return NewDecoder(applyOptFns...).Decode(wkt)
 }

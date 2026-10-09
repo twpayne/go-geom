@@ -598,16 +598,47 @@ wktdefault:
 			}
 			wktlex.(*wktLex).ret = wktDollar[1].geom
 		}
+	case 2:
+		wktDollar = wktS[wktpt-1 : wktpt+1]
+		{
+			wktlex.(*wktLex).finishGeometry(wktDollar[1].geom)
+			wktVAL.geom = wktDollar[1].geom
+		}
+	case 3:
+		wktDollar = wktS[wktpt-1 : wktpt+1]
+		{
+			wktlex.(*wktLex).finishGeometry(wktDollar[1].geom)
+			wktVAL.geom = wktDollar[1].geom
+		}
+	case 4:
+		wktDollar = wktS[wktpt-1 : wktpt+1]
+		{
+			wktlex.(*wktLex).finishGeometry(wktDollar[1].geom)
+			wktVAL.geom = wktDollar[1].geom
+		}
+	case 5:
+		wktDollar = wktS[wktpt-1 : wktpt+1]
+		{
+			wktlex.(*wktLex).finishGeometry(wktDollar[1].geom)
+			wktVAL.geom = wktDollar[1].geom
+		}
+	case 6:
+		wktDollar = wktS[wktpt-1 : wktpt+1]
+		{
+			wktlex.(*wktLex).finishGeometry(wktDollar[1].geom)
+			wktVAL.geom = wktDollar[1].geom
+		}
+	case 7:
+		wktDollar = wktS[wktpt-1 : wktpt+1]
+		{
+			wktlex.(*wktLex).finishGeometry(wktDollar[1].geom)
+			wktVAL.geom = wktDollar[1].geom
+		}
 	case 8:
 		wktDollar = wktS[wktpt-1 : wktpt+1]
 		{
-			ok := wktlex.(*wktLex).validateAndPopLayoutStackFrame()
+			ok := wktlex.(*wktLex).validateAndPopLayoutStackFrame(wktDollar[1].geomCollect)
 			if !ok {
-				return 1
-			}
-			err := wktDollar[1].geomCollect.SetLayout(wktlex.(*wktLex).curLayout())
-			if err != nil {
-				wktlex.(*wktLex).setError(err)
 				return 1
 			}
 			wktVAL.geom = wktDollar[1].geomCollect
@@ -620,6 +651,7 @@ wktdefault:
 	case 10:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewPointEmpty(wktlex.(*wktLex).curLayout())
 		}
 	case 11:
@@ -667,6 +699,7 @@ wktdefault:
 	case 19:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewLineString(wktlex.(*wktLex).curLayout())
 		}
 	case 20:
@@ -714,6 +747,7 @@ wktdefault:
 	case 28:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewPolygon(wktlex.(*wktLex).curLayout())
 		}
 	case 29:
@@ -756,6 +790,7 @@ wktdefault:
 	case 36:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewMultiPointFlat(
 				wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, geom.NewMultiPointFlatOptionWithEnds(wktDollar[2].flatRepr.ends),
 			)
@@ -770,6 +805,7 @@ wktdefault:
 	case 38:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewMultiPoint(wktlex.(*wktLex).curLayout())
 		}
 	case 39:
@@ -812,6 +848,7 @@ wktdefault:
 	case 44:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, wktDollar[2].flatRepr.ends)
 		}
 	case 45:
@@ -822,6 +859,7 @@ wktdefault:
 	case 46:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewMultiLineString(wktlex.(*wktLex).curLayout())
 		}
 	case 47:
@@ -864,6 +902,7 @@ wktdefault:
 	case 52:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].multiPolyFlatRepr.flatCoords, wktDollar[2].multiPolyFlatRepr.endss)
 		}
 	case 53:
@@ -874,6 +913,7 @@ wktdefault:
 	case 54:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
+			wktlex.(*wktLex).setDefaultLayoutForEmpty()
 			wktVAL.geom = geom.NewMultiPolygon(wktlex.(*wktLex).curLayout())
 		}
 	case 55:

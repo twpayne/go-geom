@@ -58,11 +58,19 @@ type wktLex struct {
 	ret      geom.T
 	lytStack layoutStack
 	lastErr  error
+	decoder  *Decoder
+}
+
+var defaultDecoder = &Decoder{
+	runPostGISCompatibilityChecks: true,
 }
 
 // newWKTLex returns a pointer to a newly created wktLex.
-func newWKTLex(wkt string) *wktLex {
-	return &wktLex{wkt: wkt, lytStack: makeLayoutStack()}
+func newWKTLex(wkt string, decoder *Decoder) *wktLex {
+	if decoder == nil {
+		decoder = defaultDecoder
+	}
+	return &wktLex{wkt: wkt, lytStack: makeLayoutStack(), decoder: decoder}
 }
 
 // Lex lexes a token from the input.
@@ -81,7 +89,7 @@ func (l *wktLex) Lex(yylval *wktSymType) int {
 		switch {
 		case unicode.IsLetter(c):
 			return l.keyword()
-		case isValidFirstNumRune(c):
+		case l.isValidFirstNumRune(c):
 			return l.num(yylval)
 		default:
 			l.next()
@@ -193,6 +201,9 @@ func (l *wktLex) validateStrideAndSetDefaultLayoutIfNoLayout(stride int) bool {
 // parsed layout. It is used to handle the edge case where a GEOMETRYCOLLECTIONM may have base type
 // geometries only if they are empty.
 func (l *wktLex) validateNonEmptyGeometryAllowed() bool {
+	if !l.decoder.runPostGISCompatibilityChecks {
+		return true
+	}
 	if l.nextScannedPointMustBeEmpty() {
 		if l.curLayout() != geom.XYM {
 			panic("nextPointMustBeEmpty is true but layout is not XYM")
@@ -207,6 +218,10 @@ func (l *wktLex) validateNonEmptyGeometryAllowed() bool {
 // layout and sets the layout if the current layout is unknown.
 func (l *wktLex) validateAndSetLayoutIfNoLayout(layout geom.Layout) bool {
 	if !isCompatibleLayout(l.curLayout(), layout) {
+		if !l.decoder.runPostGISCompatibilityChecks {
+			l.lytStack.setTopLayout(layout)
+			return true
+		}
 		l.setIncorrectLayoutError(layout, "")
 		return false
 	}
@@ -216,6 +231,9 @@ func (l *wktLex) validateAndSetLayoutIfNoLayout(layout geom.Layout) bool {
 
 // validateBaseGeometryTypeAllowed validates whether a base geometry type is permitted based on the parsed layout.
 func (l *wktLex) validateBaseGeometryTypeAllowed() bool {
+	if !l.decoder.runPostGISCompatibilityChecks {
+		return true
+	}
 	// Base type geometry are permitted in GEOMETRYCOLLECTIONM, GEOMETRYCOLLECTIONZ, GEOMETRYCOLLECTIONZM.
 	// The stride of the coordinates/whether EMPTY is allowed will be validated later.
 	if !l.currentlyInBaseTypeCollection() {
@@ -243,6 +261,9 @@ func (l *wktLex) validateBaseGeometryTypeAllowed() bool {
 
 // validateBaseTypeEmptyAllowed validates whether a base type EMPTY is permitted based on the parsed layout.
 func (l *wktLex) validateBaseTypeEmptyAllowed() bool {
+	if !l.decoder.runPostGISCompatibilityChecks {
+		return true
+	}
 	// EMPTY is always permitted in a non-base type collection.
 	if !l.currentlyInBaseTypeCollection() {
 		// A base type EMPTY geometry is the only permitted base type geometry in a GEOMETRYCOLLECTIONM
@@ -270,16 +291,56 @@ func (l *wktLex) validateBaseTypeEmptyAllowed() bool {
 func (l *wktLex) validateAndPushLayoutStackFrame(layout geom.Layout) bool {
 	// Check that the new layout is compatible with the previous one.
 	// Note a base type GEOMETRYCOLLECTION is permitted inside every layout.
+	inheritLayout := l.decoder.runPostGISCompatibilityChecks
 	if layout != geom.NoLayout && !isCompatibleLayout(l.curLayout(), layout) {
+		if !l.decoder.runPostGISCompatibilityChecks {
+			l.lytStack.push(layout, inheritLayout)
+			return true
+		}
 		l.setIncorrectLayoutError(layout, "")
 		return false
 	}
-	l.lytStack.push(layout)
+	l.lytStack.push(layout, inheritLayout)
 	return true
 }
 
 // validateAndPopLayoutStackFrame pops a frame from the layout stack and validates that the type is valid.
-func (l *wktLex) validateAndPopLayoutStackFrame() bool {
+func (l *wktLex) validateAndPopLayoutStackFrame(g *geom.GeometryCollection) bool {
+	if !l.decoder.runPostGISCompatibilityChecks {
+		declaredLayout := l.lytStack.topDeclaredLayout()
+		collectionLayout := geom.NoLayout
+		if g.Empty() {
+			if declaredLayout != geom.NoLayout {
+				collectionLayout = declaredLayout
+			} else {
+				collectionLayout = geom.XY
+			}
+		} else {
+			allSame := true
+			firstLayout := g.Geom(0).Layout()
+			for i := 1; i < g.NumGeoms(); i++ {
+				if g.Geom(i).Layout() != firstLayout {
+					allSame = false
+					break
+				}
+			}
+			if allSame && firstLayout != geom.NoLayout {
+				if declaredLayout == geom.NoLayout || declaredLayout == firstLayout {
+					collectionLayout = firstLayout
+				}
+			}
+		}
+		_ = g.SetLayout(collectionLayout)
+		l.lytStack.pop()
+		if l.curLayout() == geom.NoLayout && collectionLayout != geom.NoLayout {
+			l.setLayoutIfNoLayout(collectionLayout)
+		}
+		if !l.lytStack.atTopLevel() {
+			l.lytStack.resetTopLayoutForCollectionChild()
+		}
+		return true
+	}
+
 	poppedLayout := l.lytStack.pop()
 	// Update the outer context with the type we parsed in the inner context.
 	if !isCompatibleLayout(l.curLayout(), poppedLayout) {
@@ -287,7 +348,27 @@ func (l *wktLex) validateAndPopLayoutStackFrame() bool {
 		panic("uncaught layout incompatibility")
 	}
 	l.setLayoutIfNoLayout(poppedLayout)
+	if err := g.SetLayout(l.curLayout()); err != nil {
+		l.setError(err)
+		return false
+	}
 	return true
+}
+
+func (l *wktLex) setDefaultLayoutForEmpty() {
+	if l.curLayout() == geom.NoLayout {
+		if !l.lytStack.atTopLevel() && l.lytStack.topDeclaredLayout() != geom.NoLayout {
+			l.setLayoutIfNoLayout(l.lytStack.topDeclaredLayout())
+		} else {
+			l.setLayoutIfNoLayout(geom.XY)
+		}
+	}
+}
+
+func (l *wktLex) finishGeometry(g geom.T) {
+	if !l.decoder.runPostGISCompatibilityChecks && !l.lytStack.atTopLevel() {
+		l.lytStack.resetTopLayoutForCollectionChild()
+	}
 }
 
 // validateLayoutStackAtEnd returns whether the layout stack is in the expected state at the end of parsing.
@@ -310,6 +391,9 @@ func (l *wktLex) isValidPoint(flatCoords []float64) bool {
 }
 
 func (l *wktLex) isValidLineString(flatCoords []float64) bool {
+	if !l.decoder.runPostGISCompatibilityChecks {
+		return true
+	}
 	stride := l.curLayout().Stride()
 	if len(flatCoords) < 2*stride {
 		l.setParseError("non-empty linestring with only one point", "minimum number of points is 2")
@@ -319,6 +403,9 @@ func (l *wktLex) isValidLineString(flatCoords []float64) bool {
 }
 
 func (l *wktLex) isValidPolygonRing(flatCoords []float64) bool {
+	if !l.decoder.runPostGISCompatibilityChecks {
+		return true
+	}
 	stride := l.curLayout().Stride()
 	if len(flatCoords) < 4*stride {
 		l.setParseError("polygon ring doesn't have enough points", "minimum number of points is 4")
@@ -419,10 +506,13 @@ func (l *wktLex) setError(err error) {
 }
 
 // isValidFirstNumRune returns whether a rune is valid as the first rune in a number (coordinate).
-func isValidFirstNumRune(r rune) bool {
+func (l *wktLex) isValidFirstNumRune(r rune) bool {
 	switch r {
-	// PostGIS doesn't seem to accept numbers with a leading '+'.
 	case '+':
+		if !l.decoder.runPostGISCompatibilityChecks {
+			return true
+		}
+		// PostGIS doesn't seem to accept numbers with a leading '+'.
 		return false
 	// Scientific notation number must have a number before the e.
 	// Checking this case explicitly helps disambiguate between a number and a keyword.

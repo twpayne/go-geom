@@ -105,20 +105,39 @@ start:
 
 geometry:
 	point
+	{
+		wktlex.(*wktLex).finishGeometry($1)
+		$$ = $1
+	}
 |	linestring
+	{
+		wktlex.(*wktLex).finishGeometry($1)
+		$$ = $1
+	}
 |	polygon
+	{
+		wktlex.(*wktLex).finishGeometry($1)
+		$$ = $1
+	}
 |	multipoint
+	{
+		wktlex.(*wktLex).finishGeometry($1)
+		$$ = $1
+	}
 |	multilinestring
+	{
+		wktlex.(*wktLex).finishGeometry($1)
+		$$ = $1
+	}
 |	multipolygon
+	{
+		wktlex.(*wktLex).finishGeometry($1)
+		$$ = $1
+	}
 |	geometry_collection
 	{
-		ok := wktlex.(*wktLex).validateAndPopLayoutStackFrame()
+		ok := wktlex.(*wktLex).validateAndPopLayoutStackFrame($1)
 		if !ok {
-			return 1
-		}
-		err := $1.SetLayout(wktlex.(*wktLex).curLayout())
-		if err != nil {
-			wktlex.(*wktLex).setError(err)
 			return 1
 		}
 		$$ = $1
@@ -131,6 +150,7 @@ point:
 	}
 |	point_base_type empty_in_base_type
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewPointEmpty(wktlex.(*wktLex).curLayout())
 	}
 |	point_non_base_type empty_in_non_base_type
@@ -181,6 +201,7 @@ linestring:
 	}
 |	linestring_base_type empty_in_base_type
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewLineString(wktlex.(*wktLex).curLayout())
 	}
 |	linestring_non_base_type empty_in_non_base_type
@@ -231,6 +252,7 @@ polygon:
 	}
 |	polygon_base_type empty_in_base_type
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewPolygon(wktlex.(*wktLex).curLayout())
 	}
 |	polygon_non_base_type empty_in_non_base_type
@@ -277,6 +299,7 @@ polygon_non_base_type:
 multipoint:
 	multipoint_base_type multipoint_base_type_point_list_with_parens
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewMultiPointFlat(
 			wktlex.(*wktLex).curLayout(), $2.flatCoords, geom.NewMultiPointFlatOptionWithEnds($2.ends),
 		)
@@ -289,6 +312,7 @@ multipoint:
 	}
 |	multipoint_base_type empty_in_base_type
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewMultiPoint(wktlex.(*wktLex).curLayout())
 	}
 |	multipoint_non_base_type empty_in_non_base_type
@@ -331,6 +355,7 @@ multipoint_non_base_type:
 multilinestring:
 	multilinestring_base_type multilinestring_base_type_linestring_list_with_parens
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.ends)
 	}
 |	multilinestring_non_base_type multilinestring_non_base_type_linestring_list_with_parens
@@ -339,6 +364,7 @@ multilinestring:
 	}
 |	multilinestring_base_type empty_in_base_type
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewMultiLineString(wktlex.(*wktLex).curLayout())
 	}
 |	multilinestring_non_base_type empty_in_non_base_type
@@ -381,6 +407,7 @@ multilinestring_non_base_type:
 multipolygon:
 	multipolygon_base_type multipolygon_base_type_polygon_list_with_parens
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.endss)
 	}
 |	multipolygon_non_base_type multipolygon_non_base_type_polygon_list_with_parens
@@ -389,6 +416,7 @@ multipolygon:
 	}
 |	multipolygon_base_type empty_in_base_type
 	{
+		wktlex.(*wktLex).setDefaultLayoutForEmpty()
 		$$ = geom.NewMultiPolygon(wktlex.(*wktLex).curLayout())
 	}
 |	multipolygon_non_base_type empty_in_non_base_type
