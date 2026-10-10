@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"fmt"
 	"strconv"
 	"testing"
 
@@ -219,7 +220,7 @@ func TestLayoutString(t *testing.T) {
 }
 
 func TestVerify(t *testing.T) {
-	for _, tc := range []struct {
+	for i, tc := range []struct {
 		v interface {
 			verify() error
 		}
@@ -230,15 +231,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom0{NoLayout, 0, Coord{0, 0}, 0},
+			&geom0{Coord{0, 0}, NoLayout, 0, 0},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom0{XY, 1, Coord{0, 0}, 0},
+			&geom0{Coord{0, 0}, XY, 1, 0},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom0{XY, 2, Coord{0}, 0},
+			&geom0{Coord{0}, XY, 2, 0},
 			errLengthStrideMismatch,
 		},
 		{
@@ -246,15 +247,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom1{geom0{NoLayout, 0, Coord{0}, 0}},
+			&geom1{geom0{Coord{0}, NoLayout, 0, 0}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom1{geom0{XY, 1, Coord{0, 0}, 0}},
+			&geom1{geom0{Coord{0, 0}, XY, 1, 0}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom1{geom0{XY, 2, Coord{0}, 0}},
+			&geom1{geom0{Coord{0}, XY, 2, 0}},
 			errLengthStrideMismatch,
 		},
 		{
@@ -262,39 +263,39 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, Coord{0}, 0}}, []int{}},
+			&geom2{[]int{}, geom1{geom0{Coord{0}, NoLayout, 0, 0}}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, Coord{}, 0}}, []int{4}},
+			&geom2{[]int{4}, geom1{geom0{Coord{}, NoLayout, 0, 0}}},
 			errNonEmptyEnds,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0}, 0}}, []int{4}},
+			&geom2{[]int{4}, geom1{geom0{Coord{0}, XY, 2, 0}}},
 			errLengthStrideMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 1, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
+			&geom2{[]int{-1}, geom1{geom0{Coord{0, 0, 0, 0}, XY, 1, 0}}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
+			&geom2{[]int{-1}, geom1{geom0{Coord{0, 0, 0, 0}, XY, 2, 0}}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{3}},
+			&geom2{[]int{3}, geom1{geom0{Coord{0, 0, 0, 0}, XY, 2, 0}}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{8, 4}},
+			&geom2{[]int{8, 4}, geom1{geom0{Coord{0, 0, 0, 0, 0, 0, 0, 0}, XY, 2, 0}}},
 			errOutOfOrderEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 4}},
+			&geom2{[]int{4, 4}, geom1{geom0{Coord{0, 0, 0, 0, 0, 0, 0, 0}, XY, 2, 0}}},
 			errIncorrectEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 12}},
+			&geom2{[]int{4, 12}, geom1{geom0{Coord{0, 0, 0, 0, 0, 0, 0, 0}, XY, 2, 0}}},
 			errIncorrectEnd,
 		},
 		{
@@ -302,35 +303,37 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom3{geom1{geom0{XY, 3, Coord{}, 0}}, [][]int{}},
+			&geom3{[][]int{}, geom1{geom0{Coord{}, XY, 3, 0}}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom3{geom1{geom0{NoLayout, 0, Coord{0}, 0}}, [][]int{}},
+			&geom3{[][]int{}, geom1{geom0{Coord{0}, NoLayout, 0, 0}}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom3{geom1{geom0{NoLayout, 0, Coord{}, 0}}, [][]int{{0}}},
+			&geom3{[][]int{{0}}, geom1{geom0{Coord{}, NoLayout, 0, 0}}},
 			errNonEmptyEndss,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0}, 0}}, [][]int{}},
+			&geom3{[][]int{}, geom1{geom0{Coord{0}, XY, 2, 0}}},
 			errLengthStrideMismatch,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0, 0}, 0}}, [][]int{{1}}},
+			&geom3{[][]int{{1}}, geom1{geom0{Coord{0, 0}, XY, 2, 0}}},
 			errMisalignedEnd,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{4, 2}}},
+			&geom3{[][]int{{4, 2}}, geom1{geom0{Coord{0, 0, 0, 0}, XY, 2, 0}}},
 			errOutOfOrderEnd,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{2}}},
+			&geom3{[][]int{{2}}, geom1{geom0{Coord{0, 0, 0, 0}, XY, 2, 0}}},
 			errIncorrectEnd,
 		},
 	} {
-		assert.Equal(t, tc.want, tc.v.verify())
+		t.Run(fmt.Sprintf("%d_%+v", i, tc.v), func(t *testing.T) {
+			assert.Equal(t, tc.want, tc.v.verify())
+		})
 	}
 }
 

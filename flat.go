@@ -3,9 +3,9 @@ package geom
 import "math"
 
 type geom0 struct {
+	flatCoords []float64
 	layout     Layout
 	stride     int
-	flatCoords []float64
 	srid       int
 }
 
@@ -14,13 +14,13 @@ type geom1 struct {
 }
 
 type geom2 struct {
-	geom1
 	ends []int
+	geom1
 }
 
 type geom3 struct {
-	geom1
 	endss [][]int
+	geom1
 }
 
 // Bounds returns the bounds of g.

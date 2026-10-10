@@ -94,7 +94,6 @@ func deriveClonePolygon(src *Polygon) *Polygon {
 
 // deriveDeepCopy recursively copies the contents of src into dst.
 func deriveDeepCopy(dst, src *Bounds) {
-	dst.layout = src.layout
 	if src.min == nil {
 		dst.min = nil
 	} else {
@@ -131,6 +130,7 @@ func deriveDeepCopy(dst, src *Bounds) {
 		}
 		copy(dst.max, src.max)
 	}
+	dst.layout = src.layout
 }
 
 // deriveDeepCopy_ recursively copies the contents of src into dst.
@@ -212,11 +212,6 @@ func deriveDeepCopy_8(dst, src *geom1) {
 
 // deriveDeepCopy_9 recursively copies the contents of src into dst.
 func deriveDeepCopy_9(dst, src *geom2) {
-	{
-		field := new(geom1)
-		deriveDeepCopy_8(field, &src.geom1)
-		dst.geom1 = *field
-	}
 	if src.ends == nil {
 		dst.ends = nil
 	} else {
@@ -235,15 +230,15 @@ func deriveDeepCopy_9(dst, src *geom2) {
 		}
 		copy(dst.ends, src.ends)
 	}
-}
-
-// deriveDeepCopy_10 recursively copies the contents of src into dst.
-func deriveDeepCopy_10(dst, src *geom3) {
 	{
 		field := new(geom1)
 		deriveDeepCopy_8(field, &src.geom1)
 		dst.geom1 = *field
 	}
+}
+
+// deriveDeepCopy_10 recursively copies the contents of src into dst.
+func deriveDeepCopy_10(dst, src *geom3) {
 	if src.endss == nil {
 		dst.endss = nil
 	} else {
@@ -262,12 +257,15 @@ func deriveDeepCopy_10(dst, src *geom3) {
 		}
 		deriveDeepCopy_12(dst.endss, src.endss)
 	}
+	{
+		field := new(geom1)
+		deriveDeepCopy_8(field, &src.geom1)
+		dst.geom1 = *field
+	}
 }
 
 // deriveDeepCopy_11 recursively copies the contents of src into dst.
 func deriveDeepCopy_11(dst, src *geom0) {
-	dst.layout = src.layout
-	dst.stride = src.stride
 	if src.flatCoords == nil {
 		dst.flatCoords = nil
 	} else {
@@ -286,6 +284,8 @@ func deriveDeepCopy_11(dst, src *geom0) {
 		}
 		copy(dst.flatCoords, src.flatCoords)
 	}
+	dst.layout = src.layout
+	dst.stride = src.stride
 	dst.srid = src.srid
 }
 
