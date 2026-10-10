@@ -3,8 +3,8 @@ package geom
 // A GeometryCollection is a collection of arbitrary geometries with the same
 // SRID.
 type GeometryCollection struct {
-	layout Layout
 	geoms  []T
+	layout Layout
 	srid   int
 }
 
