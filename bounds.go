@@ -28,8 +28,33 @@ func (b *Bounds) Clone() *Bounds {
 	return deriveCloneBounds(b)
 }
 
+// ExtendBounds extends b to include bounding box b2.
+func (b *Bounds) ExtendBounds(b2 *Bounds) *Bounds {
+	if b2 == nil || b2.IsEmpty() {
+		return b
+	}
+	b.extendLayout(b2.layout)
+	stride := min(b.layout.Stride(), b2.layout.Stride())
+	for i := range stride {
+		b.min[i] = math.Min(b.min[i], b2.min[i])
+		b.max[i] = math.Max(b.max[i], b2.max[i])
+	}
+	return b
+}
+
 // Extend extends b to include geometry g.
 func (b *Bounds) Extend(g T) *Bounds {
+	if g == nil || g.Empty() {
+		return b
+	}
+	switch geom := g.(type) {
+	case *CircularString:
+		return b.ExtendBounds(geom.Bounds())
+	case *CompoundCurve:
+		return b.ExtendBounds(geom.Bounds())
+	case *CurvePolygon:
+		return b.ExtendBounds(geom.Bounds())
+	}
 	b.extendLayout(g.Layout())
 	if b.layout == XYZM && g.Layout() == XYM {
 		return b.extendXYZMFlatCoordsWithXYM(g.FlatCoords(), 0, len(g.FlatCoords()))

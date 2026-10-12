@@ -229,3 +229,44 @@ func TestBoundsSetCoords(t *testing.T) {
 	bounds.SetCoords(Coord{20, 0}, Coord{0, 20}) // set coords should ensure valid min / max
 	assert.Equal(t, expected, *bounds)
 }
+
+func TestBoundsExtendWithCurves(t *testing.T) {
+	// CircularString arc extending beyond control points
+	// Controls: (1, 0), (0.5, sqrt(3)/2), (-0.5, sqrt(3)/2)
+	// Extends to apex at (0, 1)
+	cs := NewCircularStringFlat(XY, []float64{1, 0, 0.5, 0.8660254037844386, -0.5, 0.8660254037844386})
+	b := NewBounds(XY).Extend(cs)
+	assertInDelta(t, -0.5, b.Min(0), 1e-9)
+	assertInDelta(t, 0.0, b.Min(1), 1e-9)
+	assertInDelta(t, 1.0, b.Max(0), 1e-9)
+	assertInDelta(t, 1.0, b.Max(1), 1e-9)
+
+	// CompoundCurve
+	ls := NewLineStringFlat(XY, []float64{-0.5, 0.8660254037844386, -2, 0})
+	cc := NewCompoundCurve(XY).MustPush(cs, ls)
+	b = NewBounds(XY).Extend(cc)
+	assertInDelta(t, -2.0, b.Min(0), 1e-9)
+	assertInDelta(t, 1.0, b.Max(1), 1e-9)
+
+	// CurvePolygon
+	cp := NewCurvePolygon(XY).MustPush(cc)
+	b = NewBounds(XY).Extend(cp)
+	assertInDelta(t, -2.0, b.Min(0), 1e-9)
+	assertInDelta(t, 1.0, b.Max(1), 1e-9)
+}
+
+func TestBoundsExtendBounds(t *testing.T) {
+	b1 := NewBounds(XY).Set(0, 0, 10, 10)
+	b2 := NewBounds(XY).Set(-5, 2, 5, 15)
+	b1.ExtendBounds(b2)
+	assert.Equal(t, -5.0, b1.Min(0))
+	assert.Equal(t, 0.0, b1.Min(1))
+	assert.Equal(t, 10.0, b1.Max(0))
+	assert.Equal(t, 15.0, b1.Max(1))
+
+	// Nil / empty bounds
+	b1.ExtendBounds(nil)
+	assert.Equal(t, -5.0, b1.Min(0))
+	b1.ExtendBounds(NewBounds(XY))
+	assert.Equal(t, -5.0, b1.Min(0))
+}

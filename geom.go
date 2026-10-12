@@ -209,6 +209,12 @@ func SetSRID(g T, srid int) (T, error) {
 		return g.SetSRID(srid), nil
 	case *GeometryCollection:
 		return g.SetSRID(srid), nil
+	case *CircularString:
+		return g.SetSRID(srid), nil
+	case *CompoundCurve:
+		return g.SetSRID(srid), nil
+	case *CurvePolygon:
+		return g.SetSRID(srid), nil
 	default:
 		return g, &ErrUnsupportedType{
 			Value: g,
