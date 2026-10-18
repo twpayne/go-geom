@@ -103,6 +103,16 @@ func (b *Bounds) Set(args ...float64) *Bounds {
 	}
 	stride := len(args) / 2
 	b.extendStride(stride)
+	if stride >= 2 && stride > b.layout.Stride() {
+		switch stride {
+		case 2:
+			b.layout = XY
+		case 3:
+			b.layout = XYZ
+		default:
+			b.layout = Layout(stride)
+		}
+	}
 	for i := range stride {
 		b.min[i], b.max[i] = args[i], args[i+stride]
 	}

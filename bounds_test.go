@@ -215,6 +215,28 @@ func TestBoundsSet(t *testing.T) {
 	})
 }
 
+func TestBoundsSetExtendsLayout(t *testing.T) {
+	for _, tc := range []struct {
+		layout   Layout
+		args     []float64
+		expected Layout
+	}{
+		{NoLayout, []float64{0, 0, 1, 1}, XY},
+		{XY, []float64{0, 0, 0, 1, 1, 1}, XYZ},
+		{XYM, []float64{0, 0, 0, 0, 1, 1, 1, 1}, XYZM},
+		{XYZM, []float64{0, 0, 0, 0, 0, 1, 1, 1, 1, 1}, Layout(5)},
+		{XYM, []float64{0, 0, 0, 1, 1, 1}, XYM},
+	} {
+		b := NewBounds(tc.layout).Set(tc.args...)
+		assert.Equal(t, tc.expected, b.Layout())
+		assert.False(t, b.IsEmpty())
+		assert.False(t, b.Polygon().Empty())
+		b.Set(tc.args...)
+		assert.Equal(t, tc.expected.Stride(), len(b.min))
+		assert.Equal(t, tc.expected.Stride(), len(b.max))
+	}
+}
+
 func TestBoundsSetCoords(t *testing.T) {
 	bounds := &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
 	bounds.SetCoords(Coord{0, 0}, Coord{20, 20})
