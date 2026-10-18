@@ -162,6 +162,33 @@ func TestGeometryCollectionSetLayout(t *testing.T) {
 	assert.Error(t, zmGeomCollection.Push(NewPointEmpty(XY)))
 }
 
+func TestGeometryCollectionNestedBounds(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		g    *GeometryCollection
+		want *Bounds
+	}{
+		{
+			name: "empty",
+			g:    NewGeometryCollection().MustPush(NewGeometryCollection().MustSetLayout(XY)),
+			want: NewBounds(XY),
+		},
+		{
+			name: "mixed layouts",
+			g: NewGeometryCollection().MustPush(
+				NewPoint(XYZ).MustSetCoords(Coord{1, 2, 3}),
+				NewGeometryCollection().MustPush(NewPoint(XYM).MustSetCoords(Coord{4, 5, 6})),
+			),
+			want: NewBounds(XYZM).SetCoords(Coord{1, 2, 3, 6}, Coord{4, 5, 3, 6}),
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.want, tc.g.Bounds())
+			assert.Equal(t, tc.want, NewBounds(NoLayout).Extend(tc.g))
+		})
+	}
+}
+
 func TestGeometryCollectionSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewGeometryCollection().SetSRID(4326).SRID())
 	assert.Equal(t, 4326, Must(SetSRID(NewGeometryCollection(), 4326)).SRID())
