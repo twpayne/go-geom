@@ -2,8 +2,8 @@
 // applications.
 package geom
 
-//go:generate bin/goderive . > derived.gen.go
-//go:generate bin/gofumpt -w derived.gen.go
+//go:generate go run awalterschulze.org/go/goderive@v0.6.0 . > derived.gen.go
+//go:generate go run mvdan.cc/gofumpt@v0.12.0 -extra -w derived.gen.go
 
 import (
 	"errors"
