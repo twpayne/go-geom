@@ -31,6 +31,12 @@ func (b *Bounds) Clone() *Bounds {
 // Extend extends b to include geometry g.
 func (b *Bounds) Extend(g T) *Bounds {
 	b.extendLayout(g.Layout())
+	if collection, ok := g.(*GeometryCollection); ok {
+		for _, child := range collection.Geoms() {
+			b.Extend(child)
+		}
+		return b
+	}
 	if b.layout == XYZM && g.Layout() == XYM {
 		return b.extendXYZMFlatCoordsWithXYM(g.FlatCoords(), 0, len(g.FlatCoords()))
 	}
