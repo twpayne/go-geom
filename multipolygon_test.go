@@ -110,6 +110,27 @@ func TestMultiPolygon(t *testing.T) {
 	}
 }
 
+func TestMultiPolygonMeasurementsWithEmptyPolygons(t *testing.T) {
+	triangle := [][]Coord{{{0, 0}, {3, 0}, {3, 4}, {0, 0}}}
+	for i, tc := range []struct {
+		coords       [][][]Coord
+		area, length float64
+	}{
+		{[][][]Coord{nil, nil}, 0, 0},
+		{[][][]Coord{nil, triangle}, 6, 12},
+		{[][][]Coord{triangle, nil, triangle}, 12, 24},
+		{[][][]Coord{triangle, nil}, 6, 12},
+	} {
+		g := NewMultiPolygon(XY).MustSetCoords(tc.coords)
+		t.Run(strconv.Itoa(i)+"/area", func(t *testing.T) {
+			assert.Equal(t, tc.area, g.Area())
+		})
+		t.Run(strconv.Itoa(i)+"/length", func(t *testing.T) {
+			assert.Equal(t, tc.length, g.Length())
+		})
+	}
+}
+
 func TestMultiPolygonSetSRID(t *testing.T) {
 	assert.Equal(t, 4326, NewMultiPolygon(NoLayout).SetSRID(4326).SRID())
 	assert.Equal(t, 4326, Must(SetSRID(NewMultiPolygon(NoLayout), 4326)).SRID())

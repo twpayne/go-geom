@@ -276,7 +276,9 @@ func doubleArea3(flatCoords []float64, offset int, endss [][]int, stride int) fl
 	var doubleArea float64
 	for _, ends := range endss {
 		doubleArea += doubleArea2(flatCoords, offset, ends, stride)
-		offset = ends[len(ends)-1]
+		if len(ends) > 0 {
+			offset = ends[len(ends)-1]
+		}
 	}
 	return doubleArea
 }
@@ -392,7 +394,9 @@ func length3(flatCoords []float64, offset int, endss [][]int, stride int) float6
 	var length float64
 	for _, ends := range endss {
 		length += length2(flatCoords, offset, ends, stride)
-		offset = ends[len(ends)-1]
+		if len(ends) > 0 {
+			offset = ends[len(ends)-1]
+		}
 	}
 	return length
 }
