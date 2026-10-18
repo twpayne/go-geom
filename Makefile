@@ -18,39 +18,18 @@ lint: ensure-golangci-lint
 	./bin/golangci-lint run
 
 .PHONY: format
-format: ensure-gofumpt
-	find . -name \*.go | xargs ./bin/gofumpt -extra -w
+format:
+	find . -name \*.go | xargs go run mvdan.cc/gofumpt@v0.12.0 -extra -w
 
 .PHONY: generate
-generate: ensure-goderive ensure-gofumpt ensure-goyacc
-	PATH=$$PATH:$(shell pwd)/bin ${GO} generate ./...
+generate:
+	go generate ./...
 
 .PHONY: install-tools
-install-tools: ensure-goderive ensure-gofumpt ensure-golangci-lint ensure-goyacc
-
-.PHONY: ensure-goderive
-ensure-goderive:
-	if [ ! -x bin/goderive ] ; then \
-		mkdir -p bin ; \
-		GOBIN=$(shell pwd)/bin ${GO} install "awalterschulze.org/go/goderive@latest" ; \
-	fi
-
-.PHONY: ensure-gofumpt
-ensure-gofumpt:
-	if [ ! -x bin/gofumpt ] || ( ./bin/gofumpt --version | grep -Fqv "v${GOFUMPT_VERSION}" ) ; then \
-		mkdir -p bin ; \
-		GOBIN=$(shell pwd)/bin ${GO} install "mvdan.cc/gofumpt@v${GOFUMPT_VERSION}" ; \
-	fi
+install-tools: ensure-golangci-lint
 
 .PHONY: ensure-golangci-lint
 ensure-golangci-lint:
 	if [ ! -x bin/golangci-lint ] || ( ./bin/golangci-lint --version | grep -Fqv "version ${GOLANGCI_LINT_VERSION}" ) ; then \
 		curl -sSfL https://golangci-lint.run/install.sh | sh -s -- v${GOLANGCI_LINT_VERSION} ; \
-	fi
-
-.PHONY: ensure-goyacc
-ensure-goyacc:
-	if [ ! -x bin/goyacc ] ; then \
-		mkdir -p bin ; \
-		GOBIN=$(shell pwd)/bin ${GO} install "golang.org/x/tools/cmd/goyacc@latest" ; \
 	fi

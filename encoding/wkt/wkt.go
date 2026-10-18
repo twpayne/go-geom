@@ -1,7 +1,7 @@
-//go:generate goyacc -l -o wkt.gen.go -p wkt wkt.y
+//go:generate go run golang.org/x/tools/cmd/goyacc@v0.52.0 -l -o wkt.gen.go -p wkt wkt.y
 // TODO remove the following line if https://github.com/golang/tools/pull/304 is accepted
 //go:generate sed -i -e "s/wktErrorVerbose = false/wktErrorVerbose = true/" wkt.gen.go
-//go:generate gofumpt -extra -w wkt.gen.go
+//go:generate go run mvdan.cc/gofumpt@v0.12.0 -extra -w wkt.gen.go
 
 // Package wkt implements Well Known Text encoding and decoding.
 package wkt
