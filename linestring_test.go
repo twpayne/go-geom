@@ -1,6 +1,7 @@
 package geom
 
 import (
+	"math"
 	"strconv"
 	"testing"
 
@@ -31,6 +32,22 @@ func (g *LineString) assertEquals(t *testing.T, e *expectedLineString) {
 	assert.Equal(t, len(e.coords), g.NumCoords())
 	for i, c := range e.coords {
 		assert.Equal(t, c, g.Coord(i))
+	}
+}
+
+func TestLineStringLengthScale(t *testing.T) {
+	for _, exponent := range []int{-600, 0, 600} {
+		t.Run(strconv.Itoa(exponent), func(t *testing.T) {
+			scale := math.Ldexp(1, exponent)
+			g := NewLineStringFlat(XY, []float64{0, 0, 3 * scale, 4 * scale})
+			assert.Equal(t, 5*scale, g.Length())
+		})
+	}
+	for _, coords := range [][]float64{
+		{0, 0, math.Inf(1), math.NaN()},
+		{0, 0, math.NaN(), math.Inf(1)},
+	} {
+		assert.True(t, math.IsNaN(NewLineStringFlat(XY, coords).Length()))
 	}
 }
 

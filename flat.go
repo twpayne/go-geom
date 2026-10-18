@@ -374,7 +374,10 @@ func length1(flatCoords []float64, offset, end, stride int) float64 {
 	for i := offset + stride; i < end; i += stride {
 		dx := flatCoords[i] - flatCoords[i-stride]
 		dy := flatCoords[i+1] - flatCoords[i+1-stride]
-		length += math.Sqrt(dx*dx + dy*dy)
+		if math.IsNaN(dx) || math.IsNaN(dy) {
+			return math.NaN()
+		}
+		length += math.Hypot(dx, dy)
 	}
 	return length
 }
